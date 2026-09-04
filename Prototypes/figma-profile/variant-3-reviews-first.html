@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Variante 3 — Reviews-First · Opinion System</title>
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../A-7/assets/os-figma.css">
+<link rel="stylesheet" href="assets/profile.css">
+<link rel="stylesheet" href="assets/variant-3.css">
+<style>
+  .harness{background:var(--os-navy);color:#fff;padding:10px 16px;font:600 12.5px/1.4 Poppins,sans-serif;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .harness a{color:var(--os-on-dark-secondary);text-decoration:none}.harness a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="harness"><span>VARIANTE 3 — REVIEWS-FIRST — identité → résumé compact → avis immédiatement, preuve complète après</span><a href="index.html">← Comparatif</a></div>
+<div id="app"></div>
+<script src="assets/fixture.js"></script>
+<script src="assets/sections.js"></script>
+<script src="assets/interactions.js"></script>
+<script>
+(function () {
+  var S = window.OSSections, f = window.OS_FIXTURE;
+  var config = { filterMode: "legacyMixed", responsePlacement: "detail" };
+
+  var html =
+    S.renderBanner(f) +
+    S.renderHeroPhoto() +
+    '<div class="business-card">' + S.renderBusinessIdentity(f) + "</div>" +
+    '<div class="trust-strip">' + S.renderDashboard(f, { compact: true }) + "</div>" +
+    S.renderReviewTabsBlock(f, { showHighlights: true }) +
+    '<div class="section">' + S.renderVerdict(f) + "</div>" +
+    S.renderQualityApproach(f) +
+    '<div class="section">' + S.renderLocations(f) + "</div>" +
+    '<div class="section"><p class="section-title">Notre équipe</p><p class="section-sub">Les visages derrière vos transactions</p></div>' +
+    S.renderTeam(f) +
+    '<div class="section">' + S.renderCertificate(f) + "</div>" +
+    '<div class="section"><p class="section-title">Questions fréquentes</p><p class="section-sub">Les réponses aux questions que se posent les consommateurs avant de faire confiance à cette entreprise.</p>' + S.renderFAQ(f) + "</div>" +
+    '<div class="section">' + S.renderListMyBusiness(f) + "</div>" +
+    S.renderLegalBlock(f) +
+    S.renderFooter(f);
+
+  document.getElementById("app").innerHTML = '<div class="viewport">' + html + "</div>";
+  OSInteractions.wireAll(document.getElementById("app"), f, config);
+})();
+</script>
+</body>
+</html>

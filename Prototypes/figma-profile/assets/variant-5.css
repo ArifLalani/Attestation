@@ -1,0 +1,51 @@
+/* Variant 5 — Premium / Editorial Trust Profile: same sections, same order
+   as Control, restyled to read as a published trust profile rather than a
+   stack of app widgets. Taller hero with an integrated credibility strip,
+   a pull-quote treatment for the Verdict, credentials presented as a
+   refined horizontal list instead of boxed cards, a quieter team masthead,
+   and a more spacious footer. Every field that exists in Control still
+   exists here — only typography, spacing and card chrome change. */
+
+.viewport .hero-photo { height: 240px; position: relative; background: linear-gradient(160deg,#5C86B8,#B9D2ED); }
+.hero-credibility {
+  position: absolute; left: 16px; right: 16px; bottom: 56px;
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(4,27,68,.55); backdrop-filter: blur(6px);
+  border-radius: var(--r-pill); padding: 8px 16px; color: #fff;
+}
+.hero-credibility .hc-rating { font: 700 16px/1 Poppins, sans-serif; }
+.hero-credibility .hc-sep { opacity: .5; }
+.hero-credibility .hc-label { font: 500 12.5px/1.3 Poppins, sans-serif; opacity: .9; }
+.hero-wrap { position: relative; }
+
+.viewport .business-card { box-shadow: none; border: 1px solid var(--os-border); }
+.viewport .biz-name { font-size: 22px; letter-spacing: -.01em; }
+
+.editorial-verdict { padding: 32px 20px; text-align: center; }
+.editorial-verdict .ev-mark { font: 700 48px/1 Georgia, "Times New Roman", serif; color: var(--os-green); opacity: .35; line-height: .5; }
+.editorial-verdict p.ev-text { font: 500 17px/1.5 Poppins, sans-serif; color: var(--os-navy); margin-top: 4px; }
+.editorial-verdict .ev-meta { margin-top: 12px; font: 600 12px/1.3 Poppins, sans-serif; color: var(--os-text-secondary); text-transform: uppercase; letter-spacing: .04em; }
+.editorial-verdict .verdict-stats { text-align: left; margin-top: 20px; }
+
+.credentials-strip { padding: 28px 20px; background: var(--os-navy); }
+.credentials-strip .cs-kicker { font: 600 11px/1.3 Poppins, sans-serif; color: var(--os-green-2,#00D492); text-transform: uppercase; letter-spacing: .08em; }
+.credentials-strip .cs-headline { font: 300 22px/1.4 Poppins, sans-serif; color: #fff; margin-top: 10px; }
+.credentials-strip .cs-headline strong { font-weight: 600; color: var(--os-green-2,#00D492); }
+.credentials-list { margin-top: 22px; display: flex; flex-direction: column; }
+.credential-row { display: flex; gap: 16px; padding: 14px 0; border-top: 1px solid rgba(255,255,255,.12); }
+.credential-row .cr-code { flex: none; width: 84px; font: 700 13px/1.4 Poppins, sans-serif; color: var(--os-green-2,#00D492); }
+.credential-row .cr-title { font: 500 14px/1.4 Poppins, sans-serif; color: #fff; }
+.credential-row .cr-desc { font: 400 12.5px/1.5 Poppins, sans-serif; color: var(--os-on-dark-secondary); margin-top: 2px; }
+
+.masthead-title { padding: 24px 20px 8px; text-align: center; }
+.masthead-title .section-title { font: 300 22px/1.3 Poppins, sans-serif; letter-spacing: .01em; }
+.team-masthead { display: flex; flex-direction: column; padding: 8px 20px 20px; }
+.team-masthead-row { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--os-border); }
+.team-masthead-row:last-child { border-bottom: 0; }
+.team-masthead-row .tm-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg,#8FB4DC,#C9DCF0); flex: none; }
+.team-masthead-row .tm-name { font: 600 14.5px/1.3 Poppins, sans-serif; color: var(--os-navy); }
+.team-masthead-row .tm-role { font: 400 12.5px/1.3 Poppins, sans-serif; color: var(--os-text-secondary); }
+
+.viewport .footer { padding: 44px 20px 32px; }
+.viewport .footer-brand { font-size: 20px; letter-spacing: .01em; }
+.viewport .section-title { letter-spacing: .005em; }

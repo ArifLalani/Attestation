@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KPI 4 — Tableau d'affichage · Opinion System</title>
+<link rel="stylesheet" href="../assets/os-mui.css">
+<link rel="stylesheet" href="../assets/os-mui-poppins.css">
+<style>
+  /* Curiosity as the informative device: default view is the certified
+     score, but you can flip to the other two — never to compare them as
+     equals, since the certified figure stays pinned in a reminder chip the
+     moment you leave it, per design.md §5 "strict rating separation". */
+  .tabs { display:flex; gap:6px; background:var(--os-tint-1); padding:4px; border-radius:99px; }
+  .tab {
+    flex:1; border:0; background:none; padding:8px 4px; border-radius:99px;
+    font:500 12px/1.3 Poppins,sans-serif; color:var(--os-text-secondary); cursor:pointer;
+  }
+  .tab.active { background:#fff; color:var(--os-navy); box-shadow:var(--e1); font-weight:600; }
+  .board {
+    margin-top:10px; border-radius:var(--r-card); padding:18px 16px; text-align:center;
+    transition:background .2s, border-color .2s;
+    animation:reveal .35s ease both;
+  }
+  @keyframes reveal { from { opacity:0; transform:translateY(4px);} to { opacity:1; transform:none; } }
+  .board .score { display:block; }
+  .board.controle { background:#fff; border:1px solid var(--os-green); }
+  .board.controle .score { color:var(--os-green-text); }
+  .board.nonverif { background:var(--os-grey-bg); border:1px dashed var(--os-grey-border); }
+  .board.nonverif .score { color:#46536B; }
+  .board.toutes { background:var(--os-tint-1); border:1px solid var(--os-border); }
+  .board.toutes .score { color:var(--os-navy); }
+  .pin {
+    display:none; align-items:center; gap:6px; justify-content:center;
+    margin-top:8px; padding:6px 10px; border-radius:99px; background:var(--os-green-bg);
+    color:var(--os-green-text); font:500 12px/1.3 Poppins,sans-serif;
+  }
+  .pin.show { display:flex; }
+</style>
+</head>
+<body>
+<div class="phone"><div class="screen">
+
+  <header class="appbar">
+    <svg viewBox="0 0 24 24" fill="none" style="width:22px;height:22px;flex:none">
+      <circle cx="12" cy="12" r="10" stroke="#2DB38A" stroke-width="2"/>
+      <path d="M7.5 12.4l3 3 6-6.5" stroke="#2DB38A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div style="flex:1;min-width:0">
+      <p class="t-overline">Réputation vérifiée</p>
+      <p class="t-caption" style="color:#fff;margin-top:-6px">Délivrée par <strong>Opinion System</strong></p>
+    </div>
+  </header>
+
+  <section class="section" style="padding-bottom:8px">
+    <div class="row">
+      <div class="logo-tile">MI</div>
+      <div style="flex:1;min-width:0">
+        <h1 class="t-h6" style="font-weight:600">Martin Immo</h1>
+        <p class="t-caption muted">Agence immobilière · Lanton, FR</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== THE WIDGET: variant 4 — scoreboard toggle ===== -->
+  <section class="section" style="padding-top:0">
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-t="controle">Contrôlés</button>
+      <button class="tab" data-t="nonverif">Non-vérifiés</button>
+      <button class="tab" data-t="toutes">Toutes sources</button>
+    </div>
+
+    <div class="board controle" id="board">
+      <span class="badge" id="badge">Avis contrôlés</span>
+      <span class="score" id="score" style="margin-top:6px">4,9<span class="score-suffix">/5</span></span>
+      <p class="t-caption muted" id="sub">312 avis · identité &amp; achat vérifiés</p>
+    </div>
+
+    <div class="pin" id="pin">
+      <svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Pour mémoire — note certifiée : 4,9/5
+    </div>
+  </section>
+
+  <p class="t-caption muted" style="padding:0 16px 16px">Réf. design.md §4.5 « Verified Reviews Dashboard » · source visuelle : Figma node 376:9683</p>
+
+</div></div>
+
+<script>
+  var DATA = {
+    controle: { badge:'<span class="badge badge-verified"><svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Avis contrôlés</span>',
+                score:'4,9<span class="score-suffix">/5</span>', sub:'312 avis · identité &amp; achat vérifiés', pin:false },
+    nonverif: { badge:'<span class="badge badge-unverified">Non-vérifiés</span>',
+                score:'4,4<span class="score-suffix">/5</span>', sub:'1 529 avis · sans vérification d’identité, non retenus dans le classement', pin:true },
+    toutes:   { badge:'<span class="badge badge-platform">Toutes sources</span>',
+                score:'4,7<span class="score-suffix">/5</span>', sub:'1 841 avis, contrôlés + non-vérifiés confondus', pin:true }
+  };
+  var board = document.getElementById('board');
+  var tabs = document.querySelectorAll('.tab');
+  function render(key){
+    var d = DATA[key];
+    board.className = 'board ' + key;
+    board.innerHTML = d.badge +
+      '<span class="score" style="margin-top:6px">' + d.score + '</span>' +
+      '<p class="t-caption muted">' + d.sub + '</p>';
+    document.getElementById('pin').classList.toggle('show', d.pin);
+  }
+  tabs.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      tabs.forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      render(btn.dataset.t);
+    });
+  });
+  render('controle');
+</script>
+</body>
+</html>

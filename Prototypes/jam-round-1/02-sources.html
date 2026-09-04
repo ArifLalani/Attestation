@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>02 — Sources séparées · Opinion System</title>
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../A-7/assets/os-figma.css">
+<link rel="stylesheet" href="../figma-profile/assets/profile.css">
+<link rel="stylesheet" href="assets/jam.css">
+<style>
+  /* The rethink: verified reviews ARE the page — no tab can demote them.
+     Non-vérifiés and Plateformes are reachable, but only as a sheet you
+     pull up and dismiss; you never "switch away" from the verified feed. */
+  .all-sources-line{display:flex;align-items:center;gap:6px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--os-border);font:500 12.5px/1.4 Poppins,sans-serif;color:var(--os-text-secondary)}
+  .all-sources-line strong{color:var(--os-navy);font-weight:700}
+  .source-row{display:flex;gap:8px;padding:16px 16px 4px;overflow-x:auto;scrollbar-width:none}
+  .source-row::-webkit-scrollbar{display:none}
+  .source-pill{flex:none;display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:var(--r-card);font:600 13px/1.2 Poppins,sans-serif;cursor:pointer;border:1.5px solid transparent}
+  .source-pill.is-main{background:var(--os-green-bg);color:var(--os-green-text);border-color:var(--os-green)}
+  .source-pill.is-link{background:var(--os-tint-1);color:var(--os-navy);border-color:var(--os-border)}
+  .source-pill.is-link .cnt{color:var(--os-text-secondary);font-weight:500}
+  .source-pill svg{width:15px;height:15px}
+  .section-wrap{background:#fff;padding:20px 16px;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="harness"><span>02 · SOURCES SÉPARÉES — le fil contrôlé reste la page ; non-vérifiés/plateformes s'ouvrent en tiroir, jamais en onglet égal</span><a href="index.html">← Jam</a></div>
+
+<div id="app"></div>
+
+<div class="sheet-scrim" id="scrim"></div>
+<div class="sheet" id="sheetNonVerifie" role="dialog" aria-modal="true" aria-label="Avis non vérifiés">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head"><span class="t-sub1 strong">Avis non vérifiés</span><button class="sheet-close" data-close-sheet aria-label="Fermer">✕</button></div>
+  <div class="sheet-body" id="sheetNonVerifieBody"></div>
+</div>
+<div class="sheet" id="sheetPlateformes" role="dialog" aria-modal="true" aria-label="Plateformes">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head"><span class="t-sub1 strong">Plateformes externes</span><button class="sheet-close" data-close-sheet aria-label="Fermer">✕</button></div>
+  <div class="sheet-body" id="sheetPlateformesBody"></div>
+</div>
+
+<script src="../figma-profile/assets/fixture.js"></script>
+<script src="../figma-profile/assets/sections.js"></script>
+<script src="../figma-profile/assets/interactions.js"></script>
+<script>
+(function () {
+  var S = window.OSSections, f = window.OS_FIXTURE, ICON = S.ICON;
+  var v = f.ratings.verified, u = f.ratings.unverified, all = f.ratings.allSources;
+
+  var reviewsBlock =
+    '<div class="section" style="padding-bottom:0"><p class="section-title">Avis contrôlés</p>' +
+    '<p class="section-sub">' + v.count + " avis vérifiés par Opinion System · certifié NF ISO 20488</p></div>" +
+    '<div class="source-row">' +
+      '<span class="source-pill is-main">' + ICON.check + v.rating.toFixed(1).replace(".", ",") + "/5 · " + v.count + " avis</span>" +
+      '<button class="source-pill is-link" type="button" data-open-sheet="sheetNonVerifie">Non vérifiés <span class="cnt">· ' + u.count.toLocaleString("fr-FR") + "</span></button>" +
+      '<button class="source-pill is-link" type="button" data-open-sheet="sheetPlateformes">Plateformes <span class="cnt">· ' + f.platforms.sourceCount + " sources</span></button>" +
+    "</div>" +
+    '<div class="section" style="padding-bottom:0"><div class="filter-scroller" id="filter-row"></div>' +
+    '<div class="filter-empty" id="filter-empty"><span>Aucun avis contrôlé ne correspond à ce filtre.</span><button class="link-btn" type="button" id="filter-reset" style="padding:4px 8px">Réinitialiser</button></div></div>' +
+    '<div class="section stack-8" style="padding-top:8px"><div class="sort-row"><label for="sort-select">Trier</label>' +
+    '<select class="sort-select" id="sort-select"><option value="recent">Les plus récents</option><option value="highest">Mieux notés</option><option value="lowest">Moins bien notés</option></select></div>' +
+    '<p class="legal">' + S.esc(f.legal.sortDisclosure) + "</p></div>" +
+    '<div class="section stack-12" id="review-list" style="padding-top:0"></div>';
+
+  var html =
+    S.renderBanner(f) +
+    S.renderHeroPhoto() +
+    '<div class="business-card">' + S.renderBusinessIdentity(f) + '<div style="margin-top:16px">' + S.renderDashboard(f) +
+      '<div class="all-sources-line">' + ICON.building.replace("<svg ", '<svg style="width:14px;height:14px" ') +
+      "Toutes sources confondues : <strong>" + all.rating.toFixed(1).replace(".", ",") + "/5</strong> sur " + all.count.toLocaleString("fr-FR") + " avis (" + all.label + ")</div>" +
+    "</div></div>" +
+    '<div class="section">' + S.renderVerdict(f) + "</div>" +
+    reviewsBlock +
+    '<div class="section-wrap">' + S.renderLocations(f) + "</div>" +
+    S.renderQualityApproach(f) +
+    '<div class="section-wrap"><p class="section-title">Notre équipe</p></div>' +
+    S.renderTeam(f) +
+    '<div class="section-wrap">' + S.renderCertificate(f) + "</div>" +
+    '<div class="section-wrap"><p class="section-title">Questions fréquentes</p>' + S.renderFAQ(f) + "</div>" +
+    '<div class="section-wrap">' + S.renderListMyBusiness(f) + "</div>" +
+    S.renderLegalBlock(f) +
+    S.renderFooter(f);
+
+  document.getElementById("app").innerHTML = '<div class="viewport">' + html + "</div>";
+  OSInteractions.wireAll(document.getElementById("app"), f, {});
+
+  // Sheet content (built once)
+  document.getElementById("sheetNonVerifieBody").innerHTML =
+    '<div class="unverified-explainer" style="margin-top:16px">' + S.esc(f.legal.unverifiedExplainer) + "</div>" +
+    '<div class="section stack-12" id="unverified-list" style="padding-top:0"></div>';
+  document.getElementById("unverified-list").innerHTML = f.reviews.unverified.map(S.renderUnverifiedCard).join("");
+
+  document.getElementById("sheetPlateformesBody").innerHTML =
+    '<div class="coming-soon" style="margin-top:16px">' + ICON.building.replace('aria-hidden="true"', 'class="cs-icon" aria-hidden="true"') +
+    '<p class="cs-title">Avis externes — bientôt disponibles</p>' +
+    '<p class="cs-body">' + S.esc(f.platforms.note) + "</p>" +
+    '<span class="cs-count">' + f.platforms.sourceCount + " sources identifiées</span></div>";
+
+  // Sheet open/close
+  var scrim = document.getElementById("scrim");
+  var sheets = { sheetNonVerifie: document.getElementById("sheetNonVerifie"), sheetPlateformes: document.getElementById("sheetPlateformes") };
+  function closeAll() {
+    Object.keys(sheets).forEach(function (k) { sheets[k].classList.remove("is-open"); });
+    scrim.classList.remove("is-open");
+    document.body.style.overflow = "";
+  }
+  document.querySelectorAll("[data-open-sheet]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      closeAll();
+      sheets[btn.getAttribute("data-open-sheet")].classList.add("is-open");
+      scrim.classList.add("is-open");
+      document.body.style.overflow = "hidden";
+    });
+  });
+  document.querySelectorAll("[data-close-sheet]").forEach(function (btn) { btn.addEventListener("click", closeAll); });
+  scrim.addEventListener("click", closeAll);
+})();
+</script>
+</body>
+</html>

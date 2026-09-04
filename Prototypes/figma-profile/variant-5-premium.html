@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Variante 5 — Profil premium · Opinion System</title>
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../A-7/assets/os-figma.css">
+<link rel="stylesheet" href="assets/profile.css">
+<link rel="stylesheet" href="assets/variant-5.css">
+<style>
+  .harness{background:var(--os-navy);color:#fff;padding:10px 16px;font:600 12.5px/1.4 Poppins,sans-serif;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .harness a{color:var(--os-on-dark-secondary);text-decoration:none}.harness a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="harness"><span>VARIANTE 5 — PROFIL PREMIUM / ÉDITORIAL — même contenu, traité comme un profil de confiance publié</span><a href="index.html">← Comparatif</a></div>
+<div id="app"></div>
+<script src="assets/fixture.js"></script>
+<script src="assets/sections.js"></script>
+<script src="assets/interactions.js"></script>
+<script>
+(function () {
+  var S = window.OSSections, f = window.OS_FIXTURE;
+  var config = { filterMode: "legacyMixed", responsePlacement: "detail" };
+  var v = f.ratings.verified, all = f.ratings.allSources;
+
+  var heroBlock =
+    '<div class="hero-wrap">' + S.renderHeroPhoto() +
+      '<div class="hero-credibility"><span class="hc-rating">★ ' + v.rating.toFixed(1).replace(".", ",") + "/5</span><span class=\"hc-sep\">·</span>" +
+      '<span class="hc-label">' + v.count + " avis vérifiés par Opinion System</span></div>" +
+    "</div>";
+
+  var editorialVerdict =
+    '<div class="editorial-verdict"><div class="ev-mark">“</div>' +
+    '<p class="ev-text">' + S.esc(f.verdict.text) + "</p>" +
+    '<p class="ev-meta">Verdict Opinion System · mis à jour le ' + S.esc(f.verdict.lastUpdated) + "</p>" +
+    '<div class="verdict-stats">' +
+      '<div class="verdict-stat is-hero"><div class="vs-label">Note vérifiée</div><div class="vs-value">' + v.rating.toFixed(1).replace(".", ",") + "/5</div></div>" +
+      '<div class="verdict-stat is-hero"><div class="vs-label">Recommandation</div><div class="vs-value">' + v.recommend + "%</div></div>" +
+      '<div class="verdict-stat is-secondary"><div class="vs-label">' + S.esc(all.label) + '</div><div class="vs-value">' + all.rating.toFixed(1).replace(".", ",") + "/5 · " + all.count.toLocaleString("fr-FR") + " avis</div></div>" +
+      '<div class="verdict-stat is-secondary"><div class="vs-label">Avis le plus récent</div><div class="vs-value" style="font-size:14px">' + S.esc(v.mostRecentReviewDate) + "</div></div>" +
+    "</div></div>";
+
+  var credentials =
+    '<div class="credentials-strip"><span class="cs-kicker">' + S.esc(f.qualityApproach.badge) + "</span>" +
+    '<p class="cs-headline">' + S.esc(f.business.name) + ' a choisi <strong>Opinion System</strong> pour des avis fiables.</p>' +
+    '<div class="credentials-list">' +
+    f.qualityApproach.items.map(function (it) {
+      return '<div class="credential-row"><span class="cr-code">' + S.esc(it.code) + '</span><div><div class="cr-title">' + S.esc(it.title) + '</div><div class="cr-desc">' + S.esc(it.desc) + "</div></div></div>";
+    }).join("") + "</div></div>";
+
+  var teamMasthead =
+    '<div class="masthead-title"><p class="section-title">Notre équipe</p></div>' +
+    '<div class="team-masthead">' +
+    f.team.map(function (m) {
+      return '<div class="team-masthead-row"><div class="tm-avatar"></div><div><div class="tm-name">' + S.esc(m.name) + '</div><div class="tm-role">' + S.esc(m.role) + "</div></div></div>";
+    }).join("") + "</div>";
+
+  var html =
+    S.renderBanner(f) +
+    heroBlock +
+    '<div class="business-card">' + S.renderBusinessIdentity(f) + '<div style="margin-top:20px">' + S.renderDashboard(f) + "</div></div>" +
+    editorialVerdict +
+    S.renderReviewTabsBlock(f) +
+    '<div class="section">' + S.renderLocations(f) + "</div>" +
+    credentials +
+    teamMasthead +
+    '<div class="section">' + S.renderCertificate(f) + "</div>" +
+    '<div class="section"><p class="section-title">Questions fréquentes</p><p class="section-sub">Les réponses aux questions que se posent les consommateurs avant de faire confiance à cette entreprise.</p>' + S.renderFAQ(f) + "</div>" +
+    '<div class="section">' + S.renderListMyBusiness(f) + "</div>" +
+    S.renderLegalBlock(f) +
+    S.renderFooter(f);
+
+  document.getElementById("app").innerHTML = '<div class="viewport">' + html + "</div>";
+  OSInteractions.wireAll(document.getElementById("app"), f, config);
+})();
+</script>
+</body>
+</html>

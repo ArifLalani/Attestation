@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KPI 1 — Bento vérifié d'abord · Opinion System</title>
+<link rel="stylesheet" href="../assets/os-mui.css">
+<link rel="stylesheet" href="../assets/os-mui-poppins.css">
+<style>
+  /* Same three numbers as the Figma reference (node 376:9683) — universal
+     score, contrôlés/non-contrôlés split, recommendation bar — but with the
+     hierarchy corrected per design.md §4.2/§4.5: verified is the one hero,
+     "toutes sources" becomes a small footnote instead of the top-billed
+     figure, and unverified never borrows the green. */
+  .kpi-hero {
+    background:#fff; border:1px solid var(--os-green); border-radius:var(--r-card);
+    padding:16px; position:relative; overflow:hidden;
+  }
+  .kpi-hero::before {
+    content:""; position:absolute; inset:0 0 auto 0; height:4px;
+    background:linear-gradient(90deg,var(--os-green),#7FE3C4);
+  }
+  .kpi-hero .row-between { align-items:flex-start; }
+  .kpi-hero .score { color:var(--os-navy); }
+  .kpi-split { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px; }
+  .kpi-tile { border-radius:var(--r); padding:10px 12px; }
+  .kpi-tile.blend { background:var(--os-tint-1); border:1px solid var(--os-border); }
+  .kpi-tile.unverified { background:var(--os-grey-bg); border:1px dashed var(--os-grey-border); }
+  .kpi-tile .lbl { display:flex; align-items:center; gap:4px; }
+  .kpi-tile .n { font:700 18px/1.2 Poppins,sans-serif; }
+  .recobar-track { height:8px; border-radius:99px; background:var(--os-tint-2); overflow:hidden; margin-top:4px; }
+  .recobar-fill { height:100%; border-radius:99px; background:linear-gradient(90deg,var(--os-green),#7FE3C4); }
+  .whybtn { border:0; background:none; color:var(--os-blue); font:500 12px/1.5 Poppins,sans-serif; padding:0; cursor:pointer; text-decoration:underline dotted; }
+  .why-panel { display:none; margin-top:8px; }
+  .why-panel.open { display:block; }
+</style>
+</head>
+<body>
+<div class="phone"><div class="screen">
+
+  <header class="appbar">
+    <svg viewBox="0 0 24 24" fill="none" style="width:22px;height:22px;flex:none">
+      <circle cx="12" cy="12" r="10" stroke="#2DB38A" stroke-width="2"/>
+      <path d="M7.5 12.4l3 3 6-6.5" stroke="#2DB38A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div style="flex:1;min-width:0">
+      <p class="t-overline">Réputation vérifiée</p>
+      <p class="t-caption" style="color:#fff;margin-top:-6px">Délivrée par <strong>Opinion System</strong></p>
+    </div>
+  </header>
+
+  <section class="section" style="padding-bottom:8px">
+    <div class="row">
+      <div class="logo-tile">MI</div>
+      <div style="flex:1;min-width:0">
+        <h1 class="t-h6" style="font-weight:600">Martin Immo</h1>
+        <p class="t-caption muted">Agence immobilière · Lanton, FR</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== THE WIDGET: variant 1 — bento, verified-first ===== -->
+  <section class="section" style="padding-top:0">
+
+    <div class="kpi-hero">
+      <div class="row-between">
+        <span class="badge badge-verified"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Avis contrôlés</span>
+        <span class="t-caption muted">312 avis</span>
+      </div>
+      <div class="row" style="gap:10px;align-items:flex-end;margin-top:8px">
+        <span class="stars stars-lg">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+        </span>
+        <span class="score">4,9<span class="score-suffix">/5</span></span>
+      </div>
+
+      <p class="t-caption muted" style="margin-top:2px">CLIENTS QUI RECOMMANDENT</p>
+      <div class="row" style="gap:10px;margin-top:2px">
+        <div class="recobar-track" style="flex:1"><div class="recobar-fill" style="width:94%"></div></div>
+        <span class="t-sub2" style="color:var(--os-green-text)">94&nbsp;%</span>
+      </div>
+
+      <div class="kpi-split">
+        <div class="kpi-tile blend">
+          <p class="t-overline muted" style="margin:0">Toutes sources</p>
+          <p class="n">4,7<span style="font-size:12px;font-weight:400;color:var(--os-text-secondary)">/5</span></p>
+          <p class="t-caption muted">1&nbsp;841 avis</p>
+        </div>
+        <div class="kpi-tile unverified">
+          <p class="t-overline" style="margin:0;color:#46536B">Non-vérifiés</p>
+          <p class="n" style="color:#46536B">4,4<span style="font-size:12px;font-weight:400;color:var(--os-text-secondary)">/5</span></p>
+          <p class="t-caption muted">1&nbsp;529 avis</p>
+        </div>
+      </div>
+
+      <button class="whybtn" style="margin-top:10px" onclick="document.getElementById('why1').classList.toggle('open')">Pourquoi trois notes différentes ?</button>
+      <div class="why-panel" id="why1">
+        <p class="t-caption muted">Seuls les 312 avis <strong>contrôlés</strong> (identité et achat vérifiés) comptent dans la note ci-dessus. « Toutes sources » et « non-vérifiés » sont affichés à titre informatif — ils n'entrent jamais dans le calcul.</p>
+      </div>
+    </div>
+
+  </section>
+
+  <p class="t-caption muted" style="padding:0 16px 16px">Réf. design.md §4.5 « Verified Reviews Dashboard » · source visuelle : Figma node 376:9683</p>
+
+</div></div>
+</body>
+</html>

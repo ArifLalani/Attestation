@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KPI Dashboard — 5 variantes · Opinion System</title>
+<link rel="stylesheet" href="../assets/os-mui.css">
+<link rel="stylesheet" href="../assets/os-mui-poppins.css">
+<style>
+  body { background:#EEF2F7; }
+  .wrap { max-width:1180px; margin:0 auto; padding:32px 20px 64px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:20px; margin-top:28px; }
+  .vcard { background:#fff; border-radius:var(--r-card); box-shadow:var(--e2); overflow:hidden; display:flex; flex-direction:column; text-decoration:none; color:inherit; }
+  .vcard .thumb { height:110px; display:grid; place-items:center; color:#fff; font:600 15px/1.3 Poppins,sans-serif; text-align:center; padding:12px; }
+  .vcard .b { padding:16px; flex:1; display:flex; flex-direction:column; gap:8px; }
+  .tag { display:inline-block; padding:2px 8px; border-radius:var(--r-pill); font:500 11px/1.7 Poppins,sans-serif; background:var(--os-tint-2); color:var(--os-navy); width:fit-content; }
+  .warn { background:#FFF4E5; border-left:4px solid #ED6C02; padding:14px 16px; border-radius:var(--r); }
+  .ref { background:#fff; border:1px solid var(--os-border); border-radius:var(--r); padding:14px 16px; margin-top:14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="t-overline muted">Opinion System · Verified Reviews Dashboard, design.md §4.5</p>
+  <h1 class="t-h4 t-brand">Widget KPI du dashboard — 5 variantes</h1>
+  <p class="t-body1 muted" style="max-width:70ch;margin-top:8px">
+    Le même trio de chiffres que la référence Figma — score « toutes sources », note
+    contrôlée vs non-vérifiée, taux de recommandation — rejoué en cinq mises en forme
+    ludiques et lisibles d'un coup d'œil.
+  </p>
+
+  <div class="ref">
+    <p class="t-sub2">Référence visuelle</p>
+    <p class="t-body2 muted" style="margin-top:4px">
+      <a href="https://www.figma.com/design/oFEG69fZBUK2wh0esta2Ov/NON-VERIFIED---ATTESTATION-ELECTRONIQUE?node-id=376-9683" target="_blank" rel="noopener">Figma — node 376:9683 « Frame 2611757 »</a>,
+      un bloc trois-zones : score universel en tête, split contrôlés/non-contrôlés, barre de recommandation.
+    </p>
+  </div>
+
+  <div class="warn" style="margin-top:14px">
+    <p class="t-sub2">⚠ Une correction volontaire par rapport à la référence</p>
+    <p class="t-body2" style="margin-top:6px">
+      Le frame Figma met le score « toutes sources » en tête (le plus grand chiffre).
+      C'est exactement l'inversion de hiérarchie que le cahier des charges interdit
+      (§5 « une seule note de référence », <a href="../../CLAUDE.md">CLAUDE.md</a> « The one thing to hold onto »).
+      Les cinq variantes ci-dessous gardent les trois chiffres mais font du score
+      <strong>contrôlé</strong> le seul héros visuel — le vert n'apparaît jamais sur
+      les avis non-vérifiés, et « toutes sources » reste toujours la mention la
+      plus petite.
+    </p>
+  </div>
+
+  <div class="grid">
+    <a class="vcard" href="variant-1-verified-first.html">
+      <div class="thumb" style="background:linear-gradient(140deg,#043B44,#43B6A3)">Bento<br>vérifié d'abord</div>
+      <div class="b">
+        <span class="tag">Le plus proche du frame Figma</span>
+        <p class="t-sub1 strong">1 — Bento, vérifié d'abord</p>
+        <p class="t-body2 muted">Même disposition que la référence, hiérarchie inversée : la tuile contrôlée domine, les deux autres deviennent des tuiles secondaires avec un « pourquoi ? » dépliable.</p>
+      </div>
+    </a>
+
+    <a class="vcard" href="variant-2-trust-gauge.html">
+      <div class="thumb" style="background:linear-gradient(140deg,#041B44,#004F9F)">Cadran<br>de confiance</div>
+      <div class="b">
+        <span class="tag">Un seul objet à lire</span>
+        <p class="t-sub1 strong">2 — Cadran de confiance</p>
+        <p class="t-body2 muted">Un compteur façon tableau de bord automobile : l'aiguille pointe la note contrôlée, un simple repère pointillé situe le non-vérifié sans jamais rivaliser.</p>
+      </div>
+    </a>
+
+    <a class="vcard" href="variant-3-receipt.html">
+      <div class="thumb" style="background:linear-gradient(140deg,#0A2B63,#2DB38A)">Reçu de<br>confiance</div>
+      <div class="b">
+        <span class="tag">Le plus « fun »</span>
+        <p class="t-sub1 strong">3 — Reçu de confiance</p>
+        <p class="t-body2 muted">Ticket de caisse avec bord dentelé, lignes en pointillés façon addition, et un tampon cire pour le taux de recommandation — le format itemise la conformité tout seul.</p>
+      </div>
+    </a>
+
+    <a class="vcard" href="variant-4-scoreboard-toggle.html">
+      <div class="thumb" style="background:linear-gradient(140deg,#004F9F,#041B44)">Tableau<br>d'affichage</div>
+      <div class="b">
+        <span class="tag">Interactif</span>
+        <p class="t-sub1 strong">4 — Tableau d'affichage à onglets</p>
+        <p class="t-body2 muted">On peut explorer les trois notes en changeant d'onglet, mais un rappel « note certifiée 4,9/5 » reste épinglé dès qu'on quitte l'onglet contrôlé — jamais d'oubli possible.</p>
+      </div>
+    </a>
+
+    <a class="vcard" href="variant-5-seal-stack.html">
+      <div class="thumb" style="background:linear-gradient(140deg,#0A2B63,#43B6A3)">Sceau &amp;<br>satellites</div>
+      <div class="b">
+        <span class="tag">Registre « attestation »</span>
+        <p class="t-sub1 strong">5 — Sceau &amp; satellites</p>
+        <p class="t-body2 muted">Un médaillon façon sceau de certificat porte la seule note qui compte, entouré de badges satellites ; les deux autres chiffres pendent, littéralement à distance, sur un fil pointillé.</p>
+      </div>
+    </a>
+  </div>
+
+  <p class="t-caption muted" style="margin-top:28px">Données : <a href="../../fixtures/martin-immo.json">fixtures/martin-immo.json</a> (4,9/5 · 312 avis contrôlés · 4,4/5 · 1 529 non-vérifiés · 4,7/5 · 1 841 toutes sources · 94 % de recommandation). Prototype — voir CLAUDE.md, « Prototypes never outrank a source of truth ».</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,69 @@
+/* ==========================================================================
+   Opinion System — Public Review Page, Figma-matched build
+   --------------------------------------------------------------------------
+   Pulls tokens directly from design-system/tokens.css (the canonical,
+   Figma-confirmed source — see CLAUDE.md's source-of-truth hierarchy).
+   This file adds only: a reset, the two device frames (mobile 433x933,
+   desktop 1920 canvas), and shared layout helpers. No component styling
+   lives here until it's confirmed against an actual Figma section.
+   ========================================================================== */
+
+@import url('../../design-system/tokens.css');
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: Poppins, sans-serif;
+  color: var(--os-text);
+  background: var(--os-tint-1);
+}
+
+img { max-width: 100%; display: block; }
+
+/* ---------- Desktop frame ----------
+   The page itself is the 1920 canvas; content scrolls the normal document
+   way. This wrapper just pins the design width so nothing reflows narrower
+   than the Figma frame while we're matching it section by section. */
+.frame-desktop {
+  width: 1920px;
+  margin: 0 auto;
+  background: #FFFFFF;
+  overflow-x: hidden;
+}
+
+/* ---------- Mobile frame ----------
+   A literal 433x933 device frame, centered in the viewport, with its own
+   internal scroll — matches the brief: "all information will scroll
+   inside" the fixed frame rather than the page scrolling. */
+body.mobile-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #E4E9F0;
+}
+
+.frame-mobile {
+  width: 433px;
+  height: 933px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #FFFFFF;
+  box-shadow: var(--e8);
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.frame-mobile::-webkit-scrollbar { display: none; }
+
+/* ---------- Section placeholder ----------
+   Drop-in target while sections are being built one screenshot at a time. */
+.section-todo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  border: 1px dashed var(--os-grey-border);
+  color: var(--os-text-secondary);
+  font: 400 14px/1.43 Poppins, sans-serif;
+}

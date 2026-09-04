@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>04 — Profil premium · Opinion System</title>
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../A-7/assets/os-figma.css">
+<link rel="stylesheet" href="../figma-profile/assets/profile.css">
+<link rel="stylesheet" href="assets/jam.css">
+<style>
+  /* Editorial trust profile, not a dashboard. Same data, treated like a
+     published certificate: generous air, one focal gauge, quiet tabs. */
+  body{background:#fff}
+  .hero-tall{position:relative;height:300px}
+  .hero-tall .hp-img{position:absolute;inset:0;background:linear-gradient(160deg,#0A2B63,#2C95FF 120%)}
+  .hero-tall .hp-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,27,68,0) 40%,rgba(4,27,68,.75) 100%)}
+  .hero-tall .hp-id{position:absolute;left:20px;right:20px;bottom:20px;color:#fff}
+  .hero-tall .hp-cat{font:600 11px/1.4 Poppins,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--os-green-2,#00D492)}
+  .hero-tall .hp-name{font:700 28px/1.2 Poppins,sans-serif;margin-top:6px}
+  .hero-tall .hp-meta{font:400 13px/1.4 Poppins,sans-serif;color:rgba(255,255,255,.8);margin-top:6px}
+
+  .trust-hero{padding:28px 24px 8px;display:flex;align-items:center;gap:22px}
+  .trust-hero .gauge-labels{flex:1 0 0}
+  .trust-hero .gl-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--os-tint-2)}
+  .trust-hero .gl-row:last-child{border-bottom:0}
+  .trust-hero .gl-label{font:500 12.5px/1.3 Poppins,sans-serif;color:var(--os-text-secondary)}
+  .trust-hero .gl-value{font:700 15px/1.3 Poppins,sans-serif;color:var(--os-navy)}
+  .trust-hero .gl-value.is-quiet{font-weight:600;color:var(--os-text-secondary);font-size:13px}
+
+  .verdict-elegant{margin:8px 24px 0;padding:24px 22px;border-top:2px solid var(--os-navy);background:var(--os-tint-1);border-radius:0 0 var(--r-card) var(--r-card)}
+  .verdict-elegant .ve-kicker{font:600 10.5px/1.4 Poppins,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--os-green-text)}
+  .verdict-elegant .ve-title{font:600 22px/1.3 Poppins,sans-serif;color:var(--os-navy);margin-top:8px}
+  .verdict-elegant .ve-text{font:400 15px/1.65 Poppins,sans-serif;color:var(--os-text);margin-top:12px}
+  .verdict-elegant .ve-date{font:400 12px/1.3 Poppins,sans-serif;color:var(--os-text-secondary);margin-top:14px}
+
+  .iso-band{padding:26px 24px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;background:#fff}
+  .iso-pill{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;border:1px solid var(--os-border);background:var(--os-tint-1)}
+  .iso-pill b{font:700 12px/1.3 Poppins,sans-serif;color:var(--os-green-text)}
+  .iso-pill span{font:500 11.5px/1.3 Poppins,sans-serif;color:var(--os-text-secondary)}
+
+  .premium .tabbar{border-bottom:1px solid var(--os-border);background:#fff}
+  .premium .tab{border-right:0;font-weight:500;color:var(--os-text-secondary);position:relative}
+  .premium .tab.is-active{background:transparent;color:var(--os-navy);font-weight:700}
+  .premium .tab.is-active::after{content:"";position:absolute;left:18%;right:18%;bottom:0;height:3px;background:var(--os-navy);border-radius:3px 3px 0 0}
+
+  .premium .team-scroller{padding:20px 24px}
+  .premium .team-card{border:0;box-shadow:0 4px 16px rgba(4,27,68,.08)}
+  .premium .team-avatar{background:linear-gradient(150deg,#0A2B63,#2C95FF)}
+
+  .section-elegant{padding:28px 24px}
+  .section-elegant + .section-elegant{border-top:1px solid var(--os-tint-2)}
+  .section-title-elegant{font:600 20px/1.3 Poppins,sans-serif;color:var(--os-navy);text-align:center}
+  .section-sub-elegant{font:400 13.5px/1.5 Poppins,sans-serif;color:var(--os-text-secondary);text-align:center;margin-top:4px}
+</style>
+</head>
+<body>
+<div class="harness"><span>04 · PROFIL PREMIUM — même page traitée comme un profil de confiance édité, pas un tableau de bord</span><a href="index.html">← Jam</a></div>
+
+<div id="app" class="premium"></div>
+
+<script src="../figma-profile/assets/fixture.js"></script>
+<script src="../figma-profile/assets/sections.js"></script>
+<script src="../figma-profile/assets/interactions.js"></script>
+<script>
+(function () {
+  var S = window.OSSections, f = window.OS_FIXTURE, ICON = S.ICON;
+  var v = f.ratings.verified, u = f.ratings.unverified, b = f.business, qa = f.qualityApproach;
+
+  var gaugePct = v.recommend;
+  var r = 54, c = 2 * Math.PI * r, offset = c * (1 - gaugePct / 100);
+  var gauge =
+    '<div class="gauge"><svg width="132" height="132" viewBox="0 0 132 132">' +
+      '<circle cx="66" cy="66" r="' + r + '" fill="none" stroke="var(--os-tint-2)" stroke-width="12"/>' +
+      '<circle cx="66" cy="66" r="' + r + '" fill="none" stroke="var(--os-green)" stroke-width="12" stroke-linecap="round" stroke-dasharray="' + c.toFixed(1) + '" stroke-dashoffset="' + offset.toFixed(1) + '"/>' +
+    "</svg><div class=\"g-num\"><span style=\"font:700 30px/1 Poppins,sans-serif;color:var(--os-navy)\">" + gaugePct + '%</span><span style="font:600 10.5px/1.4 Poppins,sans-serif;color:var(--os-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">recommandent</span></div></div>';
+
+  var trustHero =
+    '<div class="trust-hero">' + gauge +
+      '<div class="gauge-labels">' +
+        '<div class="gl-row"><span class="gl-label">Note vérifiée</span><span class="gl-value">' + v.rating.toFixed(1).replace(".", ",") + "/5 · " + v.count + " avis</span></div>" +
+        '<div class="gl-row"><span class="gl-label">Non contrôlés</span><span class="gl-value is-quiet">' + u.rating.toFixed(1).replace(".", ",") + "/5 · " + u.count.toLocaleString("fr-FR") + " avis</span></div>" +
+        '<div class="gl-row"><span class="gl-label">Adhérent depuis</span><span class="gl-value is-quiet">' + S.esc(b.memberNumber) + "</span></div>" +
+      "</div></div>";
+
+  var verdictElegant =
+    '<div class="verdict-elegant"><p class="ve-kicker">Verdict de confiance</p>' +
+    '<p class="ve-title">' + S.esc(f.verdict.title) + "</p>" +
+    '<p class="ve-text">' + S.esc(f.verdict.text) + "</p>" +
+    '<p class="ve-date">Analyse mise à jour le ' + S.esc(f.verdict.lastUpdated) + "</p></div>";
+
+  var isoBand =
+    '<div class="iso-band">' + qa.items.map(function (it) {
+      return '<span class="iso-pill"><b>' + S.esc(it.code) + "</b><span>" + S.esc(it.title) + "</span></span>";
+    }).join("") + "</div>";
+
+  var html =
+    S.renderBanner(f) +
+    '<div class="hero-tall"><div class="hp-img"></div><div class="hp-scrim"></div>' +
+      '<div class="hp-id"><p class="hp-cat">' + S.esc(b.category) + " · " + S.esc(b.activity) + '</p><p class="hp-name">' + S.esc(b.name) + '</p><p class="hp-meta">' + S.esc(b.city) + "</p></div></div>" +
+    trustHero + verdictElegant + isoBand +
+    S.renderReviewTabsBlock(f, { showHighlights: true }) +
+    '<div class="section-elegant"><p class="section-title-elegant">Nos agences</p><p class="section-sub-elegant">' + f.locations.groupCount + " agences · " + f.locations.groupVerifiedTotal + " avis contrôlés au total</p><div style=\"margin-top:18px\">" + S.renderLocations(f, { allCollapsed: true }).replace(/<div class="locations-header">[\s\S]*?<\/div>/, "") + "</div></div>" +
+    '<div class="section-elegant"><p class="section-title-elegant">Notre équipe</p><p class="section-sub-elegant">Les personnes qui portent cette réputation</p></div>' +
+    S.renderTeam(f) +
+    '<div class="section-elegant">' + S.renderCertificate(f) + "</div>" +
+    '<div class="section-elegant"><p class="section-title-elegant">Questions fréquentes</p>' + S.renderFAQ(f) + "</div>" +
+    '<div class="section-elegant">' + S.renderListMyBusiness(f) + "</div>" +
+    S.renderLegalBlock(f) +
+    S.renderFooter(f);
+
+  document.getElementById("app").innerHTML = '<div class="viewport">' + html + "</div>";
+  OSInteractions.wireAll(document.getElementById("app"), f, { responsePlacement: "detail" });
+})();
+</script>
+</body>
+</html>

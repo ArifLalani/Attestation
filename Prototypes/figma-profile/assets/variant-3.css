@@ -1,0 +1,11 @@
+/* Variant 3 — Reviews-First: identity + a compact trust strip get you to
+   the review feed fast; the full Verdict and Quality Approach move below
+   the reviews as reinforcement rather than gatekeeping. Review cards get
+   slightly more visual weight since they're the page's main job here. */
+
+.trust-strip { padding: 0 16px 16px; }
+.trust-strip .verdict-card { padding: 14px 16px; }
+.viewport #panel-controles .review-card,
+.viewport #panel-non-controles .review-card { box-shadow: 0 2px 10px rgba(4,27,68,.08); }
+.viewport .review-body { font-size: 15px; }
+.viewport .highlights-row { margin-top: 4px; }

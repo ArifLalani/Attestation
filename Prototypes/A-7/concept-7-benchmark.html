@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concept 7 — Cadrage comparatif · A-7 · Opinion System</title>
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="assets/os-figma.css">
+<style>
+  /* ============================================================
+     Concept-7-specific layout only. Tokens/type/components come
+     from design-system/tokens.css + assets/os-figma.css, identical
+     to Concept 6. The variable under test is COMPARATIVE framing —
+     the verified rating shown relative to a category standing,
+     not in isolation.
+     ============================================================ */
+  .gauge-wrap { padding: 4px 2px 4px; position: relative; }
+  .gauge-track { height: 8px; border-radius: 4px; background: var(--os-border); position: relative; }
+  .gauge-fill { height: 100%; border-radius: 4px; background: var(--os-green); }
+  .gauge-marker {
+    position: absolute; top: -6px; width: 2px; height: 20px; background: var(--os-navy);
+  }
+  .gauge-marker.mk-self { background: var(--os-green-text); width: 3px; }
+  .gauge-scale { display:flex; justify-content:space-between; margin-top:4px; }
+  .gauge-scale span { font: 400 10px/1 Poppins, sans-serif; color: var(--os-text-disabled); }
+  /* Legend row instead of floating per-marker labels — with all three
+     values clustered in the 4.0–4.9 range, labels positioned directly
+     under each marker overlapped and became illegible. A shared legend
+     with color-matched swatches reads correctly at any marker spacing. */
+  .gauge-legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 10px; }
+  .gauge-legend .lg-item { display: flex; align-items: center; gap: 6px; font: 500 11.5px/1.3 Poppins, sans-serif; color: var(--os-text-secondary); }
+  .gauge-legend .lg-swatch { width: 10px; height: 10px; border-radius: 2px; flex: none; background: var(--os-navy); }
+  .gauge-legend .lg-self .lg-swatch { background: var(--os-green-text); }
+  .gauge-legend .lg-self { color: var(--os-green-text); font-weight: 600; }
+  .assumption-note {
+    background: var(--os-tint-1); border: 1px solid var(--os-border); border-radius: var(--r);
+    padding: 10px 12px; font: 400 11.5px/1.5 Poppins, sans-serif; color: var(--os-text-secondary);
+  }
+  .assumption-note strong { color: var(--os-text); }
+</style>
+</head>
+<body>
+<div class="viewport">
+
+  <!-- Block 4.1 — Trust Banner -->
+  <header class="trust-banner">
+    <svg class="icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#00D492" stroke-width="2"/><path d="M7.5 12.4l3 3 6-6.5" stroke="#00D492" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div style="flex:1;min-width:0">
+      <p class="t-overline">Réputation vérifiée</p>
+      <p class="t-caption" style="color:#fff;margin-top:-6px">Avis de Martin Immo vérifiés par <strong>Opinion System</strong></p>
+    </div>
+  </header>
+
+  <!-- Compact identity -->
+  <section class="section" style="padding-bottom:0">
+    <div class="row-between" style="align-items:flex-start">
+      <div style="flex:1;min-width:0">
+        <h1 class="t-h6 t-brand" style="color:var(--os-navy)">Martin Immo</h1>
+        <p class="t-caption muted" data-field="business.industry"></p>
+        <p class="t-caption muted"><span data-field="business.city"></span> · <span data-field="business.memberNumber"></span></p>
+      </div>
+      <span class="badge badge-verified">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Vérifié
+      </span>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       THE COMPARATIVE GAUGE — this is the interaction under test. Instead
+       of presenting the verified rating in isolation, it's shown relative
+       to a category threshold and a peer average, matching how persona A
+       actually behaves (comparing 2–3 local providers, not judging one in
+       a vacuum). The lead FACT is the relative standing sentence, not the
+       raw number — though the raw number is still the largest single
+       figure on screen, preserving "one number rules" hero treatment.
+
+       IMPORTANT — documented assumption: no source document defines a
+       real category benchmark. "categoryAverage" and "peerVerifiedCount"
+       below are ILLUSTRATIVE, invented for this prototype only, and
+       disclosed on-page (not silently presented as real data) via the
+       methodology note. This is a per-prototype assumption to validate,
+       not a proposal to ship a fabricated statistic — if this direction
+       is chosen, OS would need a real, defensible benchmark source before
+       any of this ships.
+
+       Interim assumption on open question 3 (header ratio): this concept
+       leans the OTHER way from concept 6 — it gives the comparative
+       context real visual weight (the gauge, a peer stat) alongside the
+       verified number, rather than reducing "all sources" to one muted
+       line. Both are legitimate readings of Q3; deliberately testing both.
+       ===================================================================== -->
+  <section class="section" style="padding-top:10px">
+    <p class="t-sub1 strong" style="color:var(--os-navy)">Martin Immo se situe au-dessus du seuil de confiance</p>
+    <div class="row" style="gap:10px;align-items:baseline;margin-top:8px">
+      <span class="score" style="color:var(--os-green-text)" data-field="verified.rating"></span>
+      <span class="score-suffix">/5 vérifié</span>
+    </div>
+    <p class="t-caption" style="margin-top:2px">
+      <span data-field="verified.count"></span> avis contrôlés · <span data-field="verified.recommend"></span> % recommandent
+    </p>
+
+    <div class="gauge-wrap" style="margin-top:18px">
+      <div class="gauge-track">
+        <div class="gauge-fill" id="gauge-fill"></div>
+        <div class="gauge-marker" id="gauge-threshold"></div>
+        <div class="gauge-marker" id="gauge-peer"></div>
+        <div class="gauge-marker mk-self" id="gauge-self"></div>
+      </div>
+      <div class="gauge-scale"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+      <div class="gauge-legend">
+        <span class="lg-item"><span class="lg-swatch"></span>Seuil 4,0</span>
+        <span class="lg-item"><span class="lg-swatch"></span><span id="gauge-peer-label"></span></span>
+        <span class="lg-item lg-self"><span class="lg-swatch"></span>Martin Immo <span data-field="verified.rating"></span></span>
+      </div>
+    </div>
+
+    <details style="margin-top:8px">
+      <summary class="t-caption link" style="cursor:pointer;list-style:none">Comment ce repère est-il calculé ? ↓</summary>
+      <p class="assumption-note" style="margin-top:8px">
+        <strong>Illustratif.</strong> Le seuil (4,0/5) et la moyenne des pairs affichés ici sont des repères de démonstration pour ce prototype — Opinion System ne publie pas aujourd'hui de moyenne sectorielle officielle. Avant toute mise en production, ce repère devrait s'appuyer sur une méthodologie publique et vérifiable, au même titre que la note vérifiée elle-même.
+      </p>
+    </details>
+
+    <div class="kpi-grid" style="margin-top:14px">
+      <div class="kpi kpi-verified">
+        <p class="kpi-label">Martin Immo (vérifié)</p>
+        <p class="kpi-value"><span data-field="verified.rating"></span><span class="suffix">/5</span></p>
+      </div>
+      <div class="kpi kpi-light">
+        <p class="kpi-label">Moyenne des pairs*</p>
+        <p class="kpi-value" id="kpi-peer-rating"><span class="suffix">/5</span></p>
+      </div>
+    </div>
+    <p class="t-caption muted" style="margin-top:6px">
+      Toutes sources confondues (Martin Immo) : <span data-field="allSources.rating"></span>/5 sur <span data-field="allSources.count"></span> avis, dont <span data-field="verified.count"></span> contrôlés.
+    </p>
+
+    <p class="mechanism-line" style="font:400 13.5px/1.5 Poppins,sans-serif;margin-top:10px">
+      Ce repère se fonde uniquement sur des avis contrôlés — identité et achat vérifiés par <strong>Opinion System</strong> (NF&nbsp;ISO&nbsp;20488).
+    </p>
+    <p class="t-caption muted" style="margin-top:4px">Dernière mise à jour : <span data-field="verdict.lastUpdated"></span>. <span class="t-caption" style="color:var(--os-text-disabled)">* voir méthodologie ci-dessus</span></p>
+
+    <div class="row" style="gap:6px;flex-wrap:wrap;margin-top:10px" data-field-list="trustBadges" data-badge-class="badge badge-verified"></div>
+
+    <a class="btn btn-cta btn-block" style="margin-top:14px" href="#">
+      <svg viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+      Déposer un avis
+    </a>
+  </section>
+
+  <!-- Blocks 4.5/4.6 — Verified detail. Summary always visible, review
+       list gated (see concept 6 for the full rationale — identical
+       treatment here, only the surrounding concept differs). -->
+  <section class="section" style="padding-top:0;background:var(--os-tint-2)">
+    <div class="reviews-summary">
+      <h2 class="t-h6 t-brand" style="color:var(--os-navy)">Avis contrôlés</h2>
+      <div class="row-between rs-head" style="margin-top:8px">
+        <div><div class="row" style="gap:6px"><span class="score-sm" style="color:var(--os-green-text)" data-field="verified.rating"></span><span class="score-suffix">/5</span></div><p class="t-caption muted"><span data-field="verified.count"></span> avis contrôlés</p></div>
+        <div style="text-align:right"><div class="score-sm" style="color:var(--os-green-text)" data-field="verified.recommend" data-suffix="%"></div><p class="t-caption muted">recommandent</p></div>
+      </div>
+      <div class="stack-8 rs-histo" data-field-list="verified.histogram"></div>
+      <p class="legal rs-explain"><strong>Chaque auteur est un client réel dont l'expérience a été vérifiée.</strong> <span data-field="legal.sortMethod"></span></p>
+    </div>
+
+    <details id="verified-detail-7">
+      <summary class="reveal-link">Voir les <span data-field="verified.count"></span> avis contrôlés <span class="rl-chevron" aria-hidden="true">→</span></summary>
+      <div class="stack-12" style="padding-top:4px">
+        <div class="chip-scroller" id="chips-7" style="padding-left:0;padding-right:0">
+          <button class="chip chip-selected" data-topic="Tous">Tous les avis</button>
+        </div>
+
+        <div class="row-between" style="align-items:center">
+          <label class="t-caption muted" for="sort-7">Trier par</label>
+          <select id="sort-7" class="chip chip-outlined" style="min-height:36px">
+            <option>Plus récents</option>
+            <option>Mieux notés</option>
+            <option>Moins bien notés</option>
+          </select>
+        </div>
+        <p class="t-caption muted" id="sort-live-7" role="status">Tri actuel : Plus récents</p>
+
+        <div id="review-list-7" class="stack-12"></div>
+        <p class="t-body2 muted" id="empty-7" hidden>Aucun avis contrôlé ne correspond à ce filtre.</p>
+        <button class="btn btn-outlined btn-block" disabled>Voir plus d'avis contrôlés</button>
+      </div>
+    </details>
+  </section>
+
+  <!-- Block 4.4 — Quality Approach -->
+  <section class="surface-navy section stack-12" style="margin:0 12px 12px">
+    <span class="badge" style="background:rgba(0,212,146,.18);color:#7FE3C4">Démarche qualité</span>
+    <h2 class="t-h6 t-brand">Martin Immo a choisi Opinion System pour des avis fiables.</h2>
+    <div class="stack-8" id="standards-list-7"></div>
+  </section>
+
+  <!-- Block 4.9 — Unverified -->
+  <section class="section" style="background:var(--os-grey-bg)">
+    <details id="unverified-detail-7">
+      <summary style="list-style:none;cursor:pointer">
+        <span class="badge badge-unverified">⚠ Non vérifié</span>
+        <span class="t-sub2 strong" style="margin-left:8px">Avis non vérifiés : <span data-field="unverified.count"></span> · <span data-field="unverified.rating"></span>/5</span>
+        <span class="link" style="display:block;margin-top:4px">Afficher ↓</span>
+      </summary>
+      <div class="stack-12" style="padding-top:12px">
+        <p class="t-body2 muted">Publiés sans vérification, hors contrôle d'Opinion System. Nous indiquons la note et un lien, sans republier leur contenu.</p>
+        <div class="kpi-grid" id="platform-grid-7"></div>
+        <div class="stack-8" id="unverified-list-7"></div>
+        <button class="btn btn-outlined btn-block" disabled>Voir plus d'avis</button>
+        <p class="legal">
+          <span data-field="legal.consideration"></span> · <span data-field="legal.sortMethod"></span> ·
+          <span data-field="legal.retention"></span> <a class="link" href="#faq-7"><span data-field="legal.reportLinkText"></span></a>.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <!-- Block 4.13 — FAQ -->
+  <section style="background:#fff" id="faq-7">
+    <div class="section" style="padding-bottom:8px"><h2 class="t-h6 t-brand">Questions fréquentes</h2></div>
+    <div id="faq-list-7"></div>
+  </section>
+
+  <div class="bottom-bar">
+    <a class="btn btn-outlined btn-sm" href="#" style="flex:1">Contacter</a>
+    <a class="btn btn-cta btn-sm" href="#" style="flex:1.4">Déposer un avis</a>
+  </div>
+
+</div>
+
+<script src="shared-data.js"></script>
+<script src="shared-widgets.js"></script>
+<script>
+(function () {
+  var D = window.MARTIN_IMMO;
+  function get(path) { return path.split(".").reduce(function (o, k) { return o == null ? o : o[k]; }, D); }
+
+  /* Illustrative benchmark layer — scoped to THIS file only, never written
+     into shared-data.js so concepts 1/2/5/6/8/9 are unaffected. Documented
+     inline above and in the on-page methodology disclosure. */
+  var BENCHMARK = {
+    threshold: 4.0,
+    peerRating: 4.3,
+    peerLabel: "Moyenne des pairs 4,3",
+    peerVerifiedCount: 140
+  };
+
+  document.querySelectorAll("[data-field]").forEach(function (el) {
+    var val = get(el.getAttribute("data-field"));
+    if (val == null) return;
+    el.textContent = val + (el.getAttribute("data-suffix") || "");
+  });
+  document.querySelectorAll('[data-field-list="trustBadges"]').forEach(function (el) {
+    var cls = el.getAttribute("data-badge-class") || "badge";
+    D.trustBadges.forEach(function (label) {
+      var span = document.createElement("span");
+      span.className = cls;
+      span.textContent = label;
+      el.appendChild(span);
+    });
+  });
+  document.querySelectorAll('[data-field-list="verified.histogram"]').forEach(function (el) {
+    D.verified.histogram.forEach(function (row) {
+      var div = document.createElement("div");
+      div.className = "histo";
+      div.innerHTML =
+        '<span class="t-caption">' + row.stars + ' ★</span>' +
+        '<div class="bar"><i style="width:' + row.pct + '%"></i></div>' +
+        '<span class="t-caption">' + row.n + '</span>';
+      el.appendChild(div);
+    });
+  });
+
+  /* ---- gauge (0–5 scale) ---- */
+  function pct(v) { return (v / 5) * 100 + "%"; }
+  document.getElementById("gauge-fill").style.width = pct(D.verified.rating);
+  document.getElementById("gauge-threshold").style.left = pct(BENCHMARK.threshold);
+  document.getElementById("gauge-peer").style.left = pct(BENCHMARK.peerRating);
+  document.getElementById("gauge-peer-label").textContent = BENCHMARK.peerLabel;
+  document.getElementById("gauge-self").style.left = pct(D.verified.rating);
+  document.getElementById("kpi-peer-rating").firstChild.textContent = BENCHMARK.peerRating.toFixed(1).replace(".", ",");
+
+  var standardsList = document.getElementById("standards-list-7");
+  D.certification.standards.forEach(function (s) {
+    var div = document.createElement("div");
+    div.className = "surface-outlined surface-body row-between";
+    div.style.background = "rgba(255,255,255,.06)";
+    div.style.borderColor = "rgba(255,255,255,.18)";
+    div.innerHTML = '<div><p class="t-sub2" style="color:#fff">' + s.code + '</p><p class="t-caption" style="color:var(--os-on-dark-secondary)">' + s.scope + '</p></div>';
+    standardsList.appendChild(div);
+  });
+
+  var reviewList = document.getElementById("review-list-7");
+  var reviewEls = [];
+  D.reviews.verified.forEach(function (r) {
+    var art = document.createElement("article");
+    art.className = "review-card";
+    art.setAttribute("data-tags", r.tags.join(","));
+    art.innerHTML =
+      '<div class="row-top">' +
+        '<div class="avatar">' + r.author.charAt(0) + '</div>' +
+        '<div style="flex:1;min-width:0">' +
+          '<div class="row-between"><p class="t-sub2">' + r.author + '</p><span class="t-sub2 strong" style="color:var(--os-green-text)">' + r.rating + '</span></div>' +
+          '<p class="review-meta">' + r.service + ' · ' + r.purchaseNote + ' · ' + r.timeAgo + '</p>' +
+        '</div>' +
+      '</div>' +
+      '<span class="badge badge-verified" style="margin-top:10px">Avis contrôlé</span>' +
+      '<p class="review-body">' + r.body + '</p>' +
+      '<div class="row" style="margin-top:10px;gap:6px;flex-wrap:wrap">' +
+        r.tags.map(function (t) { return '<span class="chip chip-outlined" style="min-height:auto;padding:3px 10px;font-size:12px">#' + t + '</span>'; }).join("") +
+      '</div>' +
+      '<div class="review-response"><p class="t-caption strong">Réponse de Martin Immo · ' + r.response.author + '</p><p class="t-body2" style="margin-top:4px">' + r.response.body + '</p></div>' +
+      '<div class="review-footer"><button class="btn btn-text btn-sm">👍 Utile (' + r.helpful + ')</button><button class="btn btn-text btn-sm" style="color:var(--os-text-secondary)">⚑ Signaler</button></div>';
+    reviewList.appendChild(art);
+    reviewEls.push(art);
+  });
+  var chipsEl = document.getElementById("chips-7");
+  D.topics.forEach(function (topic) {
+    var btn = document.createElement("button");
+    btn.className = "chip chip-outlined";
+    btn.setAttribute("data-topic", topic);
+    btn.textContent = topic;
+    chipsEl.appendChild(btn);
+  });
+  window.OSWidgets.initTopicFilter(chipsEl, reviewEls, document.getElementById("empty-7"));
+  window.OSWidgets.initSort(document.getElementById("sort-7"), document.getElementById("sort-live-7"));
+  window.OSWidgets.initAutoScrollDetails(document.getElementById("verified-detail-7"));
+
+  var platformGrid = document.getElementById("platform-grid-7");
+  D.platforms.forEach(function (p) {
+    var a = document.createElement("a");
+    a.className = "platform-card";
+    a.href = "#";
+    a.innerHTML =
+      '<div class="row"><span class="platform-logo" style="background:' + p.color + ';color:' + p.textColor + '">' + p.initials + '</span><span class="t-caption strong">' + p.name + '</span></div>' +
+      '<p class="t-sub1 strong" style="margin-top:6px">' + p.rating + '<span class="score-suffix" style="font-size:12px">/5</span></p>' +
+      '<p class="t-caption muted">' + p.count + ' avis · Voir ↗</p>';
+    platformGrid.appendChild(a);
+  });
+  var unverifiedList = document.getElementById("unverified-list-7");
+  D.reviews.unverified.forEach(function (r) {
+    var art = document.createElement("article");
+    art.className = "review-card is-unverified";
+    art.innerHTML =
+      '<div class="row-between"><p class="t-sub2">' + r.author + '</p><span class="badge badge-unverified">⚠ Non vérifié</span></div>' +
+      '<p class="review-meta">Avis spontané · ' + r.timeAgo + ' · ' + r.rating + '/5</p>' +
+      '<p class="review-body">' + r.body + '</p>';
+    unverifiedList.appendChild(art);
+  });
+
+  var faqList = document.getElementById("faq-list-7");
+  D.faq.forEach(function (item, i) {
+    var details = document.createElement("details");
+    details.className = "acc";
+    if (i === 0) details.open = true;
+    details.innerHTML = '<summary>' + item.q + '</summary><div class="acc-body"><p class="t-body2 muted">' + item.a + '</p></div>';
+    faqList.appendChild(details);
+  });
+})();
+</script>
+</body>
+</html>

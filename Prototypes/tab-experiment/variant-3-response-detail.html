@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>V3 — Réponse dans le détail · Opinion System</title>
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../A-7/assets/os-figma.css">
+<link rel="stylesheet" href="assets/experiment.css">
+<style>.harness{background:var(--os-navy);color:#fff;padding:10px 16px;font:600 12.5px/1.4 Poppins,sans-serif;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.harness a{color:var(--os-on-dark-secondary);text-decoration:none}.harness a:hover{text-decoration:underline}</style>
+</head>
+<body>
+<div class="harness"><span>VARIANTE 3 — RÉPONSE DANS LE DÉTAIL — Q9-B · fonctionnellement identique au Contrôle sur cette variable (voir note)</span><a href="index.html">← Comparatif</a></div>
+<div id="app"></div>
+<script src="assets/fixture.js"></script>
+<script src="assets/render.js"></script>
+<script>
+  /* Control's own default for response placement is already "detail" — see
+     the note in launcher.html's comparison table. This file exists to give
+     the "detail-only" hypothesis its own explicit, labeled slot in the
+     comparison launcher next to Variant 2's "always visible" hypothesis,
+     per the approved variant plan (Q9-A vs Q9-B). */
+  OSExperiment.mount(document.getElementById("app"), window.OS_FIXTURE, {
+    variantId: "response-detail",
+    variantLabel: "Réponse dans le détail",
+    responsePlacement: "detail",
+    filterMode: "legacyMixed"      /* identical to Control */
+  });
+</script>
+</body>
+</html>

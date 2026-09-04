@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concept 6 — Trust Card statique · A-7 · Opinion System</title>
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="assets/os-figma.css">
+<style>
+  /* ============================================================
+     Concept-6-specific layout only. Every color/radius/type value
+     comes from design-system/tokens.css via assets/os-figma.css —
+     nothing here defines a new visual token. The thing under test
+     is density: can the FULL A-7 answer fit one non-scrolling
+     viewport with zero required interaction?
+     ============================================================ */
+  .card-frame {
+    margin: 12px; border-radius: var(--r-card); background: #fff;
+    box-shadow: var(--e2); overflow: hidden;
+  }
+  .identity-row { padding: 14px 16px 0; }
+  .hero-block { padding: 4px 16px 16px; }
+  .mechanism-line { font: 400 13.5px/1.5 Poppins, sans-serif; color: var(--os-text); }
+  .all-sources-line { font: 400 12px/1.5 Poppins, sans-serif; color: var(--os-text-secondary); }
+  .below-fold-marker {
+    display: flex; align-items: center; gap: 8px; padding: 10px 16px;
+    color: var(--os-text-secondary); font: 500 11px/1.3 Poppins, sans-serif;
+  }
+  .below-fold-marker::before, .below-fold-marker::after { content:""; flex:1; height:1px; background:var(--os-border); }
+</style>
+</head>
+<body>
+<div class="viewport">
+
+  <!-- Block 4.1 — Trust Banner, permanent, navy, above everything -->
+  <header class="trust-banner">
+    <svg class="icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#00D492" stroke-width="2"/><path d="M7.5 12.4l3 3 6-6.5" stroke="#00D492" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div style="flex:1;min-width:0">
+      <p class="t-overline">Réputation vérifiée</p>
+      <p class="t-caption" style="color:#fff;margin-top:-6px">Avis de Martin Immo vérifiés par <strong>Opinion System</strong></p>
+    </div>
+  </header>
+
+  <!-- =====================================================================
+       THE TRUST CARD — this is the interaction under test: everything A-7
+       asks for (badge, verified rating, recommend %, mechanism, verdict,
+       last-updated date, primary CTA) in ONE block, with ZERO taps needed.
+       No accordion, no reveal button, no navigation. Designed to fit a
+       single ~700px mobile viewport (iPhone 12/13/14 class) without
+       scrolling; on shorter viewports it may take ~1.2 screens, which is
+       still squarely inside A-7's own "first screen or two" wording.
+
+       Interim assumption on open question 3 (header ratio): this concept
+       takes the most lopsided legitimate reading — the verified rating
+       gets the full hero treatment (40px score, stars, recommend %), and
+       "toutes sources confondues" is reduced to one small muted line with
+       no stat treatment of its own. This is a per-prototype assumption,
+       not a proposal to resolve Q3 globally — concept 7 in this same
+       batch deliberately tests the opposite lean.
+       ===================================================================== -->
+  <section class="card-frame">
+    <div class="identity-row row-between" style="align-items:flex-start">
+      <div style="flex:1;min-width:0">
+        <h1 class="t-h6 t-brand" style="color:var(--os-navy)">Martin Immo</h1>
+        <p class="t-caption muted" data-field="business.industry"></p>
+        <p class="t-caption muted"><span data-field="business.city"></span> · <span data-field="business.memberNumber"></span></p>
+      </div>
+      <span class="badge badge-verified">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Vérifié
+      </span>
+    </div>
+
+    <div class="hero-block stack-8">
+      <div class="row" style="gap:10px;align-items:baseline;margin-top:6px">
+        <span class="score" style="color:var(--os-green-text)" data-field="verified.rating"></span>
+        <span class="score-suffix">/5</span>
+        <span class="stars stars-lg" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+        </span>
+      </div>
+      <p class="t-caption strong" style="color:var(--os-green-text)">
+        <span data-field="verified.count"></span> avis contrôlés · <span data-field="verified.recommend"></span> % recommandent
+      </p>
+
+      <p class="mechanism-line">
+        Identité et achat vérifiés par <strong>Opinion System</strong>, tiers de confiance certifié NF&nbsp;ISO&nbsp;20488 — l'entreprise ne peut pas supprimer un avis conforme, positif ou négatif.
+      </p>
+
+      <p class="all-sources-line">
+        Toutes sources confondues : <span data-field="allSources.rating"></span>/5 sur <span data-field="allSources.count"></span> avis (dont <span data-field="verified.count"></span> contrôlés). Dernière mise à jour : <span data-field="verdict.lastUpdated"></span>.
+      </p>
+
+      <div class="row" style="gap:6px;flex-wrap:wrap;margin-top:2px" data-field-list="trustBadges" data-badge-class="badge badge-verified"></div>
+
+      <a class="btn btn-cta btn-block" style="margin-top:6px" href="#">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+        Déposer un avis
+      </a>
+    </div>
+  </section>
+  <!-- ===================== end of the non-scrolling trust card ===================== -->
+
+  <p class="below-fold-marker">au-delà, défilement normal — rien n'est masqué pour forcer une interaction</p>
+
+  <!-- Block 4.4 — Quality Approach: plain-language mechanism detail, ungated -->
+  <section class="surface-navy section stack-12" style="margin:0 12px 12px;border-radius:var(--r-card)">
+    <span class="badge" style="background:rgba(0,212,146,.18);color:#7FE3C4">Démarche qualité</span>
+    <h2 class="t-h6 t-brand">Martin Immo a choisi Opinion System pour des avis fiables.</h2>
+    <div class="stack-8" id="standards-list"></div>
+    <p class="t-caption" style="color:var(--os-on-dark-secondary)">Indice de confiance <span data-field="certification.confidenceIndex"></span> · marge d'erreur <span data-field="certification.marginOfError"></span> (méthode par quotas, contrôle AFNOR).</p>
+  </section>
+
+  <!-- Blocks 4.5/4.6 — Verified reviews. Rating + histogram + calculation
+       note are ALWAYS VISIBLE plain page content (no card wrapper) — the
+       histogram must never sit behind a tap (research/competitive-
+       landscape.md). Only the actual review list (chips, sort, cards)
+       loads on demand behind the "Voir les N avis" link, which is the
+       real requirement here (§4.5→4.6, §7.4, AC10) — this concept's
+       "zero interaction" hypothesis applies to the hero above, not to
+       this legally-required on-demand list. -->
+  <section class="section" style="padding-top:0">
+    <div class="reviews-summary">
+      <h2 class="t-h6 t-brand" style="color:var(--os-navy)">Avis contrôlés</h2>
+      <div class="row-between rs-head" style="margin-top:8px">
+        <div><div class="row" style="gap:6px"><span class="score-sm" style="color:var(--os-green-text)" data-field="verified.rating"></span><span class="score-suffix">/5</span></div><p class="t-caption muted"><span data-field="verified.count"></span> avis contrôlés</p></div>
+        <div style="text-align:right"><div class="score-sm" style="color:var(--os-green-text)" data-field="verified.recommend" data-suffix="%"></div><p class="t-caption muted">recommandent</p></div>
+      </div>
+      <div class="stack-8 rs-histo" data-field-list="verified.histogram"></div>
+      <p class="legal rs-explain"><strong>Chaque auteur est un client réel dont l'expérience a été vérifiée.</strong> <span data-field="legal.sortMethod"></span></p>
+    </div>
+
+    <details id="verified-detail">
+      <summary class="reveal-link">Voir les <span data-field="verified.count"></span> avis contrôlés <span class="rl-chevron" aria-hidden="true">→</span></summary>
+      <div class="stack-12" style="padding-top:4px">
+        <div class="chip-scroller" id="chips-6" style="padding-left:0;padding-right:0">
+          <button class="chip chip-selected" data-topic="Tous">Tous les avis</button>
+        </div>
+
+        <div class="row-between" style="align-items:center">
+          <label class="t-caption muted" for="sort-6">Trier par</label>
+          <select id="sort-6" class="chip chip-outlined" style="min-height:36px">
+            <option>Plus récents</option>
+            <option>Mieux notés</option>
+            <option>Moins bien notés</option>
+          </select>
+        </div>
+        <p class="t-caption muted" id="sort-live-6" role="status">Tri actuel : Plus récents</p>
+
+        <div id="review-list-6" class="stack-12"></div>
+        <p class="t-body2 muted" id="empty-6" hidden>Aucun avis contrôlé ne correspond à ce filtre.</p>
+        <button class="btn btn-outlined btn-block" disabled>Voir plus d'avis contrôlés</button>
+      </div>
+    </details>
+  </section>
+
+  <!-- Block 4.9 — Unverified. Also legitimately gated (§5 conditional
+       display), gray + dashed, mandatory badge, never green. -->
+  <section class="section" style="padding-top:0;background:var(--os-grey-bg)">
+    <details id="unverified-detail">
+      <summary style="list-style:none;cursor:pointer">
+        <span class="badge badge-unverified">⚠ Non vérifié</span>
+        <span class="t-sub2 strong" style="margin-left:8px">Avis non vérifiés : <span data-field="unverified.count"></span> · <span data-field="unverified.rating"></span>/5</span>
+        <span class="link" style="display:block;margin-top:4px">Afficher ↓</span>
+      </summary>
+      <div class="stack-12" style="padding-top:12px">
+        <p class="t-body2 muted">Publiés sans vérification, hors contrôle d'Opinion System. Nous indiquons la note et un lien, sans republier leur contenu.</p>
+        <div class="kpi-grid" id="platform-grid-6"></div>
+        <div class="stack-8" id="unverified-list-6"></div>
+        <button class="btn btn-outlined btn-block" disabled>Voir plus d'avis</button>
+        <p class="legal">
+          <span data-field="legal.consideration"></span> · <span data-field="legal.sortMethod"></span> ·
+          <span data-field="legal.retention"></span> <a class="link" href="#faq-6"><span data-field="legal.reportLinkText"></span></a>.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <!-- Block 4.13 — FAQ -->
+  <section style="background:#fff" id="faq-6">
+    <div class="section" style="padding-bottom:8px"><h2 class="t-h6 t-brand">Questions fréquentes</h2></div>
+    <div id="faq-list-6"></div>
+  </section>
+
+  <div class="bottom-bar">
+    <a class="btn btn-outlined btn-sm" href="#" style="flex:1">Contacter</a>
+    <a class="btn btn-cta btn-sm" href="#" style="flex:1.4">Déposer un avis</a>
+  </div>
+
+</div>
+
+<script src="shared-data.js"></script>
+<script src="shared-widgets.js"></script>
+<script>
+(function () {
+  var D = window.MARTIN_IMMO;
+  function get(path) { return path.split(".").reduce(function (o, k) { return o == null ? o : o[k]; }, D); }
+
+  document.querySelectorAll("[data-field]").forEach(function (el) {
+    var val = get(el.getAttribute("data-field"));
+    if (val == null) return;
+    el.textContent = val + (el.getAttribute("data-suffix") || "");
+  });
+  document.querySelectorAll('[data-field-list="trustBadges"]').forEach(function (el) {
+    var cls = el.getAttribute("data-badge-class") || "badge";
+    D.trustBadges.forEach(function (label) {
+      var span = document.createElement("span");
+      span.className = cls;
+      span.textContent = label;
+      el.appendChild(span);
+    });
+  });
+  document.querySelectorAll('[data-field-list="verified.histogram"]').forEach(function (el) {
+    D.verified.histogram.forEach(function (row) {
+      var div = document.createElement("div");
+      div.className = "histo";
+      div.innerHTML =
+        '<span class="t-caption">' + row.stars + ' ★</span>' +
+        '<div class="bar"><i style="width:' + row.pct + '%"></i></div>' +
+        '<span class="t-caption">' + row.n + '</span>';
+      el.appendChild(div);
+    });
+  });
+
+  var standardsList = document.getElementById("standards-list");
+  D.certification.standards.forEach(function (s) {
+    var div = document.createElement("div");
+    div.className = "surface-outlined surface-body row-between";
+    div.style.background = "rgba(255,255,255,.06)";
+    div.style.borderColor = "rgba(255,255,255,.18)";
+    div.innerHTML = '<div><p class="t-sub2" style="color:#fff">' + s.code + '</p><p class="t-caption" style="color:var(--os-on-dark-secondary)">' + s.scope + '</p></div>';
+    standardsList.appendChild(div);
+  });
+
+  var reviewList = document.getElementById("review-list-6");
+  var reviewEls = [];
+  D.reviews.verified.forEach(function (r) {
+    var art = document.createElement("article");
+    art.className = "review-card";
+    art.setAttribute("data-tags", r.tags.join(","));
+    art.innerHTML =
+      '<div class="row-top">' +
+        '<div class="avatar">' + r.author.charAt(0) + '</div>' +
+        '<div style="flex:1;min-width:0">' +
+          '<div class="row-between"><p class="t-sub2">' + r.author + '</p><span class="t-sub2 strong" style="color:var(--os-green-text)">' + r.rating + '</span></div>' +
+          '<p class="review-meta">' + r.service + ' · ' + r.purchaseNote + ' · ' + r.timeAgo + '</p>' +
+        '</div>' +
+      '</div>' +
+      '<span class="badge badge-verified" style="margin-top:10px">Avis contrôlé</span>' +
+      '<p class="review-body">' + r.body + '</p>' +
+      '<div class="row" style="margin-top:10px;gap:6px;flex-wrap:wrap">' +
+        r.tags.map(function (t) { return '<span class="chip chip-outlined" style="min-height:auto;padding:3px 10px;font-size:12px">#' + t + '</span>'; }).join("") +
+      '</div>' +
+      '<div class="review-response"><p class="t-caption strong">Réponse de Martin Immo · ' + r.response.author + '</p><p class="t-body2" style="margin-top:4px">' + r.response.body + '</p></div>' +
+      '<div class="review-footer"><button class="btn btn-text btn-sm">👍 Utile (' + r.helpful + ')</button><button class="btn btn-text btn-sm" style="color:var(--os-text-secondary)">⚑ Signaler</button></div>';
+    reviewList.appendChild(art);
+    reviewEls.push(art);
+  });
+  var chipsEl = document.getElementById("chips-6");
+  D.topics.forEach(function (topic) {
+    var btn = document.createElement("button");
+    btn.className = "chip chip-outlined";
+    btn.setAttribute("data-topic", topic);
+    btn.textContent = topic;
+    chipsEl.appendChild(btn);
+  });
+  window.OSWidgets.initTopicFilter(chipsEl, reviewEls, document.getElementById("empty-6"));
+  window.OSWidgets.initSort(document.getElementById("sort-6"), document.getElementById("sort-live-6"));
+  window.OSWidgets.initAutoScrollDetails(document.getElementById("verified-detail"));
+
+  var platformGrid = document.getElementById("platform-grid-6");
+  D.platforms.forEach(function (p) {
+    var a = document.createElement("a");
+    a.className = "platform-card";
+    a.href = "#";
+    a.innerHTML =
+      '<div class="row"><span class="platform-logo" style="background:' + p.color + ';color:' + p.textColor + '">' + p.initials + '</span><span class="t-caption strong">' + p.name + '</span></div>' +
+      '<p class="t-sub1 strong" style="margin-top:6px">' + p.rating + '<span class="score-suffix" style="font-size:12px">/5</span></p>' +
+      '<p class="t-caption muted">' + p.count + ' avis · Voir ↗</p>';
+    platformGrid.appendChild(a);
+  });
+  var unverifiedList = document.getElementById("unverified-list-6");
+  D.reviews.unverified.forEach(function (r) {
+    var art = document.createElement("article");
+    art.className = "review-card is-unverified";
+    art.innerHTML =
+      '<div class="row-between"><p class="t-sub2">' + r.author + '</p><span class="badge badge-unverified">⚠ Non vérifié</span></div>' +
+      '<p class="review-meta">Avis spontané · ' + r.timeAgo + ' · ' + r.rating + '/5</p>' +
+      '<p class="review-body">' + r.body + '</p>';
+    unverifiedList.appendChild(art);
+  });
+
+  var faqList = document.getElementById("faq-list-6");
+  D.faq.forEach(function (item, i) {
+    var details = document.createElement("details");
+    details.className = "acc";
+    if (i === 0) details.open = true;
+    details.innerHTML = '<summary>' + item.q + '</summary><div class="acc-body"><p class="t-body2 muted">' + item.a + '</p></div>';
+    faqList.appendChild(details);
+  });
+})();
+</script>
+</body>
+</html>

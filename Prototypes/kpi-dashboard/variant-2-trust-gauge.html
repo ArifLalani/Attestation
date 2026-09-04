@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KPI 2 — Cadran de confiance · Opinion System</title>
+<link rel="stylesheet" href="../assets/os-mui.css">
+<link rel="stylesheet" href="../assets/os-mui-poppins.css">
+<style>
+  /* A speedometer reads as "how good" at a glance — one needle, one number,
+     rather than three numbers competing for attention. The unverified value
+     appears only as a faint reference notch on the same dial: present, but
+     structurally incapable of outranking the needle. */
+  .gauge-card { background:#fff; border:1px solid var(--os-green); border-radius:var(--r-card); padding:16px; text-align:center; }
+  .gauge-wrap { position:relative; width:220px; margin:0 auto; }
+  .gauge-center {
+    position:absolute; left:50%; top:66%; transform:translate(-50%,-50%);
+    display:flex; flex-direction:column; align-items:center;
+  }
+  .gauge-center .score { color:var(--os-navy); line-height:1; }
+  .gauge-legend { display:flex; justify-content:center; gap:16px; margin-top:4px; }
+  .gauge-legend .dot { width:8px; height:8px; border-radius:99px; display:inline-block; margin-right:4px; }
+  .pillrow { display:flex; gap:8px; margin-top:14px; }
+  .pill { flex:1; border-radius:var(--r); padding:8px 10px; text-align:left; }
+  .pill.reco { background:var(--os-green-bg); }
+  .pill.blend { background:var(--os-tint-1); border:1px solid var(--os-border); }
+  .pill .v { font:700 15px/1.2 Poppins,sans-serif; }
+</style>
+</head>
+<body>
+<div class="phone"><div class="screen">
+
+  <header class="appbar">
+    <svg viewBox="0 0 24 24" fill="none" style="width:22px;height:22px;flex:none">
+      <circle cx="12" cy="12" r="10" stroke="#2DB38A" stroke-width="2"/>
+      <path d="M7.5 12.4l3 3 6-6.5" stroke="#2DB38A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div style="flex:1;min-width:0">
+      <p class="t-overline">Réputation vérifiée</p>
+      <p class="t-caption" style="color:#fff;margin-top:-6px">Délivrée par <strong>Opinion System</strong></p>
+    </div>
+  </header>
+
+  <section class="section" style="padding-bottom:8px">
+    <div class="row">
+      <div class="logo-tile">MI</div>
+      <div style="flex:1;min-width:0">
+        <h1 class="t-h6" style="font-weight:600">Martin Immo</h1>
+        <p class="t-caption muted">Agence immobilière · Lanton, FR</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== THE WIDGET: variant 2 — trust gauge ===== -->
+  <section class="section" style="padding-top:0">
+    <div class="gauge-card">
+      <span class="badge badge-verified" style="margin-bottom:4px">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Note contrôlée · 312 avis
+      </span>
+
+      <div class="gauge-wrap">
+        <svg viewBox="0 0 200 118" width="220" height="130">
+          <!-- track -->
+          <path d="M20,100 A80,80 0 0 1 180,100" fill="none" stroke="var(--os-border)" stroke-width="14" stroke-linecap="round" pathLength="1"/>
+          <!-- verified fill, 4.9/5 = 98% -->
+          <path d="M20,100 A80,80 0 0 1 180,100" fill="none" stroke="url(#g)" stroke-width="14" stroke-linecap="round" pathLength="1" stroke-dasharray="0.98 1"/>
+          <defs>
+            <linearGradient id="g" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#7FE3C4"/>
+              <stop offset="100%" stop-color="#43B6A3"/>
+            </linearGradient>
+          </defs>
+          <!-- reference notch: unverified 4.4/5 = 88% -> rotation 68.4deg -->
+          <g style="transform-origin:100px 100px; transform:rotate(68.4deg)">
+            <line x1="100" y1="30" x2="100" y2="12" stroke="#B0BCCF" stroke-width="3" stroke-dasharray="2 2" stroke-linecap="round"/>
+          </g>
+          <!-- needle: verified 4.9/5 -> rotation 86.4deg -->
+          <g style="transform-origin:100px 100px; transform:rotate(86.4deg)">
+            <line x1="100" y1="100" x2="100" y2="32" stroke="var(--os-navy)" stroke-width="3" stroke-linecap="round"/>
+          </g>
+          <circle cx="100" cy="100" r="6" fill="var(--os-navy)"/>
+        </svg>
+        <div class="gauge-center">
+          <span class="score t-brand" style="font-size:32px">4,9<span class="score-suffix" style="font-size:14px">/5</span></span>
+        </div>
+      </div>
+
+      <div class="gauge-legend">
+        <span class="t-caption muted"><span class="dot" style="background:var(--os-green)"></span>Contrôlés</span>
+        <span class="t-caption muted"><span class="dot" style="background:#B0BCCF;border:1px dashed #8392A8"></span>Repère non-vérifié 4,4</span>
+      </div>
+
+      <div class="pillrow">
+        <div class="pill reco">
+          <p class="t-overline" style="color:var(--os-green-text);margin:0">Recommandent</p>
+          <p class="v" style="color:var(--os-green-text)">94&nbsp;%</p>
+        </div>
+        <div class="pill blend">
+          <p class="t-overline muted" style="margin:0">Toutes sources</p>
+          <p class="v">4,7/5 · 1&nbsp;841</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <p class="t-caption muted" style="padding:0 16px 16px">Réf. design.md §4.5 « Verified Reviews Dashboard » · source visuelle : Figma node 376:9683</p>
+
+</div></div>
+</body>
+</html>

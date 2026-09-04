@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concept 2 — Scorecard · A-7 · Opinion System</title>
+<link rel="stylesheet" href="../assets/os-mui.css">
+<style>
+  /* ============================================================
+     Concept-2-specific layout only — tokens/type/components all
+     come from ../assets/os-mui.css, unchanged from Concept 1 and
+     Concept 5. The variable here is the checklist-first hierarchy,
+     not the visual system.
+     ============================================================ */
+  .scorecard { background:#fff; border:1px solid var(--os-border); border-radius:var(--r-card); box-shadow:var(--e1); overflow:hidden; }
+  .criterion { border-bottom:1px solid var(--os-border); }
+  .criterion:last-child { border-bottom:0; }
+  .criterion > summary {
+    list-style:none; cursor:pointer; padding:14px 16px; min-height:48px;
+    display:flex; align-items:center; gap:10px; font:500 14px/1.4 Roboto, sans-serif;
+  }
+  .criterion > summary::-webkit-details-marker { display:none; }
+  .criterion > summary .check {
+    flex:none; width:22px; height:22px; border-radius:50%;
+    background:var(--os-green-bg); color:var(--os-green-text);
+    display:grid; place-items:center; font-size:13px; font-weight:700;
+  }
+  .criterion > summary .crit-label { flex:1; }
+  .criterion > summary .crit-chevron {
+    flex:none; width:9px; height:9px; border-right:2px solid var(--os-text-secondary);
+    border-bottom:2px solid var(--os-text-secondary); transform:rotate(45deg); transition:transform .2s;
+  }
+  .criterion[open] > summary .crit-chevron { transform:rotate(-135deg); }
+  .criterion .crit-body { padding:0 16px 16px 48px; }
+  .criterion.is-rating > summary .check { background:var(--os-green); color:#fff; font-size:11px; }
+</style>
+</head>
+<body>
+<div class="phone"><div class="screen">
+
+  <!-- Block 4.1 — Trust Banner -->
+  <header class="appbar">
+    <svg viewBox="0 0 24 24" fill="none" style="width:22px;height:22px;flex:none">
+      <circle cx="12" cy="12" r="10" stroke="#2DB38A" stroke-width="2"/>
+      <path d="M7.5 12.4l3 3 6-6.5" stroke="#2DB38A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div style="flex:1;min-width:0">
+      <p class="t-overline">Réputation vérifiée</p>
+      <p class="t-caption" style="color:#fff;margin-top:-6px">Avis de Martin Immo vérifiés par <strong>Opinion System</strong></p>
+    </div>
+  </header>
+
+  <div class="hero-img" role="img" aria-label="Photo de l'agence"></div>
+
+  <!-- Compact identity (block 4.2, identity portion) -->
+  <section class="card" style="margin:-28px 12px 0;position:relative">
+    <div class="card-body stack-8">
+      <div class="row-between" style="align-items:flex-start">
+        <div style="flex:1;min-width:0">
+          <h1 class="t-h6 t-brand">Martin Immo</h1>
+          <p class="t-caption muted" data-field="business.industry"></p>
+          <p class="t-caption muted"><span data-field="business.city"></span> · <span data-field="business.memberNumber"></span></p>
+        </div>
+        <span class="badge badge-verified">✓ Vérifié</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       THE SCORECARD — this is the interaction under test. Trust is led
+       with a checklist of criteria, not a single hero number. The rating
+       is one row among several, not the dominant visual element. Every
+       row is independently expandable and reveals real supporting
+       evidence, not a decorative chevron.
+       ===================================================================== -->
+  <section class="section" style="padding-top:14px">
+    <h2 class="t-sub1 strong" id="scorecard-heading" tabindex="-1">Pourquoi faire confiance à Martin Immo ?</h2>
+    <div class="scorecard" style="margin-top:10px" id="scorecard-list"></div>
+
+    <p class="t-caption muted" style="margin-top:10px">
+      Toutes sources : <span data-field="allSources.rating"></span>/5 (<span data-field="allSources.count"></span> avis, dont <span data-field="verified.count"></span> contrôlés)
+    </p>
+    <div class="row" style="gap:6px;flex-wrap:wrap;margin-top:8px" data-field-list="trustBadges" data-badge-class="badge badge-verified"></div>
+
+    <a class="btn btn-cta btn-block" style="margin-top:14px" href="#">
+      <svg viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+      Déposer un avis
+    </a>
+  </section>
+
+  <!-- Block 4.3 — Trust Verdict. The scorecard above is the scannable
+       entry point; this remains the one self-contained, citable paragraph
+       required by the spec (and by story C-2) — not replaced, not duplicated
+       in content, just placed immediately after its scannable summary. -->
+  <section class="section" style="padding-top:0">
+    <div class="surface-verified card-body">
+      <div class="row-between" style="align-items:flex-start">
+        <p class="t-sub2" style="color:var(--os-green-text)">En résumé : la fiabilité de Martin Immo</p>
+        <span class="t-caption muted" style="white-space:nowrap" data-field="verdict.lastUpdated"></span>
+      </div>
+      <p class="t-body2" style="margin-top:8px" data-field="verdict.text"></p>
+      <div class="stat-grid" style="margin-top:12px">
+        <div class="stat"><div class="v" style="color:var(--os-green-text)"><span data-field="verified.rating"></span>/5</div><p class="t-caption muted">Avis contrôlés</p></div>
+        <div class="stat"><div class="v" style="color:var(--os-green-text)"><span data-field="verified.recommend"></span> %</div><p class="t-caption muted">Recommandent</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Blocks 4.5/4.6 — Verified reviews: dashboard preview collapsed into
+       a <details> that expands (with auto-scroll) into the full detail,
+       exactly like the spec's "See the N Verified Reviews" -> "Hide" toggle. -->
+  <section class="section" style="padding-top:0;background:var(--os-tint-2)">
+    <details id="verified-detail-2">
+      <summary style="list-style:none;cursor:pointer;display:block">
+        <div class="card card-body stack-8">
+          <div class="row-between">
+            <div><div class="row" style="gap:6px"><span class="score-sm" style="color:var(--os-green-text)" data-field="verified.rating"></span><span class="score-suffix">/5</span></div><p class="t-caption muted"><span data-field="verified.count"></span> avis contrôlés</p></div>
+            <div style="text-align:right"><div class="score-sm" style="color:var(--os-green-text)" data-field="verified.recommend" data-suffix="%"></div><p class="t-caption muted">recommandent</p></div>
+          </div>
+          <p class="link" style="text-align:center;margin-top:4px">Voir les <span data-field="verified.count"></span> avis contrôlés ↓</p>
+        </div>
+      </summary>
+      <div class="stack-12" style="padding-top:12px">
+        <div class="card card-body stack-8">
+          <div class="stack-8" data-field-list="verified.histogram"></div>
+          <hr class="divider">
+          <div class="row" style="justify-content:space-around;text-align:center">
+            <div><div class="t-sub1 strong" style="color:var(--os-green-text)" data-field="verified.nps.promoters"></div><p class="t-caption muted">Promoteurs</p></div>
+            <div><div class="t-sub1 strong" data-field="verified.nps.neutrals"></div><p class="t-caption muted">Neutres</p></div>
+            <div><div class="t-sub1 strong" style="color:#B3261E" data-field="verified.nps.detractors"></div><p class="t-caption muted">Détracteurs</p></div>
+          </div>
+          <div class="disclosure"><p class="legal"><strong>Chaque auteur est un client réel dont l'expérience a été vérifiée.</strong> <span data-field="legal.sortMethod"></span></p></div>
+        </div>
+
+        <div class="row-between" style="align-items:center">
+          <label class="t-caption muted" for="sort-2">Trier par</label>
+          <select id="sort-2" class="chip chip-outlined" style="height:36px">
+            <option>Plus récents</option>
+            <option>Mieux notés</option>
+            <option>Moins bien notés</option>
+          </select>
+        </div>
+        <p class="t-caption muted" id="sort-live-2" role="status">Tri actuel : Plus récents</p>
+
+        <div class="chip-scroller" id="chips-2" style="padding-left:0;padding-right:0">
+          <button class="chip chip-selected" data-topic="Tous">Tous</button>
+        </div>
+
+        <div id="review-list-2"></div>
+        <p class="t-body2 muted" id="empty-2" hidden>Aucun avis contrôlé ne correspond à ce filtre.</p>
+
+        <button class="btn btn-outlined btn-block" disabled>Voir plus d'avis contrôlés</button>
+      </div>
+    </details>
+  </section>
+
+  <!-- Block 4.4 mechanism, folded into the scorecard's own evidence rows —
+       kept here too as the plain-language standards list for anyone who
+       scrolls past instead of using the scorecard. -->
+  <section class="surface-navy section stack-12">
+    <span class="badge" style="background:rgba(45,179,138,.2);color:#7FE3C4">Démarche qualité</span>
+    <h2 class="t-h6 t-brand">Martin Immo a choisi Opinion System pour des avis fiables.</h2>
+    <div class="stack-8" id="standards-list-2"></div>
+  </section>
+
+  <!-- Block 4.9 — Unverified reviews. Collapsed by default via <details>,
+       exactly as the spec's "conditional display" rule requires. -->
+  <section class="section" style="background:var(--os-grey-bg)">
+    <details id="unverified-detail-2">
+      <summary style="list-style:none;cursor:pointer">
+        <span class="badge badge-unverified">⚠ Non vérifié</span>
+        <span class="t-sub2" style="margin-left:8px">Avis non vérifiés : <span data-field="unverified.count"></span> · <span data-field="unverified.rating"></span>/5</span>
+        <span class="link" style="display:block;margin-top:4px">Afficher ↓</span>
+      </summary>
+      <div class="stack-12" style="padding-top:12px">
+        <p class="t-body2 muted">Publiés sans vérification, hors contrôle d'Opinion System. Nous indiquons la note et un lien, sans republier leur contenu.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="platform-grid-2"></div>
+        <div class="stack-8" id="unverified-list-2"></div>
+        <button class="btn btn-outlined btn-block" disabled>Voir plus d'avis</button>
+        <p class="legal">
+          <span data-field="legal.consideration"></span> · <span data-field="legal.sortMethod"></span> ·
+          <span data-field="legal.retention"></span> <a class="link" href="#faq-2"><span data-field="legal.reportLinkText"></span></a>.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <!-- Block 4.13 — FAQ -->
+  <section style="background:#fff" id="faq-2">
+    <div class="section" style="padding-bottom:8px"><h2 class="t-h6 t-brand">Questions fréquentes</h2></div>
+    <div id="faq-list-2"></div>
+  </section>
+
+  <div class="bottom-bar">
+    <a class="btn btn-outlined btn-sm" href="#" style="flex:1">Contacter</a>
+    <a class="btn btn-cta btn-sm" href="#" style="flex:1.4">Déposer un avis</a>
+  </div>
+
+</div></div>
+
+<script src="shared-data.js"></script>
+<script src="shared-widgets.js"></script>
+<script>
+(function () {
+  var D = window.MARTIN_IMMO;
+
+  function get(path) {
+    return path.split(".").reduce(function (o, k) { return o == null ? o : o[k]; }, D);
+  }
+  document.querySelectorAll("[data-field]").forEach(function (el) {
+    var val = get(el.getAttribute("data-field"));
+    if (val == null) return;
+    el.textContent = val + (el.getAttribute("data-suffix") || "");
+  });
+  document.querySelectorAll('[data-field-list="trustBadges"]').forEach(function (el) {
+    var cls = el.getAttribute("data-badge-class") || "badge";
+    D.trustBadges.forEach(function (label) {
+      var span = document.createElement("span");
+      span.className = cls;
+      span.textContent = label;
+      el.appendChild(span);
+    });
+  });
+  document.querySelectorAll('[data-field-list="verified.histogram"]').forEach(function (el) {
+    D.verified.histogram.forEach(function (row) {
+      var div = document.createElement("div");
+      div.className = "histo";
+      div.innerHTML =
+        '<span class="t-caption muted">' + row.stars + ' ★</span>' +
+        '<div class="bar"><i style="width:' + row.pct + '%"></i></div>' +
+        '<span class="t-caption muted">' + row.n + '</span>';
+      el.appendChild(div);
+    });
+  });
+
+  /* ---------------------------------------------------------------------
+     THE SCORECARD — this is the interaction under test. Five criteria,
+     each a real <details> row: tapping one expands inline evidence,
+     independently of the others (AC10-style independent expand/collapse),
+     with the verified rating demoted to a single row rather than a hero.
+     --------------------------------------------------------------------- */
+  var criteria = [
+    {
+      icon: "✓",
+      label: "Avis rédigés par des clients identifiés",
+      body: "Chaque avis contrôlé provient d'un client dont l'identité et l'achat réel ont été vérifiés par Opinion System avant publication — pas de compte anonyme, pas d'auto-évaluation."
+    },
+    {
+      icon: "✓",
+      label: "L'entreprise ne peut pas supprimer un avis conforme",
+      body: get("certification.neutralityNote")
+    },
+    {
+      icon: null, rating: true,
+      label: get("verified.rating") + "/5 sur " + get("verified.count") + " avis contrôlés",
+      body: null /* filled below with the histogram + NPS + jump link */
+    },
+    {
+      icon: "✓",
+      label: "Audité par un tiers indépendant (AFNOR)",
+      body: null /* filled below with the standards list */
+    },
+    {
+      icon: "✓",
+      label: "Aucune contrepartie versée en échange d'un avis",
+      body: get("legal.consideration") + " " + get("legal.sortMethod") + " " + get("legal.retention")
+    }
+  ];
+
+  var list = document.getElementById("scorecard-list");
+  criteria.forEach(function (c, i) {
+    var details = document.createElement("details");
+    details.className = "criterion" + (c.rating ? " is-rating" : "");
+    var summary = document.createElement("summary");
+    summary.innerHTML =
+      '<span class="check">' + (c.rating ? "★" : c.icon) + '</span>' +
+      '<span class="crit-label">' + c.label + '</span>' +
+      '<span class="crit-chevron" aria-hidden="true"></span>';
+    details.appendChild(summary);
+
+    var body = document.createElement("div");
+    body.className = "crit-body";
+    if (c.rating) {
+      var histoWrap = document.createElement("div");
+      histoWrap.className = "stack-8";
+      D.verified.histogram.forEach(function (row) {
+        var div = document.createElement("div");
+        div.className = "histo";
+        div.innerHTML =
+          '<span class="t-caption muted">' + row.stars + ' ★</span>' +
+          '<div class="bar"><i style="width:' + row.pct + '%"></i></div>' +
+          '<span class="t-caption muted">' + row.n + '</span>';
+        histoWrap.appendChild(div);
+      });
+      body.appendChild(histoWrap);
+      var npsRow = document.createElement("p");
+      npsRow.className = "t-caption muted";
+      npsRow.style.marginTop = "8px";
+      npsRow.textContent = D.verified.nps.promoters + " promoteurs · " + D.verified.nps.neutrals + " neutres · " + D.verified.nps.detractors + " détracteurs";
+      body.appendChild(npsRow);
+      var jump = document.createElement("a");
+      jump.className = "link";
+      jump.href = "#verified-detail-2";
+      jump.style.display = "inline-block";
+      jump.style.marginTop = "8px";
+      jump.textContent = "Lire les avis en détail ↓";
+      jump.addEventListener("click", function (e) {
+        e.preventDefault();
+        var d = document.getElementById("verified-detail-2");
+        d.open = true;
+        d.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      body.appendChild(jump);
+    } else if (i === 3) {
+      D.certification.standards.forEach(function (s) {
+        var div = document.createElement("div");
+        div.className = "card-outlined card-body row-between";
+        div.style.marginTop = "6px";
+        div.innerHTML = '<div><p class="t-sub2">' + s.code + '</p><p class="t-caption muted">' + s.scope + '</p></div>';
+        body.appendChild(div);
+      });
+      var note = document.createElement("p");
+      note.className = "t-caption muted";
+      note.style.marginTop = "6px";
+      note.textContent = "Indice de confiance " + D.certification.confidenceIndex + " · marge d'erreur " + D.certification.marginOfError + ".";
+      body.appendChild(note);
+    } else {
+      var p = document.createElement("p");
+      p.className = "t-body2 muted";
+      p.textContent = c.body;
+      body.appendChild(p);
+    }
+    details.appendChild(body);
+    list.appendChild(details);
+  });
+
+  /* ---- verified review cards (full detail, same content as Concept 1) ---- */
+  var reviewList = document.getElementById("review-list-2");
+  var reviewEls = [];
+  D.reviews.verified.forEach(function (r) {
+    var art = document.createElement("article");
+    art.className = "card";
+    art.setAttribute("data-tags", r.tags.join(","));
+    art.innerHTML =
+      '<div class="review">' +
+        '<div class="row" style="align-items:flex-start">' +
+          '<div class="avatar">' + r.author.charAt(0) + '</div>' +
+          '<div style="flex:1;min-width:0">' +
+            '<div class="row-between"><p class="t-sub2">' + r.author + '</p><span class="t-sub2" style="color:var(--os-green-text)">' + r.rating + '</span></div>' +
+            '<p class="review-meta">' + r.service + ' · ' + r.purchaseNote + ' · ' + r.timeAgo + '</p>' +
+          '</div>' +
+        '</div>' +
+        '<span class="badge badge-verified" style="margin-top:10px">Avis contrôlé</span>' +
+        '<p class="review-body">' + r.body + '</p>' +
+        '<div class="row" style="margin-top:10px;gap:6px;flex-wrap:wrap">' +
+          r.tags.map(function (t) { return '<span class="chip chip-outlined chip-sm">#' + t + '</span>'; }).join("") +
+        '</div>' +
+        '<div class="response"><p class="t-caption strong">Réponse de Martin Immo · ' + r.response.author + '</p><p class="t-body2" style="margin-top:4px">' + r.response.body + '</p></div>' +
+        '<div class="review-footer"><button class="btn btn-text btn-sm">👍 Utile (' + r.helpful + ')</button><button class="btn btn-text btn-sm" style="color:var(--os-text-secondary)">⚑ Signaler</button></div>' +
+      '</div>';
+    reviewList.appendChild(art);
+    reviewEls.push(art);
+  });
+  var chipsEl = document.getElementById("chips-2");
+  D.topics.forEach(function (topic) {
+    var btn = document.createElement("button");
+    btn.className = "chip chip-outlined";
+    btn.setAttribute("data-topic", topic);
+    btn.textContent = topic;
+    chipsEl.appendChild(btn);
+  });
+  window.OSWidgets.initTopicFilter(chipsEl, reviewEls, document.getElementById("empty-2"));
+  window.OSWidgets.initSort(document.getElementById("sort-2"), document.getElementById("sort-live-2"));
+  window.OSWidgets.initAutoScrollDetails(document.getElementById("verified-detail-2"));
+
+  /* ---- unverified + platforms ---- */
+  var platformGrid = document.getElementById("platform-grid-2");
+  D.platforms.forEach(function (p) {
+    var a = document.createElement("a");
+    a.className = "card-outlined card-body";
+    a.href = "#";
+    a.style.textDecoration = "none";
+    a.style.color = "inherit";
+    a.innerHTML =
+      '<div class="row"><span class="platform-logo" style="background:' + p.color + ';color:' + p.textColor + '">' + p.initials + '</span><span class="t-caption strong">' + p.name + '</span></div>' +
+      '<p class="t-sub1 strong" style="margin-top:6px">' + p.rating + '<span class="score-suffix" style="font-size:12px">/5</span></p>' +
+      '<p class="t-caption muted">' + p.count + ' avis · Voir ↗</p>';
+    platformGrid.appendChild(a);
+  });
+  var unverifiedList = document.getElementById("unverified-list-2");
+  D.reviews.unverified.forEach(function (r) {
+    var art = document.createElement("article");
+    art.className = "surface-unverified card-body";
+    art.innerHTML =
+      '<div class="row-between"><p class="t-sub2">' + r.author + '</p><span class="badge badge-unverified">⚠ Non vérifié</span></div>' +
+      '<p class="review-meta">Avis spontané · ' + r.timeAgo + ' · ' + r.rating + '/5</p>' +
+      '<p class="review-body">' + r.body + '</p>';
+    unverifiedList.appendChild(art);
+  });
+
+  var standardsList2 = document.getElementById("standards-list-2");
+  D.certification.standards.forEach(function (s) {
+    var div = document.createElement("div");
+    div.className = "card-outlined card-body row-between";
+    div.style.background = "rgba(255,255,255,.06)";
+    div.style.borderColor = "rgba(255,255,255,.18)";
+    div.innerHTML = '<div><p class="t-sub2" style="color:#fff">' + s.code + '</p><p class="t-caption muted">' + s.scope + '</p></div><span class="link" style="color:#7FE3C4">›</span>';
+    standardsList2.appendChild(div);
+  });
+
+  var faqList2 = document.getElementById("faq-list-2");
+  D.faq.forEach(function (item, i) {
+    var details = document.createElement("details");
+    details.className = "acc";
+    if (i === 0) details.open = true;
+    details.innerHTML = '<summary>' + item.q + '</summary><div class="acc-body"><p class="t-body2 muted">' + item.a + '</p></div>';
+    faqList2.appendChild(details);
+  });
+})();
+</script>
+</body>
+</html>

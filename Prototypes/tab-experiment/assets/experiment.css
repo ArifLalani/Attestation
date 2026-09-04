@@ -1,0 +1,172 @@
+/* ==========================================================================
+   Opinion System — Tab-Experiment · additive component layer
+   --------------------------------------------------------------------------
+   Loaded AFTER ../../design-system/tokens.css and ../../A-7/assets/os-figma.css
+   (reused as-is — trust banner, surfaces, buttons, chips, badges, review
+   card, KPI tile, histogram, disclosure box already exist there and are not
+   redefined here). This file only adds what those two don't yet have:
+   tabs, the sort control, the review "détail complet" panel, the Platforms
+   coming-soon state, and the handful of experiment-only helpers (vertical
+   switch demo, response-subordinate styling for Variant 2).
+   ========================================================================== */
+
+/* ---------- Tabs (block "Contrôlés / Non vérifiés / Plateformes") ---------- */
+.tabbar {
+  display: flex;
+  border-bottom: 1px solid var(--os-border);
+  background: var(--os-tint-2);
+}
+.tab {
+  flex: 1 0 0;
+  min-width: 0;
+  padding: 14px 4px 12px;
+  border: 0;
+  border-right: 1px solid var(--os-border);
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font: 600 13px/1.3 Poppins, sans-serif;
+  color: var(--os-text-secondary);
+  border-radius: var(--r) var(--r) 0 0;
+}
+.tab:last-child { border-right: 0; }
+.tab .tab-count { font: 600 11px/1.3 Poppins, sans-serif; color: var(--os-text-secondary); }
+.tab.is-active {
+  background: #fff;
+  color: var(--os-navy);
+}
+.tab.is-active .tab-count { color: var(--os-green-text); }
+.tab:focus-visible { outline: 2px solid var(--os-blue); outline-offset: -2px; }
+
+.panel { background: #fff; }
+.panel[hidden] { display: none; }
+
+/* ---------- Sort row ---------- */
+.sort-row { display: flex; align-items: center; gap: 12px; }
+.sort-row label { font: 600 14px/1.3 Poppins, sans-serif; color: var(--os-navy); flex: none; }
+.sort-select {
+  flex: 1 0 0; min-width: 0; min-height: 48px;
+  padding: 10px 14px; border-radius: var(--r);
+  border: 1px solid var(--os-border); background: #fff;
+  font: 600 14px/1.3 Poppins, sans-serif; color: var(--os-navy);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'%3E%3Cpath fill='%23041B44' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 36px;
+}
+.sort-select:focus-visible { outline: 2px solid var(--os-blue); }
+
+/* ---------- Filter chip row + empty state ---------- */
+.filter-scroller { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 8px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.filter-scroller::-webkit-scrollbar { display: none; }
+.filter-empty {
+  display: none; align-items: center; gap: 10px;
+  padding: 16px; margin-top: 8px;
+  background: var(--os-tint-1); border: 1px solid var(--os-border); border-radius: var(--r);
+  font: 400 13.5px/1.5 Poppins, sans-serif; color: var(--os-text-secondary);
+}
+.filter-empty.is-visible { display: flex; }
+.filter-empty button { flex: none; }
+
+/* ---------- Truncated review text ("Voir plus" — text only, per Q7) ---------- */
+.review-body.is-clamped {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ---------- Review actions row ---------- */
+.review-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin-top: 12px; }
+.review-actions .spacer { flex: 1 0 0; }
+.link-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  min-height: 40px; padding: 6px 8px; border: 0; background: transparent;
+  font: 500 13.5px/1.3 Poppins, sans-serif; color: var(--os-navy); cursor: pointer;
+  border-radius: var(--r);
+}
+.link-btn:hover { background: rgba(4,27,68,.05); }
+.link-btn:focus-visible { outline: 2px solid var(--os-blue); }
+.link-btn .chev { transition: transform .18s; }
+.link-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+
+/* ---------- Review "détail complet" panel ---------- */
+.review-detail { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--os-border); }
+.review-detail[hidden] { display: none; }
+.detail-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.detail-kpi { background: var(--os-tint-1); border: 1px solid var(--os-border); border-radius: var(--r); padding: 10px; }
+.detail-kpi .dk-label { font: 600 11px/1.3 Poppins, sans-serif; color: var(--os-text-secondary); text-transform: uppercase; letter-spacing: .02em; }
+.detail-kpi .dk-track { height: 5px; border-radius: 3px; background: var(--os-border); overflow: hidden; margin: 6px 0; }
+.detail-kpi .dk-track > i { display: block; height: 100%; background: var(--os-blue-light); border-radius: 3px; }
+.detail-kpi.is-recommend .dk-track > i { background: var(--os-green); }
+.detail-kpi .dk-value { font: 700 20px/1 Poppins, sans-serif; color: var(--os-navy); }
+
+.detail-meta { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+.detail-meta-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; font: 400 13.5px/1.4 Poppins, sans-serif; color: var(--os-navy); }
+.detail-meta-row .dm-label { color: var(--os-text-secondary); }
+.nps-chip { font: 600 12px/1.4 Poppins, sans-serif; padding: 2px 8px; border-radius: var(--r); }
+.nps-chip.promoteur { background: var(--os-green-bg); color: var(--os-green-text); }
+.nps-chip.neutre { background: var(--os-grey-chip); color: var(--os-text-secondary); }
+.nps-chip.detracteur { background: #FFE7DE; color: var(--os-error); }
+
+.subratings { margin-top: 12px; }
+.subratings-title { font: 600 13px/1.3 Poppins, sans-serif; color: var(--os-navy); margin: 0 0 8px; }
+.subrating-row { display: grid; grid-template-columns: 118px 1fr 34px; align-items: center; gap: 8px; margin-top: 6px; }
+.subrating-row .sr-label { font: 400 12.5px/1.3 Poppins, sans-serif; color: var(--os-text-secondary); }
+.subrating-row .sr-track { height: 5px; border-radius: 3px; background: var(--os-border); overflow: hidden; }
+.subrating-row .sr-track > i { display: block; height: 100%; background: var(--os-blue-light); border-radius: 3px; }
+.subrating-row .sr-value { font: 600 12.5px/1.3 Poppins, sans-serif; color: var(--os-navy); text-align: right; }
+.detail-caption { margin-top: 10px; }
+
+/* ---------- Business response ---------- */
+.review-response.is-subordinate {
+  margin-top: 8px; padding: 8px 10px 8px 12px;
+  background: transparent; border-left: 2px solid var(--os-border);
+  border-radius: 0;
+}
+.review-response.is-subordinate .rr-author { font: 600 12px/1.4 Poppins, sans-serif; color: var(--os-text-secondary); }
+.review-response.is-subordinate .rr-body { font: 400 13px/1.45 Poppins, sans-serif; color: var(--os-text-secondary); margin-top: 2px; }
+.review-response .rr-author { font: 600 12.5px/1.4 Poppins, sans-serif; color: var(--os-navy); }
+.review-response .rr-author::before { content: "↳ "; }
+.review-response .rr-body { font: 400 13.5px/1.5 Poppins, sans-serif; color: var(--os-text); margin: 2px 0 0; }
+
+/* ---------- Unverified explainer ---------- */
+.unverified-explainer {
+  margin: 0 16px 12px; padding: 12px; border-radius: var(--r);
+  background: var(--os-grey-bg); border: 1px dashed var(--os-grey-border);
+  font: 400 13px/1.5 Poppins, sans-serif; color: var(--os-text);
+}
+
+/* ---------- Platforms — reserved / coming soon ---------- */
+.coming-soon { margin: 16px; padding: 28px 16px; text-align: center; background: var(--os-tint-1); border: 1px solid var(--os-border); border-radius: var(--r-card); }
+.coming-soon .cs-icon { width: 40px; height: 40px; margin: 0 auto 12px; opacity: .55; }
+.coming-soon .cs-title { font: 600 15px/1.3 Poppins, sans-serif; color: var(--os-navy); }
+.coming-soon .cs-body { font: 400 13.5px/1.5 Poppins, sans-serif; color: var(--os-text-secondary); margin-top: 6px; max-width: 34ch; margin-left: auto; margin-right: auto; }
+.coming-soon .cs-count { display: inline-block; margin-top: 14px; font: 600 12px/1.4 Poppins, sans-serif; color: var(--os-text-secondary); padding: 5px 12px; border: 1px solid var(--os-border); border-radius: var(--r-pill); background: #fff; }
+
+/* ---------- Trust Verdict stat grid ---------- */
+.verdict-stats { margin-top: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.verdict-stat { padding: 10px; border-radius: var(--r); background: var(--os-tint-1); }
+.verdict-stat .vs-label { font: 600 10.5px/1.3 Poppins, sans-serif; color: var(--os-text-secondary); text-transform: uppercase; letter-spacing: .03em; }
+.verdict-stat .vs-value { font: 700 20px/1.2 Poppins, sans-serif; color: var(--os-navy); margin-top: 2px; }
+.verdict-stat.is-hero { background: var(--os-green-bg); }
+.verdict-stat.is-hero .vs-value { color: var(--os-green-text); }
+.verdict-stat.is-secondary .vs-value { font-size: 15px; color: var(--os-text-secondary); }
+.verdict-stat.is-secondary .vs-label { color: var(--os-text-secondary); }
+
+/* ---------- Variant-5 vertical-taxonomy demo switch ---------- */
+.vertical-switch { margin: 0 16px 4px; padding: 10px 12px; background: var(--os-tint-1); border: 1px solid var(--os-border); border-radius: var(--r); display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.vertical-switch .vsw-label { font: 400 12.5px/1.4 Poppins, sans-serif; color: var(--os-text-secondary); }
+.vertical-switch .vsw-active { font: 600 12.5px/1.4 Poppins, sans-serif; color: var(--os-navy); }
+
+/* ---------- Verified / Unverified signal badges (text + icon, never icon alone) ---------- */
+.signal-badge { display: inline-flex; align-items: center; gap: 5px; }
+.signal-badge svg { width: 13px; height: 13px; flex: none; }
+
+/* ---------- Misc ---------- */
+.legal-stack { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.two-up { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }

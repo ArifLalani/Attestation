@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>05 — Divulgation progressive · Opinion System</title>
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../A-7/assets/os-figma.css">
+<link rel="stylesheet" href="../figma-profile/assets/profile.css">
+<link rel="stylesheet" href="assets/jam.css">
+<style>
+  /* Nothing deleted, everything tucked. Only the verdict + a mini identity
+     stay permanently open — every other block is a native <details>
+     reachable instantly from the sticky jump-nav. */
+  .mini-strip{display:flex;align-items:center;gap:10px;padding:14px 16px;background:#fff}
+  .mini-strip .logo-tile{width:44px;height:44px;border-radius:10px;font-size:15px}
+  .mini-strip .ms-name{font:600 16px/1.2 Poppins,sans-serif;color:var(--os-navy)}
+  .mini-strip .ms-sub{font:400 12.5px/1.3 Poppins,sans-serif;color:var(--os-text-secondary);margin-top:2px}
+  .mini-strip details{margin-left:auto}
+  .mini-strip summary{list-style:none;cursor:pointer;font:600 12.5px/1.2 Poppins,sans-serif;color:var(--os-blue);padding:8px 10px}
+  .mini-strip summary::-webkit-details-marker{display:none}
+  .fiche-complete{padding:0 16px 16px;background:#fff}
+  .verdict-open{padding:0 16px 16px;background:#fff}
+  details.acc .acc-count{font:600 12px/1.3 Poppins,sans-serif;color:var(--os-text-secondary);margin-left:auto;margin-right:10px}
+  details.acc > summary{justify-content:flex-start}
+  details.acc[open]{background:var(--os-tint-1)}
+</style>
+</head>
+<body>
+<div class="harness"><span>05 · DIVULGATION PROGRESSIVE — rien n'est supprimé ; tout est replié sauf le verdict, navigation rapide en haut</span><a href="index.html">← Jam</a></div>
+
+<div id="app"></div>
+
+<script src="../figma-profile/assets/fixture.js"></script>
+<script src="../figma-profile/assets/sections.js"></script>
+<script src="../figma-profile/assets/interactions.js"></script>
+<script>
+(function () {
+  var S = window.OSSections, f = window.OS_FIXTURE;
+  var v = f.ratings.verified, u = f.ratings.unverified;
+
+  var miniStrip =
+    '<div class="mini-strip">' +
+      '<div class="logo-tile" style="background:rgba(44,149,255,.08)">' + f.business.logoInitials + "</div>" +
+      '<div><div class="ms-name">' + S.esc(f.business.name) + '</div><div class="ms-sub">' + S.esc(f.business.category) + " · " + S.esc(f.business.city) + "</div></div>" +
+      '<details><summary>Voir la fiche complète</summary></details>' +
+    "</div>";
+
+  var ficheComplete =
+    '<details class="acc" id="acc-fiche"><summary>Coordonnées &amp; identité complète</summary><div class="acc-body">' +
+    S.renderBusinessIdentity(f) + '<div style="margin-top:16px">' + S.renderDashboard(f) + "</div></div></details>";
+
+  var jumpnav =
+    '<div class="jumpnav" id="jumpnav">' +
+      '<button data-jump-to="acc-avis">Avis (' + v.count + ")</button>" +
+      '<button data-jump-to="acc-fiche">Fiche complète</button>' +
+      '<button data-jump-to="acc-quality">Démarche qualité</button>' +
+      '<button data-jump-to="acc-agences">Agences</button>' +
+      '<button data-jump-to="acc-equipe">Équipe</button>' +
+      '<button data-jump-to="acc-faq">FAQ</button>' +
+      '<button data-jump-to="acc-infos">Infos légales</button>' +
+    "</div>";
+
+  var html =
+    S.renderBanner(f) +
+    miniStrip +
+    '<div class="verdict-open">' + S.renderVerdict(f) + "</div>" +
+    jumpnav +
+    ficheComplete +
+    '<details class="acc" id="acc-avis" open><summary>Avis clients<span class="acc-count">' + v.count + " contrôlés · " + u.count.toLocaleString("fr-FR") + " non vérifiés</span></summary><div class=\"acc-body\" style=\"padding:0\">" + S.renderReviewTabsBlock(f, { showHighlights: true }) + "</div></details>" +
+    '<details class="acc" id="acc-quality"><summary>Démarche qualité (ISO 20488 / 20252 / 9001)</summary><div class="acc-body" style="padding:0">' + S.renderQualityApproach(f) + "</div></details>" +
+    '<details class="acc" id="acc-agences"><summary>Nos agences<span class="acc-count">' + f.locations.groupCount + " agences</span></summary><div class=\"acc-body\">" + S.renderLocations(f, { allCollapsed: true }) + "</div></details>" +
+    '<details class="acc" id="acc-equipe"><summary>Notre équipe</summary><div class="acc-body" style="padding:8px 0">' + S.renderTeam(f) + "</div></details>" +
+    '<details class="acc" id="acc-certificat"><summary>Certificat</summary><div class="acc-body">' + S.renderCertificate(f) + "</div></details>" +
+    '<details class="acc" id="acc-faq"><summary>Questions fréquentes</summary><div class="acc-body">' + S.renderFAQ(f) + "</div></details>" +
+    '<details class="acc" id="acc-infos"><summary>Informations légales &amp; inscription</summary><div class="acc-body stack-16">' + S.renderListMyBusiness(f) + S.renderLegalBlock(f).replace('class="legal-stack"', 'class="legal-stack" style="padding:0"') + "</div></details>" +
+    S.renderFooter(f);
+
+  var appEl = document.getElementById("app");
+  appEl.innerHTML = '<div class="viewport">' + html + "</div>";
+  OSInteractions.wireAll(appEl, f, { responsePlacement: "detail" });
+
+  appEl.querySelectorAll("[data-jump-to]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var target = document.getElementById(btn.getAttribute("data-jump-to"));
+      if (!target) return;
+      target.open = true;
+      requestAnimationFrame(function () {
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+        var jn = document.getElementById("jumpnav");
+        window.scrollBy(0, -jn.offsetHeight - 4);
+      });
+      document.querySelectorAll("#jumpnav button").forEach(function (b) { b.classList.remove("is-current"); });
+      btn.classList.add("is-current");
+    });
+  });
+})();
+</script>
+</body>
+</html>

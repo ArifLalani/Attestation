@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A-7 — Explorations UX · Opinion System</title>
+<link rel="stylesheet" href="../assets/os-mui.css">
+<style>
+  body { background:#EEF2F7; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 32px 20px 64px; }
+  .story-card {
+    background:#fff; border:1px solid var(--os-border); border-left:4px solid var(--os-blue);
+    border-radius:var(--r-card); box-shadow:var(--e1); padding:16px 18px; margin-top:20px;
+  }
+  .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap:20px; margin-top:28px; }
+  .ccard { background:#fff; border-radius:var(--r-card); box-shadow:var(--e2); overflow:hidden; display:flex; flex-direction:column; text-decoration:none; color:inherit; }
+  .ccard .thumb { height:110px; display:grid; place-items:center; color:#fff; font:600 15px/1.3 Poppins,Roboto,sans-serif; text-align:center; padding:12px; }
+  .ccard .b { padding:16px; flex:1; display:flex; flex-direction:column; gap:8px; }
+  .tag { display:inline-block; padding:2px 8px; border-radius:var(--r-pill); font:500 11px/1.7 Roboto,sans-serif; background:var(--os-tint-2); color:var(--os-navy); width:fit-content; }
+  .hypothesis { font:400 13px/1.5 Roboto,sans-serif; color:var(--os-text); font-style:italic; border-left:2px solid var(--os-border); padding-left:8px; }
+  table { width:100%; border-collapse:collapse; margin-top:12px; background:#fff; border-radius:var(--r-card); overflow:hidden; box-shadow:var(--e1); }
+  th, td { text-align:left; padding:10px 12px; border-bottom:1px solid var(--os-border); font:400 13px/1.5 Roboto,sans-serif; vertical-align:top; }
+  th { background:var(--os-tint-1); font-weight:500; }
+  tr:last-child td { border-bottom:0; }
+  .note { background:#FFF4E5; border-left:4px solid #ED6C02; padding:14px 16px; border-radius:var(--r); margin-top:24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="t-overline muted">Opinion System · A-7 · exploration ciblée</p>
+  <h1 class="t-h4 t-brand">Sept architectures pour A-7</h1>
+  <p class="t-body1 muted" style="max-width:70ch;margin-top:8px">
+    Sept prototypes interactifs, en deux lots, testant des architectures d'information
+    fondamentalement différentes pour la même exigence — jamais des habillages visuels d'un
+    même gabarit. Même entreprise fictive, mêmes données (<code>shared-data.js</code>), même
+    largeur mobile réaliste. Lot 1 (concepts 1, 2, 5) est sur les anciens tokens
+    (<code>../assets/os-mui.css</code>) ; lot 2 (concepts 6–9, ci-dessous) est le premier à
+    utiliser <a class="link" href="../../design-system/tokens.css">design-system/tokens.css</a>,
+    la fondation Figma-alignée. Dans les deux lots, la seule variable est l'architecture et le
+    modèle d'interaction.
+  </p>
+
+  <div class="story-card">
+    <p class="t-overline" style="color:var(--os-blue)">User story testée</p>
+    <p class="t-sub1 strong" style="margin-top:4px">A-7</p>
+    <p class="t-body1" style="margin-top:4px">
+      « En tant que visiteur mobile peu patient, je veux voir le signal de confiance clé dès
+      le premier ou deuxième écran, pour décider rapidement sans faire défiler toute la page. »
+    </p>
+    <p class="t-caption muted" style="margin-top:8px">
+      <strong>[RESEARCH]</strong> — recommandations.md §3.1 « divulgation progressive » ;
+      requirements.md §7.4. Ce n'est pas une exigence [SPEC] absolue : chaque concept peut
+      arbitrer contre elle si un autre principe [SPEC] l'exige, et chaque arbitrage est noté
+      dans le prototype concerné. Détail complet et histoires liées :
+      <a class="link" href="../../product/user-stories.md">product/user-stories.md</a>.
+    </p>
+  </div>
+
+  <div class="grid">
+    <a class="ccard" href="concept-1-trust-hub.html">
+      <div class="thumb" style="background:linear-gradient(140deg,#041B44,#004F9F)">Concept 1<br>Trust Hub</div>
+      <div class="b">
+        <span class="tag">Navigation par onglets-destinations</span>
+        <p class="t-sub1 strong">Hub-and-spoke</p>
+        <p class="hypothesis">Hypothèse : si toute la décision de confiance tient dans un seul écran non-scrollable, et que le reste devient une navigation à la demande, la décision sera plus rapide qu'un long scroll — au prix d'un ton moins « document institutionnel ».</p>
+        <p class="t-caption muted" style="margin-top:auto">4 destinations réelles (avis contrôlés · avis non vérifiés · comment ça marche · FAQ), routeur par ancre fonctionnel, retour navigateur opérant.</p>
+      </div>
+    </a>
+
+    <a class="ccard" href="concept-2-scorecard.html">
+      <div class="thumb" style="background:linear-gradient(140deg,#2DB38A,#0A2B63)">Concept 2<br>Scorecard</div>
+      <div class="b">
+        <span class="tag">Checklist de critères, pas un chiffre géant</span>
+        <p class="t-sub1 strong">Scorecard</p>
+        <p class="hypothesis">Hypothèse : un mécanisme de confiance scannable en 5 lignes convainc plus vite qu'une note isolée — au prix d'enfreindre le principe « un seul chiffre fait autorité » du design-system.</p>
+        <p class="t-caption muted" style="margin-top:auto">5 critères, chacun un <code>&lt;details&gt;</code> indépendant qui révèle sa preuve (mécanisme, neutralité, note détaillée, certification, absence de contrepartie).</p>
+      </div>
+    </a>
+
+    <a class="ccard" href="concept-5-qa-lead.html">
+      <div class="thumb" style="background:linear-gradient(140deg,#0A2B63,#2DB38A)">Concept 5<br>Q&amp;A Lead</div>
+      <div class="b">
+        <span class="tag">La question du visiteur, littéralement</span>
+        <p class="t-sub1 strong">Q&amp;A Lead</p>
+        <p class="hypothesis">Hypothèse : répondre à la question exacte que le visiteur se pose (« puis-je faire confiance ? ») avant de la reformuler en jargon institutionnel réduit la charge de lecture perçue, et sert aussi bien les moteurs de réponse IA.</p>
+        <p class="t-caption muted" style="margin-top:auto">Un seul déclencheur « Voir les preuves ↓ » qui dévoile 5 couches de preuves dans un ordre fixe, une à la fois.</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="note" style="background:#E9FFF2;border-left-color:var(--os-green)">
+    <p class="t-sub2">✓ Lot 2 — première exploration A-7 construite sur la fondation Figma</p>
+    <p class="t-body2" style="margin-top:6px">
+      Les quatre concepts ci-dessous (6–9) sont les premiers prototypes A-7 à ne plus utiliser
+      <code>../assets/os-mui.css</code> (l'ancien design system extrait du site en direct).
+      Ils chargent <a class="link" href="../../design-system/tokens.css">design-system/tokens.css</a>
+      directement, plus un nouveau calque de composants
+      (<a class="link" href="assets/os-figma.css">assets/os-figma.css</a>) construit contre le
+      Figma Design System connecté d'Opinion System — pas contre les concepts 1, 2 et 5
+      ci-dessus, qui restent inchangés et sur les anciens tokens. Deux écarts concrets avec
+      l'ancien fichier, tous deux tracés dans
+      <a class="link" href="../../design-system/figma-source.md">figma-source.md</a> : les puces
+      (chips/badges) utilisent le rayon confirmé Figma de 8&nbsp;px (rectangle arrondi), pas le
+      pill 999&nbsp;px hérité ; les tuiles de statistiques suivent le motif réel du composant
+      « KPI Card »/« Dashboard » (416:9753, 416:13085) plutôt que la grille héritée.
+    </p>
+  </div>
+
+  <div class="story-card" style="border-left-color:var(--os-green)">
+    <p class="t-overline" style="color:var(--os-green-text)">Quatre nouvelles hypothèses testées</p>
+    <p class="t-body1" style="margin-top:6px">
+      Même fixture Martin Immo, mêmes règles [SPEC] (note héros = avis contrôlés uniquement ·
+      badge « Non vérifié » systématique · vert jamais sur un avis non vérifié · tri
+      chronologique annoncé · blocs Avis contrôlés/Non vérifiés repliés par défaut, conformément
+      à la §5 « Conditional display ») — la variable est l'architecture de l'information, pas
+      l'habillage visuel. Chaque prototype documente, en commentaire HTML et ci-dessous,
+      l'hypothèse qu'il teste et toute hypothèse prise sur une question ouverte non résolue
+      (<a class="link" href="../../product/open-questions.md">open-questions.md</a>) — ces
+      arbitrages restent locaux au prototype, ils ne résolvent rien globalement.
+    </p>
+  </div>
+
+  <div class="grid">
+    <a class="ccard" href="concept-6-trust-card.html">
+      <div class="thumb" style="background:linear-gradient(140deg,#041B44,#2D7B6E)">Concept 6<br>Trust Card statique</div>
+      <div class="b">
+        <span class="tag">Zéro interaction requise</span>
+        <p class="t-sub1 strong">Static Trust Card</p>
+        <p class="hypothesis">Hypothèse : si toute la réponse A-7 (badge, note contrôlée, mécanisme, verdict, date) tient dans un seul écran non-scrollable sans aucune interaction requise, la densité l'emporte sur la divulgation progressive.</p>
+        <p class="t-caption muted" style="margin-top:auto">Hypothèse locale sur la Q3 (ratio note contrôlée / toutes sources) : lecture la plus tranchée en faveur du contrôlé — « toutes sources » réduit à une seule ligne discrète.</p>
+      </div>
+    </a>
+
+    <a class="ccard" href="concept-7-benchmark.html">
+      <div class="thumb" style="background:linear-gradient(140deg,#004F9F,#00D492)">Concept 7<br>Cadrage comparatif</div>
+      <div class="b">
+        <span class="tag">Jauge de positionnement, pas un chiffre isolé</span>
+        <p class="t-sub1 strong">Comparative / Benchmark</p>
+        <p class="hypothesis">Hypothèse : montrer la note contrôlée par rapport à un seuil et une moyenne de pairs aide un visiteur en phase de comparaison (2–3 prestataires) à décider plus vite qu'un chiffre absolu seul.</p>
+        <p class="t-caption muted" style="margin-top:auto">⚠ Repère de benchmark explicitement fictif/illustratif, divulgué en page (méthodologie dépliable) — aucune moyenne sectorielle réelle n'existe dans les sources. Hypothèse locale sur la Q3 opposée à celle du concept 6.</p>
+      </div>
+    </a>
+
+    <a class="ccard" href="concept-8-exemplar-lead.html">
+      <div class="thumb" style="background:linear-gradient(140deg,#2D7B6E,#041B44)">Concept 8<br>Preuve d'abord</div>
+      <div class="b">
+        <span class="tag">Un avis réel avant tout chiffre</span>
+        <p class="t-sub1 strong">Evidence-first / Exemplar-led</p>
+        <p class="hypothesis">Hypothèse : un avis contrôlé concret, affiché avant toute statistique agrégée, se lit plus vite qu'un chiffre abstrait — inverse délibérément l'ordre de tous les autres concepts A-7.</p>
+        <p class="t-caption muted" style="margin-top:auto">Ne teste pas si la note doit apparaître tôt (elle le fait, dans le même premier écran) mais si elle doit être le tout premier élément — hypothèse implicite dans les concepts 1, 2, 5, 6 et 7.</p>
+      </div>
+    </a>
+
+    <a class="ccard" href="concept-9-ambient-strip.html">
+      <div class="thumb" style="background:linear-gradient(140deg,#00D492,#004F9F)">Concept 9<br>Bandeau persistant</div>
+      <div class="b">
+        <span class="tag">Nécessite un vrai défilement pour s'évaluer</span>
+        <p class="t-sub1 strong">Persistent Ambient Trust Strip</p>
+        <p class="hypothesis">Hypothèse : au lieu de faire tenir toute la décision dans un écran, garder un signal de confiance compact épinglé pendant tout le défilement rend la réponse constamment visible, plutôt que disponible une seule fois.</p>
+        <p class="t-caption muted" style="margin-top:auto">⚠ Affiche en continu le volume d'avis non vérifiés (jamais en vert, jamais une note) — hypothèse locale sur la Q4 ; une lecture plus stricte omettrait ce chiffre du bandeau.</p>
+      </div>
+    </a>
+  </div>
+
+  <h2 class="t-h6 t-brand" style="margin-top:36px">Contrôle expérimental — lot 1 (concepts 1, 2, 5)</h2>
+  <table>
+    <tr><th style="width:34%">Constante entre les 3 concepts</th><th>Détail</th></tr>
+    <tr><td>Données</td><td>Fixture unique « Martin Immo » chargée depuis <code>shared-data.js</code> — mêmes chiffres, même avis, mêmes plateformes dans les trois fichiers.</td></tr>
+    <tr><td>Tokens de design</td><td><code>../assets/os-mui.css</code>, identique aux variantes 1–10 déjà publiées. Aucune couleur, police ou ombre redéfinie localement.</td></tr>
+    <tr><td>Viewport</td><td>390&nbsp;px, cadre <code>.phone</code>, optimisation mobile d'abord.</td></tr>
+    <tr><td>Widgets non expérimentaux</td><td>Tri, filtre par sujet, auto-scroll à l'ouverture : mêmes fonctions (<code>shared-widgets.js</code>) dans les trois — ce n'est pas la variable testée.</td></tr>
+    <tr><td>Conformité [SPEC]</td><td>Note héros = avis contrôlés uniquement · badge « Non vérifié » systématique · vert jamais sur un avis non vérifié · tri chronologique par défaut annoncé · mentions L121-4 présentes · signalement + réponse sur chaque avis contrôlé — identique dans les trois.</td></tr>
+    <tr><td>La seule variable</td><td>L'architecture de l'information et le modèle d'interaction pour amener le signal de confiance à l'écran.</td></tr>
+  </table>
+
+  <h2 class="t-h6 t-brand" style="margin-top:28px">Contrôle expérimental — lot 2 (concepts 6, 7, 8, 9)</h2>
+  <table>
+    <tr><th style="width:34%">Constante entre les 4 concepts</th><th>Détail</th></tr>
+    <tr><td>Données</td><td>La MÊME fixture « Martin Immo » que le lot 1, chargée depuis le même <code>shared-data.js</code> (non modifié). Le concept 7 ajoute localement, dans son propre script, un petit repère de benchmark illustratif — jamais écrit dans le fichier partagé.</td></tr>
+    <tr><td>Tokens de design</td><td><code>../../design-system/tokens.css</code> (canonique, Figma-aligné) + <code>assets/os-figma.css</code> (nouveau calque de composants, construit contre le Figma Design System connecté — voir la note verte ci-dessus). Aucune valeur copiée depuis <code>os-mui.css</code> ni depuis les concepts 1/2/5.</td></tr>
+    <tr><td>Viewport</td><td>Largeur mobile réaliste (max 430&nbsp;px, <code>.viewport</code>), sans le cadre-téléphone à bordures arrondies des anciens prototypes.</td></tr>
+    <tr><td>Widgets non expérimentaux</td><td>Tri, filtre par sujet, auto-scroll à l'ouverture : mêmes fonctions (<code>shared-widgets.js</code>, inchangé) dans les quatre.</td></tr>
+    <tr><td>Conformité [SPEC]</td><td>Identique au lot 1, plus : blocs Avis contrôlés (4.5/4.6) et Non vérifiés (4.9) toujours repliés par défaut (§5 « Conditional display ») dans les quatre concepts — même le concept 6, dont l'hypothèse « zéro interaction » porte explicitement sur le verdict du premier écran, pas sur ces blocs légalement conditionnels.</td></tr>
+    <tr><td>La seule variable</td><td>L'architecture de l'information, la hiérarchie et le modèle d'interaction — jamais l'apparence.</td></tr>
+  </table>
+
+  <div class="note">
+    <p class="t-sub2">⚠ Compromis assumés dans les sept prototypes</p>
+    <p class="t-body2" style="margin-top:6px">
+      Portée volontairement réduite au périmètre pertinent pour A-7 : le bloc Équipe (4.7), le
+      multi-agences complet (4.11), le CTA certificat PDF détaillé (4.12) et le bandeau B2B
+      « Inscrire mon entreprise » (4.14) sont omis — ils ne relèvent pas de la décision de
+      confiance testée ici. Le contenu individuel des avis (auteur, texte) ne figure pas dans
+      <code>fixtures/martin-immo.json</code> (agrégats seulement) ; il est repris à l'identique
+      de <code>Prototypes/variant-3-dual-ledger.html</code> plutôt que réinventé, y compris dans
+      le lot 2. Les CTA (Contacter, Déposer un avis, Voir plus) sont volontairement inertes —
+      les flux de formulaire sont hors périmètre (requirements.md §8).
+    </p>
+  </div>
+
+  <p class="t-caption muted" style="margin-top:24px">
+    Variantes 1–10 inchangées : <a class="link" href="../index.html">Prototypes/index.html</a>.
+    Contexte produit dans <a class="link" href="../../product/user-stories.md">user-stories.md</a>,
+    <a class="link" href="../../product/requirements.md">requirements.md</a>,
+    <a class="link" href="../../product/open-questions.md">open-questions.md</a> et
+    <a class="link" href="../../design-system/principles.md">design-system/principles.md</a>.
+  </p>
+</div>
+</body>
+</html>

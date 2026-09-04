@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tab Experiment — Comparatif · Opinion System</title>
+<link rel="stylesheet" href="../assets/os-mui.css">
+<style>
+  body { background:#EEF2F7; font-family: Poppins, Roboto, sans-serif; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 32px 20px 64px; }
+  .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap:20px; margin-top:24px; }
+  .ccard { background:#fff; border-radius:var(--r-card); box-shadow:var(--e2); overflow:hidden; display:flex; flex-direction:column; text-decoration:none; color:inherit; }
+  .ccard .thumb { height:96px; display:grid; place-items:center; color:#fff; font:600 15px/1.3 Poppins,Roboto,sans-serif; text-align:center; padding:12px; }
+  .ccard .b { padding:16px; flex:1; display:flex; flex-direction:column; gap:6px; }
+  .tag { display:inline-block; padding:2px 8px; border-radius:var(--r-pill); font:500 11px/1.7 Roboto,sans-serif; background:var(--os-tint-2); color:var(--os-navy); width:fit-content; }
+  table { width:100%; border-collapse:collapse; margin-top:12px; background:#fff; border-radius:var(--r-card); overflow:hidden; box-shadow:var(--e1); }
+  th, td { text-align:left; padding:10px 12px; border-bottom:1px solid var(--os-border); font:400 13px/1.5 Roboto,sans-serif; vertical-align:top; }
+  th { background:var(--os-tint-1); font-weight:500; }
+  tr:last-child td { border-bottom:0; }
+  .note { background:#E9FFF2; border-left:4px solid #2DB38A; padding:14px 16px; border-radius:var(--r); margin-top:24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="t-overline muted">Opinion System · Comparatif ciblé</p>
+  <h1 class="t-h4 t-brand">Tab-experiment — 5 variantes contrôlées</h1>
+  <p class="t-body1 muted" style="max-width:74ch;margin-top:8px">
+    Fait suite à l'audit du wireframe Figma <em>Attestation 1</em> (node 140:1426) et aux
+    décisions P0/P1/P2 qui en découlent. Les cinq pages ci-dessous partagent exactement les
+    mêmes données (<code>assets/fixture.js</code>), le même système de design
+    (<a class="link" href="../../design-system/tokens.css">tokens.css</a> +
+    <a class="link" href="../A-7/assets/os-figma.css">A-7/assets/os-figma.css</a>, réutilisés
+    tels quels) et le même moteur de rendu (<code>assets/render.js</code>). Seule la variable
+    UX propre à chaque variante change — voir le tableau plus bas.
+  </p>
+
+  <div class="grid">
+    <a class="ccard" href="control.html">
+      <div class="thumb" style="background:linear-gradient(140deg,#041B44,#004F9F)">Variante 1<br>Contrôle</div>
+      <div class="b">
+        <span class="tag">Référence</span>
+        <p class="t-sub1 strong">Contrôle</p>
+        <p class="t-body2 muted">Complète le wireframe Figma aussi fidèlement que possible : gaps de conformité fermés (bordure + grille Trust Verdict, badge « Non vérifié », panneau Non contrôlés construit, séparation stricte des catégories), sans redesign.</p>
+      </div>
+    </a>
+
+    <a class="ccard" href="variant-2-response-visible.html">
+      <div class="thumb" style="background:linear-gradient(140deg,#004F9F,#2C95FF)">Variante 2<br>Réponse visible</div>
+      <div class="b">
+        <span class="tag">Q9-A</span>
+        <p class="t-sub1 strong">Réponse toujours visible</p>
+        <p class="t-body2 muted">La réponse de l'entreprise apparaît directement dans la carte repliée, visuellement subordonnée à l'avis client.</p>
+      </div>
+    </a>
+
+    <a class="ccard" href="variant-3-response-detail.html">
+      <div class="thumb" style="background:linear-gradient(140deg,#2C95FF,#0A2B63)">Variante 3<br>Réponse en détail</div>
+      <div class="b">
+        <span class="tag">Q9-B</span>
+        <p class="t-sub1 strong">Réponse dans le détail</p>
+        <p class="t-body2 muted">La réponse n'apparaît que dans « Voir le détail complet ». Fonctionnellement identique au Contrôle sur cette variable — isolée ici pour la comparaison directe avec la Variante 2.</p>
+      </div>
+    </a>
+
+    <a class="ccard" href="variant-4-fixed-filters.html">
+      <div class="thumb" style="background:linear-gradient(140deg,#2D7B6E,#43B6A3)">Variante 4<br>Filtres fixes</div>
+      <div class="b">
+        <span class="tag">Q10-A</span>
+        <p class="t-sub1 strong">Taxonomie fixe (thèmes)</p>
+        <p class="t-body2 muted">Un seul jeu de 6 puces (Tous/Accueil/Conseil/Réactivité/Tarifs/Habitation) — retire les puces sectorielles incohérentes (Auto/Santé/Emprunteur) trouvées dans le wireframe audité.</p>
+      </div>
+    </a>
+
+    <a class="ccard" href="variant-5-configurable-filters.html">
+      <div class="thumb" style="background:linear-gradient(140deg,#041B44,#00D492)">Variante 5<br>Filtres configurables</div>
+      <div class="b">
+        <span class="tag">Q10-B</span>
+        <p class="t-sub1 strong">Taxonomie par secteur</p>
+        <p class="t-body2 muted">Les puces proviennent d'une config par secteur (démo bascule immobilier ↔ assurance) — les avis affichés restent ceux de Martin Immo, seule la liste de filtres change.</p>
+      </div>
+    </a>
+  </div>
+
+  <h2 class="t-h6 t-brand" style="margin-top:32px">Ce que testent — et ne testent pas — ces cinq variantes</h2>
+  <table>
+    <tr><th style="width:22%">Variante</th><th style="width:30%">Variable testée</th><th>Question P2</th><th>Exigence validée</th></tr>
+    <tr><td>1 — Contrôle</td><td>N/A — référence fixe</td><td>—</td><td>AC1, AC2, AC4 · §4.3 Trust Verdict · §6 séparation stricte · GDPR (pas de collaborateur nommé)</td></tr>
+    <tr><td>2 — Réponse visible</td><td>Emplacement de la réponse entreprise : toujours visible</td><td>Q9</td><td>§4.2 « slot de réponse » · §6 « réponse jamais confondue avec l'avis »</td></tr>
+    <tr><td>3 — Réponse détail</td><td>Emplacement de la réponse entreprise : détail seulement</td><td>Q9</td><td>idem, hypothèse opposée</td></tr>
+    <tr><td>4 — Filtres fixes</td><td>Taxonomie de filtres : jeu unique, non configurable</td><td>Q10</td><td>research/competitive-landscape.md (puces de sujet) · hygiène de contenu (audit)</td></tr>
+    <tr><td>5 — Filtres configurables</td><td>Taxonomie de filtres : source de données par secteur</td><td>Q10</td><td>business-context.md question ouverte n°6 (généralisation verticale)</td></tr>
+  </table>
+
+  <h2 class="t-h6 t-brand" style="margin-top:28px">Constantes entre les cinq variantes</h2>
+  <table>
+    <tr><th style="width:30%">Constante</th><th>Détail</th></tr>
+    <tr><td>Données</td><td>Fixture unique <code>assets/fixture.js</code> — 4,9/5 sur 312 avis contrôlés, 4,4/5 sur 1&nbsp;529 avis non contrôlés, histogramme dérivé (240→290/52→15/... — <strong>données de démonstration</strong>, voir le commentaire de provenance dans le fichier), même contenu d'avis, même bloc légal.</td></tr>
+    <tr><td>Système de design</td><td><a class="link" href="../../design-system/tokens.css">design-system/tokens.css</a> + <a class="link" href="../A-7/assets/os-figma.css">A-7/assets/os-figma.css</a>, réutilisés sans modification. Seul <code>assets/experiment.css</code> ajoute les composants propres à cette expérience (onglets, tri, panneau « détail complet », état « bientôt disponible »).</td></tr>
+    <tr><td>Onglets</td><td>Contrôlés (par défaut) / Non vérifiés / Plateformes — fonctionnels dans les cinq. Plateformes = état réservé/« bientôt disponible », aucun avis de plateforme fabriqué.</td></tr>
+    <tr><td>Signal vérifié / non vérifié</td><td>Badge texte « Avis contrôlé » / « Non vérifié » sur chaque avis, jamais l'icône seule ; vert jamais sur une carte non vérifiée.</td></tr>
+    <tr><td>« Voir plus » vs « Voir le détail complet »</td><td>Deux contrôles indépendants par avis contrôlé : le premier ne fait que dérouler le texte tronqué, le second révèle KPI/métadonnées/sous-notes. Chaque avis se déplie indépendamment.</td></tr>
+    <tr><td>Tri</td><td>Par défaut « Les plus récents » ; mention légale du mode de tri affichée sur la page, pas seulement implémentée.</td></tr>
+    <tr><td>Trust Verdict</td><td>Bordure + grille de 4 statistiques identiques dans les cinq — n'est PAS une variable de cette expérience.</td></tr>
+    <tr><td>Mentions légales</td><td>Bloc « Informations légales » (contrepartie, conservation, procédure de vérification) affiché en dehors des onglets, donc jamais masqué par un changement d'onglet.</td></tr>
+  </table>
+
+  <div class="note">
+    <p class="t-sub2">Portée volontairement réduite</p>
+    <p class="t-body2" style="margin-top:6px">
+      Cette expérience couvre le bandeau de confiance, l'en-tête, le Trust Verdict, les trois
+      onglets et la liste d'avis — les blocs Équipe (4.7), Agences (4.11), Certificat (4.12) et
+      FAQ (4.13) sont identiques dans les cinq variantes et n'apportent aucun signal sur les
+      questions testées ici, donc omis pour rester sur le périmètre de l'expérience. Les
+      variantes 1–10 de <a class="link" href="../index.html">Prototypes/index.html</a> et les
+      concepts A-7 restent inchangés.
+    </p>
+  </div>
+
+  <p class="t-caption muted" style="margin-top:24px">
+    Contexte : <a class="link" href="../../product/decisions.md">product/decisions.md</a> ·
+    <a class="link" href="../../product/open-questions.md">product/open-questions.md</a> ·
+    <a class="link" href="../../fixtures/martin-immo.json">fixtures/martin-immo.json</a>.
+  </p>
+</div>
+</body>
+</html>

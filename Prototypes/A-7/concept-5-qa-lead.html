@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concept 5 — Q&amp;A Lead · A-7 · Opinion System</title>
+<link rel="stylesheet" href="../assets/os-mui.css">
+<style>
+  /* ============================================================
+     Concept-5-specific layout only — tokens/type/components all
+     come from ../assets/os-mui.css, identical to Concepts 1 and 2.
+     The variable here is the question-led hierarchy and the
+     sequential (not parallel, not tabbed) disclosure of evidence.
+     ============================================================ */
+  .qa-hero { padding: 4px 16px 0; }
+  .qa-question {
+    font: 600 22px/1.3 Poppins, Roboto, sans-serif; color: var(--os-navy); margin:0;
+  }
+  .qa-question::before { content:"“"; color: var(--os-green); }
+  .qa-question::after { content:"”"; color: var(--os-green); }
+  .qa-answer { font:400 15px/1.55 Roboto, sans-serif; margin-top:10px; }
+  .qa-answer strong { color: var(--os-green-text); }
+  .evidence-layer {
+    border-top:1px solid var(--os-border); padding:16px; background:#fff;
+    animation: qa-reveal .35s ease both;
+  }
+  @keyframes qa-reveal { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+  .evidence-layer h3 { margin:0 0 8px; }
+  .reveal-trigger-wrap { padding:16px; text-align:center; background:var(--os-tint-1); border-top:1px solid var(--os-border); }
+  .qa-progress { font:400 11px/1.5 Roboto, sans-serif; color:var(--os-text-secondary); margin-bottom:8px; }
+</style>
+</head>
+<body>
+<div class="phone"><div class="screen">
+
+  <!-- Block 4.1 — Trust Banner -->
+  <header class="appbar">
+    <svg viewBox="0 0 24 24" fill="none" style="width:22px;height:22px;flex:none">
+      <circle cx="12" cy="12" r="10" stroke="#2DB38A" stroke-width="2"/>
+      <path d="M7.5 12.4l3 3 6-6.5" stroke="#2DB38A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div style="flex:1;min-width:0">
+      <p class="t-overline">Réputation vérifiée</p>
+      <p class="t-caption" style="color:#fff;margin-top:-6px">Avis de Martin Immo vérifiés par <strong>Opinion System</strong></p>
+    </div>
+  </header>
+
+  <div class="hero-img" role="img" aria-label="Photo de l'agence" style="height:88px"></div>
+
+  <!-- Compact identity -->
+  <div style="padding:10px 16px 0">
+    <p class="t-caption muted"><strong>Martin Immo</strong> · <span data-field="business.industry"></span></p>
+    <p class="t-caption muted"><span data-field="business.city"></span> · <span data-field="business.memberNumber"></span></p>
+  </div>
+
+  <!-- =====================================================================
+       THE Q&A LEAD — this is the interaction under test. The page opens on
+       the visitor's actual question, answered directly. This answer
+       paragraph also carries every field the spec requires of the Trust
+       Verdict block (4.3): business name, city, verified count, certifying
+       standard, an explicit verdict, and a last-updated date — it is that
+       block, reformatted as a direct answer, not a duplicate of it.
+       ===================================================================== -->
+  <section class="qa-hero" id="trust-verdict" style="margin-top:14px">
+    <h1 class="qa-question" tabindex="-1">Puis-je faire confiance à Martin Immo ?</h1>
+    <p class="qa-answer">
+      <strong>Oui.</strong> Martin Immo est certifiée par <strong>Opinion System</strong>, tiers de confiance
+      indépendant, sur la base de <strong data-field="verified.count"></strong> avis contrôlés
+      (<strong><span data-field="verified.rating"></span>/5</strong>, <span data-field="verified.recommend"></span>&nbsp;% de recommandation) —
+      identité et achat vérifiés, avis non modifiables. Toutes sources confondues :
+      <span data-field="allSources.rating"></span>/5 sur <span data-field="allSources.count"></span> avis.
+    </p>
+    <div class="stat-grid" style="margin-top:12px">
+      <div class="stat"><div class="v" style="color:var(--os-green-text)"><span data-field="verified.rating"></span>/5</div><p class="t-caption muted">Avis contrôlés</p></div>
+      <div class="stat"><div class="v" style="color:var(--os-green-text)"><span data-field="verified.recommend"></span> %</div><p class="t-caption muted">Recommandent</p></div>
+    </div>
+    <p class="t-caption muted" style="margin-top:8px">Dernière mise à jour : <span data-field="verdict.lastUpdated"></span></p>
+
+    <div class="row" style="gap:6px;flex-wrap:wrap;margin-top:10px" data-field-list="trustBadges" data-badge-class="badge badge-verified"></div>
+
+    <a class="btn btn-cta btn-block" style="margin-top:14px" href="#">
+      <svg viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+      Déposer un avis
+    </a>
+  </section>
+
+  <!-- =====================================================================
+       PROGRESSIVE EVIDENCE — sequential, guided disclosure. Unlike
+       Concept 2's independently-expandable checklist rows, evidence here
+       unlocks one layer at a time, in a fixed order, each new layer
+       appearing only after the visitor asks for it. There is exactly one
+       "next" control, and it moves down the page as evidence accumulates.
+       ===================================================================== -->
+  <div id="evidence-stream" style="margin-top:18px"></div>
+  <div class="reveal-trigger-wrap" id="reveal-wrap">
+    <p class="qa-progress" id="reveal-progress">Étape 0 sur 5</p>
+    <button class="btn btn-outlined btn-block" id="reveal-btn">Voir les preuves ↓</button>
+  </div>
+
+  <div class="bottom-bar">
+    <a class="btn btn-outlined btn-sm" href="#" style="flex:1">Contacter</a>
+    <a class="btn btn-cta btn-sm" href="#" style="flex:1.4">Déposer un avis</a>
+  </div>
+
+</div></div>
+
+<script src="shared-data.js"></script>
+<script src="shared-widgets.js"></script>
+<script>
+(function () {
+  var D = window.MARTIN_IMMO;
+
+  function get(path) {
+    return path.split(".").reduce(function (o, k) { return o == null ? o : o[k]; }, D);
+  }
+  document.querySelectorAll("[data-field]").forEach(function (el) {
+    var val = get(el.getAttribute("data-field"));
+    if (val == null) return;
+    el.textContent = val + (el.getAttribute("data-suffix") || "");
+  });
+  document.querySelectorAll('[data-field-list="trustBadges"]').forEach(function (el) {
+    var cls = el.getAttribute("data-badge-class") || "badge";
+    D.trustBadges.forEach(function (label) {
+      var span = document.createElement("span");
+      span.className = cls;
+      span.textContent = label;
+      el.appendChild(span);
+    });
+  });
+
+  /* ---- layer builders: each returns a DOM node for one evidence layer ---- */
+  function layerMechanism() {
+    var el = document.createElement("section");
+    el.className = "evidence-layer";
+    el.innerHTML = '<h3 class="t-sub1 strong" tabindex="-1">1. Comment ça marche</h3>' +
+      '<p class="t-body2 muted" style="margin-bottom:10px">' + D.certification.neutralityNote + '</p>';
+    var wrap = document.createElement("div");
+    wrap.className = "stack-8";
+    D.certification.standards.forEach(function (s) {
+      var div = document.createElement("div");
+      div.className = "card-outlined card-body row-between";
+      div.innerHTML = '<div><p class="t-sub2">' + s.code + '</p><p class="t-caption muted">' + s.scope + '</p></div>';
+      wrap.appendChild(div);
+    });
+    el.appendChild(wrap);
+    var note = document.createElement("p");
+    note.className = "t-caption muted";
+    note.style.marginTop = "8px";
+    note.textContent = "Indice de confiance " + D.certification.confidenceIndex + " · marge d'erreur " + D.certification.marginOfError + " (méthode par quotas).";
+    el.appendChild(note);
+    return el;
+  }
+
+  function layerRatingDetail() {
+    var el = document.createElement("section");
+    el.className = "evidence-layer";
+    el.innerHTML = '<h3 class="t-sub1 strong" tabindex="-1">2. La note en détail</h3>';
+    var card = document.createElement("div");
+    card.className = "card card-body stack-8";
+    var histoWrap = document.createElement("div");
+    histoWrap.className = "stack-8";
+    D.verified.histogram.forEach(function (row) {
+      var div = document.createElement("div");
+      div.className = "histo";
+      div.innerHTML =
+        '<span class="t-caption muted">' + row.stars + ' ★</span>' +
+        '<div class="bar"><i style="width:' + row.pct + '%"></i></div>' +
+        '<span class="t-caption muted">' + row.n + '</span>';
+      histoWrap.appendChild(div);
+    });
+    card.appendChild(histoWrap);
+    var hr = document.createElement("hr");
+    hr.className = "divider";
+    card.appendChild(hr);
+    var npsRow = document.createElement("div");
+    npsRow.className = "row";
+    npsRow.style.justifyContent = "space-around";
+    npsRow.style.textAlign = "center";
+    npsRow.innerHTML =
+      '<div><div class="t-sub1 strong" style="color:var(--os-green-text)">' + D.verified.nps.promoters + '</div><p class="t-caption muted">Promoteurs</p></div>' +
+      '<div><div class="t-sub1 strong">' + D.verified.nps.neutrals + '</div><p class="t-caption muted">Neutres</p></div>' +
+      '<div><div class="t-sub1 strong" style="color:#B3261E">' + D.verified.nps.detractors + '</div><p class="t-caption muted">Détracteurs</p></div>';
+    card.appendChild(npsRow);
+    var disclosure = document.createElement("div");
+    disclosure.className = "disclosure";
+    disclosure.innerHTML = '<p class="legal"><strong>Chaque auteur est un client réel dont l\'expérience a été vérifiée.</strong> ' + D.legal.sortMethod + '</p>';
+    card.appendChild(disclosure);
+    el.appendChild(card);
+    return el;
+  }
+
+  function layerSampleReview() {
+    var el = document.createElement("section");
+    el.className = "evidence-layer";
+    el.innerHTML = '<h3 class="t-sub1 strong" tabindex="-1">3. Un avis contrôlé, en détail</h3>';
+
+    var sortRow = document.createElement("div");
+    sortRow.className = "row-between";
+    sortRow.innerHTML =
+      '<label class="t-caption muted" for="sort-5">Trier par</label>' +
+      '<select id="sort-5" class="chip chip-outlined" style="height:36px">' +
+        '<option>Plus récents</option><option>Mieux notés</option><option>Moins bien notés</option>' +
+      '</select>';
+    el.appendChild(sortRow);
+    var sortLive = document.createElement("p");
+    sortLive.className = "t-caption muted";
+    sortLive.id = "sort-live-5";
+    sortLive.setAttribute("role", "status");
+    sortLive.textContent = "Tri actuel : Plus récents";
+    el.appendChild(sortLive);
+
+    var chipsEl = document.createElement("div");
+    chipsEl.className = "chip-scroller";
+    chipsEl.id = "chips-5";
+    chipsEl.style.paddingLeft = "0";
+    chipsEl.style.paddingRight = "0";
+    var allChip = document.createElement("button");
+    allChip.className = "chip chip-selected";
+    allChip.setAttribute("data-topic", "Tous");
+    allChip.textContent = "Tous";
+    chipsEl.appendChild(allChip);
+    D.topics.forEach(function (topic) {
+      var btn = document.createElement("button");
+      btn.className = "chip chip-outlined";
+      btn.setAttribute("data-topic", topic);
+      btn.textContent = topic;
+      chipsEl.appendChild(btn);
+    });
+    el.appendChild(chipsEl);
+
+    var reviewList = document.createElement("div");
+    var reviewEls = [];
+    D.reviews.verified.forEach(function (r) {
+      var art = document.createElement("article");
+      art.className = "card";
+      art.style.marginTop = "10px";
+      art.setAttribute("data-tags", r.tags.join(","));
+      art.innerHTML =
+        '<div class="review">' +
+          '<div class="row" style="align-items:flex-start">' +
+            '<div class="avatar">' + r.author.charAt(0) + '</div>' +
+            '<div style="flex:1;min-width:0">' +
+              '<div class="row-between"><p class="t-sub2">' + r.author + '</p><span class="t-sub2" style="color:var(--os-green-text)">' + r.rating + '</span></div>' +
+              '<p class="review-meta">' + r.service + ' · ' + r.purchaseNote + ' · ' + r.timeAgo + '</p>' +
+            '</div>' +
+          '</div>' +
+          '<span class="badge badge-verified" style="margin-top:10px">Avis contrôlé</span>' +
+          '<p class="review-body">' + r.body + '</p>' +
+          '<div class="row" style="margin-top:10px;gap:6px;flex-wrap:wrap">' +
+            r.tags.map(function (t) { return '<span class="chip chip-outlined chip-sm">#' + t + '</span>'; }).join("") +
+          '</div>' +
+          '<div class="response"><p class="t-caption strong">Réponse de Martin Immo · ' + r.response.author + '</p><p class="t-body2" style="margin-top:4px">' + r.response.body + '</p></div>' +
+          '<div class="review-footer"><button class="btn btn-text btn-sm">👍 Utile (' + r.helpful + ')</button><button class="btn btn-text btn-sm" style="color:var(--os-text-secondary)">⚑ Signaler</button></div>' +
+        '</div>';
+      reviewList.appendChild(art);
+      reviewEls.push(art);
+    });
+    el.appendChild(reviewList);
+    var empty = document.createElement("p");
+    empty.className = "t-body2 muted";
+    empty.id = "empty-5";
+    empty.hidden = true;
+    empty.textContent = "Aucun avis contrôlé ne correspond à ce filtre.";
+    el.appendChild(empty);
+
+    window.setTimeout(function () {
+      window.OSWidgets.initTopicFilter(chipsEl, reviewEls, empty);
+      window.OSWidgets.initSort(document.getElementById("sort-5"), sortLive);
+    }, 0);
+
+    return el;
+  }
+
+  function layerUnverified() {
+    var el = document.createElement("section");
+    el.className = "evidence-layer";
+    el.style.background = "var(--os-grey-bg)";
+    el.innerHTML =
+      '<h3 class="t-sub1 strong" tabindex="-1">4. Avis non vérifiés</h3>' +
+      '<p class="t-body2 muted" style="margin-bottom:10px">Publiés sans vérification, hors contrôle d\'Opinion System (' +
+      D.unverified.count + ' avis · ' + D.unverified.rating + '/5). Nous indiquons la note et un lien, sans republier leur contenu.</p>';
+    var grid = document.createElement("div");
+    grid.style.display = "grid";
+    grid.style.gridTemplateColumns = "1fr 1fr";
+    grid.style.gap = "8px";
+    D.platforms.forEach(function (p) {
+      var a = document.createElement("a");
+      a.className = "card-outlined card-body";
+      a.href = "#";
+      a.style.textDecoration = "none";
+      a.style.color = "inherit";
+      a.style.background = "#fff";
+      a.innerHTML =
+        '<div class="row"><span class="platform-logo" style="background:' + p.color + ';color:' + p.textColor + '">' + p.initials + '</span><span class="t-caption strong">' + p.name + '</span></div>' +
+        '<p class="t-sub1 strong" style="margin-top:6px">' + p.rating + '<span class="score-suffix" style="font-size:12px">/5</span></p>' +
+        '<p class="t-caption muted">' + p.count + ' avis · Voir ↗</p>';
+      grid.appendChild(a);
+    });
+    el.appendChild(grid);
+    var listWrap = document.createElement("div");
+    listWrap.className = "stack-8";
+    listWrap.style.marginTop = "10px";
+    D.reviews.unverified.forEach(function (r) {
+      var art = document.createElement("article");
+      art.className = "surface-unverified card-body";
+      art.innerHTML =
+        '<div class="row-between"><p class="t-sub2">' + r.author + '</p><span class="badge badge-unverified">⚠ Non vérifié</span></div>' +
+        '<p class="review-meta">Avis spontané · ' + r.timeAgo + ' · ' + r.rating + '/5</p>' +
+        '<p class="review-body">' + r.body + '</p>';
+      listWrap.appendChild(art);
+    });
+    el.appendChild(listWrap);
+    var legal = document.createElement("p");
+    legal.className = "legal";
+    legal.style.marginTop = "10px";
+    legal.innerHTML = D.legal.consideration + " · " + D.legal.sortMethod + " · " + D.legal.retention + " " + D.legal.reportLinkText + ".";
+    el.appendChild(legal);
+    return el;
+  }
+
+  function layerFaq() {
+    var el = document.createElement("section");
+    el.className = "evidence-layer";
+    el.innerHTML = '<h3 class="t-sub1 strong" tabindex="-1">5. Questions fréquentes</h3>';
+    D.faq.forEach(function (item) {
+      var details = document.createElement("details");
+      details.className = "acc";
+      details.innerHTML = '<summary>' + item.q + '</summary><div class="acc-body"><p class="t-body2 muted">' + item.a + '</p></div>';
+      el.appendChild(details);
+    });
+    return el;
+  }
+
+  /* =====================================================================
+     THE PROGRESSIVE REVEAL SEQUENCER — this is the interaction under test.
+     One trigger, one layer at a time, in a fixed evidentiary order. Each
+     click both reveals the next layer AND relocates the trigger to below
+     it, so the "next" control is always exactly where the visitor's
+     attention just landed.
+     ===================================================================== */
+  var layers = [layerMechanism, layerRatingDetail, layerSampleReview, layerUnverified, layerFaq];
+  var idx = 0;
+  var stream = document.getElementById("evidence-stream");
+  var wrap = document.getElementById("reveal-wrap");
+  var btn = document.getElementById("reveal-btn");
+  var progress = document.getElementById("reveal-progress");
+
+  function revealNext() {
+    if (idx >= layers.length) return;
+    var node = layers[idx]();
+    stream.appendChild(node);
+    idx++;
+    progress.textContent = "Étape " + idx + " sur " + layers.length;
+    stream.appendChild(wrap); /* move the trigger to below the newest layer */
+    var heading = node.querySelector("h3");
+    if (heading) { heading.focus({ preventScroll: true }); }
+    node.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (idx === 1) { btn.textContent = "Voir plus ↓"; }
+    if (idx >= layers.length) {
+      btn.textContent = "Vous avez vu l'ensemble des preuves ✓";
+      btn.disabled = true;
+    }
+  }
+  btn.addEventListener("click", revealNext);
+})();
+</script>
+</body>
+</html>

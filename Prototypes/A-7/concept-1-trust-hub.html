@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concept 1 — Trust Hub · A-7 · Opinion System</title>
+<link rel="stylesheet" href="../assets/os-mui.css">
+<style>
+  /* ============================================================
+     Concept-1-specific layout. Tokens, type and component classes
+     all come from ../assets/os-mui.css — nothing here redefines a
+     color or a font. This block only adds the hub/spoke structure:
+     a tile-navigation grid and a view-switching shell.
+     ============================================================ */
+  .hub-tiles { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+  .tile {
+    display:block; text-align:left; background:#fff; border:1px solid var(--os-border);
+    border-radius: var(--r-card); padding:14px; text-decoration:none; color:inherit;
+    box-shadow: var(--e1); min-height:96px; position:relative; cursor:pointer;
+  }
+  .tile:active { box-shadow: var(--e1); transform: translateY(1px); }
+  .tile .tile-figure { font: 700 20px/1 Roboto, sans-serif; color: var(--os-navy); }
+  .tile .tile-label { font: 500 13px/1.3 Roboto, sans-serif; margin-top:6px; }
+  .tile .tile-meta { font: 400 11px/1.4 Roboto, sans-serif; color: var(--os-text-secondary); margin-top:2px; }
+  .tile-verified { border-color: var(--os-green); border-left: 4px solid var(--os-green); }
+  .tile-verified .tile-figure { color: var(--os-green-text); }
+  .tile-unverified { background: var(--os-grey-bg); border: 1px dashed var(--os-grey-border); }
+  .tile-unverified .tile-figure { color: #46536B; }
+  .tile-arrow { position:absolute; top:12px; right:12px; color: var(--os-text-secondary); font-size:14px; }
+
+  /* View shell: every spoke and the hub itself is a real DOM node,
+     always present (so a crawler still sees everything — see the
+     "hub-and-spoke vs. crawlability" tradeoff noted in research), and
+     JS only toggles which one is visible. */
+  [data-view] { }
+  [data-view]:not(.is-active) { display:none; }
+  .spoke-head { display:flex; align-items:center; gap:10px; padding: 14px 16px 4px; }
+  .back-link {
+    display:inline-flex; align-items:center; gap:4px; min-height:32px;
+    font:500 13px/1.3 Roboto, sans-serif; color:var(--os-blue); text-decoration:none;
+  }
+  .crumb { font:400 12px/1.4 Roboto, sans-serif; color:var(--os-text-secondary); }
+  .hub-header-mini { padding: 12px 16px 0; }
+  [aria-current="true"] .tile { outline: 2px solid var(--os-blue); }
+</style>
+</head>
+<body>
+<div class="phone"><div class="screen">
+
+  <!-- ===================================================================
+       Block 4.1 — Trust Banner. Permanent, navy, present above EVERY view
+       (hub and all four spokes) — persistence across navigation, not just
+       on first load, per the spec's "before any content below" framing.
+       =================================================================== -->
+  <header class="appbar">
+    <svg viewBox="0 0 24 24" fill="none" style="width:22px;height:22px;flex:none">
+      <circle cx="12" cy="12" r="10" stroke="#2DB38A" stroke-width="2"/>
+      <path d="M7.5 12.4l3 3 6-6.5" stroke="#2DB38A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div style="flex:1;min-width:0">
+      <p class="t-overline">Réputation vérifiée</p>
+      <p class="t-caption" style="color:#fff;margin-top:-6px">Avis de Martin Immo vérifiés par <strong>Opinion System</strong></p>
+    </div>
+  </header>
+
+  <!-- =====================================================================
+       HUB VIEW — this whole view IS the first viewport (block 4.1 + 4.2 +
+       a compressed verdict + navigation). Nothing below it loads until the
+       visitor taps a tile: the trust decision is fully answerable without
+       ever leaving this screen.
+       ===================================================================== -->
+  <main data-view="hub" class="is-active">
+    <div class="hero-img" role="img" aria-label="Photo de l'agence"></div>
+
+    <section class="card" style="margin:-28px 12px 0;position:relative">
+      <div class="card-body stack-12">
+        <div class="row-between" style="align-items:flex-start">
+          <div style="flex:1;min-width:0">
+            <h1 class="t-h6 t-brand" id="hub-heading">Martin Immo</h1>
+            <p class="t-caption muted" data-field="business.industry"></p>
+            <p class="t-caption muted"><span data-field="business.city"></span> · <span data-field="business.memberNumber"></span></p>
+          </div>
+          <span class="badge badge-verified">✓ Vérifié</span>
+        </div>
+
+        <!-- Hero rating — verified only (AC1). All-sources is a smaller,
+             explicitly labeled supplement (spec block 4.2), never the hero. -->
+        <div class="row" style="gap:10px;align-items:baseline">
+          <span class="score" style="color:var(--os-green-text)" data-field="verified.rating"></span>
+          <span class="score-suffix">/5</span>
+          <span class="stars" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+          </span>
+        </div>
+        <p class="t-caption strong" style="color:var(--os-green-text)">
+          <span data-field="verified.count"></span> avis contrôlés · <span data-field="verified.recommend"></span> % recommandent
+        </p>
+        <p class="t-caption muted">
+          Toutes sources : <span data-field="allSources.rating"></span>/5 (<span data-field="allSources.count"></span> avis, dont <span data-field="verified.count"></span> contrôlés)
+        </p>
+
+        <div class="row" style="gap:6px;flex-wrap:wrap" data-field-list="trustBadges" data-badge-class="badge badge-verified"></div>
+
+        <p class="t-body2" style="margin-top:2px">Entreprise fiable — vérifiée par Opinion System.
+          <a class="link" href="#trust-verdict" data-goto="how-it-works">voir le verdict complet →</a>
+        </p>
+
+        <a class="btn btn-cta btn-block" href="#">
+          <svg viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+          Déposer un avis
+        </a>
+      </div>
+    </section>
+
+    <!-- ============ THE HUB: four tappable destinations, not four
+         decorative cards. Tapping one is a real navigation, not a scroll
+         anchor — the screen changes and a distinct spoke view takes over. ============ -->
+    <nav class="section" aria-label="Explorer la réputation de Martin Immo">
+      <p class="t-overline muted" style="margin-bottom:8px">Explorer</p>
+      <div class="hub-tiles">
+        <button class="tile tile-verified" data-goto="reviews-verified" aria-current="false">
+          <span class="tile-arrow">›</span>
+          <div class="tile-figure"><span data-field="verified.count"></span></div>
+          <div class="tile-label">Avis contrôlés</div>
+          <div class="tile-meta"><span data-field="verified.rating"></span>/5 · identité vérifiée</div>
+        </button>
+        <button class="tile tile-unverified" data-goto="reviews-unverified" aria-current="false">
+          <span class="tile-arrow">›</span>
+          <div class="tile-figure"><span data-field="unverified.count"></span></div>
+          <div class="tile-label">Avis non vérifiés</div>
+          <div class="tile-meta"><span data-field="unverified.rating"></span>/5 · hors note certifiée</div>
+        </button>
+        <button class="tile" data-goto="how-it-works" aria-current="false">
+          <span class="tile-arrow">›</span>
+          <div class="tile-figure">🛡</div>
+          <div class="tile-label">Comment ça marche</div>
+          <div class="tile-meta">3 certifications AFNOR</div>
+        </button>
+        <button class="tile" data-goto="faq" aria-current="false">
+          <span class="tile-arrow">›</span>
+          <div class="tile-figure">?</div>
+          <div class="tile-label">Questions fréquentes</div>
+          <div class="tile-meta">2 réponses courtes</div>
+        </button>
+      </div>
+    </nav>
+
+    <div style="height:76px" aria-hidden="true"></div>
+  </main>
+
+  <!-- =====================================================================
+       SPOKE — Avis contrôlés (verified reviews dashboard + detail)
+       ===================================================================== -->
+  <section data-view="reviews-verified" aria-labelledby="h-reviews-verified">
+    <div class="spoke-head">
+      <a href="#hub" class="back-link" data-goto="hub">← Retour</a>
+      <span class="crumb">Martin Immo</span>
+    </div>
+    <div class="section" style="padding-top:0">
+      <h2 class="t-h6 t-brand" id="h-reviews-verified">Avis contrôlés : <span data-field="verified.count"></span></h2>
+      <span class="badge badge-verified" style="margin-top:6px;display:inline-flex">NF ISO 20488</span>
+
+      <div class="card card-body stack-12" style="margin-top:12px">
+        <div class="row-between">
+          <div>
+            <div class="row" style="gap:6px"><span class="score-sm" style="color:var(--os-green-text)" data-field="verified.rating"></span><span class="score-suffix">/5</span></div>
+            <p class="t-caption muted"><span data-field="verified.count"></span> avis contrôlés</p>
+          </div>
+          <div style="text-align:right">
+            <div class="score-sm" style="color:var(--os-green-text)" data-field="verified.recommend" data-suffix="%"></div>
+            <p class="t-caption muted">recommandent</p>
+          </div>
+        </div>
+        <div class="stack-8" data-field-list="verified.histogram"></div>
+        <hr class="divider">
+        <div class="row" style="justify-content:space-around;text-align:center">
+          <div><div class="t-sub1 strong" style="color:var(--os-green-text)" data-field="verified.nps.promoters"></div><p class="t-caption muted">Promoteurs</p></div>
+          <div><div class="t-sub1 strong" data-field="verified.nps.neutrals"></div><p class="t-caption muted">Neutres</p></div>
+          <div><div class="t-sub1 strong" style="color:#B3261E" data-field="verified.nps.detractors"></div><p class="t-caption muted">Détracteurs</p></div>
+        </div>
+        <div class="disclosure"><p class="legal"><strong>Chaque auteur est un client réel dont l'expérience a été vérifiée.</strong> <span data-field="legal.sortMethod"></span></p></div>
+      </div>
+
+      <div class="row-between" style="margin-top:14px;align-items:center">
+        <label class="t-caption muted" for="sort-1">Trier par</label>
+        <select id="sort-1" class="chip chip-outlined" style="height:36px">
+          <option>Plus récents</option>
+          <option>Mieux notés</option>
+          <option>Moins bien notés</option>
+        </select>
+      </div>
+      <p class="t-caption muted" id="sort-live-1" role="status" style="margin-top:4px">Tri actuel : Plus récents</p>
+
+      <div class="chip-scroller" id="chips-1" style="padding-left:0;padding-right:0;margin-top:8px">
+        <button class="chip chip-selected" data-topic="Tous">Tous</button>
+      </div>
+
+      <div id="review-list-1"></div>
+      <p class="t-body2 muted" id="empty-1" hidden>Aucun avis contrôlé ne correspond à ce filtre.</p>
+
+      <button class="btn btn-outlined btn-block" style="margin-top:12px" disabled>Voir plus d'avis contrôlés</button>
+      <p class="legal" style="margin-top:12px">Signalement possible sur chaque avis · réponse publique de l'entreprise autorisée, jamais de modification du contenu original.</p>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       SPOKE — Avis non vérifiés (block 4.9, gray + dashed, mandatory badge)
+       ===================================================================== -->
+  <section data-view="reviews-unverified" aria-labelledby="h-reviews-unverified">
+    <div class="spoke-head">
+      <a href="#hub" class="back-link" data-goto="hub">← Retour</a>
+      <span class="crumb">Martin Immo</span>
+    </div>
+    <div class="section" style="padding-top:0;background:var(--os-grey-bg)">
+      <h2 class="t-h6 t-brand" id="h-reviews-unverified" style="margin-bottom:4px">Avis clients non vérifiés : <span data-field="unverified.count"></span></h2>
+      <p class="t-body2 muted" style="margin-bottom:12px">Publiés sans vérification, hors contrôle d'Opinion System. Nous indiquons la note et un lien, sans republier leur contenu.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="platform-grid-1"></div>
+
+      <div class="stack-8" style="margin-top:12px" id="unverified-list-1"></div>
+
+      <button class="btn btn-outlined btn-block" style="margin-top:12px" disabled>Voir plus d'avis</button>
+      <p class="legal" style="margin-top:12px">
+        <span data-field="legal.consideration"></span> · <span data-field="legal.sortMethod"></span> ·
+        <span data-field="legal.retention"></span> <a class="link" href="#faq" data-goto="faq"><span data-field="legal.reportLinkText"></span></a>.
+      </p>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       SPOKE — Comment ça marche (block 4.4 mechanism + block 4.3 verdict)
+       ===================================================================== -->
+  <section data-view="how-it-works" aria-labelledby="h-how-it-works">
+    <div class="spoke-head">
+      <a href="#hub" class="back-link" data-goto="hub">← Retour</a>
+      <span class="crumb">Martin Immo</span>
+    </div>
+    <div class="section" style="padding-top:0" id="trust-verdict">
+      <h2 class="t-h6 t-brand" id="h-how-it-works">Comment ça marche</h2>
+
+      <div class="surface-verified card-body" style="margin-top:12px">
+        <div class="row-between" style="align-items:flex-start">
+          <p class="t-sub2" style="color:var(--os-green-text)">En résumé : la fiabilité de Martin Immo</p>
+          <span class="t-caption muted" style="white-space:nowrap" data-field="verdict.lastUpdated"></span>
+        </div>
+        <p class="t-body2" style="margin-top:8px" data-field="verdict.text"></p>
+        <div class="stat-grid" style="margin-top:12px">
+          <div class="stat"><div class="v" style="color:var(--os-green-text)"><span data-field="verified.rating"></span>/5</div><p class="t-caption muted">Avis contrôlés</p></div>
+          <div class="stat"><div class="v" style="color:var(--os-green-text)"><span data-field="verified.recommend"></span> %</div><p class="t-caption muted">Recommandent</p></div>
+        </div>
+      </div>
+
+      <div class="stack-8" style="margin-top:16px" id="standards-list-1"></div>
+
+      <div class="disclosure" style="margin-top:12px">
+        <p class="legal" data-field="certification.neutralityNote"></p>
+      </div>
+      <p class="t-caption muted" style="margin-top:8px">
+        Indice de confiance <span data-field="certification.confidenceIndex"></span> · marge d'erreur <span data-field="certification.marginOfError"></span> (méthode par quotas, contrôle AFNOR).
+      </p>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       SPOKE — FAQ (block 4.13)
+       ===================================================================== -->
+  <section data-view="faq" aria-labelledby="h-faq">
+    <div class="spoke-head">
+      <a href="#hub" class="back-link" data-goto="hub">← Retour</a>
+      <span class="crumb">Martin Immo</span>
+    </div>
+    <div style="background:#fff">
+      <div class="section" style="padding-top:0;padding-bottom:8px"><h2 class="t-h6 t-brand" id="h-faq">Questions fréquentes</h2></div>
+      <div id="faq-list-1"></div>
+    </div>
+  </section>
+
+  <div class="bottom-bar">
+    <a class="btn btn-outlined btn-sm" href="#" style="flex:1">Contacter</a>
+    <a class="btn btn-cta btn-sm" href="#" style="flex:1.4">Déposer un avis</a>
+  </div>
+
+</div></div>
+
+<script src="shared-data.js"></script>
+<script src="shared-widgets.js"></script>
+<script>
+(function () {
+  var D = window.MARTIN_IMMO;
+
+  /* ---- fill simple text fields declared in the markup above ---- */
+  function get(path) {
+    return path.split(".").reduce(function (o, k) { return o == null ? o : o[k]; }, D);
+  }
+  document.querySelectorAll("[data-field]").forEach(function (el) {
+    var path = el.getAttribute("data-field");
+    var val = get(path);
+    if (val == null) return;
+    var suffix = el.getAttribute("data-suffix") || "";
+    el.textContent = val + suffix;
+  });
+  document.querySelectorAll('[data-field-list="trustBadges"]').forEach(function (el) {
+    var cls = el.getAttribute("data-badge-class") || "badge";
+    D.trustBadges.forEach(function (label) {
+      var span = document.createElement("span");
+      span.className = cls;
+      span.textContent = label;
+      el.appendChild(span);
+    });
+  });
+  document.querySelectorAll('[data-field-list="verified.histogram"]').forEach(function (el) {
+    D.verified.histogram.forEach(function (row) {
+      var div = document.createElement("div");
+      div.className = "histo";
+      div.innerHTML =
+        '<span class="t-caption muted">' + row.stars + ' ★</span>' +
+        '<div class="bar"><i style="width:' + row.pct + '%"></i></div>' +
+        '<span class="t-caption muted">' + row.n + '</span>';
+      el.appendChild(div);
+    });
+  });
+
+  /* ---- verified review cards ---- */
+  var reviewList = document.getElementById("review-list-1");
+  var reviewEls = [];
+  D.reviews.verified.forEach(function (r) {
+    var art = document.createElement("article");
+    art.className = "card";
+    art.setAttribute("data-tags", r.tags.join(","));
+    art.innerHTML =
+      '<div class="review">' +
+        '<div class="row" style="align-items:flex-start">' +
+          '<div class="avatar">' + r.author.charAt(0) + '</div>' +
+          '<div style="flex:1;min-width:0">' +
+            '<div class="row-between"><p class="t-sub2">' + r.author + '</p><span class="t-sub2" style="color:var(--os-green-text)">' + r.rating + '</span></div>' +
+            '<p class="review-meta">' + r.service + ' · ' + r.purchaseNote + ' · ' + r.timeAgo + '</p>' +
+          '</div>' +
+        '</div>' +
+        '<span class="badge badge-verified" style="margin-top:10px">Avis contrôlé</span>' +
+        '<p class="review-body">' + r.body + '</p>' +
+        '<div class="row" style="margin-top:10px;gap:6px;flex-wrap:wrap">' +
+          r.tags.map(function (t) { return '<span class="chip chip-outlined chip-sm">#' + t + '</span>'; }).join("") +
+        '</div>' +
+        '<div class="response"><p class="t-caption strong">Réponse de Martin Immo · ' + r.response.author + '</p><p class="t-body2" style="margin-top:4px">' + r.response.body + '</p></div>' +
+        '<div class="review-footer"><button class="btn btn-text btn-sm">👍 Utile (' + r.helpful + ')</button><button class="btn btn-text btn-sm" style="color:var(--os-text-secondary)">⚑ Signaler</button></div>' +
+      '</div>';
+    reviewList.appendChild(art);
+    reviewEls.push(art);
+  });
+  var chipsEl = document.getElementById("chips-1");
+  D.topics.forEach(function (topic) {
+    var btn = document.createElement("button");
+    btn.className = "chip chip-outlined";
+    btn.setAttribute("data-topic", topic);
+    btn.textContent = topic;
+    chipsEl.appendChild(btn);
+  });
+  window.OSWidgets.initTopicFilter(chipsEl, reviewEls, document.getElementById("empty-1"));
+  window.OSWidgets.initSort(document.getElementById("sort-1"), document.getElementById("sort-live-1"));
+
+  /* ---- unverified reviews + platform cards ---- */
+  var platformGrid = document.getElementById("platform-grid-1");
+  D.platforms.forEach(function (p) {
+    var a = document.createElement("a");
+    a.className = "card-outlined card-body";
+    a.href = "#";
+    a.style.textDecoration = "none";
+    a.style.color = "inherit";
+    a.innerHTML =
+      '<div class="row"><span class="platform-logo" style="background:' + p.color + ';color:' + p.textColor + '">' + p.initials + '</span><span class="t-caption strong">' + p.name + '</span></div>' +
+      '<p class="t-sub1 strong" style="margin-top:6px">' + p.rating + '<span class="score-suffix" style="font-size:12px">/5</span></p>' +
+      '<p class="t-caption muted">' + p.count + ' avis · Voir ↗</p>';
+    platformGrid.appendChild(a);
+  });
+  var unverifiedList = document.getElementById("unverified-list-1");
+  D.reviews.unverified.forEach(function (r) {
+    var art = document.createElement("article");
+    art.className = "surface-unverified card-body";
+    art.innerHTML =
+      '<div class="row-between"><p class="t-sub2">' + r.author + '</p><span class="badge badge-unverified">⚠ Non vérifié</span></div>' +
+      '<p class="review-meta">Avis spontané · ' + r.timeAgo + ' · ' + r.rating + '/5</p>' +
+      '<p class="review-body">' + r.body + '</p>';
+    unverifiedList.appendChild(art);
+  });
+
+  /* ---- certification standards ---- */
+  var standardsList = document.getElementById("standards-list-1");
+  D.certification.standards.forEach(function (s) {
+    var div = document.createElement("div");
+    div.className = "card-outlined card-body row-between";
+    div.innerHTML = '<div><p class="t-sub2">' + s.code + '</p><p class="t-caption muted">' + s.scope + '</p></div>';
+    standardsList.appendChild(div);
+  });
+
+  /* ---- FAQ ---- */
+  var faqList = document.getElementById("faq-list-1");
+  D.faq.forEach(function (item, i) {
+    var details = document.createElement("details");
+    details.className = "acc";
+    if (i === 0) details.open = true;
+    details.innerHTML = '<summary>' + item.q + '</summary><div class="acc-body"><p class="t-body2 muted">' + item.a + '</p></div>';
+    faqList.appendChild(details);
+  });
+
+  /* =====================================================================
+     THE HUB-AND-SPOKE ROUTER — this is the interaction under test.
+     A real client-side route: the URL hash changes, only one <section>
+     is visible at a time, the browser back/forward buttons genuinely
+     work, and focus moves to the new view's heading for accessibility.
+     Every view stays a real DOM node throughout (nothing is destroyed
+     or fetched), so the page remains fully readable by a crawler even
+     though a human sees only one screen at a time.
+     ===================================================================== */
+  var views = document.querySelectorAll("[data-view]");
+  function showView(id) {
+    var found = false;
+    views.forEach(function (v) {
+      var active = v.getAttribute("data-view") === id;
+      v.classList.toggle("is-active", active);
+      if (active) found = true;
+    });
+    if (!found) { showView("hub"); return; }
+    document.querySelectorAll("[data-goto]").forEach(function (t) {
+      if (t.hasAttribute("aria-current")) {
+        t.setAttribute("aria-current", t.getAttribute("data-goto") === id ? "true" : "false");
+      }
+    });
+    var heading = document.querySelector('[data-view="' + id + '"] h1, [data-view="' + id + '"] h2');
+    if (heading) {
+      heading.setAttribute("tabindex", "-1");
+      heading.focus({ preventScroll: false });
+    }
+    window.scrollTo(0, 0);
+  }
+  document.querySelectorAll("[data-goto]").forEach(function (el) {
+    el.addEventListener("click", function (e) {
+      e.preventDefault();
+      location.hash = "#" + el.getAttribute("data-goto");
+    });
+  });
+  window.addEventListener("hashchange", function () {
+    showView((location.hash || "#hub").slice(1));
+  });
+  showView((location.hash || "#hub").slice(1));
+})();
+</script>
+</body>
+</html>

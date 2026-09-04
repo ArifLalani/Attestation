@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Figma build — Attestation (node 316:12480) · Opinion System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#041b44;
+    --green:#43b6a3;
+    --green-2:#00d492;
+    --yellow:#ffd500;
+    --blue:#2c95ff;
+    --blue-200:#80bfff;
+    --blue-5:rgba(44,149,255,.05);
+    --blue-10:rgba(44,149,255,.1);
+    --blue-20:rgba(44,149,255,.2);
+    --blue-30:rgba(44,149,255,.3);
+    --gray:#8ea1b2;
+    --gray-l1:#f7fafc;
+    --gray-l2:#f0f6f9;
+    --gray-m1:#dfe9ef;
+    --gray-m2:#b8c2cc;
+    --white:#fff;
+    --error:#fc6530;
+    --star:#f7b600;
+    --r-review:16px;
+    --shadow-card:0 2px 8px rgba(4,27,68,.12);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:#e7edf3;
+    font-family:'Poppins',sans-serif;
+    color:var(--navy);
+    -webkit-font-smoothing:antialiased;
+  }
+  img{display:block;max-width:100%;}
+  button{font-family:inherit;cursor:pointer;}
+  a{color:inherit;text-decoration:none;}
+
+  .phone{
+    width:430px;
+    margin:24px auto;
+    background:var(--gray-l2);
+    box-shadow:0 12px 40px rgba(4,27,68,.25);
+    border-radius:28px;
+    overflow:hidden;
+  }
+  @media (max-width:460px){
+    .phone{width:100%;margin:0;border-radius:0;box-shadow:none;}
+    body{background:var(--gray-l2);}
+  }
+  .screen{overflow-x:hidden;}
+
+  /* ---------- 4.1 Trust Banner ---------- */
+  .trust-banner{
+    background:var(--navy);
+    display:flex;
+    gap:16px;
+    align-items:flex-start;
+    padding:24px 16px 12px;
+    border-radius:0;
+    box-shadow:0 3px 3px -2px rgba(0,0,0,.2),0 3px 4px rgba(0,0,0,.14),0 1px 8px rgba(0,0,0,.12);
+    position:relative;
+    z-index:2;
+  }
+  .trust-banner .logo-wrap{flex:none;width:36px;height:36px;}
+  .trust-banner .logo-wrap img{width:36px;height:36px;}
+  .trust-banner .text{flex:1;min-width:0;}
+  .trust-banner .kicker{margin:0;font-weight:600;font-size:14px;color:var(--green);letter-spacing:.8px;white-space:nowrap;}
+  .trust-banner .sub{margin:4px 0 0;font-size:12px;line-height:1.4;color:var(--white);font-weight:600;}
+  .subscribe-btn{
+    flex:none;background:var(--yellow);display:flex;align-items:center;justify-content:center;
+    gap:2px;padding:4px 6px;border-radius:8px;border:none;
+  }
+  .subscribe-btn span{font-weight:600;font-size:14px;color:#000;white-space:nowrap;}
+  .subscribe-btn img{width:20px;height:20px;}
+
+  /* ---------- 4.2 Business Header ---------- */
+  .biz-photo{
+    height:250px;width:100%;overflow:hidden;position:relative;
+    background:linear-gradient(150deg,#8fb2db 0%,#c9dbf0 71.4%);
+  }
+  .biz-photo img{width:100%;height:100%;object-fit:cover;}
+  .biz-card{
+    background:var(--white);
+    margin:-60px 16px 0;
+    border-radius:12px;
+    box-shadow:var(--shadow-card);
+    padding:16px;
+    position:relative;
+    z-index:2;
+    display:flex;flex-direction:column;gap:16px;
+  }
+  .identity-row{display:flex;gap:10px;align-items:flex-start;}
+  .logo-tile{
+    flex:none;width:56px;height:56px;border-radius:10px;background:var(--blue-5);
+    border:1px solid var(--gray-m1);display:flex;align-items:center;justify-content:center;position:relative;
+  }
+  .logo-tile img{width:42px;height:42px;}
+  .logo-tile span{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-weight:800;font-size:18px;color:var(--navy);}
+  .biz-name{flex:1;min-width:0;font-weight:600;font-size:20px;color:var(--navy);margin:0;}
+  .share-btn{flex:none;border:none;background:none;padding:8px;border-radius:100px;}
+  .share-btn img{width:24px;height:24px;}
+  .about-list{display:flex;gap:8px;}
+  .about-item{display:flex;gap:4px;align-items:center;font-weight:500;font-size:12px;color:var(--gray);white-space:nowrap;}
+  .about-item img{width:16px;height:16px;flex:none;}
+
+  /* Dashboard */
+  .note-global{
+    background:var(--blue-10);border:1px solid var(--blue-20);border-radius:12px;
+    padding:12px;display:flex;flex-direction:column;gap:16px;cursor:pointer;
+  }
+  .note-global-head-row{display:flex;align-items:center;justify-content:space-between;}
+  .note-global-head{display:flex;align-items:center;gap:4px;font-weight:700;font-size:14px;color:var(--navy);text-transform:uppercase;}
+  .note-global-head img{width:20px;height:20px;}
+  .note-global-info{background:none;border:none;padding:0;flex:none;display:flex;line-height:0;cursor:pointer;}
+  .note-global-info img,.note-global-info svg{width:20px;height:20px;}
+  .note-global-row{display:flex;align-items:center;justify-content:space-between;}
+  .note-global-detail{display:none;flex-direction:column;gap:6px;font-weight:500;font-size:12px;line-height:1.5;color:#5a6b85;padding:0;}
+  .note-global.expanded .note-global-detail{display:flex;}
+  .note-global-detail p{margin:0;}
+  .note-global-detail strong{color:var(--navy);}
+  .note-global-score{display:flex;align-items:center;gap:4px;}
+  .note-global-score-icon{width:30px;height:28.5px;}
+  .note-global-stars{display:flex;align-items:center;gap:2px;margin-left:6px;}
+  .note-global-stars img{width:24px;height:24px;}
+  .note-global-score .val{font-weight:700;font-size:40px;color:var(--navy);line-height:1;}
+  .note-global-score .val small{font-weight:400;font-size:16px;color:var(--gray);}
+  .note-global-cumul{text-align:right;}
+  .note-global-cumul .n{margin:0;font-weight:800;font-size:16px;color:var(--navy);}
+  .note-global-cumul .l{margin:0;font-weight:600;font-size:14px;color:var(--gray);}
+
+  .split-row{display:flex;gap:10px;}
+  .mini-kpi{
+    flex:1;min-width:0;border:none;text-align:left;border-radius:12px;padding:12px 4px 12px 12px;
+    display:flex;align-items:center;gap:8px;font-family:inherit;cursor:pointer;
+  }
+  .mini-kpi.green{background:#edf9f7;border:1px solid #c6ece7;}
+  .mini-kpi.gray{background:var(--gray-l2);border:1px solid #dde8ef;}
+  .mini-kpi-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;}
+  .mini-kpi-head{display:flex;align-items:center;gap:6px;font-weight:700;font-size:14px;letter-spacing:.25px;text-transform:uppercase;white-space:nowrap;}
+  .mini-kpi-head img{width:20px;height:20px;}
+  .mini-kpi.green .mini-kpi-head{color:var(--green);}
+  .mini-kpi.gray .mini-kpi-head{color:var(--gray);}
+  .mini-kpi-score-row{display:flex;align-items:center;gap:8px;}
+  .mini-kpi-stars{display:flex;gap:2px;}
+  .mini-kpi-stars img{width:10px;height:10px;}
+  .mini-kpi-score{display:flex;align-items:baseline;gap:2px;}
+  .mini-kpi-score .v{font-weight:800;font-size:24px;color:var(--navy);}
+  .mini-kpi-score .v small{font-weight:600;font-size:12px;color:var(--gray);}
+  .mini-kpi-count{font-weight:600;font-size:14px;}
+  .mini-kpi.green .mini-kpi-count{color:var(--green);}
+  .mini-kpi.gray .mini-kpi-count{color:var(--gray);}
+  .mini-kpi-chevron{flex:none;width:24px;height:24px;align-self:flex-end;}
+
+  .stat-boxes{display:flex;gap:8px;}
+  .stat-box{flex:1;background:var(--gray-l2);border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:8px;}
+  .stat-box .v{margin:0;font-weight:800;font-size:20px;color:var(--navy);white-space:nowrap;}
+  .stat-box .l{margin:0;font-weight:600;font-size:11px;color:var(--gray);}
+
+
+  .cta-primary{
+    width:100%;height:56px;background:var(--yellow);border:none;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:18px;color:var(--navy);
+  }
+  .cta-primary img{width:24px;height:24px;}
+
+  .contact-chips{display:flex;gap:10px;}
+  .chip-contact{
+    flex:1;background:var(--gray-l1);border:none;border-radius:8px;display:flex;align-items:center;justify-content:center;
+    gap:4px;padding:4px;font-weight:400;font-size:14px;color:var(--navy);
+  }
+  .chip-contact img{width:20px;height:20px;}
+  .social-row{display:flex;gap:16px;align-items:center;justify-content:center;}
+  .social-row img,.social-row .x-icon{width:24px;height:24px;}
+  .x-icon{background:#000;border-radius:4px;padding:5px;}
+  .x-icon img{width:100%;height:100%;}
+
+  /* ---------- 4.3 Trust Verdict ---------- */
+  .trust-verdict{padding:16px;}
+  .verdict-card{background:var(--white);border-radius:12px;box-shadow:var(--shadow-card);padding:16px;display:flex;flex-direction:column;gap:8px;}
+  .verdict-card h2{margin:0;font-weight:600;font-size:16px;color:var(--navy);}
+  .verdict-card .date{margin:0;font-size:12px;color:var(--gray);}
+  .verdict-card p.body{margin:0;font-weight:500;font-size:14px;line-height:1.5;color:var(--gray);}
+
+  /* ---------- Tabs ---------- */
+  .tabs{display:flex;background:var(--gray-l2);border-radius:20px 20px 0 0;overflow:hidden;}
+  .tab{flex:1;padding:16px 16px 14px 24px;border:none;display:flex;align-items:flex-start;gap:10px;background:none;color:var(--gray);}
+  .tab.active{background:var(--white);border-radius:20px 20px 0 0;}
+  .tab:not(.active){justify-content:flex-end;text-align:right;padding:16px 24px 14px 16px;}
+  .tab-icon{flex:none;width:24px;height:24px;}
+  .tab-icon img{width:100%;height:100%;}
+  .tab:not(.active) .tab-icon img{filter:grayscale(1) opacity(.5);}
+  .tab-text{display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .tab-label{font-weight:600;font-size:16px;color:var(--gray);white-space:nowrap;}
+  .tab.active .tab-label{color:var(--navy);}
+  .tab-count{font-size:14px;font-weight:600;color:var(--gray);white-space:nowrap;}
+  .tab[data-tab="controles"].active .tab-count{color:var(--green);}
+
+  .tab-panel{display:none;background:var(--white);}
+  .tab-panel.active{display:block;}
+
+  /* ---------- Résumé des avis contrôlés ---------- */
+  .summary-card{background:var(--white);padding:24px;display:flex;flex-direction:column;gap:16px;}
+  .summary-subtitle{margin:0;font-weight:500;font-size:15px;line-height:1.5;color:var(--gray);}
+  .summary-subtitle strong{color:var(--navy);font-weight:700;}
+  .summary-score-row{display:flex;justify-content:space-between;align-items:flex-start;}
+  .summary-score{display:flex;flex-direction:column;align-items:center;gap:8px;}
+  .summary-score .num-row{display:flex;align-items:center;gap:4px;}
+  .summary-score .num-row img{width:40px;}
+  .summary-score .num{font-weight:700;font-size:40px;color:var(--navy);}
+  .summary-score .num small{font-weight:700;font-size:20px;color:var(--gray);}
+  .chip-green{background:rgba(67,182,163,.2);border:1px solid var(--green);border-radius:8px;padding:4px 10px;font-weight:500;font-size:13px;color:var(--green);display:flex;align-items:center;gap:4px;white-space:nowrap;}
+  .chip-gray{background:var(--gray-l2);border-radius:8px;padding:4px 10px;font-weight:500;font-size:13px;color:var(--gray);white-space:nowrap;}
+  .summary-recommend{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+  .summary-recommend .pct{font-weight:700;font-size:40px;color:var(--navy);}
+  .summary-recommend .pct small{font-weight:700;font-size:20px;color:var(--navy);}
+
+  .distribution{display:flex;flex-direction:column;gap:8px;}
+  .rating-row{display:flex;align-items:center;gap:8px;font-weight:600;font-size:16px;}
+  .rating-row .star-num{display:flex;align-items:center;gap:2px;width:26px;color:var(--navy);}
+  .rating-row .star-num .star-char{color:var(--star);}
+  .rating-row .track{flex:1;height:6px;border-radius:3px;background:var(--gray-m1);overflow:hidden;}
+  .rating-row .fill{height:100%;background:var(--green);border-radius:3px;}
+  .rating-row .count{width:32px;text-align:right;color:var(--navy);}
+
+  .stats-row{display:flex;justify-content:space-between;}
+  .stat-col{display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .stat-col img{width:32px;height:32px;}
+  .stat-col .num{font-weight:800;font-size:22px;}
+  .stat-col .lbl{font-weight:700;font-size:13px;color:var(--gray);}
+
+  /* ---------- Panel avis (contrôlés + non vérifiés share this chrome) ---------- */
+  .reviews-panel{padding:24px;display:flex;flex-direction:column;gap:16px;}
+  .sorting-row{display:flex;gap:14px;align-items:center;}
+  .sorting-row > span{font-weight:600;font-size:16px;color:var(--navy);white-space:nowrap;}
+  .sort-dropdown{position:relative;flex:1;}
+  .sort-trigger{width:100%;background:var(--white);border:1px solid var(--gray-m1);border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;font-weight:600;font-size:16px;color:var(--navy);}
+  .sort-trigger img{width:20px;height:20px;transition:transform .15s;}
+  .sort-dropdown.open .sort-trigger img{transform:rotate(180deg);}
+  .sort-menu{display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--white);border:1px solid var(--gray-m1);border-radius:12px;box-shadow:var(--shadow-card);z-index:5;overflow:hidden;}
+  .sort-dropdown.open .sort-menu{display:block;}
+  .sort-menu button{display:block;width:100%;text-align:left;background:none;border:none;padding:10px 16px;font-size:14px;font-weight:500;color:var(--navy);}
+  .sort-menu button:hover{background:var(--gray-l2);}
+
+  .filter-row{display:flex;gap:8px;align-items:center;overflow-x:auto;padding-bottom:2px;}
+  .filter-row::-webkit-scrollbar{display:none;}
+  .filter-row img{width:24px;height:24px;flex:none;}
+  .chip-filter{flex:none;border-radius:8px;padding:6px 12px;font-weight:500;font-size:14px;background:var(--white);border:1px solid var(--gray-m1);color:var(--navy);white-space:nowrap;}
+  .chip-filter.active{background:var(--blue-20);border-color:var(--blue-30);}
+
+  .review-card{border-radius:var(--r-review);overflow:hidden;}
+  .review-card.expanded{background:var(--blue-5);border:1px solid var(--blue);}
+  .review-card.collapsed{background:var(--gray-l1);border:1px solid var(--gray-m2);}
+  .review-top{display:flex;gap:8px;align-items:flex-start;padding:8px 16px;}
+  .review-avatar{flex:none;width:38px;height:38px;border-radius:100px;background:#ede7f6;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:#4527a0;}
+  .review-id{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;}
+  .review-line{display:flex;align-items:center;gap:4px;}
+  .review-name{flex:1;min-width:0;font-weight:600;font-size:16px;color:var(--navy);margin:0;}
+  .review-date{flex:1;min-width:0;font-weight:400;font-size:14px;color:var(--navy);margin:0;}
+  .review-check{display:flex;align-items:center;gap:2px;}
+  .review-check img,.review-check svg{width:24px;height:24px;}
+  .review-check span{font-weight:600;font-size:16px;color:var(--navy);}
+  .stars{position:relative;display:inline-block;font-size:18px;line-height:1;letter-spacing:2px;color:var(--gray-m1);}
+  .stars .fillstars{position:absolute;left:0;top:0;overflow:hidden;white-space:nowrap;color:var(--yellow);}
+  .review-content{padding:8px 16px;font-weight:400;font-size:16px;line-height:1.43;color:var(--navy);letter-spacing:.17px;}
+  .review-tags{display:flex;gap:6px;align-items:center;padding:8px 16px;flex-wrap:wrap;}
+  .tag-chip{background:var(--gray-l2);border-radius:8px;padding:4px 6px;font-weight:500;font-size:13px;color:var(--navy);}
+  .review-actions{display:flex;gap:6px;align-items:center;justify-content:flex-end;padding:12px 16px;}
+  .review-actions .act{background:none;border:none;display:flex;align-items:center;gap:4px;padding:0 6px;font-weight:500;font-size:14px;color:var(--navy);}
+  .review-actions .toggle{margin-left:auto;flex:1;justify-content:flex-end;}
+  .review-actions .toggle img{width:20px;height:20px;}
+
+  .review-detail{padding:0 16px 16px;display:none;flex-direction:column;gap:16px;}
+  .review-card.show-detail .review-detail{display:flex;}
+  .detail-kpis{border:1px solid var(--gray-m1);border-radius:16px;overflow:hidden;background:var(--white);}
+  .detail-kpi{padding:12px;display:flex;flex-direction:column;gap:4px;align-items:center;}
+  .detail-kpi .kpi-lbl{font-weight:600;font-size:14px;color:var(--navy);text-transform:uppercase;}
+  .detail-kpi .kpi-bar-row{width:100%;display:flex;align-items:center;gap:10px;}
+  .progress-track{flex:1;height:6px;border-radius:20px;background:var(--gray-m1);overflow:hidden;}
+  .progress-fill{height:100%;background:var(--green);border-radius:20px;}
+  .detail-kpi .val{font-weight:700;font-size:32px;color:var(--navy);white-space:nowrap;}
+  .detail-kpi .val small{font-size:20px;}
+
+  .subratings{display:flex;flex-direction:column;gap:8px;}
+  .subratings h4{margin:0 0 4px;font-weight:600;font-size:14px;color:var(--navy);}
+  .subrating-row{display:flex;align-items:center;gap:8px;}
+  .subrating-row .lbl{width:138px;flex:none;font-size:14px;color:var(--navy);}
+  .subrating-row .track{flex:1;height:5px;border-radius:20px;background:var(--gray-m1);overflow:hidden;}
+  .subrating-row .fill{height:100%;background:var(--blue);border-radius:20px;}
+  .subrating-row .val{width:26px;text-align:right;font-weight:600;font-size:14px;color:var(--navy);}
+
+  .detail-meta{display:flex;flex-direction:column;gap:4px;}
+  .detail-meta h4{margin:0 0 4px;font-weight:600;font-size:14px;color:var(--navy);}
+  .meta-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:14px;color:var(--navy);}
+  .meta-row .v{display:flex;align-items:center;gap:4px;font-weight:500;}
+  .meta-row .v img,.meta-row .v svg{width:16px;height:16px;}
+  .meta-chip{background:var(--gray-l2);border-radius:100px;padding:3px 8px;font-weight:500;font-size:14px;}
+  hr.divider{border:none;border-top:1px solid rgba(0,0,0,.08);margin:0;}
+
+  .btn-outline-block{width:100%;border:1px solid var(--navy);border-radius:4px;background:none;padding:8px 22px;font-weight:500;font-size:14px;letter-spacing:.46px;text-transform:uppercase;color:var(--navy);}
+
+  /* ---------- Store locator ---------- */
+  .locator{padding:16px;display:flex;flex-direction:column;gap:16px;}
+  .locator-title{display:flex;gap:10px;}
+  .locator-title img{width:40px;height:40px;flex:none;}
+  .locator-title h2{margin:0;font-weight:700;font-size:20px;color:var(--navy);}
+  .locator-title p{margin:0;font-weight:600;font-size:14px;color:var(--gray);}
+
+  .agency-card{border-radius:20px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;}
+  .agency-card.expanded{background:var(--gray-l2);border:1px solid var(--gray-m1);}
+  .agency-card.collapsed-style{background:var(--white);border:1px solid var(--gray-m1);}
+  .agency-head-row{display:flex;justify-content:space-between;align-items:flex-start;gap:6px;}
+  .agency-name{font-weight:700;font-size:18px;color:var(--navy);margin:0;}
+  .open-dot{display:flex;align-items:center;gap:6px;font-weight:500;font-size:12px;color:var(--green);white-space:nowrap;}
+  .open-dot i{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;}
+  .agency-addr{font-weight:600;font-size:14px;color:var(--gray);margin:0;}
+  .agency-meta{display:flex;gap:12px;align-items:center;font-weight:500;font-size:12px;color:var(--gray);flex-wrap:wrap;}
+  .agency-meta .item{display:flex;gap:4px;align-items:center;}
+  .agency-meta img{width:14px;height:14px;}
+  .agency-meta .phone-val{font-weight:500;color:var(--navy);}
+
+  .btn-itinerary-dark{align-self:flex-start;background:var(--navy);color:#fff;border:none;border-radius:100px;padding:10px 24px;font-weight:600;font-size:13px;}
+  .btn-itinerary-outline{background:none;border:1px solid var(--navy);border-radius:100px;padding:8px 20px;font-weight:600;font-size:12px;color:var(--navy);}
+
+  .hours-block h5{margin:0 0 12px;font-weight:700;font-size:13px;color:var(--navy);}
+  .hours-list{display:flex;flex-direction:column;gap:4px;font-weight:500;font-size:13px;color:var(--navy);}
+  .hour-row{display:flex;justify-content:space-between;padding:4px 8px;border-radius:8px;}
+  .hour-row.today{background:var(--gray-m1);font-weight:700;}
+  .collapse-btn-wrap{display:flex;justify-content:flex-end;}
+  .collapse-btn{background:var(--white);border:1px solid var(--gray-m1);border-radius:100px;padding:8px;display:flex;}
+  .collapse-btn img{width:14px;height:14px;}
+
+  .agency-card.collapsed-style .agency-collapsed-row{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+  .expand-btn{background:var(--yellow);border:none;border-radius:100px;padding:10px;display:flex;}
+  .expand-btn img{width:14px;height:14px;}
+  .agency-hidden{display:none;}
+  .agency-card.is-open .agency-hidden{display:flex;flex-direction:column;gap:12px;}
+  .agency-card.is-open .agency-collapsed-row .expand-btn img{transform:rotate(180deg);}
+
+  .map-card{border:1px solid var(--gray-m1);border-radius:16px;overflow:hidden;position:relative;height:280px;}
+  .map-card img.map-bg{width:108%;height:120%;object-fit:cover;position:absolute;top:-10%;left:-4%;}
+  .map-card .pin{position:absolute;left:50%;top:calc(50% - 10px);transform:translate(-50%,-50%);width:28px;height:28px;}
+
+  /* ---------- Team ---------- */
+  .team-section{background:var(--gray-l2);padding:20px 0;display:flex;flex-direction:column;gap:16px;}
+  .team-header{padding:0 24px;display:flex;flex-direction:column;gap:16px;}
+  .team-header h2{margin:0;font-weight:700;font-size:24px;color:var(--navy);}
+  .team-header .sub{margin:0;font-weight:400;font-size:14px;color:var(--navy);opacity:.8;}
+  .team-scroll{display:flex;gap:16px;padding:0 16px;overflow-x:auto;scroll-snap-type:x proximity;}
+  .team-scroll::-webkit-scrollbar{display:none;}
+  .team-card{flex:none;scroll-snap-align:start;width:180px;height:250px;background:var(--white);border-radius:16px;box-shadow:0 4px 6px rgba(4,27,68,.06);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;}
+  .team-avatar{width:80px;height:80px;border-radius:40px;object-fit:cover;background:#26a69a;}
+  .team-name{margin:0;font-weight:600;font-size:15px;color:var(--navy);text-align:center;}
+  .team-role{margin:0;font-weight:400;font-size:12px;color:var(--gray);text-align:center;}
+  .linkedin-btn{background:#eef3f8;border:none;border-radius:8px;padding:6px 14px;font-weight:700;font-size:13px;color:var(--navy);}
+
+  /* ---------- Quality banner (Banner_Container) ---------- */
+  .quality-banner{background:var(--navy);padding:64px 16px;display:flex;flex-direction:column;gap:32px;}
+  .quality-badge{align-self:flex-start;background:rgba(0,212,146,.12);border:1px solid var(--green-2);border-radius:6px;padding:6px 12px;font-weight:700;font-size:12px;color:var(--green-2);}
+  .quality-top{display:flex;flex-direction:column;gap:16px;}
+  .quality-heading{margin:0;font-weight:700;font-size:24px;line-height:1.3;color:#fff;}
+  .quality-sub{margin:0;font-weight:400;font-size:16px;line-height:1.5;color:var(--gray-m2);}
+  hr.quality-divider{border:none;border-top:1px solid rgba(255,255,255,.4);margin:0;}
+
+  .quality-proof{display:flex;flex-direction:column;align-items:center;gap:16px;}
+  .quality-logo-block{display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .quality-logo-block img{height:56px;}
+  .quality-logo-block p{margin:0;font-weight:400;font-size:12px;color:var(--gray);}
+  .quality-reco-badge{display:flex;align-items:center;gap:4px;background:rgba(0,212,146,.12);border:1px solid var(--green-2);border-radius:6px;padding:6px 12px;font-weight:700;font-size:12px;color:var(--green-2);}
+  .quality-reco-badge img{width:24px;height:24px;}
+  .btn-yellow-full{width:100%;background:var(--yellow);border:none;border-radius:12px;padding:12px 22px;font-weight:600;font-size:18px;color:var(--navy);height:56px;}
+
+  .macaron-wrap{display:flex;justify-content:center;}
+  .macaron-wrap img{width:80px;height:80px;}
+  .iso-list{display:flex;flex-direction:column;gap:8px;}
+  .iso-item{display:flex;gap:16px;align-items:center;background:var(--blue-10);border-radius:16px;padding:16px;}
+  .iso-badge{flex:none;width:75px;height:75px;border-radius:100px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .iso-badge img{max-width:53px;max-height:54px;width:auto;height:auto;}
+  .iso-item .txt{flex:1;min-width:0;color:#fff;}
+  .iso-item h4{margin:0;font-weight:600;font-size:16px;}
+  .iso-item p{margin:4px 0 0;font-weight:400;font-size:14px;line-height:1.43;color:#fff;}
+  .iso-item .chev{flex:none;width:20px;height:20px;}
+
+  /* ---------- FAQ (white, no navy wrap in this revision) ---------- */
+  .faq-section{background:var(--white);padding:64px 16px 32px;display:flex;flex-direction:column;gap:16px;}
+  .faq-head{display:flex;flex-direction:column;gap:12px;}
+  .faq-head h2{margin:0;font-weight:700;font-size:20px;line-height:26px;color:var(--navy);}
+  .faq-head .sub{margin:0;font-weight:400;font-size:13px;line-height:20px;color:var(--gray);}
+  .faq-list{display:flex;flex-direction:column;}
+  .faq-item{border-bottom:1px solid var(--gray-m1);}
+  .faq-item:last-child{border-bottom:none;}
+  .faq-q{width:100%;background:none;border:none;display:flex;gap:12px;align-items:center;padding:16px 0;text-align:left;}
+  .faq-icon{flex:none;width:18px;height:18px;border-radius:4px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;}
+  .faq-q .faq-label{flex:1;font-weight:600;font-size:14px;line-height:20px;color:var(--navy);}
+  .faq-a{display:none;padding:0 0 16px 30px;font-weight:400;font-size:13px;line-height:20px;color:var(--gray);}
+  .faq-item.open .faq-a{display:block;}
+
+  .reputation-cta{background:var(--white);padding:32px 16px 64px;display:flex;justify-content:center;}
+  .reputation-card{background:#fff;border-radius:24px;padding:16px;display:flex;flex-direction:column;gap:20px;box-shadow:0 3px 4px rgba(0,0,0,.14),0 1px 8px rgba(0,0,0,.12);}
+  .reputation-badge{align-self:flex-start;display:flex;align-items:center;gap:8px;background:var(--blue-5);border:1px solid var(--blue);border-radius:100px;padding:6px 12px;font-weight:600;font-size:12px;color:var(--blue);}
+  .reputation-badge img{width:14px;height:14px;}
+  .reputation-card h3{margin:0;font-weight:700;font-size:22px;line-height:28px;color:var(--navy);}
+  .reputation-card p{margin:0;font-weight:400;font-size:13px;line-height:18px;color:var(--gray);}
+  .btn-yellow-pill{width:100%;background:var(--yellow);border:none;border-radius:12px;padding:12px 22px;font-weight:600;font-size:18px;color:var(--navy);height:56px;}
+
+  /* ---------- Footer (section-footer) ---------- */
+  .footer{background:var(--navy);padding:64px 16px 40px;display:flex;flex-direction:column;gap:32px;}
+  .footer-logo-block{display:flex;flex-direction:column;align-items:flex-start;gap:16px;}
+  .footer-logo-block img{height:56px;}
+  .footer-tagline{margin:0;font-weight:400;font-size:13px;line-height:1.6;color:var(--gray);max-width:320px;}
+  .footer-contact{display:flex;flex-direction:column;gap:4px;}
+  .footer-contact p{margin:0;font-weight:400;font-size:13px;color:var(--gray);}
+  .footer-col h5{margin:0 0 12px;font-weight:600;font-size:13px;color:#fff;}
+  .footer-col ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
+  .footer-col li a{font-weight:400;font-size:13px;color:var(--gray);}
+  .footer-legal{border-top:1px solid rgba(255,255,255,.1);padding-top:20px;font-weight:400;font-size:11.5px;line-height:1.5;color:var(--gray);margin:0;}
+</style>
+</head>
+<body>
+<div class="phone"><div class="screen">
+
+  <!-- 4.1 Trust Banner -->
+  <header class="trust-banner">
+    <div class="logo-wrap"><img src="https://www.figma.com/api/mcp/asset/d9155026-9669-4b39-a86e-ea5b935abb76.svg" alt="Opinion System"></div>
+    <div class="text">
+      <p class="kicker">RÉPUTATION VÉRIFIÉE</p>
+      <p class="sub">Réputation et avis contrôlés par Opinion System</p>
+    </div>
+    <button class="subscribe-btn" type="button">
+      <span>S'inscrire</span>
+      <img src="https://www.figma.com/api/mcp/asset/9d3d0894-78cc-4d1c-8600-d5fb1cad398e.svg" alt="">
+    </button>
+  </header>
+
+  <!-- 4.2 Business Header -->
+  <div class="biz-photo">
+    <img src="https://www.figma.com/api/mcp/asset/578aacdb-6775-454b-80e7-6b85aa9072d0.png" alt="Photo de l'agence Martin Immo">
+  </div>
+
+  <section class="biz-card">
+    <div class="identity-row">
+      <div class="logo-tile">
+        <img src="https://www.figma.com/api/mcp/asset/9987655a-5c4b-4023-b4d1-730923a30834.svg" alt="">
+        <span>MI</span>
+      </div>
+      <p class="biz-name">Maison &amp; Patrimoine Immobilier</p>
+      <button class="share-btn" type="button" aria-label="Partager"><img src="https://www.figma.com/api/mcp/asset/c7bac214-8143-4e4e-8eda-aadac38ec934.svg" alt=""></button>
+    </div>
+
+    <div class="about-list">
+      <div class="about-item"><img src="https://www.figma.com/api/mcp/asset/a86b0e78-4c62-47b6-9f24-4b654fd75f21.svg" alt="">Agence immobilière</div>
+      <div class="about-item"><img src="https://www.figma.com/api/mcp/asset/e8774dfb-3798-47bf-b228-aea8c76e668d.svg" alt="">Client n&deg; 00258</div>
+    </div>
+
+    <div class="note-global" id="noteGlobal">
+      <div class="note-global-head-row">
+        <div class="note-global-head"><img src="https://www.figma.com/api/mcp/asset/074265cc-13a4-44c4-bccd-c8ac8bb2b308.svg" alt="">Note Global</div>
+        <button class="note-global-info" id="noteGlobalInfo" type="button" aria-label="Pourquoi trois notes différentes ?">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#041b44" stroke-width="1.6"/><path d="M12 11v5.5" stroke="#041b44" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="7.8" r="1.1" fill="#041b44"/></svg>
+        </button>
+      </div>
+      <div class="note-global-row">
+        <div class="note-global-score">
+          <span class="val">4,4<small>/5</small></span>
+          <span class="note-global-stars">
+            <img src="https://www.figma.com/api/mcp/asset/dc688efa-1940-45b3-93b5-62eead48c07a.svg" alt="">
+            <img src="https://www.figma.com/api/mcp/asset/dc688efa-1940-45b3-93b5-62eead48c07a.svg" alt="">
+            <img src="https://www.figma.com/api/mcp/asset/dc688efa-1940-45b3-93b5-62eead48c07a.svg" alt="">
+            <img src="https://www.figma.com/api/mcp/asset/dc688efa-1940-45b3-93b5-62eead48c07a.svg" alt="">
+            <img src="https://www.figma.com/api/mcp/asset/8db267d5-2854-4915-99c6-60f4b39a8ff8.svg" alt="">
+          </span>
+        </div>
+        <div class="note-global-cumul">
+          <p class="n">1 841</p>
+          <p class="l">avis cumulés</p>
+        </div>
+      </div>
+      <div class="note-global-detail" id="noteGlobalDetail">
+        <p><strong>Note Globale</strong> — moyenne toutes sources confondues.</p>
+        <p><strong>Contrôlés</strong> — uniquement les avis vérifiés (identité et achat) par Opinion System.</p>
+        <p><strong>Non contrôlés</strong> — avis simples, non vérifiés.</p>
+      </div>
+    </div>
+
+    <div class="split-row">
+      <button class="mini-kpi green" type="button" data-goto-tab="controles">
+        <div class="mini-kpi-body">
+          <span class="mini-kpi-head"><img src="https://www.figma.com/api/mcp/asset/103f17b5-3c0f-41fe-bf80-db40bfc0b476.svg" alt="">Contrôlés</span>
+          <span class="mini-kpi-score-row">
+            <span class="mini-kpi-score"><span class="v">4,7<small>/5</small></span></span>
+            <span class="mini-kpi-stars">
+              <img src="https://www.figma.com/api/mcp/asset/dc688efa-1940-45b3-93b5-62eead48c07a.svg" alt="">
+              <img src="https://www.figma.com/api/mcp/asset/dc688efa-1940-45b3-93b5-62eead48c07a.svg" alt="">
+              <img src="https://www.figma.com/api/mcp/asset/dc688efa-1940-45b3-93b5-62eead48c07a.svg" alt="">
+              <img src="https://www.figma.com/api/mcp/asset/dc688efa-1940-45b3-93b5-62eead48c07a.svg" alt="">
+              <img src="https://www.figma.com/api/mcp/asset/8db267d5-2854-4915-99c6-60f4b39a8ff8.svg" alt="">
+            </span>
+          </span>
+          <span class="mini-kpi-count">312 avis</span>
+        </div>
+        <img class="mini-kpi-chevron" src="https://www.figma.com/api/mcp/asset/b7c56f75-8594-4656-947c-bf2eab260500.svg" alt="">
+      </button>
+      <button class="mini-kpi gray" type="button" data-goto-tab="non-verifies">
+        <div class="mini-kpi-body">
+          <span class="mini-kpi-head"><img src="https://www.figma.com/api/mcp/asset/3e7e110f-de25-448d-8db8-0ff257a9d982.svg" alt="">Non contrôlés</span>
+          <span class="mini-kpi-score-row">
+            <span class="mini-kpi-score"><span class="v">4,3<small>/5</small></span></span>
+            <span class="mini-kpi-stars">
+              <img src="https://www.figma.com/api/mcp/asset/dc688efa-1940-45b3-93b5-62eead48c07a.svg" alt="">
+              <img src="https://www.figma.com/api/mcp/asset/dc688efa-1940-45b3-93b5-62eead48c07a.svg" alt="">
+              <img src="https://www.figma.com/api/mcp/asset/dc688efa-1940-45b3-93b5-62eead48c07a.svg" alt="">
+              <img src="https://www.figma.com/api/mcp/asset/dc688efa-1940-45b3-93b5-62eead48c07a.svg" alt="">
+              <img src="https://www.figma.com/api/mcp/asset/8db267d5-2854-4915-99c6-60f4b39a8ff8.svg" alt="">
+            </span>
+          </span>
+          <span class="mini-kpi-count">1 529 avis</span>
+        </div>
+        <img class="mini-kpi-chevron" src="https://www.figma.com/api/mcp/asset/d7a13ebf-9369-43e9-b1f2-cd9716357aac.svg" alt="">
+      </button>
+    </div>
+
+    <div class="stat-boxes">
+      <div class="stat-box"><p class="v">95%</p><p class="l">Satisfaction générale</p></div>
+      <div class="stat-box"><p class="v">92%</p><p class="l">Niveau de recommandation</p></div>
+    </div>
+
+    <button class="cta-primary" type="button">
+      Deposer un avis
+      <img src="https://www.figma.com/api/mcp/asset/6025d607-f37b-4c59-8181-fcdb53dad8ba.svg" alt="">
+    </button>
+
+    <div class="contact-chips">
+      <button class="chip-contact" type="button"><img src="https://www.figma.com/api/mcp/asset/993370e6-74f3-46d6-9b88-1715431e3313.svg" alt="">Contacter</button>
+      <button class="chip-contact" type="button"><img src="https://www.figma.com/api/mcp/asset/993370e6-74f3-46d6-9b88-1715431e3313.svg" alt="">Site web</button>
+      <button class="chip-contact" type="button"><img src="https://www.figma.com/api/mcp/asset/993370e6-74f3-46d6-9b88-1715431e3313.svg" alt="">Itinéraire</button>
+    </div>
+
+    <div class="social-row">
+      <a href="#" aria-label="Instagram"><img src="https://www.figma.com/api/mcp/asset/7218c7db-bdd0-4b07-a922-29a12f6a1e2b.svg" alt=""></a>
+      <a href="#" aria-label="Facebook"><img src="https://www.figma.com/api/mcp/asset/aa02ea26-6d3a-463d-bd99-a44678fcba2e.svg" alt=""></a>
+      <a href="#" aria-label="X" class="x-icon"><img src="https://www.figma.com/api/mcp/asset/95f9bd81-fdc0-43a7-a07f-7034eace824d.svg" alt=""></a>
+      <a href="#" aria-label="LinkedIn"><img src="https://www.figma.com/api/mcp/asset/d6243791-2b98-40be-85a2-7b7c64575e31.svg" alt=""></a>
+    </div>
+  </section>
+
+  <!-- 4.3 Trust Verdict -->
+  <section class="trust-verdict">
+    <div class="verdict-card">
+      <h2>La fiabilité de Martin Immo</h2>
+      <p class="date">2 juil. 2026</p>
+      <p class="body">Martin Immo est une agence immobilière basée à Lanton. Sa réputation repose sur 312 avis contrôlés par Opinion System, tiers de confiance indépendant certifié NF ISO 20488&nbsp;: l'identité et l'achat réel de chaque client sont vérifiés, et ces avis ne peuvent être ni modifiés ni supprimés par l'entreprise. Verdict&nbsp;: entreprise fiable.</p>
+    </div>
+  </section>
+
+  <!-- Tabs — Contrôlés / Non vérifiés -->
+  <nav class="tabs">
+    <button class="tab active" type="button" data-tab="controles">
+      <span class="tab-icon"><img src="https://www.figma.com/api/mcp/asset/6cee896b-c314-40d5-ba63-ddcde9977b45.svg" alt=""></span>
+      <span class="tab-text"><span class="tab-label">Avis contrôlés</span><span class="tab-count">312 avis</span></span>
+    </button>
+    <button class="tab" type="button" data-tab="non-verifies">
+      <span class="tab-icon"><img src="https://www.figma.com/api/mcp/asset/3e7e110f-de25-448d-8db8-0ff257a9d982.svg" alt=""></span>
+      <span class="tab-text"><span class="tab-label">Avis non vérifiés</span><span class="tab-count">1&nbsp;529 avis</span></span>
+    </button>
+  </nav>
+
+  <!-- Panel: CONTRÔLÉS -->
+  <div class="tab-panel active" id="panel-controles">
+
+    <div class="summary-card">
+      <p class="summary-subtitle">Les avis ci-dessus sont tous <strong>Certifié AFNOR</strong> et authentifié par <strong>Opinion System</strong>.</p>
+      <div class="summary-score-row">
+        <div class="summary-score">
+          <div class="num-row"><img src="https://www.figma.com/api/mcp/asset/07639b33-1585-43ea-835a-edd891ccda81.svg" alt=""><span class="num">4,7<small>/5</small></span></div>
+          <span class="chip-gray">Sur 312 avis</span>
+        </div>
+        <div class="summary-recommend">
+          <span class="pct">92<small>%</small></span>
+          <span class="chip-green">✓ Recommandé</span>
+        </div>
+      </div>
+      <div class="distribution">
+        <div class="rating-row"><span class="star-num">5<span class="star-char">★</span></span><div class="track"><div class="fill" style="width:100%"></div></div><span class="count">240</span></div>
+        <div class="rating-row"><span class="star-num">4<span class="star-char">★</span></span><div class="track"><div class="fill" style="width:22%"></div></div><span class="count">52</span></div>
+        <div class="rating-row"><span class="star-num">3<span class="star-char">★</span></span><div class="track"><div class="fill" style="width:6%"></div></div><span class="count">14</span></div>
+        <div class="rating-row"><span class="star-num">2<span class="star-char">★</span></span><div class="track"><div class="fill" style="width:2%"></div></div><span class="count">4</span></div>
+        <div class="rating-row"><span class="star-num">1<span class="star-char">★</span></span><div class="track"><div class="fill" style="width:1%"></div></div><span class="count">2</span></div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-col"><img src="https://www.figma.com/api/mcp/asset/d7d9245d-337b-4ab8-a5ff-0e2d8d57b483.svg" alt=""><span class="num" style="color:var(--navy)">300</span><span class="lbl">promoteurs</span></div>
+        <div class="stat-col"><img src="https://www.figma.com/api/mcp/asset/7f11fbee-54a4-44ae-bf6d-c71486c56d7e.svg" alt=""><span class="num" style="color:var(--gray)">10</span><span class="lbl">neutres</span></div>
+        <div class="stat-col"><img src="https://www.figma.com/api/mcp/asset/93fccbc6-5baf-4713-9856-79056d62a7cd.svg" alt=""><span class="num" style="color:var(--error)">2</span><span class="lbl">detracteurs</span></div>
+      </div>
+    </div>
+
+    <div class="reviews-panel">
+      <div class="sorting-row">
+        <span>Trier</span>
+        <div class="sort-dropdown" id="sortDropdown">
+          <button class="sort-trigger" type="button" id="sortTrigger">
+            <span id="sortValue">Les plus récents</span>
+            <img src="https://www.figma.com/api/mcp/asset/b5d034b2-66fd-48b6-b000-5b40bf9d766c.svg" alt="">
+          </button>
+          <div class="sort-menu">
+            <button type="button" data-sort="Les plus récents">Les plus récents</button>
+            <button type="button" data-sort="Meilleures notes">Meilleures notes</button>
+            <button type="button" data-sort="Moins bonnes notes">Moins bonnes notes</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-row">
+        <img src="https://www.figma.com/api/mcp/asset/267ca745-ea28-4f2e-a005-b51dfdb28c4b.svg" alt="Filtrer">
+        <button class="chip-filter active" type="button">Tous</button>
+        <button class="chip-filter" type="button">Acceuil</button>
+        <button class="chip-filter" type="button">Conseil</button>
+        <button class="chip-filter" type="button">Réactivité</button>
+        <button class="chip-filter" type="button">Tarifs</button>
+        <button class="chip-filter" type="button">Habitation</button>
+        <button class="chip-filter" type="button">Auto</button>
+        <button class="chip-filter" type="button">Santé</button>
+        <button class="chip-filter" type="button">Emprunteur</button>
+      </div>
+
+      <!-- All three review cards default to the collapsed state (per current Figma: the
+           full expanded card is a hidden reference node — "Voir plus" reveals the same detail). -->
+      <article class="review-card collapsed">
+        <div class="review-top">
+          <div class="review-avatar">S</div>
+          <div class="review-id">
+            <div class="review-line"><p class="review-name">Sophie M.</p><span class="review-check"><img src="https://www.figma.com/api/mcp/asset/2016f0c0-3d16-4d37-984f-21bfc5755f7e.svg" alt="">4.5</span></div>
+            <div class="review-line"><p class="review-date">il y a 3 jours</p><span class="stars" style="--pct:90%"><span class="bg">★★★★★</span><span class="fillstars" style="width:90%">★★★★★</span></span></div>
+          </div>
+        </div>
+        <p class="review-content">Une expérience fantastique du début à la fin&nbsp;! L'équipe était professionnelle, réactive et a vraiment compris ce que je voulais atteindr...</p>
+        <div class="review-tags">
+          <span class="tag-chip">#Habitation</span><span class="tag-chip">#Conseil</span><span class="tag-chip">#Acceuil</span>
+        </div>
+        <div class="review-actions">
+          <button class="act">👍 Utile (24)</button>
+          <button class="act"><img src="https://www.figma.com/api/mcp/asset/a2c035fa-d585-4af4-b478-8bed2e30a0ca.svg" alt="" style="width:20px;height:20px">Signaler</button>
+          <button class="act toggle" data-toggle-detail>Voir plus <img src="https://www.figma.com/api/mcp/asset/78f4a3e2-15c1-4155-94f2-2e1b23ffc9a4.svg" alt=""></button>
+        </div>
+        <div class="review-detail">
+          <div class="detail-kpis">
+            <div class="detail-kpi">
+              <p class="kpi-lbl">Satisfaction générale</p>
+              <div class="kpi-bar-row"><div class="progress-track"><div class="progress-fill" style="width:95%;background:var(--blue-200)"></div></div><span class="val">95<small style="color:var(--gray-l2)">%</small></span></div>
+            </div>
+            <div class="detail-kpi">
+              <p class="kpi-lbl">Clients qui recommandent</p>
+              <div class="kpi-bar-row"><div class="progress-track"><div class="progress-fill" style="width:92%"></div></div><span class="val">92<small style="color:var(--gray-l2)">%</small></span></div>
+            </div>
+          </div>
+          <div class="subratings">
+            <h4>Répartition des notes</h4>
+            <div class="subrating-row"><span class="lbl">Acceuil</span><div class="track"><div class="fill" style="width:100%"></div></div><span class="val">5.0</span></div>
+            <div class="subrating-row"><span class="lbl">Qualité du conseil</span><div class="track"><div class="fill" style="width:90%"></div></div><span class="val">4.5</span></div>
+            <div class="subrating-row"><span class="lbl">Réactivité</span><div class="track"><div class="fill" style="width:100%"></div></div><span class="val">5.0</span></div>
+            <div class="subrating-row"><span class="lbl">Rapport qualité prix</span><div class="track"><div class="fill" style="width:92%"></div></div><span class="val">4.6</span></div>
+            <div class="subrating-row"><span class="lbl">Aide Suivi</span><div class="track"><div class="fill" style="width:88%"></div></div><span class="val">4.4</span></div>
+          </div>
+          <hr class="divider">
+          <div class="detail-meta">
+            <h4>Information de l'avis</h4>
+            <div class="meta-row"><span>Type de questionnaire</span><span class="v"><img src="https://www.figma.com/api/mcp/asset/6514082d-ebe8-4e20-b6ff-3721df3a6256.svg" alt="">Contrôlé</span></div>
+            <div class="meta-row"><span>Collaborateur</span><span class="v"><img src="https://www.figma.com/api/mcp/asset/b0e20eb7-19ee-4365-abfc-7bf972b8dea5.svg" alt="">Angela Belle</span></div>
+            <div class="meta-row"><span>Service</span><span class="v">Vente de propriété</span></div>
+            <div class="meta-row"><span>Numero de l'avis</span><span class="v"><span class="meta-chip">101923</span></span></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Review card template — reused for load-more and for the other 2 visible slots -->
+      <template id="collapsedCardTpl">
+        <article class="review-card collapsed">
+          <div class="review-top">
+            <div class="review-avatar">S</div>
+            <div class="review-id">
+              <div class="review-line"><p class="review-name">Sophie M.</p><span class="review-check"><img src="https://www.figma.com/api/mcp/asset/2016f0c0-3d16-4d37-984f-21bfc5755f7e.svg" alt="">4.5</span></div>
+              <div class="review-line"><p class="review-date">il y a 3 jours</p><span class="stars" style="--pct:90%"><span class="bg">★★★★★</span><span class="fillstars" style="width:90%">★★★★★</span></span></div>
+            </div>
+          </div>
+          <p class="review-content">Une expérience fantastique du début à la fin&nbsp;! L'équipe était professionnelle, réactive et a vraiment compris ce que je voulais atteindr...</p>
+          <div class="review-tags">
+            <span class="tag-chip">#Habitation</span><span class="tag-chip">#Conseil</span><span class="tag-chip">#Acceuil</span>
+          </div>
+          <div class="review-actions">
+            <button class="act">👍 Utile (24)</button>
+            <button class="act"><img src="https://www.figma.com/api/mcp/asset/a2c035fa-d585-4af4-b478-8bed2e30a0ca.svg" alt="" style="width:20px;height:20px">Signaler</button>
+            <button class="act toggle" data-toggle-detail>Voir plus <img src="https://www.figma.com/api/mcp/asset/78f4a3e2-15c1-4155-94f2-2e1b23ffc9a4.svg" alt=""></button>
+          </div>
+        </article>
+      </template>
+      <div id="defaultExtraCards"></div>
+      <div id="collapsedCardsHost"></div>
+
+      <button class="btn-outline-block" id="loadMoreReviews" type="button">Voir plus d'avis contrôlés</button>
+    </div>
+  </div>
+
+  <!-- Panel: NON VÉRIFIÉS — Figma has no populated design for this tab state.
+       Reusing the exact Contrôlés review-card markup/content, only swapping the OS
+       verification checkmark for a "Simple" clipboard icon. -->
+  <div class="tab-panel" id="panel-non-verifies">
+    <div class="reviews-panel">
+      <div class="sorting-row">
+        <span>Trier</span>
+        <div class="sort-dropdown">
+          <button class="sort-trigger" type="button">
+            <span>Les plus récents</span>
+            <img src="https://www.figma.com/api/mcp/asset/b5d034b2-66fd-48b6-b000-5b40bf9d766c.svg" alt="">
+          </button>
+        </div>
+      </div>
+
+      <div class="filter-row">
+        <img src="https://www.figma.com/api/mcp/asset/267ca745-ea28-4f2e-a005-b51dfdb28c4b.svg" alt="Filtrer">
+        <button class="chip-filter active" type="button">Tous</button>
+        <button class="chip-filter" type="button">Acceuil</button>
+        <button class="chip-filter" type="button">Conseil</button>
+        <button class="chip-filter" type="button">Réactivité</button>
+        <button class="chip-filter" type="button">Tarifs</button>
+        <button class="chip-filter" type="button">Habitation</button>
+        <button class="chip-filter" type="button">Auto</button>
+        <button class="chip-filter" type="button">Santé</button>
+        <button class="chip-filter" type="button">Emprunteur</button>
+      </div>
+
+      <template id="collapsedCardTplNv">
+        <article class="review-card collapsed">
+          <div class="review-top">
+            <div class="review-avatar">S</div>
+            <div class="review-id">
+              <div class="review-line"><p class="review-name">Sophie M.</p>
+                <span class="review-check">
+                  <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#e4e9f0"/><rect x="7.5" y="6" width="9" height="12.5" rx="1.6" stroke="#8ea1b2" stroke-width="1.4"/><rect x="9.5" y="4.8" width="5" height="2.4" rx="0.8" fill="#8ea1b2"/><path d="M9.5 11h5M9.5 13.5h5M9.5 16h3" stroke="#8ea1b2" stroke-width="1.2" stroke-linecap="round"/></svg>
+                  4.5
+                </span>
+              </div>
+              <div class="review-line"><p class="review-date">il y a 3 jours</p><span class="stars" style="--pct:90%"><span class="bg">★★★★★</span><span class="fillstars" style="width:90%">★★★★★</span></span></div>
+            </div>
+          </div>
+          <p class="review-content">Une expérience fantastique du début à la fin&nbsp;! L'équipe était professionnelle, réactive et a vraiment compris ce que je voulais atteindr...</p>
+          <div class="review-tags">
+            <span class="tag-chip">#Habitation</span><span class="tag-chip">#Conseil</span><span class="tag-chip">#Acceuil</span>
+          </div>
+          <div class="review-actions">
+            <button class="act">👍 Utile (24)</button>
+            <button class="act"><img src="https://www.figma.com/api/mcp/asset/a2c035fa-d585-4af4-b478-8bed2e30a0ca.svg" alt="" style="width:20px;height:20px">Signaler</button>
+            <button class="act toggle" data-toggle-detail>Voir plus <img src="https://www.figma.com/api/mcp/asset/78f4a3e2-15c1-4155-94f2-2e1b23ffc9a4.svg" alt=""></button>
+          </div>
+        </article>
+      </template>
+      <div id="defaultExtraCardsNv"></div>
+      <div id="collapsedCardsHostNv"></div>
+
+      <button class="btn-outline-block" id="loadMoreReviewsNv" type="button">Voir plus d'avis simples</button>
+    </div>
+  </div>
+
+  <!-- Store locator -->
+  <section class="locator">
+    <div class="locator-title">
+      <img src="https://www.figma.com/api/mcp/asset/9c85ca2d-49b7-456f-a249-813bf38056b0.svg" alt="">
+      <div><h2>Nos Agences</h2><p>Trouves l'agence Martin Immo la plus proche de chez vous</p></div>
+    </div>
+
+    <div class="agency-card expanded is-open" id="agency-lanton">
+      <div class="agency-head-row">
+        <p class="agency-name">Martin Immo — Lanton</p>
+        <span class="open-dot"><i></i>Ouvert — 19:00</span>
+      </div>
+      <p class="agency-addr">42 cours Vitton, 69006 Lyon</p>
+      <div class="agency-meta">
+        <span class="item"><img src="https://www.figma.com/api/mcp/asset/76f41b9e-5777-453f-bd9e-641f31484412.svg" alt="">4.7/5</span>
+        <span>•</span><span>1872 avis</span><span>•</span>
+        <span class="item"><img src="https://www.figma.com/api/mcp/asset/b4726eb6-9871-4e16-9b5c-768f39d54dda.svg" alt=""><span class="phone-val">04 78 24 00 00</span></span>
+      </div>
+      <button class="btn-itinerary-dark" type="button">Itinéraire</button>
+      <hr class="divider">
+      <div class="hours-block">
+        <h5>Horaire d'ouverture</h5>
+        <div class="hours-list">
+          <div class="hour-row"><span>Lundi</span><span>09:00 - 19:00</span></div>
+          <div class="hour-row"><span>Mardi</span><span>09:00 - 19:00</span></div>
+          <div class="hour-row today"><span>Mercredi</span><span>09:00 - 19:00</span></div>
+          <div class="hour-row"><span>Jeudi</span><span>09:00 - 19:00</span></div>
+          <div class="hour-row"><span>Vendredi</span><span>09:00 - 19:00</span></div>
+          <div class="hour-row"><span>Samedi</span><span>09:00 - 19:00</span></div>
+          <div class="hour-row"><span>Dimanche</span><span>Fermé</span></div>
+        </div>
+      </div>
+      <div class="collapse-btn-wrap">
+        <button class="collapse-btn" type="button" data-collapse="agency-lanton"><img src="https://www.figma.com/api/mcp/asset/b4488d79-795d-489c-87a9-aa07bdacc76a.svg" alt="Réduire"></button>
+      </div>
+    </div>
+
+    <div class="map-card">
+      <img class="map-bg" src="https://www.figma.com/api/mcp/asset/ae281fe3-b3cb-40f6-b3c6-fa113025641b.png" alt="Carte de localisation">
+      <img class="pin" src="https://www.figma.com/api/mcp/asset/be11b49e-5e84-4273-8507-d8bb81d8f9f0.svg" alt="">
+    </div>
+
+    <div class="agency-card collapsed-style" id="agency-villeurbanne">
+      <div class="agency-collapsed-row">
+        <div>
+          <span class="open-dot"><i></i>Ouvert — 19:00</span>
+          <p class="agency-name" style="font-size:16px;margin-top:6px">Martin Immo — Villeurbanne</p>
+        </div>
+      </div>
+      <p class="agency-addr" style="font-size:13px">18 av. Henri Barbusse, 69100 Villeurbanne</p>
+      <div class="agency-meta">
+        <span class="item"><img src="https://www.figma.com/api/mcp/asset/aacc9de3-d5e2-4fa5-a8d7-4d748151b2f2.svg" alt="">4.8/5</span>
+        <span>•</span><span>1480 avis</span><span>•</span>
+        <span class="item"><img src="https://www.figma.com/api/mcp/asset/9c8dc7ce-f747-4404-8aad-ff98174b37f2.svg" alt=""><span class="phone-val">04 78 24 00 24</span></span>
+      </div>
+      <div class="agency-collapsed-row">
+        <button class="btn-itinerary-outline" type="button">Itinéraire</button>
+        <button class="expand-btn" type="button" data-collapse="agency-villeurbanne"><img src="https://www.figma.com/api/mcp/asset/d08f1a93-c806-49db-bdaa-2591e060b8d8.svg" alt="Développer"></button>
+      </div>
+      <div class="agency-hidden">
+        <hr class="divider">
+        <div class="hours-block">
+          <h5>Horaire d'ouverture</h5>
+          <div class="hours-list">
+            <div class="hour-row"><span>Lundi</span><span>09:00 - 19:00</span></div>
+            <div class="hour-row"><span>Mardi</span><span>09:00 - 19:00</span></div>
+            <div class="hour-row"><span>Mercredi</span><span>09:00 - 19:00</span></div>
+            <div class="hour-row"><span>Jeudi</span><span>09:00 - 19:00</span></div>
+            <div class="hour-row"><span>Vendredi</span><span>09:00 - 19:00</span></div>
+            <div class="hour-row"><span>Samedi</span><span>09:00 - 19:00</span></div>
+            <div class="hour-row"><span>Dimanche</span><span>Fermé</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="agency-card collapsed-style" id="agency-ecully">
+      <div class="agency-collapsed-row">
+        <div>
+          <span class="open-dot"><i></i>Ouvert — 19:00</span>
+          <p class="agency-name" style="font-size:16px;margin-top:6px">Martin Immo — Écully</p>
+        </div>
+      </div>
+      <p class="agency-addr" style="font-size:13px">5 place de la Libération, 69130 Écully</p>
+      <div class="agency-meta">
+        <span class="item"><img src="https://www.figma.com/api/mcp/asset/aacc9de3-d5e2-4fa5-a8d7-4d748151b2f2.svg" alt="">4.8/5</span>
+        <span>•</span><span>192 avis</span><span>•</span>
+        <span class="item"><img src="https://www.figma.com/api/mcp/asset/9c8dc7ce-f747-4404-8aad-ff98174b37f2.svg" alt=""><span class="phone-val">04 78 24 00 10</span></span>
+      </div>
+      <div class="agency-collapsed-row">
+        <button class="btn-itinerary-outline" type="button">Itinéraire</button>
+        <button class="expand-btn" type="button" data-collapse="agency-ecully"><img src="https://www.figma.com/api/mcp/asset/d08f1a93-c806-49db-bdaa-2591e060b8d8.svg" alt="Développer"></button>
+      </div>
+      <div class="agency-hidden">
+        <hr class="divider">
+        <div class="hours-block">
+          <h5>Horaire d'ouverture</h5>
+          <div class="hours-list">
+            <div class="hour-row"><span>Lundi</span><span>09:00 - 19:00</span></div>
+            <div class="hour-row"><span>Mardi</span><span>09:00 - 19:00</span></div>
+            <div class="hour-row"><span>Mercredi</span><span>09:00 - 19:00</span></div>
+            <div class="hour-row"><span>Jeudi</span><span>09:00 - 19:00</span></div>
+            <div class="hour-row"><span>Vendredi</span><span>09:00 - 19:00</span></div>
+            <div class="hour-row"><span>Samedi</span><span>09:00 - 19:00</span></div>
+            <div class="hour-row"><span>Dimanche</span><span>Fermé</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team -->
+  <section class="team-section">
+    <div class="team-header">
+      <h2>L'ÉQUIPE de Martin Immo</h2>
+      <p class="sub">Les personnes qui vous accompagnent au quotidien dans cette agence.</p>
+    </div>
+    <div class="team-scroll">
+      <div class="team-card">
+        <img class="team-avatar" src="https://www.figma.com/api/mcp/asset/87480708-0ad5-499c-9b45-d7cd01cd4b08.png" alt="Claire Fontaine">
+        <div><p class="team-name">Claire Fontaine</p><p class="team-role">Directrice d'agence</p></div>
+        <button class="linkedin-btn" type="button">in</button>
+      </div>
+      <div class="team-card">
+        <img class="team-avatar" src="https://www.figma.com/api/mcp/asset/0cb6142e-3772-4fe3-9749-25736a729bc2.png" alt="Marc Dubois">
+        <div><p class="team-name">Marc Dubois</p><p class="team-role">Conseiller vente</p></div>
+        <button class="linkedin-btn" type="button">in</button>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar" aria-hidden="true"></div>
+        <div><p class="team-name">Marie Laurent</p><p class="team-role">Chargée de gestion</p></div>
+        <button class="linkedin-btn" type="button">in</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quality banner (Banner_Container) -->
+  <section class="quality-banner">
+    <div class="quality-top">
+      <span class="quality-badge">DÉMARCHE QUALITÉ</span>
+      <p class="quality-heading">Martin immo a choisi Opinion System pour des avis fiables.</p>
+      <p class="quality-sub">Cette agence est engagée dans une démarche qualité encadrée par les trois normes qui certifient Opinion System. Organisme indépendant qui collecte et contrôle ces avis. Le seul en Europe à cumuler trois certifications ISO pour des avis clients délivrée par AFNOR Certification.</p>
+    </div>
+    <hr class="quality-divider">
+    <div class="quality-proof">
+      <div class="quality-logo-block">
+        <img src="https://www.figma.com/api/mcp/asset/3710c263-818a-4288-96bc-4304b579bcfb.png" alt="Opinion System">
+        <p>Avis contrôlés · identité &amp; achat vérifiés</p>
+      </div>
+      <span class="quality-reco-badge"><img src="https://www.figma.com/api/mcp/asset/72b657ab-3d3d-4272-a4b9-9fa0825a785a.svg" alt="">97% recommandation</span>
+      <button class="btn-yellow-full" type="button">Lire les avis clients</button>
+    </div>
+    <div class="macaron-wrap"><img src="https://www.figma.com/api/mcp/asset/0a469d1c-e769-481c-acc9-0a54aa352fd9.png" alt="Macaron Avis Contrôlés Opinion System 2024"></div>
+    <div class="iso-list">
+      <div class="iso-item">
+        <span class="iso-badge"><img src="https://www.figma.com/api/mcp/asset/7723478c-aef9-42b1-acf2-f395ba3c17c1.png" alt=""></span>
+        <div class="txt"><h4>NF Service 522 / ISO 20488</h4><p>Avis de consommateurs en ligne, collecte et contrôle</p></div>
+        <img class="chev" src="https://www.figma.com/api/mcp/asset/7f6dccf8-869f-45cc-9ac7-e9dbe4e31ccb.svg" alt="">
+      </div>
+      <div class="iso-item">
+        <span class="iso-badge"><img src="https://www.figma.com/api/mcp/asset/350ae224-5a48-4f3f-b39a-c9823dd472a9.svg" alt=""></span>
+        <div class="txt"><h4>ISO 20252</h4><p>Organisme de sondage, rigueur statistique des résultats</p></div>
+        <img class="chev" src="https://www.figma.com/api/mcp/asset/7f6dccf8-869f-45cc-9ac7-e9dbe4e31ccb.svg" alt="">
+      </div>
+      <div class="iso-item">
+        <span class="iso-badge"><img src="https://www.figma.com/api/mcp/asset/eec50998-e633-4e63-a8d2-57b5ce5f6393.svg" alt=""></span>
+        <div class="txt"><h4>ISO 9001</h4><p>Qualité de l'organisation interne</p></div>
+        <img class="chev" src="https://www.figma.com/api/mcp/asset/7f6dccf8-869f-45cc-9ac7-e9dbe4e31ccb.svg" alt="">
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ (white, standalone — no navy wrap in this revision) -->
+  <section class="faq-section">
+    <div class="faq-head">
+      <h2>QUESTIONS fréquentes sur la fiabilité de Assurances Martin</h2>
+      <p class="sub">Les réponses aux questions que se posent les consommateurs avant de faire confiance à cette entreprise.</p>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" type="button"><span class="faq-icon">+</span><span class="faq-label">Martin Immo est-elle une entreprise fiable ?</span></button>
+        <div class="faq-a">Oui&nbsp;: sa note de 4,7/5 repose sur 312 avis contrôlés et certifiés par un tiers indépendant.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button"><span class="faq-icon">+</span><span class="faq-label">Les avis de Martin Immo peuvent-ils être truqués ?</span></button>
+        <div class="faq-a">Non&nbsp;: les avis contrôlés sont collectés directement auprès de clients identifiés et ne peuvent être ni modifiés ni supprimés par l'entreprise.</div>
+      </div>
+      <div class="faq-item open">
+        <button class="faq-q" type="button"><span class="faq-icon">−</span><span class="faq-label">Qui contrôle les avis de Martin Immo ?</span></button>
+        <div class="faq-a">Opinion System, organisme de sondage indépendant. C'est le seul acteur en Europe à disposer d'une triple-certification AFNOR pour des avis clients&nbsp;: ISO 20252 (organisme de sondage) et ISO 9001 (organisation interne).</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button"><span class="faq-icon">+</span><span class="faq-label">Martin Immo répond-elle aux avis clients ?</span></button>
+        <div class="faq-a">L'entreprise peut répondre publiquement à chaque avis contrôlé depuis son espace professionnel.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="reputation-cta">
+    <div class="reputation-card">
+      <span class="reputation-badge"><img src="https://www.figma.com/api/mcp/asset/a45cf7ed-3d04-4a1a-b192-25bc610a968a.svg" alt="">Vous êtes une entreprise ?</span>
+      <h3>Affichez une e-réputation vérifiée et incontestable.</h3>
+      <p>Rejoignez les entreprises qui collectent des avis contrôlés par le seul organisme triplement certifié AFNOR en Europe.</p>
+      <button class="btn-yellow-pill" type="button">Inscrire mon entreprise</button>
+    </div>
+  </section>
+
+  <!-- Footer (section-footer) -->
+  <footer class="footer">
+    <div class="footer-logo-block">
+      <img src="https://www.figma.com/api/mcp/asset/3710c263-818a-4288-96bc-4304b579bcfb.png" alt="Opinion System">
+      <p class="footer-tagline">Le tiers de confiance des avis clients, triplement certifié AFNOR en Europe.</p>
+      <div class="footer-contact">
+        <p>contact@opinionsystem.fr</p>
+        <p>+33 5 33 02 05 54</p>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h5>Opinion System</h5>
+      <ul>
+        <li><a href="#">Notre histoire</a></li>
+        <li><a href="#">Nos certifications</a></li>
+        <li><a href="#">Nos équipes</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Entreprises</h5>
+      <ul>
+        <li><a href="#">Votre réputation</a></li>
+        <li><a href="#">S'inscrire</a></li>
+        <li><a href="#">Tarifs</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Consommateurs</h5>
+      <ul>
+        <li><a href="#">Trouver un pro</a></li>
+        <li><a href="#">Mon espace</a></li>
+        <li><a href="#">Déposer un avis</a></li>
+      </ul>
+    </div>
+
+    <p class="footer-legal">Mentions Légales | Conditions d'utilisation | Politique de confidentialité | Sitemap</p>
+  </footer>
+
+</div></div>
+
+<script>
+(function(){
+  // Tabs
+  function activateTab(name){
+    document.querySelectorAll('.tab').forEach(function(t){ t.classList.toggle('active', t.dataset.tab === name); });
+    document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.toggle('active', p.id === 'panel-' + name); });
+  }
+  document.querySelectorAll('.tab').forEach(function(tab){
+    tab.addEventListener('click', function(){ activateTab(tab.dataset.tab); });
+  });
+
+  // Dashboard mini-KPI cards jump to the matching tab
+  document.querySelectorAll('[data-goto-tab]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      activateTab(btn.dataset.gotoTab);
+      document.querySelector('.tabs').scrollIntoView({ behavior:'smooth', block:'start' });
+    });
+  });
+
+  // Tapping anywhere on the Note Global card expands it to show the three-notes explanation
+  document.getElementById('noteGlobal').addEventListener('click', function(){
+    this.classList.toggle('expanded');
+  });
+
+  // Review card expand/collapse toggle (works for both tabs)
+  document.body.addEventListener('click', function(e){
+    var btn = e.target.closest('[data-toggle-detail]');
+    if(!btn) return;
+    var card = btn.closest('.review-card');
+    var isOpen = card.classList.toggle('show-detail');
+    btn.childNodes[0].textContent = isOpen ? 'Voir moins ' : 'Voir plus ';
+  });
+
+  // Populate the 2 extra default-visible collapsed cards for each tab (Figma shows 3 total)
+  ['defaultExtraCards','defaultExtraCardsNv'].forEach(function(hostId, i){
+    var tpl = document.getElementById(i === 0 ? 'collapsedCardTpl' : 'collapsedCardTplNv');
+    var host = document.getElementById(hostId);
+    host.appendChild(tpl.content.cloneNode(true));
+    host.appendChild(tpl.content.cloneNode(true));
+  });
+
+  // Sort dropdown (Contrôlés tab)
+  var sortDropdown = document.getElementById('sortDropdown');
+  document.getElementById('sortTrigger').addEventListener('click', function(){
+    sortDropdown.classList.toggle('open');
+  });
+  sortDropdown.querySelectorAll('.sort-menu button').forEach(function(opt){
+    opt.addEventListener('click', function(){
+      document.getElementById('sortValue').textContent = opt.dataset.sort;
+      sortDropdown.classList.remove('open');
+    });
+  });
+  document.addEventListener('click', function(e){
+    if(!sortDropdown.contains(e.target)) sortDropdown.classList.remove('open');
+  });
+
+  // Filter chips — single select, scoped per panel
+  document.querySelectorAll('.filter-row').forEach(function(row){
+    row.querySelectorAll('.chip-filter').forEach(function(chip){
+      chip.addEventListener('click', function(){
+        row.querySelectorAll('.chip-filter').forEach(function(c){ c.classList.remove('active'); });
+        chip.classList.add('active');
+      });
+    });
+  });
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(function(q){
+    q.addEventListener('click', function(){
+      q.closest('.faq-item').classList.toggle('open');
+    });
+  });
+
+  // Store locator accordion
+  document.querySelectorAll('[data-collapse]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.getElementById(btn.dataset.collapse).classList.toggle('is-open');
+    });
+  });
+
+  // "Voir plus d'avis contrôlés" — appends two more collapsed review cards
+  document.getElementById('loadMoreReviews').addEventListener('click', function(){
+    var tpl = document.getElementById('collapsedCardTpl');
+    var host = document.getElementById('collapsedCardsHost');
+    host.appendChild(tpl.content.cloneNode(true));
+    host.appendChild(tpl.content.cloneNode(true));
+    this.textContent = 'Toutes les 312 avis ne sont pas chargées dans ce prototype';
+    this.disabled = true;
+    this.style.opacity = '.5';
+  });
+
+  // "Voir plus d'avis simples" — same pattern for the Non vérifiés tab
+  document.getElementById('loadMoreReviewsNv').addEventListener('click', function(){
+    var tpl = document.getElementById('collapsedCardTplNv');
+    var host = document.getElementById('collapsedCardsHostNv');
+    host.appendChild(tpl.content.cloneNode(true));
+    host.appendChild(tpl.content.cloneNode(true));
+    this.textContent = 'Tous les 1 529 avis ne sont pas chargés dans ce prototype';
+    this.disabled = true;
+    this.style.opacity = '.5';
+  });
+})();
+</script>
+
+</body>
+</html>

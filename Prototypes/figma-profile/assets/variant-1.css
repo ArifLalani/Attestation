@@ -1,0 +1,30 @@
+/* Variant 1 — Refined: same structure as Control, polish pass only.
+   Changes: consistent section rhythm (alternating ground + real dividers
+   instead of implicit whitespace), tighter/more legible type scale on
+   review bodies, de-emphasized secondary actions so the CTA hierarchy
+   reads clearly, calmer chip/border weight throughout. No new sections,
+   no reordering. */
+
+.v1-section { padding: 28px 16px; }
+.v1-section.is-tint { background: var(--os-tint-1); }
+.v1-section + .v1-section { border-top: 1px solid var(--os-border); }
+
+.viewport .business-card { box-shadow: 0 4px 16px rgba(4,27,68,.10); }
+.viewport .bio { line-height: 1.55; }
+.viewport .about-item { font-weight: 500; letter-spacing: .01px; }
+
+/* CTA hierarchy: one loud yellow action, everything else quiet */
+.viewport .contact-row { margin-top: 4px; }
+.viewport .contact-chip { background: transparent; border: 1px solid var(--os-border); color: var(--os-text-secondary); font-weight: 500; }
+.viewport .social-row { opacity: .7; }
+
+.viewport .review-card { padding: 18px; }
+.viewport .review-body { line-height: 1.6; letter-spacing: .1px; }
+.viewport .chip-scroller .chip { background: var(--os-tint-1); }
+
+.viewport .section-title { font-size: 19px; }
+.viewport .section-sub { margin-top: 6px; }
+
+.viewport .verdict-card { box-shadow: 0 4px 16px rgba(67,182,163,.12); }
+.viewport .agency-card { box-shadow: 0 1px 4px rgba(4,27,68,.06); }
+.viewport .team-card { box-shadow: 0 1px 4px rgba(4,27,68,.06); }

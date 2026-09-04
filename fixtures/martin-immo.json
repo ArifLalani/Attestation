@@ -16,7 +16,15 @@
       "rating": 4.9,
       "count": 312,
       "recommendation_rate": 0.94,
-      "source": "research/concept-teardown.md §1 (reputation card 'Réputation source contrôlée')"
+      "source": "research/concept-teardown.md §1 (reputation card 'Réputation source contrôlée')",
+      "histogram": {
+        "$comment": "inferred:true — PROTOTYPE/DEMO DATA ONLY, not real production data. Derived 2026-08-28 to resolve an inconsistency found auditing the Figma wireframe (node 263:3764 'Résumé des avis contrôlés'), whose built-in histogram (240/52/14/4/2 on 312) mathematically averages to ~4.7, contradicting this fixture's canonical 4.9. This distribution totals exactly 312, averages to 4.894 (rounds to 4,9/5), stays heavily weighted toward 5 stars, and still includes every star level so it doesn't read as artificially perfect. Used by Prototypes/tab-experiment/ so all five variants share identical numbers.",
+        "5": 290,
+        "4": 15,
+        "3": 4,
+        "2": 2,
+        "1": 1
+      }
     },
     "unverified": {
       "rating": 4.4,

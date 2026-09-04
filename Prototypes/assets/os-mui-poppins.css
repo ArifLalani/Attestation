@@ -1,0 +1,33 @@
+/* ==========================================================================
+   Typography override — variants 6–10 ("Poppins throughout" exploration)
+   --------------------------------------------------------------------------
+   Loads AFTER os-mui.css. Keeps every OS brand token (color, spacing, shadow,
+   shape, component structure) identical — only replaces the documented
+   Poppins(headings)/Roboto(body) split (opinion-system.md §6.3) with Poppins
+   for all text, per explicit design-review request. Scoped to variants 6–10
+   only; variants 1–5 are untouched.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,500&display=swap');
+
+body { font-family: Poppins, "Helvetica Neue", Arial, sans-serif; }
+
+.t-h4       { font-family: Poppins, sans-serif; font-weight: 500; }
+.t-h5       { font-family: Poppins, sans-serif; font-weight: 500; }
+.t-h6       { font-family: Poppins, sans-serif; font-weight: 600; }
+.t-sub1     { font-family: Poppins, sans-serif; font-weight: 400; }
+.t-sub2     { font-family: Poppins, sans-serif; font-weight: 500; }
+.t-body1    { font-family: Poppins, sans-serif; font-weight: 400; }
+.t-body2    { font-family: Poppins, sans-serif; font-weight: 400; }
+.t-caption  { font-family: Poppins, sans-serif; font-weight: 400; }
+.t-overline { font-family: Poppins, sans-serif; font-weight: 600; }
+
+.btn, .chip, .badge, .action, .legal, .review-meta, .review-body,
+.score, .score-sm, .score-suffix, .ref, th, td, input, select, textarea,
+details.acc > summary, .tablist label, .stat .v {
+  font-family: Poppins, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Poppins has no true mono/tabular figure face; keep ledger-style numeral
+   columns aligned with feature-setting instead of swapping typeface. */
+.tnum { font-feature-settings: "tnum" 1, "lnum" 1; font-variant-numeric: tabular-nums lining-nums; }

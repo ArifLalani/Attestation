@@ -1,0 +1,25 @@
+/* Variant 4 — Compact / High-Scanability: same sections, same order, same
+   information — tighter rhythm throughout so more of the page's evidence
+   fits per screen. Nothing is removed; agency cards default to collapsed
+   (still expandable) instead of the first one being pre-opened. */
+
+.viewport .section { padding: 12px 16px; }
+.viewport .business-card { padding: 14px; margin-top: -32px; }
+.viewport .hero-photo { height: 150px; }
+.viewport .verdict-card, .viewport .agency-card, .viewport .team-card, .viewport .certificate-card, .viewport .lmb-card { padding: 14px; }
+.viewport .verdict-stats { gap: 6px; }
+.viewport .verdict-stat { padding: 8px; }
+.viewport .verdict-stat .vs-value { font-size: 17px; }
+.viewport .quality-approach { padding: 16px; }
+.viewport .qa-items { gap: 8px; margin-top: 14px; }
+.viewport .qa-item { padding: 12px; gap: 12px; }
+.viewport .team-card { width: 118px; padding: 12px 8px; }
+.viewport .team-avatar { width: 48px; height: 48px; }
+.viewport .review-card { padding: 12px; }
+.viewport .review-card + .review-card,
+#review-list > .review-card + .review-card { margin-top: 10px; }
+.viewport .faq-q { padding: 12px 4px; }
+.viewport .faq-a { padding: 0 4px 12px; }
+.viewport .section-title { font-size: 16px; }
+.viewport .section-sub { font-size: 12.5px; margin-top: 2px; }
+#review-list, #unverified-list { display: flex; flex-direction: column; gap: 10px; }

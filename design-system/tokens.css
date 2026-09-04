@@ -52,6 +52,7 @@
   --os-green-text: #2D7B6E;    /* [LOCAL-DERIVED] darkened from #43B6A3 at the same hue/saturation to reach ~5.0:1 on white (passes AA) — same technique used for the value it replaces. Text/icon use only. */
   --os-green-bg: #E9FFF2;      /* [FIGMA-CONFIRMED] Figma's --success-light-2, the paired background for the "Promoteur" chip. Replaces legacy #E8F7F1 (near-identical). */
   --os-green-legacy: #2DB38A;  /* [LEGACY] retired 2026-08-27. Kept only so past screenshots/comparisons stay explainable — do not use in new work. */
+  --os-green-2: #00D492;       /* [FIGMA-CONFIRMED] Figma's --vert-os-2, found on the KPI Card component (node 416:9753) as the color of its "327 AVIS" count pill — a SECOND, distinct green from --vert-os/--os-green. Not yet used anywhere on the public review page; logged 2026-08-27 while building A-7 concepts 6–9. Do not adopt without a decision — see product/decisions.md "Open items not yet decided" (star-amber/CTA-yellow precedent: Figma doesn't always keep the distinctions we do). */
 
   /* ---------- Error / warning — new, fills a real gap ---------- */
   --os-error: #FC6530;         /* [FIGMA-CONFIRMED] Figma's --error3. Used there for warning/expiry/validation states (e.g. an unanswered review invitation, a rejected review, a form validation error). We had no token for this before. */
@@ -70,7 +71,7 @@
 
   /* ---------- Shape ---------- */
   --r: 8px;                    /* [FIGMA-CONFIRMED] base interactive-component radius — Button, Chip, and Text Input all use 8px in Figma. Replaces the assumed legacy value of 4px (2026-08-27, product/decisions.md). */
-  --r-card: 12px;              /* [UNCONFIRMED] no generic "Card" component has been inspected in Figma yet — stays at its legacy value until one is. Do NOT assume this should become 16px; see --r-card-review. */
+  --r-card: 12px;              /* [UNCONFIRMED] no generic "Card" component has been inspected in Figma yet — stays at its legacy value until one is. Do NOT assume this should become 16px; see --r-card-review. PARTIAL CORROBORATION (2026-08-27): the KPI Card and Dashboard stat-tile components (nodes 416:9753, 416:13085) both use 12px — not the same component family as a generic "Card", but a second independent data point at the same value. Still not promoted to FIGMA-CONFIRMED. */
   --r-card-review: 16px;       /* [FIGMA-CONFIRMED] Review Card specifically uses 16px in Figma (node 416:13164). Scoped to review cards only — not a general card-radius change. */
   --r-pill: 999px;             /* [LOCAL-ONLY] */
 

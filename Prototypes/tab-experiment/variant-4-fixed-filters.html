@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>V4 — Filtres fixes · Opinion System</title>
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../A-7/assets/os-figma.css">
+<link rel="stylesheet" href="assets/experiment.css">
+<style>.harness{background:var(--os-navy);color:#fff;padding:10px 16px;font:600 12.5px/1.4 Poppins,sans-serif;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.harness a{color:var(--os-on-dark-secondary);text-decoration:none}.harness a:hover{text-decoration:underline}</style>
+</head>
+<body>
+<div class="harness"><span>VARIANTE 4 — FILTRES FIXES — Q10-A · seule différence vs. Contrôle : la taxonomie de filtres</span><a href="index.html">← Comparatif</a></div>
+<div id="app"></div>
+<script src="assets/fixture.js"></script>
+<script src="assets/render.js"></script>
+<script>
+  OSExperiment.mount(document.getElementById("app"), window.OS_FIXTURE, {
+    variantId: "fixed-filters",
+    variantLabel: "Filtres fixes (thèmes uniquement)",
+    responsePlacement: "detail",   /* identical to Control */
+    filterMode: "cleanTopics"      /* EXPERIMENTAL VARIABLE — 6-chip fixed real-estate set */
+  });
+</script>
+</body>
+</html>

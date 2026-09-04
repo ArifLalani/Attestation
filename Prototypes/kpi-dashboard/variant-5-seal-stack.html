@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KPI 5 — Sceau &amp; satellites · Opinion System</title>
+<link rel="stylesheet" href="../assets/os-mui.css">
+<link rel="stylesheet" href="../assets/os-mui-poppins.css">
+<style>
+  /* Plays on the certificate/attestation register the brand already owns
+     (opinion-system.md §"institutional voice") — a wax-seal medal for the
+     one number OS stands behind, with everything else literally held at
+     arm's length below, on a dotted tether, clearly a separate object. */
+  .seal-area { position:relative; height:200px; margin:6px 0 0; }
+  .seal {
+    position:absolute; left:50%; top:6px; transform:translateX(-50%);
+    width:148px; height:148px; border-radius:50%;
+    background:radial-gradient(circle at 32% 28%, #0A2B63, var(--os-navy) 65%);
+    border:4px solid var(--os-green); box-shadow:var(--e4);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; color:#fff;
+  }
+  .seal::before {
+    content:""; position:absolute; inset:9px; border-radius:50%; border:1.5px dashed rgba(255,255,255,.35);
+  }
+  .seal .stars svg { width:12px; height:12px; }
+  .seal .score { color:#fff; font-size:30px; }
+  .seal .tag { font:600 9px/1.6 Poppins,sans-serif; letter-spacing:.09em; text-transform:uppercase; color:#7FE3C4; margin-top:2px; }
+  .sat {
+    position:absolute; background:#fff; border-radius:var(--r-pill); box-shadow:var(--e2);
+    padding:6px 12px; text-align:center; border:1px solid var(--os-border);
+  }
+  .sat .v { font:700 14px/1.2 Poppins,sans-serif; color:var(--os-navy); display:block; }
+  .sat .l { font:500 9px/1.4 Poppins,sans-serif; color:var(--os-text-secondary); text-transform:uppercase; letter-spacing:.05em; }
+  .sat-reco { left:6px; top:20px; }
+  .sat-count { right:6px; top:20px; }
+  .sat-fresh { left:50%; top:172px; transform:translateX(-50%); }
+
+  .tether { border-left:1.5px dashed var(--os-grey-border); height:16px; margin:0 auto; }
+  .aside {
+    background:var(--os-grey-bg); border:1px dashed var(--os-grey-border); border-radius:var(--r-card);
+    padding:10px 14px; display:flex; align-items:center; justify-content:center; gap:14px;
+  }
+  .aside .cell { text-align:center; }
+  .aside .cell .v { font:700 14px/1.2 Poppins,sans-serif; color:#46536B; }
+  .aside .cell .l { font:500 10px/1.4 Poppins,sans-serif; color:#5A6B85; }
+  .aside .div { width:1px; align-self:stretch; background:var(--os-grey-border); }
+</style>
+</head>
+<body>
+<div class="phone"><div class="screen">
+
+  <header class="appbar">
+    <svg viewBox="0 0 24 24" fill="none" style="width:22px;height:22px;flex:none">
+      <circle cx="12" cy="12" r="10" stroke="#2DB38A" stroke-width="2"/>
+      <path d="M7.5 12.4l3 3 6-6.5" stroke="#2DB38A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div style="flex:1;min-width:0">
+      <p class="t-overline">Réputation vérifiée</p>
+      <p class="t-caption" style="color:#fff;margin-top:-6px">Délivrée par <strong>Opinion System</strong></p>
+    </div>
+  </header>
+
+  <section class="section" style="padding-bottom:8px">
+    <div class="row">
+      <div class="logo-tile">MI</div>
+      <div style="flex:1;min-width:0">
+        <h1 class="t-h6" style="font-weight:600">Martin Immo</h1>
+        <p class="t-caption muted">Agence immobilière · Lanton, FR</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== THE WIDGET: variant 5 — seal & satellites ===== -->
+  <section class="section" style="padding-top:0">
+
+    <div class="seal-area">
+      <div class="sat sat-reco"><span class="v">94%</span><span class="l">Recommandent</span></div>
+      <div class="seal">
+        <span class="stars">
+          <svg viewBox="0 0 24 24" fill="#FFC107"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+          <svg viewBox="0 0 24 24" fill="#FFC107"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+          <svg viewBox="0 0 24 24" fill="#FFC107"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+          <svg viewBox="0 0 24 24" fill="#FFC107"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+          <svg viewBox="0 0 24 24" fill="#FFC107"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+        </span>
+        <span class="score" style="margin-top:4px">4,9<span class="score-suffix" style="color:#B9C7DD">/5</span></span>
+        <span class="tag">Certifié · 312 avis</span>
+      </div>
+      <div class="sat sat-count"><span class="v">312</span><span class="l">Avis contrôlés</span></div>
+      <div class="sat sat-fresh"><span class="v" style="font-size:12px">Il y a 3&nbsp;j.</span><span class="l">Dernier avis</span></div>
+    </div>
+
+    <div class="tether"></div>
+    <div class="aside">
+      <div class="cell"><span class="v">4,7/5</span><span class="l">Toutes sources (1&nbsp;841)</span></div>
+      <div class="div"></div>
+      <div class="cell"><span class="v">4,4/5</span><span class="l">Non-vérifiés (1&nbsp;529)</span></div>
+    </div>
+    <p class="t-caption muted" style="text-align:center;margin-top:6px">Pour information — hors du sceau, hors du classement</p>
+
+  </section>
+
+  <p class="t-caption muted" style="padding:0 16px 16px">Réf. design.md §4.5 « Verified Reviews Dashboard » · source visuelle : Figma node 376:9683</p>
+
+</div></div>
+</body>
+</html>

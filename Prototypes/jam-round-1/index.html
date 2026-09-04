@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design Jam — Round 1 · Opinion System</title>
+<link rel="stylesheet" href="../assets/os-mui.css">
+<style>
+  body { background:#EEF2F7; font-family: Poppins, Roboto, sans-serif; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 20px 64px; }
+  .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(230px,1fr)); gap:18px; margin-top:24px; }
+  .ccard { background:#fff; border-radius:var(--r-card); box-shadow:var(--e2); overflow:hidden; display:flex; flex-direction:column; text-decoration:none; color:inherit; transition:transform .15s; }
+  .ccard:hover { transform: translateY(-3px); }
+  .ccard .thumb { height:74px; display:grid; place-items:center; color:#fff; font:700 14px/1.3 Poppins,sans-serif; text-align:center; padding:10px; }
+  .ccard .b { padding:14px; flex:1; display:flex; flex-direction:column; gap:6px; }
+  .num { font:700 11px/1.4 Poppins,sans-serif; color:var(--os-text-secondary); letter-spacing:.05em; }
+  .name { font:600 15px/1.3 Poppins,sans-serif; color:var(--os-navy); }
+  .hyp { font:400 12.5px/1.5 Roboto,sans-serif; color:var(--os-text-secondary); }
+  .note { margin-top:28px; padding:16px; background:#FFF7E0; border:1px solid #F0D98A; border-radius:var(--r-card); font:400 13px/1.6 Roboto,sans-serif; color:#5A4A0A; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="t-overline muted">Design jam · Round 1 — à partir de VOTRE Figma</p>
+  <h1 class="t-h4 t-brand">6 directions, 6 mécaniques différentes</h1>
+  <p class="t-body1 muted" style="max-width:74ch;margin-top:8px">
+    Même contenu (Martin Immo — node 140:1426 de votre Figma), même système visuel,
+    mais chaque version change délibérément la navigation, la hiérarchie ou la
+    densité. Cliquez, testez, réagissez — round 2 arrive dès que vous avez des retours.
+  </p>
+
+  <div class="grid">
+    <a class="ccard" href="01-refined.html">
+      <div class="thumb" style="background:linear-gradient(140deg,#041B44,#004F9F)">Fidèle, affinée</div>
+      <div class="b"><span class="num">01 — CLOSE TO FIGMA</span><span class="name">Votre structure, polish de rythme</span>
+        <span class="hyp">Même ordre de blocs que votre Figma. En-tête condensé qui apparaît au scroll, verdict + histogramme, onglets sticky pendant la lecture des avis.</span></div>
+    </a>
+    <a class="ccard" href="02-sources.html">
+      <div class="thumb" style="background:linear-gradient(140deg,#2D7B6E,#00D492)">Sources séparées</div>
+      <div class="b"><span class="num">02 — REPENSE LES 3 SOURCES</span><span class="name">Le fil contrôlé reste la page</span>
+        <span class="hyp">Fini les 3 onglets égaux : les avis contrôlés sont le contenu principal ; Non vérifiés et Plateformes s'ouvrent en tiroir (bottom sheet) qu'on referme, sans jamais "switcher" hors du vérifié.</span></div>
+    </a>
+    <a class="ccard" href="03-explorer.html">
+      <div class="thumb" style="background:linear-gradient(140deg,#004F9F,#2C95FF)">Explorateur</div>
+      <div class="b"><span class="num">03 — MOBILE REVIEW BROWSING</span><span class="name">Un avis plein écran à la fois</span>
+        <span class="hyp">Deck façon "stories" : swipe ou flèches pour passer à l'avis suivant, barre de progression, filtre/tri en tiroir. Le reste de la page est replié sous l'explorateur.</span></div>
+    </a>
+    <a class="ccard" href="04-premium.html">
+      <div class="thumb" style="background:linear-gradient(140deg,#0A2B63,#2C95FF)">Premium</div>
+      <div class="b"><span class="num">04 — TRUST PROFILE PREMIUM</span><span class="name">Un profil édité, pas un dashboard</span>
+        <span class="hyp">Hero photo pleine largeur avec identité en surimpression, jauge circulaire de recommandation, verdict traité comme un extrait de certificat, onglets discrets soulignés.</span></div>
+    </a>
+    <a class="ccard" href="05-disclosure.html">
+      <div class="thumb" style="background:linear-gradient(140deg,#5A4A0A,#B0951E)">Divulgation</div>
+      <div class="b"><span class="num">05 — PROGRESSIVE DISCLOSURE</span><span class="name">Tout replié, rien supprimé</span>
+        <span class="hyp">Seuls le verdict et une mini-identité restent ouverts ; chaque autre bloc est un accordéon natif, atteignable en un tap via une nav rapide sticky en haut.</span></div>
+    </a>
+    <a class="ccard" href="06-appshell.html">
+      <div class="thumb" style="background:linear-gradient(140deg,#041B44,#43B6A3)">App Shell</div>
+      <div class="b"><span class="num">06 — CARTE BLANCHE</span><span class="name">Une appli à onglets, pas un long scroll</span>
+        <span class="hyp">Barre d'onglets basse façon app native : Aperçu / Avis / Agences / Infos. Devient une sidebar sticky à gauche en desktop.</span></div>
+    </a>
+  </div>
+
+  <div class="note">
+    <strong>Point de vigilance produit :</strong> partout, la note d'en-tête et le Verdict de confiance restent
+    calculés UNIQUEMENT sur les avis contrôlés (4,9/5 · 312) — jamais la note "toutes sources confondues" (4,7/5 · 1 841,
+    83&nbsp;% non vérifiés) que montrent les concepts client. C'est le seul chiffre conforme à l'exigence spec
+    (voir CLAUDE.md, "Open conflict"). La version 02 est la seule à afficher le chiffre combiné, en petit et sous-titré,
+    ce qui est la façon conforme de garder un headline de volume sans diluer le vérifié.
+  </div>
+  <p class="t-caption muted" style="margin-top:14px">
+    Toutes les versions partagent <code>figma-profile/assets/fixture.js</code> (4,9/5 · 312 avis contrôlés),
+    <code>sections.js</code> et, quand la mécanique le permet, <code>interactions.js</code> — seuls la mise en page,
+    la navigation et la mécanique d'interaction propres à chaque fichier changent.
+  </p>
+</div>
+</body>
+</html>

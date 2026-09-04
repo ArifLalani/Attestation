@@ -23,7 +23,7 @@
 <body>
 <div class="wrap">
   <p class="t-overline muted">Opinion System · Page d'avis publique</p>
-  <h1 class="t-h4 t-brand">Prototypes mobiles — 5 variantes</h1>
+  <h1 class="t-h4 t-brand">Prototypes mobiles — 10 variantes</h1>
   <p class="t-body1 muted" style="max-width:70ch;margin-top:8px">
     HTML/CSS statique, système de design MUI (Material) habillé aux couleurs de la marque.
     Chaque variante résout différemment le même problème : afficher plus de volume d'avis
@@ -93,7 +93,73 @@
     </a>
   </div>
 
-  <h2 class="t-h6 t-brand" style="margin-top:36px">Ce que les 5 variantes ont en commun</h2>
+  <div class="warn" style="margin-top:28px;border-left-color:#004F9F;background:#EAF3FF">
+    <p class="t-sub2">Lot 2 — variantes 6 à 10</p>
+    <p class="t-body2" style="margin-top:6px">
+      Cinq nouvelles directions d'architecture de l'information (pas de simples habillages),
+      construites en priorisant le cahier des charges (<code>design.md</code>) sur les
+      concepts fournis à chaque fois qu'ils divergent — même règle que le lot 1. Différence
+      volontaire : typographie <strong>Poppins</strong> de bout en bout (titres <em>et</em>
+      corps de texte), via <code>assets/os-mui-poppins.css</code> chargé après la feuille de
+      style commune. C'est un écart assumé par rapport au système documenté
+      (Poppins/Roboto, opinion-system.md §6.3) pour cette exploration — les variantes 1 à 5
+      restent inchangées.
+    </p>
+  </div>
+
+  <div class="grid">
+    <a class="vcard" href="variant-6-dashboard.html" style="text-decoration:none;color:inherit">
+      <div class="thumb" style="background:linear-gradient(140deg,#041B44,#2DB38A)">Tableau de bord<br>grille de statistiques</div>
+      <div class="b">
+        <span class="tag">Lecture en un coup d'œil</span>
+        <p class="t-sub1 strong">6 — Tableau de bord</p>
+        <p class="t-body2 muted">La règle « une seule note fait autorité » devient une grille bento : une tuile vérifiée dominante, trois tuiles secondaires plus petites et étiquetées.</p>
+        <p class="t-caption muted" style="margin-top:auto"><strong>Pour :</strong> scannable, look "asset SaaS" pour l'adhérent · <strong>Contre :</strong> moins de récit que les autres variantes</p>
+      </div>
+    </a>
+
+    <a class="vcard" href="variant-7-timeline.html" style="text-decoration:none;color:inherit">
+      <div class="thumb" style="background:linear-gradient(140deg,#0A2B63,#004F9F)">Chronologie<br>rail vertical par date</div>
+      <div class="b">
+        <span class="tag">Anti-manipulation du tri</span>
+        <p class="t-sub1 strong">7 — Chronologie</p>
+        <p class="t-body2 muted">La règle « tri chronologique, aucune sélection arbitraire » devient l'objet visuel central : un rail plein pour les avis contrôlés, un rail pointillé distinct pour les non vérifiés.</p>
+        <p class="t-caption muted" style="margin-top:auto"><strong>Pour :</strong> rend la conformité tangible plutôt qu'illustrée · <strong>Contre :</strong> moins compact qu'une liste classique</p>
+      </div>
+    </a>
+
+    <a class="vcard" href="variant-8-ledger.html" style="text-decoration:none;color:inherit">
+      <div class="thumb" style="background:linear-gradient(140deg,#041B44,#5A6B85)">Grand livre<br>relevé à deux colonnes</div>
+      <div class="b">
+        <span class="tag">Voix évidentielle, poussée à fond</span>
+        <p class="t-sub1 strong">8 — Grand livre</p>
+        <p class="t-body2 muted">La séparation devient un relevé comptable : colonne « Contrôlé » vs colonne « Non contrôlé », chiffres alignés, lu comme un bilan plutôt qu'une page marketing.</p>
+        <p class="t-caption muted" style="margin-top:auto"><strong>Pour :</strong> cohérent avec « Opinion System délivre un document » · <strong>Contre :</strong> registre très froid, risque de sous-humaniser la page</p>
+      </div>
+    </a>
+
+    <a class="vcard" href="variant-9-qa.html" style="text-decoration:none;color:inherit">
+      <div class="thumb" style="background:linear-gradient(140deg,#004F9F,#2C95FF)">Questions / Réponses<br>toute la page en Q/R</div>
+      <div class="b">
+        <span class="tag">SEO / FAQPage par construction</span>
+        <p class="t-sub1 strong">9 — Questions/Réponses</p>
+        <p class="t-body2 muted">Chaque bloc du cahier des charges devient la réponse à la question qu'un consommateur — ou un moteur de réponse IA — poserait réellement. La FAQ n'est plus un bloc en bas de page : c'est le squelette entier.</p>
+        <p class="t-caption muted" style="margin-top:auto"><strong>Pour :</strong> même langage pour l'humain et le crawler, structure FAQPage native · <strong>Contre :</strong> le rythme Q/R peut lasser sur une page longue</p>
+      </div>
+    </a>
+
+    <a class="vcard" href="variant-10-receipt.html" style="text-decoration:none;color:inherit">
+      <div class="thumb" style="background:linear-gradient(140deg,#041B44,#FFD500)">Reçu de confiance<br>tout tient en 1 écran</div>
+      <div class="b">
+        <span class="tag">Performance §7.4, à l'extrême</span>
+        <p class="t-sub1 strong">10 — Reçu de confiance</p>
+        <p class="t-body2 muted">Au-dessus de la ligne de flottaison : un seul "reçu" — entreprise, note certifiée, verdict, une action. Tout le reste (avis, histogramme, non-vérifié, agences, FAQ) est derrière un unique bouton "Voir les preuves".</p>
+        <p class="t-caption muted" style="margin-top:auto"><strong>Pour :</strong> le plus rapide à charger et à partager (capture d'écran) · <strong>Contre :</strong> le volume d'avis promis par le projet reste caché tant qu'on ne déplie pas</p>
+      </div>
+    </a>
+  </div>
+
+  <h2 class="t-h6 t-brand" style="margin-top:36px">Ce que les 10 variantes ont en commun</h2>
   <table>
     <tr><th style="width:34%">Règle</th><th>Application</th></tr>
     <tr><td>Note héros = avis contrôlés uniquement</td><td>4,9/5 sur 312 avis. La note toutes sources (4,4/5) apparaît en corps réduit, explicitement exclue du calcul.</td></tr>

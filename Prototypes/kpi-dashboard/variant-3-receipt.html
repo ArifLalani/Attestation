@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KPI 3 — Reçu de confiance · Opinion System</title>
+<link rel="stylesheet" href="../assets/os-mui.css">
+<link rel="stylesheet" href="../assets/os-mui-poppins.css">
+<style>
+  /* A receipt itemizes by nature — each line already carries a label, a
+     value and an implicit "counts / doesn't count" status, so the ledger
+     metaphor does the compliance work for free. The wax-seal stamp keeps
+     the one number OS actually vouches for physically apart from the rest. */
+  .ticket {
+    position:relative; background:#fff; border-radius:var(--r-card) var(--r-card) 0 0;
+    padding:16px 16px 22px; box-shadow:var(--e1);
+  }
+  .ticket::after {
+    content:""; position:absolute; left:0; right:0; bottom:-9px; height:18px;
+    background-image:
+      linear-gradient(45deg, transparent 33.333%, #fff 33.333%, #fff 66.667%, transparent 66.667%),
+      linear-gradient(-45deg, transparent 33.333%, #fff 33.333%, #fff 66.667%, transparent 66.667%);
+    background-size:16px 18px; background-position:0 0, 8px 0;
+  }
+  .line { display:flex; align-items:baseline; padding:6px 0; }
+  .line .leader { flex:1; border-bottom:1px dotted var(--os-border); margin:0 6px 5px; }
+  .line .val { font:700 15px/1 Poppins,sans-serif; }
+  .line.unverified .val, .line.unverified .lbl { color:#5A6B85; }
+  .perf { border-top:1px dashed var(--os-grey-border); margin:14px -16px 14px; position:relative; }
+  .perf::before, .perf::after {
+    content:""; position:absolute; top:-9px; width:18px; height:18px; border-radius:99px; background:var(--os-tint-2);
+  }
+  .perf::before { left:-9px; } .perf::after { right:-9px; }
+  .stampwrap { text-align:center; padding-top:6px 0 20px; }
+  .stamp {
+    display:inline-flex; flex-direction:column; align-items:center; justify-content:center;
+    width:96px; height:96px; border-radius:99px; border:2.5px dashed var(--os-green);
+    color:var(--os-green-text); transform:rotate(-8deg); margin-top:4px;
+  }
+  .stamp .v { font:700 22px/1 Poppins,sans-serif; }
+  .stamp .l { font:600 8px/1.4 Poppins,sans-serif; text-transform:uppercase; letter-spacing:.06em; max-width:70px; text-align:center; }
+</style>
+</head>
+<body>
+<div class="phone"><div class="screen">
+
+  <header class="appbar">
+    <svg viewBox="0 0 24 24" fill="none" style="width:22px;height:22px;flex:none">
+      <circle cx="12" cy="12" r="10" stroke="#2DB38A" stroke-width="2"/>
+      <path d="M7.5 12.4l3 3 6-6.5" stroke="#2DB38A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div style="flex:1;min-width:0">
+      <p class="t-overline">Réputation vérifiée</p>
+      <p class="t-caption" style="color:#fff;margin-top:-6px">Délivrée par <strong>Opinion System</strong></p>
+    </div>
+  </header>
+
+  <section class="section" style="padding-bottom:8px">
+    <div class="row">
+      <div class="logo-tile">MI</div>
+      <div style="flex:1;min-width:0">
+        <h1 class="t-h6" style="font-weight:600">Martin Immo</h1>
+        <p class="t-caption muted">Agence immobilière · Lanton, FR</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== THE WIDGET: variant 3 — certified receipt ===== -->
+  <section class="section" style="padding-top:0;padding-bottom:26px">
+    <div class="ticket tnum">
+      <p class="t-overline muted" style="text-align:center">Reçu de confiance · 31 août 2026</p>
+
+      <div class="line">
+        <span class="badge badge-verified" style="flex:none">✓ Contrôlés</span>
+        <span class="leader"></span>
+        <span class="val" style="color:var(--os-green-text)">4,9/5&nbsp;<span class="t-caption muted" style="font-weight:400">(312)</span></span>
+      </div>
+      <div class="line">
+        <span class="t-body2 muted" style="flex:none">— Toutes sources</span>
+        <span class="leader"></span>
+        <span class="val" style="font-weight:500">4,7/5&nbsp;<span class="t-caption muted" style="font-weight:400">(1 841)</span></span>
+      </div>
+      <div class="line unverified">
+        <span class="badge badge-unverified" style="flex:none">○ Non-vérifiés</span>
+        <span class="leader"></span>
+        <span class="val">4,4/5&nbsp;<span class="t-caption" style="font-weight:400">(1 529)</span></span>
+      </div>
+
+      <div class="perf"></div>
+
+      <div class="stampwrap" style="display:flex;align-items:center;justify-content:center;gap:16px">
+        <div class="stamp">
+          <span class="v">94%</span>
+          <span class="l">Clients qui recommandent</span>
+        </div>
+        <p class="t-caption muted" style="max-width:120px">Calculé sur les seuls avis <strong>contrôlés</strong> — jamais sur le total toutes sources.</p>
+      </div>
+    </div>
+  </section>
+
+  <p class="t-caption muted" style="padding:14px 16px 16px">Réf. design.md §4.5 « Verified Reviews Dashboard » · source visuelle : Figma node 376:9683</p>
+
+</div></div>
+</body>
+</html>

@@ -1,0 +1,52 @@
+/* ==========================================================================
+   Opinion System — Design Jam Round 1 · shared mechanism layer
+   --------------------------------------------------------------------------
+   Loaded on top of tokens.css + A-7/os-figma.css + figma-profile/profile.css.
+   Only the INTERACTION MECHANISMS shared by more than one variant live here
+   (bottom sheet, bottom app-tab-bar, swipe deck, jump-nav, gauge, harness
+   bar). Each variant's own look-and-feel stays in its own <style> block —
+   this file must never make two variants look the same.
+   ========================================================================== */
+
+.harness{background:var(--os-navy);color:#fff;padding:10px 16px;font:600 12.5px/1.4 Poppins,sans-serif;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;position:relative;z-index:50}
+.harness a{color:var(--os-on-dark-secondary);text-decoration:none}
+.harness a:hover{text-decoration:underline}
+
+/* ---------- Bottom sheet (variant 02) ---------- */
+.sheet-scrim{position:fixed;inset:0;background:rgba(4,27,68,.45);opacity:0;pointer-events:none;transition:opacity .22s;z-index:40}
+.sheet-scrim.is-open{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;max-width:430px;margin:0 auto;background:#fff;border-radius:20px 20px 0 0;box-shadow:0 -8px 30px rgba(4,27,68,.25);transform:translateY(100%);transition:transform .26s cubic-bezier(.32,.72,0,1);z-index:41;max-height:82vh;display:flex;flex-direction:column}
+.sheet.is-open{transform:translateY(0)}
+.sheet-handle{width:40px;height:4px;border-radius:99px;background:var(--os-border);margin:10px auto 4px}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;padding:6px 16px 12px;border-bottom:1px solid var(--os-border)}
+.sheet-body{overflow-y:auto;padding-bottom:24px}
+.sheet-close{border:0;background:var(--os-tint-1);width:32px;height:32px;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--os-navy)}
+
+/* ---------- Bottom app-tab-bar (variant 06) ---------- */
+.app-tabbar{position:fixed;left:0;right:0;bottom:0;max-width:430px;margin:0 auto;background:#fff;border-top:1px solid var(--os-border);display:flex;z-index:30;box-shadow:0 -2px 12px rgba(4,27,68,.08)}
+.app-tab{flex:1 0 0;border:0;background:transparent;padding:8px 4px 10px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;color:var(--os-text-secondary);font:600 10.5px/1.2 Poppins,sans-serif}
+.app-tab svg{width:22px;height:22px}
+.app-tab.is-active{color:var(--os-navy)}
+.app-tab.is-active svg{color:var(--os-blue-light)}
+
+/* ---------- Jump nav (variant 05) ---------- */
+.jumpnav{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--os-border);display:flex;gap:6px;overflow-x:auto;padding:10px 12px;scrollbar-width:none}
+.jumpnav::-webkit-scrollbar{display:none}
+.jumpnav button{flex:none;border:1px solid var(--os-border);background:var(--os-tint-1);border-radius:999px;padding:7px 13px;font:600 12.5px/1.2 Poppins,sans-serif;color:var(--os-navy);cursor:pointer}
+.jumpnav button.is-current{background:var(--os-navy);color:#fff;border-color:var(--os-navy)}
+
+/* ---------- Score gauge (variant 04) ---------- */
+.gauge{position:relative;width:132px;height:132px;flex:none}
+.gauge svg{transform:rotate(-90deg)}
+.gauge .g-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+
+/* ---------- Swipe deck (variant 03) ---------- */
+.deck{position:relative;padding:12px 16px 4px}
+.deck-progress{display:flex;gap:4px;padding:0 16px 10px}
+.deck-progress i{flex:1 0 0;height:3px;border-radius:2px;background:var(--os-border)}
+.deck-progress i.is-seen{background:var(--os-green)}
+.deck-card-wrap{overflow:hidden}
+.deck-nav{display:flex;justify-content:space-between;align-items:center;padding:10px 16px 0}
+.deck-nav button{border:0;background:var(--os-tint-1);width:46px;height:46px;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--os-navy)}
+.deck-nav button:disabled{opacity:.35;cursor:default}
+.deck-counter{font:600 13px/1.3 Poppins,sans-serif;color:var(--os-text-secondary)}

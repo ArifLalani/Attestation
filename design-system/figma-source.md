@@ -33,19 +33,32 @@
 | Text Input | `412:1882` | Empty, Typing, Warning, Filled | Radius (8px), focus border (30% opacity blue), warning border color |
 | Review Card | `416:13164` | Review, Google Review, Variant4, **Pending** | Radius (16px), author/body text styles, the `Pending` expiry state (not yet modeled on our page) |
 | `<Chip>` (nested in Review Card) | `416:13306` / `416:13308` | Promoteur, Google | `--vert-os` green, `--success-light-2` bg, radius (8px) |
+| KPI Card | `416:9753` | Default, Selected, Variant3 (sync) | Radius (12px), Poppins Bold 24px number, `rgba(44,149,255,.2)` translucent navy-tint surface, `--vert-os-2 #00d492` count-pill text on a `rgba(44,149,255,.3)` pill |
+| Dashboard (stat tiles) | `416:13085` | Default | Same 12px radius, two-tone tile pattern (translucent-blue-on-dark / white-on-light), Poppins Bold 40px "Ma note" numeral, `/5` suffix in `--gris #8ea1b2` |
 
-Named Figma text styles seen so far: **OS/Heading 4** (Poppins SemiBold 18px), **OS/Heading 5**
-(Poppins SemiBold 16px), **OS/Heading 6** (Poppins SemiBold 14px). Body copy observed at
-Poppins Regular 16px / Regular 14px / Medium 13px — no named style captured for these yet.
+Named Figma text styles seen so far: **OS/Heading 1** (Poppins Bold 32px), **OS/Heading 4**
+(Poppins SemiBold 18px), **OS/Heading 5** (Poppins SemiBold 16px), **OS/Heading 6** (Poppins
+SemiBold 14px). Body copy observed at Poppins Regular 16px / Regular 14px / Medium 13px — no
+named style captured for these yet.
 
 Named Figma color variables seen so far: `--bleu-fonce #041b44`, `--bleu-400 #2c95ff`,
 `--yellow #ffd500`, `--jaune-400 #ffd500` (same hex as `--yellow`), `--vert-os #43b6a3`,
-`--success-light-2 #e9fff2`, `--error3 #fc6530`, `--gris #8ea1b2`, `--gris-clair-1 #f7fafc`,
-`--gris-clair-2 #f0f6f9`, `--gris-moyen-1 #dfe9ef`.
+`--vert-os-2 #00d492` (a SECOND, distinct green — seen only on KPI Card's count pill so far;
+not adopted into tokens.css beyond a logged, unused entry — see tokens.css and
+product/decisions.md), `--success-light-2 #e9fff2`, `--error3 #fc6530`, `--gris #8ea1b2`,
+`--gris-clair-1 #f7fafc`, `--gris-clair-2 #f0f6f9`, `--gris-moyen-1 #dfe9ef`.
 
-**Not yet inspected:** a generic "Card" component (so `--r-card`'s 12px stays unconfirmed),
+**Not yet inspected:** a generic "Card" component (so `--r-card`'s 12px stays formally
+unconfirmed, though KPI Card/Dashboard now corroborate the same value — see tokens.css),
 spacing/grid as a named token system (only inferred from observed padding/gap values), effect
-styles (shadows), and most of the Home/Survey/Recipient sections beyond their component names.
+styles (shadows, including the `card-dropshadow` effect style seen in search results but not
+inspected), and most of the Home/Survey/Recipient sections beyond their component names.
+
+**2026-08-27 addendum:** searched for a dedicated public-page "Card"/"Stat" component ahead of
+building A-7 concepts 6–9 (`Prototypes/A-7/concept-6..9`) — no OS-specific generic Card exists
+in the design system (only third-party MUI/Hologram/etc. library Cards, which aren't ours);
+KPI Card and Dashboard were the closest real matches and are now the basis for those
+prototypes' stat-tile components.
 
 ---
 
