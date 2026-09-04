@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Variante 5 — Attestation · Opinion System</title>
+<link rel="stylesheet" href="assets/os-mui.css">
+<style>
+  /* Variant 5 — the page as a formal ATTESTATION, not a listing.
+     Leans into what Opinion System actually is: an independent institute that
+     issues a document. Numbered clauses, a reference number, an issue date, a
+     seal, and the certifier's signature block. The register is the product —
+     this variant tests whether "boring and official" out-converts "friendly". */
+  .doc { background:#fff; margin:0 12px; border-radius: var(--r-card); box-shadow: var(--e2); overflow:hidden; }
+  .doc-head { background:var(--os-navy); color:#fff; padding:18px 16px; position:relative; }
+  .doc-head::after { content:""; position:absolute; left:0; right:0; bottom:0; height:3px;
+    background: linear-gradient(90deg, var(--os-green) 0 33%, var(--os-yellow) 33% 66%, var(--os-blue-light) 66% 100%); }
+  .seal { width:70px;height:70px;border-radius:50%;border:2px solid var(--os-green);
+    display:grid;place-items:center;text-align:center;color:var(--os-green-text);background:var(--os-green-bg);
+    font:700 9px/1.25 Roboto,sans-serif;letter-spacing:.06em;text-transform:uppercase;flex:none; }
+  .clause { display:grid; grid-template-columns: 26px 1fr; gap:10px; padding:14px 16px; border-top:1px solid var(--os-border); }
+  .clause .num { font:700 12px/1.6 Roboto,sans-serif; color:var(--os-text-secondary); }
+  .clause dt { font:500 14px/1.5 Roboto,sans-serif; margin:0; }
+  .clause dd { font:400 13px/1.5 Roboto,sans-serif; color:var(--os-text-secondary); margin:2px 0 0; }
+  .figure-row { display:grid; grid-template-columns:1fr 1fr; }
+  .figure-row > div { padding:14px 16px; border-top:1px solid var(--os-border);
+    display:flex; flex-direction:column; }
+  .figure-row > div:first-child { border-right:1px solid var(--os-border); }
+  .figure-row .cap { margin-top:auto; }   /* captions align to the bottom of both columns */
+  .ref { font:400 11px/1.6 "Roboto Mono", Roboto, monospace; letter-spacing:.06em; color:var(--os-on-dark-secondary); }
+</style>
+</head>
+<body>
+<div class="phone"><div class="screen">
+
+  <header class="appbar">
+    <svg viewBox="0 0 24 24" fill="none" style="width:22px;height:22px;flex:none">
+      <circle cx="12" cy="12" r="10" stroke="#2DB38A" stroke-width="2"/>
+      <path d="M7.5 12.4l3 3 6-6.5" stroke="#2DB38A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div style="flex:1;min-width:0">
+      <p class="t-overline">Réputation vérifiée</p>
+      <p class="t-caption" style="color:#fff;margin-top:-6px">Délivrée par <strong>Opinion System</strong></p>
+    </div>
+    <a class="btn btn-text btn-sm" href="#" style="color:var(--os-yellow)">Partager</a>
+  </header>
+
+  <!-- ===== THE ATTESTATION ===== -->
+  <section style="padding:16px 0 0;background:var(--os-tint-2)">
+    <div class="doc">
+      <div class="doc-head">
+        <p class="t-overline" style="color:#7FE3C4">Attestation de réputation vérifiée</p>
+        <h1 class="t-h5 t-brand" style="color:#fff;margin-top:4px">Martin Immo</h1>
+        <p class="t-caption" style="color:var(--os-on-dark-secondary)">Agence immobilière · Vente &amp; location · Lanton, FR</p>
+        <p class="ref" style="margin-top:10px">ADHÉRENT N° 001256 · ÉMISE LE 02.07.2026 · MISE À JOUR EN CONTINU</p>
+      </div>
+
+      <!-- Attestation statement + seal -->
+      <div class="row" style="padding:16px;gap:14px;align-items:flex-start">
+        <div class="seal">NF ISO<br>20488<br>AFNOR</div>
+        <p class="t-body2" style="flex:1">
+          <strong>Opinion System</strong>, organisme de sondage indépendant, atteste que la réputation de
+          <strong>Martin Immo</strong> repose sur <strong>312 avis clients contrôlés</strong>,
+          collectés après un achat réel et vérifiés selon la norme <strong>NF Service 522 / ISO 20488</strong>.
+        </p>
+      </div>
+
+      <!-- The certified figures -->
+      <div class="figure-row">
+        <div>
+          <p class="t-overline muted">Note certifiée</p>
+          <div class="row" style="gap:5px;align-items:baseline"><span class="score" style="color:var(--os-green-text)">4,9</span><span class="score-suffix">/5</span></div>
+          <span class="stars" style="margin-top:2px">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+          </span>
+          <p class="t-caption muted cap" style="margin-top:4px">312 avis contrôlés</p>
+        </div>
+        <div>
+          <p class="t-overline muted">Recommandation</p>
+          <div><span class="score" style="color:var(--os-green-text)">94</span><span class="score-suffix"> %</span></div>
+          <p class="t-caption muted cap">des clients recommandent</p>
+        </div>
+      </div>
+
+      <!-- Numbered clauses: what the attestation actually guarantees -->
+      <dl style="margin:0">
+        <div class="clause"><span class="num">01</span><div><dt>Achat réel constaté</dt><dd>Le questionnaire n'est adressé qu'après une transaction effective.</dd></div></div>
+        <div class="clause"><span class="num">02</span><div><dt>Identité de l'auteur vérifiée</dt><dd>Nom, e-mail et/ou téléphone contrôlés par Opinion System.</dd></div></div>
+        <div class="clause"><span class="num">03</span><div><dt>Aucune sélection, aucun filtrage</dt><dd>Ni le choix des clients interrogés ni les avis publiés ne peuvent être triés arbitrairement.</dd></div></div>
+        <div class="clause"><span class="num">04</span><div><dt>Contenu inaltérable</dt><dd>Ni l'entreprise ni Opinion System ne peuvent modifier ou supprimer un avis conforme.</dd></div></div>
+        <div class="clause"><span class="num">05</span><div><dt>Droit de réponse et de signalement</dt><dd>L'entreprise peut répondre publiquement ; tout visiteur peut signaler un avis suspect.</dd></div></div>
+        <div class="clause"><span class="num">06</span><div><dt>Aucune contrepartie</dt><dd>Aucun cadeau, remise ou promotion n'a été accordé en échange d'un avis.</dd></div></div>
+      </dl>
+
+      <!-- Certifier signature block -->
+      <div style="padding:16px;border-top:1px solid var(--os-border);background:var(--os-tint-1)">
+        <p class="t-overline muted">Organisme certificateur</p>
+        <div class="row" style="margin-top:6px">
+          <svg viewBox="0 0 24 24" fill="none" style="width:26px;height:26px;flex:none">
+            <circle cx="12" cy="12" r="10" stroke="#2DB38A" stroke-width="2"/>
+            <path d="M7.5 12.4l3 3 6-6.5" stroke="#2DB38A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div style="flex:1;min-width:0">
+            <p class="t-sub2">Opinion System</p>
+            <p class="t-caption muted">Institut de sondage indépendant · Lanton, France</p>
+          </div>
+        </div>
+        <div class="row" style="gap:6px;flex-wrap:wrap;margin-top:10px">
+          <span class="badge badge-verified">NF Service 522 / ISO 20488</span>
+          <span class="badge badge-verified">ISO 20252</span>
+          <span class="badge badge-verified">ISO 9001</span>
+        </div>
+        <p class="legal" style="margin-top:10px">Seul organisme en Europe à cumuler ces trois certifications AFNOR pour les avis clients.</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <a class="btn btn-cta btn-block" href="#">Déposer un avis</a>
+      <div class="row" style="gap:8px;margin-top:8px">
+        <a class="btn btn-outlined btn-sm" href="#" style="flex:1">Télécharger le PDF</a>
+        <a class="btn btn-outlined btn-sm" href="#" style="flex:1">Attestation groupe</a>
+      </div>
+      <div class="actions" style="margin-top:8px">
+        <a class="action" href="#"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15 15 0 006.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.2.4 2.4.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 013 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1l-2.3 2.2z"/></svg>Appeler</a>
+        <a class="action" href="#"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>Contacter</a>
+        <a class="action" href="#"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>Site web</a>
+        <a class="action" href="#"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.7 11.3l-9-9a1 1 0 00-1.4 0l-9 9a1 1 0 000 1.4l9 9a1 1 0 001.4 0l9-9a1 1 0 000-1.4zM14 14.5V12h-4v3H8v-4a1 1 0 011-1h5V7.5l3.5 3.5-3.5 3.5z"/></svg>Itinéraire</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Annexe A : the reviews that back the attestation -->
+  <section class="section" style="background:#fff">
+    <p class="t-overline muted">Annexe A</p>
+    <div class="row-between" style="margin:2px 0 12px">
+      <h2 class="t-h6 t-brand">Avis contrôlés (312)</h2>
+      <button class="chip chip-outlined chip-sm">Trier ▾</button>
+    </div>
+
+    <div class="stack-8" style="margin-bottom:14px">
+      <div class="histo"><span class="t-caption muted">5 ★</span><div class="bar"><i style="width:77%"></i></div><span class="t-caption muted">240</span></div>
+      <div class="histo"><span class="t-caption muted">4 ★</span><div class="bar"><i style="width:17%"></i></div><span class="t-caption muted">52</span></div>
+      <div class="histo"><span class="t-caption muted">3 ★</span><div class="bar"><i style="width:5%"></i></div><span class="t-caption muted">14</span></div>
+      <div class="histo"><span class="t-caption muted">2 ★</span><div class="bar"><i style="width:2%"></i></div><span class="t-caption muted">4</span></div>
+      <div class="histo"><span class="t-caption muted">1 ★</span><div class="bar"><i style="width:1%"></i></div><span class="t-caption muted">2</span></div>
+    </div>
+
+    <article class="card-outlined card-body" style="border-left:3px solid var(--os-green)">
+      <div class="row-between"><p class="t-sub2">Sophie M.</p><span class="t-sub2" style="color:var(--os-green-text)">4,7/5</span></div>
+      <p class="review-meta">Vente habitation · Achat vérifié · Juillet 2026</p>
+      <span class="badge badge-verified" style="margin-top:8px">Avis contrôlé</span>
+      <p class="review-body">Accompagnement vraiment au top pour ma nouvelle habitation. Aucune mauvaise surprise sur le contrat.</p>
+      <div class="response"><p class="t-caption strong">Réponse de Martin Immo</p><p class="t-body2" style="margin-top:4px">Merci beaucoup Sophie pour votre confiance !</p></div>
+      <div class="review-footer"><button class="btn btn-text btn-sm">👍 Utile (24)</button><button class="btn btn-text btn-sm" style="color:var(--os-text-secondary)">⚑ Signaler</button></div>
+    </article>
+
+    <button class="btn btn-outlined btn-block" style="margin-top:12px">Consulter les 312 avis</button>
+  </section>
+
+  <!-- Annexe B : outside the attestation -->
+  <section class="section" style="background:var(--os-grey-bg)">
+    <p class="t-overline muted">Annexe B — hors attestation</p>
+    <h2 class="t-h6 t-brand" style="margin:2px 0 8px">Sources non vérifiées</h2>
+    <p class="t-body2 muted" style="margin-bottom:12px">
+      Les éléments ci-dessous <strong>ne sont pas couverts</strong> par l'attestation ci-dessus et n'entrent
+      dans aucun de ses chiffres. Ils sont affichés à titre purement informatif.
+    </p>
+
+    <details class="acc surface-unverified" style="border-bottom:0">
+      <summary><span><span class="badge badge-unverified">⚠ Non vérifié</span><span class="t-sub2" style="display:block;margin-top:6px">Avis spontanés (1 529) · 4,4/5</span></span></summary>
+      <div class="acc-body">
+        <article class="card-outlined card-body" style="border-style:dashed;border-color:var(--os-grey-border)">
+          <div class="row-between"><p class="t-sub2">Émilie R.</p><span class="t-sub2 muted">4/5</span></div>
+          <p class="review-meta">Avis spontané · il y a 4 jours</p>
+          <span class="badge badge-unverified" style="margin-top:8px">⚠ Non vérifié</span>
+          <p class="review-body">Bon accueil en agence. Je mets 4 car j'ai attendu un peu au téléphone.</p>
+        </article>
+        <p class="legal" style="margin-top:12px">Sans vérification d'identité ni d'achat · aucune contrepartie · tri chronologique · conservation 24 mois.</p>
+      </div>
+    </details>
+
+    <details class="acc card-outlined" style="border-bottom:0;margin-top:10px;border-radius:var(--r-card)">
+      <summary><span class="t-sub2">Autres plateformes (6 sources)</span></summary>
+      <div class="acc-body stack-8">
+        <p class="t-body2 muted">Note et lien uniquement — contenu jamais republié.</p>
+        <a class="card-outlined card-body row-between" href="#" style="text-decoration:none;color:inherit"><div class="row"><span class="platform-logo" style="background:#4285F4">G</span><span class="t-body2">Google · 526 avis</span></div><span class="t-sub2">4,5 ↗</span></a>
+        <a class="card-outlined card-body row-between" href="#" style="text-decoration:none;color:inherit"><div class="row"><span class="platform-logo" style="background:#00B67A">★</span><span class="t-body2">Trustpilot · 389 avis</span></div><span class="t-sub2">4,5 ↗</span></a>
+      </div>
+    </details>
+  </section>
+
+  <!-- Agencies + FAQ -->
+  <section class="section" style="background:#fff">
+    <p class="t-overline muted">Annexe C</p>
+    <h2 class="t-h6 t-brand" style="margin:2px 0 10px">Établissements du groupe</h2>
+    <div class="stack-8">
+      <div class="card-outlined card-body" style="border-left:3px solid var(--os-green)">
+        <div class="row-between"><p class="t-sub2">Martin Immo — Lanton</p><span class="badge badge-verified chip-sm">Cette agence</span></div>
+        <p class="t-caption muted">42 cours Vitton, 69006 Lyon</p><p class="t-caption strong">4,7/5 · 1 872 avis contrôlés</p>
+      </div>
+      <div class="card-outlined card-body"><p class="t-sub2">Martin Immo — Villeurbanne</p><p class="t-caption strong">4,6/5 · 1 480 avis contrôlés</p></div>
+      <div class="card-outlined card-body"><p class="t-sub2">Martin Immo — Écully</p><p class="t-caption strong">4,8/5 · 197 avis contrôlés</p></div>
+    </div>
+    <p class="t-caption muted" style="margin-top:10px">3 établissements · 3 549 avis contrôlés au total</p>
+  </section>
+
+  <section style="background:var(--os-tint-2)">
+    <div class="section" style="padding-bottom:8px"><h2 class="t-h6 t-brand">Questions fréquentes</h2></div>
+    <details class="acc" open><summary>Que garantit exactement cette attestation ?</summary><div class="acc-body"><p class="t-body2 muted">Que les 312 avis contrôlés proviennent de clients réels dont l'identité et l'achat ont été vérifiés par Opinion System, et qu'aucun d'eux ne peut être modifié ou supprimé par l'entreprise.</p></div></details>
+    <details class="acc"><summary>Les avis peuvent-ils être truqués ?</summary><div class="acc-body"><p class="t-body2 muted">Pas ceux couverts par l'attestation. Les avis de l'Annexe B ne sont pas vérifiés et sont signalés comme tels.</p></div></details>
+    <details class="acc"><summary>Qui est Opinion System ?</summary><div class="acc-body"><p class="t-body2 muted">Un organisme de sondage indépendant, seul en Europe à cumuler ISO 20488, ISO 20252 et ISO 9001 délivrées par AFNOR Certification.</p></div></details>
+  </section>
+
+  <section class="surface-navy section">
+    <h2 class="t-h6 t-brand" style="margin-bottom:12px">Obtenez votre attestation de réputation vérifiée.</h2>
+    <a class="btn btn-cta btn-block" href="#">Inscrire mon entreprise</a>
+  </section>
+
+  <div class="bottom-bar">
+    <a class="btn btn-outlined btn-sm" href="#" style="flex:1">Télécharger</a>
+    <a class="btn btn-cta btn-sm" href="#" style="flex:1.4">Déposer un avis</a>
+  </div>
+
+</div></div>
+</body>
+</html>

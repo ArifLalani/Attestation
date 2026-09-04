@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Variante 3 — Double registre · Opinion System</title>
+<link rel="stylesheet" href="assets/os-mui.css">
+<style>
+  /* Variant 3 — closest to the supplied concepts (mob 8 / Attestation.png).
+     Keeps the two "réputation" cards side by side, but fixes the compliance
+     problem: the CONTROLLED card is the hero and the NON-VERIFIED card is
+     visibly subordinate — smaller score, grey ground, dashed edge, and a
+     literal "hors note certifiée" line. Same information, legal hierarchy. */
+  .ledger { display:grid; grid-template-columns: 1.35fr 1fr; gap:10px; align-items:stretch; }
+  .ledger > * { padding:14px 12px; border-radius: var(--r-card); }
+  .ledger .lead   { background:#fff; border:1px solid var(--os-green); border-top:4px solid var(--os-green); }
+  .ledger .second { background:var(--os-grey-bg); border:1px dashed var(--os-grey-border); }
+  .ledger .lead .score   { font-size:34px; color:var(--os-green-text); }
+  .ledger .second .score { font-size:24px; color:#46536B; }
+  .vs-note { text-align:center; font:400 11px/1.5 Roboto,sans-serif; color:var(--os-text-secondary); margin-top:8px; }
+</style>
+</head>
+<body>
+<div class="phone"><div class="screen">
+
+  <header class="appbar">
+    <svg viewBox="0 0 24 24" fill="none" style="width:22px;height:22px;flex:none">
+      <circle cx="12" cy="12" r="10" stroke="#2DB38A" stroke-width="2"/>
+      <path d="M7.5 12.4l3 3 6-6.5" stroke="#2DB38A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div style="flex:1;min-width:0">
+      <p class="t-overline">Réputation vérifiée</p>
+      <p class="t-caption" style="color:#fff;margin-top:-6px">Avis de Martin Immo contrôlés par <strong>Opinion System</strong></p>
+    </div>
+  </header>
+
+  <div class="hero-img" role="img" aria-label="Photo de l'agence"></div>
+
+  <section class="card" style="margin:-28px 12px 0;position:relative">
+    <div class="card-body stack-12">
+      <div class="row-between" style="align-items:flex-start">
+        <div style="flex:1;min-width:0">
+          <h1 class="t-h6 t-brand" style="line-height:1.25">Martin Immo</h1>
+          <p class="t-caption muted">Agence immobilière · Vente &amp; location</p>
+          <p class="t-caption muted">Lanton, FR · n° 001256</p>
+        </div>
+        <span class="badge badge-verified">✓ Vérifié</span>
+      </div>
+
+      <p class="t-body2 muted">Agence immobilière reconnue pour son sérieux et sa capacité à guider ses clients avec clarté et méthode. <a class="link" href="#">Voir plus</a></p>
+
+      <!-- ===== THE DUAL LEDGER ===== -->
+      <div class="ledger">
+        <div class="lead">
+          <p class="t-overline" style="color:var(--os-green-text)">Avis contrôlés</p>
+          <div class="row" style="gap:4px;align-items:baseline">
+            <span class="score">4,9</span><span class="score-suffix">/5</span>
+          </div>
+          <span class="stars" style="margin-top:4px" aria-label="4,9 sur 5">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+          </span>
+          <p class="t-caption strong" style="margin-top:8px;color:var(--os-green-text)">312 avis · 94 % recommandent</p>
+          <p class="t-caption muted">Identité &amp; achat vérifiés</p>
+          <a class="btn btn-text btn-sm" href="#p-verif" style="padding-left:0">Lire les avis →</a>
+        </div>
+
+        <div class="second">
+          <p class="t-overline" style="color:#46536B">Non vérifiés</p>
+          <div class="row" style="gap:4px;align-items:baseline">
+            <span class="score">4,4</span><span class="score-suffix" style="font-size:13px">/5</span>
+          </div>
+          <span class="stars stars-grey" style="margin-top:4px">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.7-7L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7z"/></svg>
+          </span>
+          <p class="t-caption" style="margin-top:8px;color:#46536B">1 529 avis · 6 sources</p>
+          <p class="t-caption muted"><strong>Hors note certifiée</strong></p>
+          <a class="btn btn-text btn-sm" href="#p-nonverif" style="padding-left:0;color:#46536B">Consulter →</a>
+        </div>
+      </div>
+      <p class="vs-note">Les deux notes sont calculées séparément et ne sont jamais additionnées.</p>
+
+      <a class="btn btn-cta btn-block" href="#">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+        Déposer un avis
+      </a>
+
+      <div class="actions">
+        <a class="action" href="#"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15 15 0 006.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.2.4 2.4.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 013 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1l-2.3 2.2z"/></svg>Appeler</a>
+        <a class="action" href="#"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>Contacter</a>
+        <a class="action" href="#"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm6.9 6h-2.9a15.7 15.7 0 00-1.4-3.6A8 8 0 0118.9 8z"/></svg>Site web</a>
+        <a class="action" href="#"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.7 11.3l-9-9a1 1 0 00-1.4 0l-9 9a1 1 0 000 1.4l9 9a1 1 0 001.4 0l9-9a1 1 0 000-1.4zM14 14.5V12h-4v3H8v-4a1 1 0 011-1h5V7.5l3.5 3.5-3.5 3.5z"/></svg>Itinéraire</a>
+      </div>
+
+      <div class="row" style="justify-content:center;gap:14px;padding-top:4px">
+        <span class="muted">◎</span><span class="muted">f</span><span class="muted">𝕏</span><span class="muted">in</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust verdict -->
+  <section class="section">
+    <div class="surface-verified card-body">
+      <div class="row-between" style="align-items:flex-start">
+        <p class="t-sub2" style="color:var(--os-green-text)">En résumé : la fiabilité de Martin Immo</p>
+        <span class="t-caption muted" style="white-space:nowrap">2 juil. 2026</span>
+      </div>
+      <p class="t-body2" style="margin-top:8px">
+        <strong>Martin Immo</strong> repose sur <strong>312 avis contrôlés</strong> par Opinion System,
+        tiers de confiance certifié <strong>NF ISO 20488</strong>.
+        <strong>Verdict : entreprise fiable.</strong>
+      </p>
+      <div class="stat-grid" style="margin-top:12px">
+        <div class="stat"><div class="v" style="color:var(--os-green-text)">4,9/5</div><p class="t-caption muted">Avis contrôlés</p></div>
+        <div class="stat"><div class="v" style="color:var(--os-green-text)">94 %</div><p class="t-caption muted">Recommandent</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Verified block -->
+  <section class="section" id="p-verif" style="background:var(--os-tint-2)">
+    <div class="row-between" style="margin-bottom:12px">
+      <h2 class="t-h6 t-brand">Avis contrôlés : 312</h2>
+      <span class="badge badge-verified">NF ISO 20488</span>
+    </div>
+
+    <div class="card card-body stack-12">
+      <div class="row-between">
+        <div><div class="row" style="gap:6px"><span class="score-sm" style="color:var(--os-green-text)">4,9</span><span class="score-suffix">/5</span></div><p class="t-caption muted">312 avis contrôlés</p></div>
+        <div style="text-align:right"><div class="score-sm" style="color:var(--os-green-text)">94 %</div><p class="t-caption muted">recommandent</p></div>
+      </div>
+      <div class="stack-8">
+        <div class="histo"><span class="t-caption muted">5 ★</span><div class="bar"><i style="width:77%"></i></div><span class="t-caption muted">240</span></div>
+        <div class="histo"><span class="t-caption muted">4 ★</span><div class="bar"><i style="width:17%"></i></div><span class="t-caption muted">52</span></div>
+        <div class="histo"><span class="t-caption muted">3 ★</span><div class="bar"><i style="width:5%"></i></div><span class="t-caption muted">14</span></div>
+        <div class="histo"><span class="t-caption muted">2 ★</span><div class="bar"><i style="width:2%"></i></div><span class="t-caption muted">4</span></div>
+        <div class="histo"><span class="t-caption muted">1 ★</span><div class="bar"><i style="width:1%"></i></div><span class="t-caption muted">2</span></div>
+      </div>
+      <!-- NPS strip from the concept -->
+      <hr class="divider">
+      <div class="row" style="justify-content:space-around;text-align:center">
+        <div><div class="t-sub1 strong" style="color:var(--os-green-text)">300</div><p class="t-caption muted">Promoteurs</p></div>
+        <div><div class="t-sub1 strong">10</div><p class="t-caption muted">Neutres</p></div>
+        <div><div class="t-sub1 strong" style="color:#B3261E">2</div><p class="t-caption muted">Détracteurs</p></div>
+      </div>
+      <div class="disclosure"><p class="legal"><strong>Chaque auteur est un client réel dont l'expérience a été vérifiée.</strong> Tri par défaut du plus récent au plus ancien, sans manipulation.</p></div>
+    </div>
+
+    <div class="chip-scroller" style="padding-left:0;padding-right:0;margin-top:12px">
+      <button class="chip chip-selected">Tous</button>
+      <button class="chip chip-outlined">Accueil</button>
+      <button class="chip chip-outlined">Conseil</button>
+      <button class="chip chip-outlined">Tarifs</button>
+      <button class="chip chip-outlined">Réactivité</button>
+    </div>
+
+    <article class="card">
+      <div class="review">
+        <div class="row" style="align-items:flex-start">
+          <div class="avatar">S</div>
+          <div style="flex:1;min-width:0">
+            <div class="row-between"><p class="t-sub2">Sophie M.</p><span class="t-sub2" style="color:var(--os-green-text)">4,7</span></div>
+            <p class="review-meta">Vente habitation · Achat vérifié · il y a 3 jours</p>
+          </div>
+        </div>
+        <span class="badge badge-verified" style="margin-top:10px">Avis contrôlé</span>
+        <p class="review-body">Accompagnement vraiment au top. La conseillère a pris le temps de tout m'expliquer, aucune mauvaise surprise sur le contrat.</p>
+        <div class="row" style="margin-top:10px;gap:6px;flex-wrap:wrap">
+          <span class="chip chip-outlined chip-sm">#Habitation</span><span class="chip chip-outlined chip-sm">#Conseil</span>
+        </div>
+        <div class="response">
+          <p class="t-caption strong">Réponse de Martin Immo · Martine Pedro</p>
+          <p class="t-body2" style="margin-top:4px">Merci beaucoup Sophie pour votre confiance !</p>
+        </div>
+        <div class="review-footer">
+          <button class="btn btn-text btn-sm">👍 Utile (24)</button>
+          <button class="btn btn-text btn-sm" style="color:var(--os-text-secondary)">⚑ Signaler</button>
+        </div>
+      </div>
+    </article>
+
+    <button class="btn btn-outlined btn-block" style="margin-top:12px">Voir plus d'avis contrôlés</button>
+  </section>
+
+  <!-- Unverified block -->
+  <section class="section" id="p-nonverif" style="background:var(--os-grey-bg)">
+    <h2 class="t-h6 t-brand" style="margin-bottom:4px">Avis clients non vérifiés : 1 529</h2>
+    <p class="t-body2 muted" style="margin-bottom:12px">Publiés sans vérification, hors contrôle d'Opinion System. Nous indiquons la note et un lien, sans republier leur contenu.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <a class="card-outlined card-body" href="#" style="text-decoration:none;color:inherit"><div class="row"><span class="platform-logo" style="background:#4285F4">G</span><span class="t-caption strong">Google</span></div><p class="t-sub1 strong" style="margin-top:6px">4,5<span class="score-suffix" style="font-size:12px">/5</span></p><p class="t-caption muted">526 avis · Voir ↗</p></a>
+      <a class="card-outlined card-body" href="#" style="text-decoration:none;color:inherit"><div class="row"><span class="platform-logo" style="background:#FFD500;color:#041B44">PJ</span><span class="t-caption strong">Pages Jaunes</span></div><p class="t-sub1 strong" style="margin-top:6px">4,4<span class="score-suffix" style="font-size:12px">/5</span></p><p class="t-caption muted">214 avis · Voir ↗</p></a>
+      <a class="card-outlined card-body" href="#" style="text-decoration:none;color:inherit"><div class="row"><span class="platform-logo" style="background:#00B67A">★</span><span class="t-caption strong">Trustpilot</span></div><p class="t-sub1 strong" style="margin-top:6px">4,5<span class="score-suffix" style="font-size:12px">/5</span></p><p class="t-caption muted">389 avis · Voir ↗</p></a>
+      <a class="card-outlined card-body" href="#" style="text-decoration:none;color:inherit"><div class="row"><span class="platform-logo" style="background:#E4032E">SL</span><span class="t-caption strong">SeLoger</span></div><p class="t-sub1 strong" style="margin-top:6px">4,6<span class="score-suffix" style="font-size:12px">/5</span></p><p class="t-caption muted">429 avis · Voir ↗</p></a>
+    </div>
+
+    <div class="stack-8" style="margin-top:12px">
+      <article class="surface-unverified card-body">
+        <div class="row-between"><p class="t-sub2">Émilie R.</p><span class="badge badge-unverified">⚠ Non vérifié</span></div>
+        <p class="review-meta">Avis spontané · il y a 4 jours · 4/5</p>
+        <p class="review-body">Bon accueil en agence, on m'a bien orientée. Je mets 4 car j'ai attendu un peu au téléphone.</p>
+      </article>
+      <article class="surface-unverified card-body">
+        <div class="row-between"><p class="t-sub2">Anonyme</p><span class="badge badge-unverified">⚠ Non vérifié</span></div>
+        <p class="review-meta">Avis spontané · il y a 1 semaine · 3/5</p>
+        <p class="review-body">Correct sans plus. Délais de traitement un peu longs.</p>
+      </article>
+    </div>
+    <button class="btn btn-outlined btn-block" style="margin-top:12px">Voir plus d'avis</button>
+    <p class="legal" style="margin-top:12px">Mentions légales : aucune contrepartie versée en échange de ces avis · tri chronologique · conservation 24 mois · <a class="link" href="#">procédures de contrôle et signalement</a>.</p>
+  </section>
+
+  <!-- Quality approach -->
+  <section class="surface-navy section stack-12">
+    <span class="badge" style="background:rgba(45,179,138,.2);color:#7FE3C4">Démarche qualité</span>
+    <h2 class="t-h6 t-brand">Martin Immo a choisi Opinion System pour des avis fiables.</h2>
+    <div class="stack-8">
+      <div class="card-outlined card-body row-between" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18)">
+        <div><p class="t-sub2" style="color:#fff">NF Service 522 / ISO 20488</p><p class="t-caption muted">Collecte &amp; contrôle</p></div><span class="link" style="color:#7FE3C4">›</span></div>
+      <div class="card-outlined card-body row-between" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18)">
+        <div><p class="t-sub2" style="color:#fff">ISO 20252</p><p class="t-caption muted">Organisme de sondage</p></div><span class="link" style="color:#7FE3C4">›</span></div>
+      <div class="card-outlined card-body row-between" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18)">
+        <div><p class="t-sub2" style="color:#fff">ISO 9001</p><p class="t-caption muted">Organisation interne</p></div><span class="link" style="color:#7FE3C4">›</span></div>
+    </div>
+  </section>
+
+  <!-- Agencies -->
+  <section class="section">
+    <h2 class="t-h6 t-brand">Nos agences</h2>
+    <p class="t-body2 muted" style="margin-bottom:12px">3 agences · 3 549 avis contrôlés</p>
+    <div class="stack-8">
+      <div class="card card-body" style="border-left:4px solid var(--os-green)">
+        <div class="row-between"><p class="t-sub2">Martin Immo — Lanton</p><span class="badge badge-verified chip-sm">Cette agence</span></div>
+        <p class="t-caption muted">42 cours Vitton, 69006 Lyon · Ouvert jusqu'à 19:00</p>
+        <p class="t-caption strong" style="margin-top:4px">4,7/5 · 1 872 avis contrôlés</p>
+      </div>
+      <div class="card card-body"><p class="t-sub2">Martin Immo — Villeurbanne</p><p class="t-caption muted">18 av. Henri Barbusse, 69100</p><p class="t-caption strong" style="margin-top:4px">4,6/5 · 1 480 avis</p></div>
+      <div class="card card-body"><p class="t-sub2">Martin Immo — Écully</p><p class="t-caption muted">5 place de la Libération, 69130</p><p class="t-caption strong" style="margin-top:4px">4,8/5 · 197 avis</p></div>
+    </div>
+  </section>
+
+  <section style="background:#fff">
+    <div class="section" style="padding-bottom:8px"><h2 class="t-h6 t-brand">Questions fréquentes</h2></div>
+    <details class="acc" open><summary>Martin Immo est-elle fiable ?</summary><div class="acc-body"><p class="t-body2 muted">Oui — 312 avis contrôlés, 4,9/5, 94 % de recommandation, vérifiés par Opinion System (NF ISO 20488).</p></div></details>
+    <details class="acc"><summary>Les avis peuvent-ils être truqués ?</summary><div class="acc-body"><p class="t-body2 muted">Pas les avis contrôlés. Les autres sont explicitement signalés « non vérifié ».</p></div></details>
+  </section>
+
+  <section class="surface-navy section">
+    <h2 class="t-h6 t-brand" style="margin-bottom:12px">Affichez une e-réputation vérifiée et incontestable.</h2>
+    <a class="btn btn-cta btn-block" href="#">Inscrire mon entreprise</a>
+  </section>
+
+  <div class="bottom-bar">
+    <a class="btn btn-outlined btn-sm" href="#" style="flex:1">Contacter</a>
+    <a class="btn btn-cta btn-sm" href="#" style="flex:1.4">Déposer un avis</a>
+  </div>
+
+</div></div>
+</body>
+</html>
