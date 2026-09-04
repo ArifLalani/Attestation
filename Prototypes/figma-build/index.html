@@ -105,7 +105,7 @@
   .biz-name{flex:1;min-width:0;font-weight:600;font-size:20px;color:var(--navy);margin:0;}
   .share-btn{flex:none;border:none;background:none;padding:8px;border-radius:100px;}
   .share-btn img{width:24px;height:24px;}
-  .about-list{display:flex;gap:8px;}
+  .about-list{display:flex;flex-direction:column;gap:8px;}
   .about-item{display:flex;gap:4px;align-items:center;font-weight:500;font-size:12px;color:var(--gray);white-space:nowrap;}
   .about-item img{width:16px;height:16px;flex:none;}
 
@@ -140,7 +140,7 @@
     display:flex;align-items:center;gap:8px;font-family:inherit;cursor:pointer;
   }
   .mini-kpi.green{background:#edf9f7;border:1px solid #c6ece7;}
-  .mini-kpi.gray{background:var(--gray-l2);border:1px solid #dde8ef;}
+  .mini-kpi.gray{background:var(--gray-l2);border:1px solid var(--gray-m1);}
   .mini-kpi-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;}
   .mini-kpi-head{display:flex;align-items:center;gap:6px;font-weight:700;font-size:14px;letter-spacing:.25px;text-transform:uppercase;white-space:nowrap;}
   .mini-kpi-head img{width:20px;height:20px;}
@@ -157,17 +157,16 @@
   .mini-kpi.gray .mini-kpi-count{color:var(--gray);}
   .mini-kpi-chevron{flex:none;width:24px;height:24px;align-self:flex-end;}
 
-  .stat-boxes{display:flex;gap:8px;}
-  .stat-box{flex:1;background:var(--gray-l2);border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:8px;}
-  .stat-box .v{margin:0;font-weight:800;font-size:20px;color:var(--navy);white-space:nowrap;}
-  .stat-box .l{margin:0;font-weight:600;font-size:11px;color:var(--gray);}
-
-
-  .cta-primary{
-    width:100%;height:56px;background:var(--yellow);border:none;border-radius:12px;
-    display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:18px;color:var(--navy);
-  }
-  .cta-primary img{width:24px;height:24px;}
+  .stat-boxes{display:flex;gap:16px;}
+  .stat-box{flex:1;min-width:0;background:var(--gray-l2);border-radius:8px;padding:5px 13px;display:flex;flex-direction:column;align-items:center;}
+  .stat-box .l{margin:0;font-weight:600;font-size:13px;color:var(--navy);text-transform:uppercase;}
+  .stat-box-bar-row{width:100%;display:flex;align-items:center;gap:4px;}
+  .stat-box .track{flex:1;height:6px;border-radius:20px;background:rgba(255,255,255,.6);overflow:hidden;}
+  .stat-box .track .fill{height:100%;border-radius:20px;}
+  .stat-box.satisfaction .track .fill{background:var(--blue-200);}
+  .stat-box.recommandation .track .fill{background:var(--green);}
+  .stat-box .v{margin:0;font-weight:600;font-size:20px;color:var(--navy);white-space:nowrap;}
+  .stat-box .v small{font-weight:400;font-size:14px;color:var(--gray-m2);}
 
   .contact-chips{display:flex;gap:10px;}
   .chip-contact{
@@ -204,6 +203,8 @@
   .tab-panel{display:none;background:var(--white);}
   .tab-panel.active{display:block;}
 
+  .reviews-card{border-radius:20px;box-shadow:var(--shadow-card);overflow:hidden;}
+
   /* ---------- Résumé des avis contrôlés ---------- */
   .summary-card{background:var(--white);padding:24px;display:flex;flex-direction:column;gap:16px;}
   .summary-subtitle{margin:0;font-weight:500;font-size:15px;line-height:1.5;color:var(--gray);}
@@ -229,10 +230,17 @@
   .rating-row .count{width:32px;text-align:right;color:var(--navy);}
 
   .stats-row{display:flex;justify-content:space-between;}
-  .stat-col{display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .stat-col{display:flex;flex-direction:column;align-items:center;gap:2px;border:1px solid transparent;background:none;padding:6px 10px;border-radius:8px;font:inherit;}
   .stat-col img{width:32px;height:32px;}
   .stat-col .num{font-weight:800;font-size:22px;}
   .stat-col .lbl{font-weight:700;font-size:13px;color:var(--gray);}
+  .stat-col.selected{background:var(--blue-20);border-color:var(--blue-30);}
+  .stat-col:focus-visible{outline:2px solid var(--blue);outline-offset:2px;}
+
+  /* ---------- Reviews meta row: live count + reset (Contrôlés tab) ---------- */
+  .reviews-meta-row{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .reset-link{background:none;border:none;padding:0;font-weight:600;font-size:14px;color:var(--blue);}
+  .empty-state{padding:28px 8px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;color:var(--gray);font-weight:500;font-size:14px;}
 
   /* ---------- Panel avis (contrôlés + non vérifiés share this chrome) ---------- */
   .reviews-panel{padding:24px;display:flex;flex-direction:column;gap:16px;}
@@ -246,6 +254,7 @@
   .sort-dropdown.open .sort-menu{display:block;}
   .sort-menu button{display:block;width:100%;text-align:left;background:none;border:none;padding:10px 16px;font-size:14px;font-weight:500;color:var(--navy);}
   .sort-menu button:hover{background:var(--gray-l2);}
+  .theme-menu button.active{background:var(--blue-20);font-weight:600;}
 
   .filter-row{display:flex;gap:8px;align-items:center;overflow-x:auto;padding-bottom:2px;}
   .filter-row::-webkit-scrollbar{display:none;}
@@ -255,10 +264,10 @@
 
   .review-card{border-radius:var(--r-review);overflow:hidden;}
   .review-card.expanded{background:var(--blue-5);border:1px solid var(--blue);}
-  .review-card.collapsed{background:var(--gray-l1);border:1px solid var(--gray-m2);}
-  .review-top{display:flex;gap:8px;align-items:flex-start;padding:8px 16px;}
+  .review-card.collapsed{background:var(--white);border:1px solid var(--gray-m1);box-shadow:0 1px 3px rgba(4,27,68,.05);}
+  .review-top{display:flex;gap:10px;align-items:flex-start;padding:16px 16px 10px;}
   .review-avatar{flex:none;width:38px;height:38px;border-radius:100px;background:#ede7f6;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:#4527a0;}
-  .review-id{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;}
+  .review-id{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:2px;}
   .review-line{display:flex;align-items:center;gap:4px;}
   .review-name{flex:1;min-width:0;font-weight:600;font-size:16px;color:var(--navy);margin:0;}
   .review-date{flex:1;min-width:0;font-weight:400;font-size:14px;color:var(--navy);margin:0;}
@@ -267,10 +276,10 @@
   .review-check span{font-weight:600;font-size:16px;color:var(--navy);}
   .stars{position:relative;display:inline-block;font-size:18px;line-height:1;letter-spacing:2px;color:var(--gray-m1);}
   .stars .fillstars{position:absolute;left:0;top:0;overflow:hidden;white-space:nowrap;color:var(--yellow);}
-  .review-content{padding:8px 16px;font-weight:400;font-size:16px;line-height:1.43;color:var(--navy);letter-spacing:.17px;}
-  .review-tags{display:flex;gap:6px;align-items:center;padding:8px 16px;flex-wrap:wrap;}
-  .tag-chip{background:var(--gray-l2);border-radius:8px;padding:4px 6px;font-weight:500;font-size:13px;color:var(--navy);}
-  .review-actions{display:flex;gap:6px;align-items:center;justify-content:flex-end;padding:12px 16px;}
+  .review-content{padding:0 16px 12px;font-weight:400;font-size:16px;line-height:1.5;color:var(--navy);letter-spacing:.17px;}
+  .review-tags{display:flex;gap:8px;align-items:center;padding:0 16px 14px;flex-wrap:wrap;}
+  .tag-chip{background:var(--gray-l2);border-radius:8px;padding:4px 8px;font-weight:500;font-size:13px;color:var(--navy);}
+  .review-actions{display:flex;gap:6px;align-items:center;justify-content:flex-end;padding:0 16px 16px;border-top:1px solid var(--gray-l2);padding-top:12px;}
   .review-actions .act{background:none;border:none;display:flex;align-items:center;gap:4px;padding:0 6px;font-weight:500;font-size:14px;color:var(--navy);}
   .review-actions .toggle{margin-left:auto;flex:1;justify-content:flex-end;}
   .review-actions .toggle img{width:20px;height:20px;}
@@ -302,7 +311,22 @@
   .meta-chip{background:var(--gray-l2);border-radius:100px;padding:3px 8px;font-weight:500;font-size:14px;}
   hr.divider{border:none;border-top:1px solid rgba(0,0,0,.08);margin:0;}
 
+  .review-list{display:flex;flex-direction:column;gap:16px;}
+  .load-more-row{display:flex;gap:12px;}
+  .load-more-row .btn-outline-block{flex:1;width:auto;}
+
   .btn-outline-block{width:100%;border:1px solid var(--navy);border-radius:4px;background:none;padding:8px 22px;font-weight:500;font-size:14px;letter-spacing:.46px;text-transform:uppercase;color:var(--navy);}
+  .btn-outline-block:disabled{opacity:.5;cursor:default;}
+
+  /* ---------- Skeleton loading (initial fetch, tab switch, "Voir plus") ---------- */
+  .skeleton{background:linear-gradient(90deg,var(--gray-m1) 25%,var(--gray-l1) 37%,var(--gray-m1) 63%);background-size:400% 100%;animation:skeleton-shimmer 1.4s ease infinite;border-radius:6px;}
+  @keyframes skeleton-shimmer{0%{background-position:100% 50%}100%{background-position:0 50%}}
+  .skeleton-card{border:1px solid var(--gray-m1);background:var(--white);}
+  .skeleton-avatar{width:38px;height:38px;border-radius:100px;flex:none;}
+  .skeleton-line{height:12px;}
+  .skeleton-tags-row{display:flex;gap:6px;padding:8px 16px;}
+  .skeleton-chip{width:64px;height:22px;border-radius:8px;}
+  .skeleton-actions-row{padding:12px 16px;}
 
   /* ---------- Store locator ---------- */
   .locator{padding:16px;display:flex;flex-direction:column;gap:16px;}
@@ -343,17 +367,17 @@
   .agency-card.is-open .agency-collapsed-row .expand-btn img{transform:rotate(180deg);}
 
   .map-card{border:1px solid var(--gray-m1);border-radius:16px;overflow:hidden;position:relative;height:280px;}
-  .map-card img.map-bg{width:108%;height:120%;object-fit:cover;position:absolute;top:-10%;left:-4%;}
-  .map-card .pin{position:absolute;left:50%;top:calc(50% - 10px);transform:translate(-50%,-50%);width:28px;height:28px;}
+  .map-card img.map-bg{width:108.24%;height:119.67%;object-fit:cover;position:absolute;top:-9.76%;left:-4.06%;}
+  .map-card .pin{position:absolute;transform:translate(-50%,-50%);width:28px;height:28px;}
 
   /* ---------- Team ---------- */
-  .team-section{background:var(--gray-l2);padding:20px 0;display:flex;flex-direction:column;gap:16px;}
-  .team-header{padding:0 24px;display:flex;flex-direction:column;gap:16px;}
-  .team-header h2{margin:0;font-weight:700;font-size:24px;color:var(--navy);}
-  .team-header .sub{margin:0;font-weight:400;font-size:14px;color:var(--navy);opacity:.8;}
+  .team-section{background:var(--gray-l2);padding:16px 0;display:flex;flex-direction:column;gap:16px;}
+  .team-header{padding:0 16px;display:flex;flex-direction:column;gap:8px;}
+  .team-header h2{margin:0;font-weight:700;font-size:20px;color:var(--navy);}
+  .team-header .sub{margin:0;font-weight:600;font-size:14px;color:var(--gray);}
   .team-scroll{display:flex;gap:16px;padding:0 16px;overflow-x:auto;scroll-snap-type:x proximity;}
   .team-scroll::-webkit-scrollbar{display:none;}
-  .team-card{flex:none;scroll-snap-align:start;width:180px;height:250px;background:var(--white);border-radius:16px;box-shadow:0 4px 6px rgba(4,27,68,.06);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;}
+  .team-card{flex:none;scroll-snap-align:start;width:180px;height:auto;background:var(--white);border-radius:12px;box-shadow:0 2px 4px rgba(4,27,68,.12);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px;}
   .team-avatar{width:80px;height:80px;border-radius:40px;object-fit:cover;background:#26a69a;}
   .team-name{margin:0;font-weight:600;font-size:15px;color:var(--navy);text-align:center;}
   .team-role{margin:0;font-weight:400;font-size:12px;color:var(--gray);text-align:center;}
@@ -439,7 +463,7 @@
 
   <!-- 4.2 Business Header -->
   <div class="biz-photo">
-    <img src="https://www.figma.com/api/mcp/asset/578aacdb-6775-454b-80e7-6b85aa9072d0.png" alt="Photo de l'agence Martin Immo">
+    <img src="https://www.figma.com/api/mcp/asset/578aacdb-6775-454b-80e7-6b85aa9072d0.png" alt="Photo de l'agence Maison &amp; Patrimoine Immobilier">
   </div>
 
   <section class="biz-card">
@@ -453,8 +477,8 @@
     </div>
 
     <div class="about-list">
-      <div class="about-item"><img src="https://www.figma.com/api/mcp/asset/a86b0e78-4c62-47b6-9f24-4b654fd75f21.svg" alt="">Agence immobilière</div>
-      <div class="about-item"><img src="https://www.figma.com/api/mcp/asset/e8774dfb-3798-47bf-b228-aea8c76e668d.svg" alt="">Client n&deg; 00258</div>
+      <div class="about-item"><img src="https://www.figma.com/api/mcp/asset/02bcb728-7ccd-4566-8937-8845b14ec44e.svg" alt="">Agence immobilière</div>
+      <div class="about-item"><img src="https://www.figma.com/api/mcp/asset/4f2a9104-6cc9-443c-b0e1-0f40dda3d021.svg" alt="">42 cours Vitton, 69006 Lyon, FR</div>
     </div>
 
     <div class="note-global" id="noteGlobal">
@@ -525,14 +549,15 @@
     </div>
 
     <div class="stat-boxes">
-      <div class="stat-box"><p class="v">95%</p><p class="l">Satisfaction générale</p></div>
-      <div class="stat-box"><p class="v">92%</p><p class="l">Niveau de recommandation</p></div>
+      <div class="stat-box satisfaction">
+        <p class="l">Satisfaction</p>
+        <div class="stat-box-bar-row"><div class="track"><div class="fill" style="width:95%"></div></div><p class="v">95<small>%</small></p></div>
+      </div>
+      <div class="stat-box recommandation">
+        <p class="l">Recommandation</p>
+        <div class="stat-box-bar-row"><div class="track"><div class="fill" style="width:92%"></div></div><p class="v">92<small>%</small></p></div>
+      </div>
     </div>
-
-    <button class="cta-primary" type="button">
-      Deposer un avis
-      <img src="https://www.figma.com/api/mcp/asset/6025d607-f37b-4c59-8181-fcdb53dad8ba.svg" alt="">
-    </button>
 
     <div class="contact-chips">
       <button class="chip-contact" type="button"><img src="https://www.figma.com/api/mcp/asset/993370e6-74f3-46d6-9b88-1715431e3313.svg" alt="">Contacter</button>
@@ -551,13 +576,14 @@
   <!-- 4.3 Trust Verdict -->
   <section class="trust-verdict">
     <div class="verdict-card">
-      <h2>La fiabilité de Martin Immo</h2>
+      <h2>La fiabilité de Maison &amp; Patrimoine Immobilier</h2>
       <p class="date">2 juil. 2026</p>
-      <p class="body">Martin Immo est une agence immobilière basée à Lanton. Sa réputation repose sur 312 avis contrôlés par Opinion System, tiers de confiance indépendant certifié NF ISO 20488&nbsp;: l'identité et l'achat réel de chaque client sont vérifiés, et ces avis ne peuvent être ni modifiés ni supprimés par l'entreprise. Verdict&nbsp;: entreprise fiable.</p>
+      <p class="body">Maison &amp; Patrimoine Immobilier est une agence immobilière basée à Lanton. Sa réputation repose sur 312 avis contrôlés par Opinion System, tiers de confiance indépendant certifié NF ISO 20488&nbsp;: l'identité et l'achat réel de chaque client sont vérifiés, et ces avis ne peuvent être ni modifiés ni supprimés par l'entreprise. Verdict&nbsp;: entreprise fiable.</p>
     </div>
   </section>
 
   <!-- Tabs — Contrôlés / Non vérifiés -->
+  <div class="reviews-card">
   <nav class="tabs">
     <button class="tab active" type="button" data-tab="controles">
       <span class="tab-icon"><img src="https://www.figma.com/api/mcp/asset/6cee896b-c314-40d5-ba63-ddcde9977b45.svg" alt=""></span>
@@ -591,10 +617,10 @@
         <div class="rating-row"><span class="star-num">2<span class="star-char">★</span></span><div class="track"><div class="fill" style="width:2%"></div></div><span class="count">4</span></div>
         <div class="rating-row"><span class="star-num">1<span class="star-char">★</span></span><div class="track"><div class="fill" style="width:1%"></div></div><span class="count">2</span></div>
       </div>
-      <div class="stats-row">
-        <div class="stat-col"><img src="https://www.figma.com/api/mcp/asset/d7d9245d-337b-4ab8-a5ff-0e2d8d57b483.svg" alt=""><span class="num" style="color:var(--navy)">300</span><span class="lbl">promoteurs</span></div>
-        <div class="stat-col"><img src="https://www.figma.com/api/mcp/asset/7f11fbee-54a4-44ae-bf6d-c71486c56d7e.svg" alt=""><span class="num" style="color:var(--gray)">10</span><span class="lbl">neutres</span></div>
-        <div class="stat-col"><img src="https://www.figma.com/api/mcp/asset/93fccbc6-5baf-4713-9856-79056d62a7cd.svg" alt=""><span class="num" style="color:var(--error)">2</span><span class="lbl">detracteurs</span></div>
+      <div class="stats-row" id="recommendationStats">
+        <button type="button" class="stat-col" data-rec="promoter" aria-pressed="false" aria-label="Filtrer par promoteurs, 300 avis"><img src="https://www.figma.com/api/mcp/asset/d7d9245d-337b-4ab8-a5ff-0e2d8d57b483.svg" alt=""><span class="num" style="color:var(--navy)">300</span><span class="lbl">promoteurs</span></button>
+        <button type="button" class="stat-col" data-rec="neutral" aria-pressed="false" aria-label="Filtrer par neutres, 10 avis"><img src="https://www.figma.com/api/mcp/asset/7f11fbee-54a4-44ae-bf6d-c71486c56d7e.svg" alt=""><span class="num" style="color:var(--gray)">10</span><span class="lbl">neutres</span></button>
+        <button type="button" class="stat-col" data-rec="detractor" aria-pressed="false" aria-label="Filtrer par détracteurs, 2 avis"><img src="https://www.figma.com/api/mcp/asset/93fccbc6-5baf-4713-9856-79056d62a7cd.svg" alt=""><span class="num" style="color:var(--error)">2</span><span class="lbl">detracteurs</span></button>
       </div>
     </div>
 
@@ -606,107 +632,54 @@
             <span id="sortValue">Les plus récents</span>
             <img src="https://www.figma.com/api/mcp/asset/b5d034b2-66fd-48b6-b000-5b40bf9d766c.svg" alt="">
           </button>
-          <div class="sort-menu">
-            <button type="button" data-sort="Les plus récents">Les plus récents</button>
-            <button type="button" data-sort="Meilleures notes">Meilleures notes</button>
-            <button type="button" data-sort="Moins bonnes notes">Moins bonnes notes</button>
+          <div class="sort-menu" id="sortMenu">
+            <button type="button" data-sort="recent">Les plus récents</button>
+            <button type="button" data-sort="best">Meilleures notes</button>
+            <button type="button" data-sort="worst">Moins bonnes notes</button>
           </div>
         </div>
       </div>
 
-      <div class="filter-row">
-        <img src="https://www.figma.com/api/mcp/asset/267ca745-ea28-4f2e-a005-b51dfdb28c4b.svg" alt="Filtrer">
-        <button class="chip-filter active" type="button">Tous</button>
-        <button class="chip-filter" type="button">Acceuil</button>
-        <button class="chip-filter" type="button">Conseil</button>
-        <button class="chip-filter" type="button">Réactivité</button>
-        <button class="chip-filter" type="button">Tarifs</button>
-        <button class="chip-filter" type="button">Habitation</button>
-        <button class="chip-filter" type="button">Auto</button>
-        <button class="chip-filter" type="button">Santé</button>
-        <button class="chip-filter" type="button">Emprunteur</button>
+      <div class="sorting-row">
+        <span>Thèmes</span>
+        <div class="sort-dropdown" id="themeDropdown">
+          <button class="sort-trigger" type="button" id="themeTrigger">
+            <span id="themeValue">Tous</span>
+            <img src="https://www.figma.com/api/mcp/asset/b5d034b2-66fd-48b6-b000-5b40bf9d766c.svg" alt="">
+          </button>
+          <div class="sort-menu theme-menu" id="themeMenu">
+            <button type="button" data-theme="Acceuil">Acceuil</button>
+            <button type="button" data-theme="Conseil">Conseil</button>
+            <button type="button" data-theme="Réactivité">Réactivité</button>
+            <button type="button" data-theme="Tarifs">Tarifs</button>
+            <button type="button" data-theme="Habitation">Habitation</button>
+            <button type="button" data-theme="Auto">Auto</button>
+            <button type="button" data-theme="Santé">Santé</button>
+            <button type="button" data-theme="Emprunteur">Emprunteur</button>
+          </div>
+        </div>
       </div>
 
-      <!-- All three review cards default to the collapsed state (per current Figma: the
-           full expanded card is a hidden reference node — "Voir plus" reveals the same detail). -->
-      <article class="review-card collapsed">
-        <div class="review-top">
-          <div class="review-avatar">S</div>
-          <div class="review-id">
-            <div class="review-line"><p class="review-name">Sophie M.</p><span class="review-check"><img src="https://www.figma.com/api/mcp/asset/2016f0c0-3d16-4d37-984f-21bfc5755f7e.svg" alt="">4.5</span></div>
-            <div class="review-line"><p class="review-date">il y a 3 jours</p><span class="stars" style="--pct:90%"><span class="bg">★★★★★</span><span class="fillstars" style="width:90%">★★★★★</span></span></div>
-          </div>
-        </div>
-        <p class="review-content">Une expérience fantastique du début à la fin&nbsp;! L'équipe était professionnelle, réactive et a vraiment compris ce que je voulais atteindr...</p>
-        <div class="review-tags">
-          <span class="tag-chip">#Habitation</span><span class="tag-chip">#Conseil</span><span class="tag-chip">#Acceuil</span>
-        </div>
-        <div class="review-actions">
-          <button class="act">👍 Utile (24)</button>
-          <button class="act"><img src="https://www.figma.com/api/mcp/asset/a2c035fa-d585-4af4-b478-8bed2e30a0ca.svg" alt="" style="width:20px;height:20px">Signaler</button>
-          <button class="act toggle" data-toggle-detail>Voir plus <img src="https://www.figma.com/api/mcp/asset/78f4a3e2-15c1-4155-94f2-2e1b23ffc9a4.svg" alt=""></button>
-        </div>
-        <div class="review-detail">
-          <div class="detail-kpis">
-            <div class="detail-kpi">
-              <p class="kpi-lbl">Satisfaction générale</p>
-              <div class="kpi-bar-row"><div class="progress-track"><div class="progress-fill" style="width:95%;background:var(--blue-200)"></div></div><span class="val">95<small style="color:var(--gray-l2)">%</small></span></div>
-            </div>
-            <div class="detail-kpi">
-              <p class="kpi-lbl">Clients qui recommandent</p>
-              <div class="kpi-bar-row"><div class="progress-track"><div class="progress-fill" style="width:92%"></div></div><span class="val">92<small style="color:var(--gray-l2)">%</small></span></div>
-            </div>
-          </div>
-          <div class="subratings">
-            <h4>Répartition des notes</h4>
-            <div class="subrating-row"><span class="lbl">Acceuil</span><div class="track"><div class="fill" style="width:100%"></div></div><span class="val">5.0</span></div>
-            <div class="subrating-row"><span class="lbl">Qualité du conseil</span><div class="track"><div class="fill" style="width:90%"></div></div><span class="val">4.5</span></div>
-            <div class="subrating-row"><span class="lbl">Réactivité</span><div class="track"><div class="fill" style="width:100%"></div></div><span class="val">5.0</span></div>
-            <div class="subrating-row"><span class="lbl">Rapport qualité prix</span><div class="track"><div class="fill" style="width:92%"></div></div><span class="val">4.6</span></div>
-            <div class="subrating-row"><span class="lbl">Aide Suivi</span><div class="track"><div class="fill" style="width:88%"></div></div><span class="val">4.4</span></div>
-          </div>
-          <hr class="divider">
-          <div class="detail-meta">
-            <h4>Information de l'avis</h4>
-            <div class="meta-row"><span>Type de questionnaire</span><span class="v"><img src="https://www.figma.com/api/mcp/asset/6514082d-ebe8-4e20-b6ff-3721df3a6256.svg" alt="">Contrôlé</span></div>
-            <div class="meta-row"><span>Collaborateur</span><span class="v"><img src="https://www.figma.com/api/mcp/asset/b0e20eb7-19ee-4365-abfc-7bf972b8dea5.svg" alt="">Angela Belle</span></div>
-            <div class="meta-row"><span>Service</span><span class="v">Vente de propriété</span></div>
-            <div class="meta-row"><span>Numero de l'avis</span><span class="v"><span class="meta-chip">101923</span></span></div>
-          </div>
-        </div>
-      </article>
+      <div class="reviews-meta-row">
+        <span class="chip-gray" id="controlesCount">13 avis</span>
+        <button type="button" class="reset-link" id="controlesReset" style="display:none">Réinitialiser</button>
+      </div>
 
-      <!-- Review card template — reused for load-more and for the other 2 visible slots -->
-      <template id="collapsedCardTpl">
-        <article class="review-card collapsed">
-          <div class="review-top">
-            <div class="review-avatar">S</div>
-            <div class="review-id">
-              <div class="review-line"><p class="review-name">Sophie M.</p><span class="review-check"><img src="https://www.figma.com/api/mcp/asset/2016f0c0-3d16-4d37-984f-21bfc5755f7e.svg" alt="">4.5</span></div>
-              <div class="review-line"><p class="review-date">il y a 3 jours</p><span class="stars" style="--pct:90%"><span class="bg">★★★★★</span><span class="fillstars" style="width:90%">★★★★★</span></span></div>
-            </div>
-          </div>
-          <p class="review-content">Une expérience fantastique du début à la fin&nbsp;! L'équipe était professionnelle, réactive et a vraiment compris ce que je voulais atteindr...</p>
-          <div class="review-tags">
-            <span class="tag-chip">#Habitation</span><span class="tag-chip">#Conseil</span><span class="tag-chip">#Acceuil</span>
-          </div>
-          <div class="review-actions">
-            <button class="act">👍 Utile (24)</button>
-            <button class="act"><img src="https://www.figma.com/api/mcp/asset/a2c035fa-d585-4af4-b478-8bed2e30a0ca.svg" alt="" style="width:20px;height:20px">Signaler</button>
-            <button class="act toggle" data-toggle-detail>Voir plus <img src="https://www.figma.com/api/mcp/asset/78f4a3e2-15c1-4155-94f2-2e1b23ffc9a4.svg" alt=""></button>
-          </div>
-        </article>
-      </template>
-      <div id="defaultExtraCards"></div>
-      <div id="collapsedCardsHost"></div>
+      <!-- Reviews are rendered entirely from JS (see reviewsControles below) so the list can
+           skeleton-load, page 5 at a time, and show genuinely varied review content. -->
+      <div class="review-list" id="reviewListControles"></div>
 
-      <button class="btn-outline-block" id="loadMoreReviews" type="button">Voir plus d'avis contrôlés</button>
+      <div class="load-more-row">
+        <button class="btn-outline-block" id="loadMoreReviews" type="button">Voir plus d'avis contrôlés</button>
+        <button class="btn-outline-block" id="loadLessReviews" type="button" style="display:none">Voir moins</button>
+      </div>
     </div>
   </div>
 
-  <!-- Panel: NON VÉRIFIÉS — Figma has no populated design for this tab state.
-       Reusing the exact Contrôlés review-card markup/content, only swapping the OS
-       verification checkmark for a "Simple" clipboard icon. -->
+  <!-- Panel: NON VÉRIFIÉS — Figma has no populated design for this tab state. Same chrome as
+       Contrôlés, but the review card carries a "Simple" clipboard icon instead of the OS
+       verification checkmark, and never gets a detail/subratings panel — see CLAUDE.md: green
+       and the verified detail breakdown are trust semantics reserved for contrôlé reviews. -->
   <div class="tab-panel" id="panel-non-verifies">
     <div class="reviews-panel">
       <div class="sorting-row">
@@ -732,48 +705,26 @@
         <button class="chip-filter" type="button">Emprunteur</button>
       </div>
 
-      <template id="collapsedCardTplNv">
-        <article class="review-card collapsed">
-          <div class="review-top">
-            <div class="review-avatar">S</div>
-            <div class="review-id">
-              <div class="review-line"><p class="review-name">Sophie M.</p>
-                <span class="review-check">
-                  <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#e4e9f0"/><rect x="7.5" y="6" width="9" height="12.5" rx="1.6" stroke="#8ea1b2" stroke-width="1.4"/><rect x="9.5" y="4.8" width="5" height="2.4" rx="0.8" fill="#8ea1b2"/><path d="M9.5 11h5M9.5 13.5h5M9.5 16h3" stroke="#8ea1b2" stroke-width="1.2" stroke-linecap="round"/></svg>
-                  4.5
-                </span>
-              </div>
-              <div class="review-line"><p class="review-date">il y a 3 jours</p><span class="stars" style="--pct:90%"><span class="bg">★★★★★</span><span class="fillstars" style="width:90%">★★★★★</span></span></div>
-            </div>
-          </div>
-          <p class="review-content">Une expérience fantastique du début à la fin&nbsp;! L'équipe était professionnelle, réactive et a vraiment compris ce que je voulais atteindr...</p>
-          <div class="review-tags">
-            <span class="tag-chip">#Habitation</span><span class="tag-chip">#Conseil</span><span class="tag-chip">#Acceuil</span>
-          </div>
-          <div class="review-actions">
-            <button class="act">👍 Utile (24)</button>
-            <button class="act"><img src="https://www.figma.com/api/mcp/asset/a2c035fa-d585-4af4-b478-8bed2e30a0ca.svg" alt="" style="width:20px;height:20px">Signaler</button>
-            <button class="act toggle" data-toggle-detail>Voir plus <img src="https://www.figma.com/api/mcp/asset/78f4a3e2-15c1-4155-94f2-2e1b23ffc9a4.svg" alt=""></button>
-          </div>
-        </article>
-      </template>
-      <div id="defaultExtraCardsNv"></div>
-      <div id="collapsedCardsHostNv"></div>
+      <div class="review-list" id="reviewListNv"></div>
 
-      <button class="btn-outline-block" id="loadMoreReviewsNv" type="button">Voir plus d'avis simples</button>
+      <div class="load-more-row">
+        <button class="btn-outline-block" id="loadMoreReviewsNv" type="button">Voir plus d'avis simples</button>
+        <button class="btn-outline-block" id="loadLessReviewsNv" type="button" style="display:none">Voir moins</button>
+      </div>
     </div>
+  </div>
   </div>
 
   <!-- Store locator -->
   <section class="locator">
     <div class="locator-title">
       <img src="https://www.figma.com/api/mcp/asset/9c85ca2d-49b7-456f-a249-813bf38056b0.svg" alt="">
-      <div><h2>Nos Agences</h2><p>Trouves l'agence Martin Immo la plus proche de chez vous</p></div>
+      <div><h2>Nos Agences</h2><p>Trouves l'agence Maison &amp; Patrimoine Immobilier la plus proche de chez vous</p></div>
     </div>
 
     <div class="agency-card expanded is-open" id="agency-lanton">
       <div class="agency-head-row">
-        <p class="agency-name">Martin Immo — Lanton</p>
+        <p class="agency-name">Maison &amp; Patrimoine Immobilier — Lyon</p>
         <span class="open-dot"><i></i>Ouvert — 19:00</span>
       </div>
       <p class="agency-addr">42 cours Vitton, 69006 Lyon</p>
@@ -802,60 +753,24 @@
     </div>
 
     <div class="map-card">
-      <img class="map-bg" src="https://www.figma.com/api/mcp/asset/ae281fe3-b3cb-40f6-b3c6-fa113025641b.png" alt="Carte de localisation">
-      <img class="pin" src="https://www.figma.com/api/mcp/asset/be11b49e-5e84-4273-8507-d8bb81d8f9f0.svg" alt="">
+      <img class="map-bg" src="https://www.figma.com/api/mcp/asset/2d152c85-d638-4c98-b419-291b5d43f893.png" alt="Carte de localisation">
+      <img class="pin" style="left:calc(50% - 18.66px);top:calc(50% + 18px)" src="https://www.figma.com/api/mcp/asset/aadddaa7-9a13-49d3-b024-6a5653bc2180.svg" alt="">
+      <img class="pin" style="left:calc(50% + 65px);top:calc(50% + 4px)" src="https://www.figma.com/api/mcp/asset/aadddaa7-9a13-49d3-b024-6a5653bc2180.svg" alt="">
+      <img class="pin" style="left:calc(50% - 9.33px);top:calc(50% - 72px)" src="https://www.figma.com/api/mcp/asset/aadddaa7-9a13-49d3-b024-6a5653bc2180.svg" alt="">
+      <img class="pin" style="left:calc(50% - 78px);top:calc(50% - 14px)" src="https://www.figma.com/api/mcp/asset/aadddaa7-9a13-49d3-b024-6a5653bc2180.svg" alt="">
     </div>
 
     <div class="agency-card collapsed-style" id="agency-villeurbanne">
       <div class="agency-collapsed-row">
         <div>
           <span class="open-dot"><i></i>Ouvert — 19:00</span>
-          <p class="agency-name" style="font-size:16px;margin-top:6px">Martin Immo — Villeurbanne</p>
+          <p class="agency-name" style="font-size:16px;margin-top:6px">Maison &amp; Patrimoine Immobilier — Villeurbanne</p>
         </div>
       </div>
       <p class="agency-addr" style="font-size:13px">18 av. Henri Barbusse, 69100 Villeurbanne</p>
-      <div class="agency-meta">
-        <span class="item"><img src="https://www.figma.com/api/mcp/asset/aacc9de3-d5e2-4fa5-a8d7-4d748151b2f2.svg" alt="">4.8/5</span>
-        <span>•</span><span>1480 avis</span><span>•</span>
-        <span class="item"><img src="https://www.figma.com/api/mcp/asset/9c8dc7ce-f747-4404-8aad-ff98174b37f2.svg" alt=""><span class="phone-val">04 78 24 00 24</span></span>
-      </div>
       <div class="agency-collapsed-row">
         <button class="btn-itinerary-outline" type="button">Itinéraire</button>
         <button class="expand-btn" type="button" data-collapse="agency-villeurbanne"><img src="https://www.figma.com/api/mcp/asset/d08f1a93-c806-49db-bdaa-2591e060b8d8.svg" alt="Développer"></button>
-      </div>
-      <div class="agency-hidden">
-        <hr class="divider">
-        <div class="hours-block">
-          <h5>Horaire d'ouverture</h5>
-          <div class="hours-list">
-            <div class="hour-row"><span>Lundi</span><span>09:00 - 19:00</span></div>
-            <div class="hour-row"><span>Mardi</span><span>09:00 - 19:00</span></div>
-            <div class="hour-row"><span>Mercredi</span><span>09:00 - 19:00</span></div>
-            <div class="hour-row"><span>Jeudi</span><span>09:00 - 19:00</span></div>
-            <div class="hour-row"><span>Vendredi</span><span>09:00 - 19:00</span></div>
-            <div class="hour-row"><span>Samedi</span><span>09:00 - 19:00</span></div>
-            <div class="hour-row"><span>Dimanche</span><span>Fermé</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="agency-card collapsed-style" id="agency-ecully">
-      <div class="agency-collapsed-row">
-        <div>
-          <span class="open-dot"><i></i>Ouvert — 19:00</span>
-          <p class="agency-name" style="font-size:16px;margin-top:6px">Martin Immo — Écully</p>
-        </div>
-      </div>
-      <p class="agency-addr" style="font-size:13px">5 place de la Libération, 69130 Écully</p>
-      <div class="agency-meta">
-        <span class="item"><img src="https://www.figma.com/api/mcp/asset/aacc9de3-d5e2-4fa5-a8d7-4d748151b2f2.svg" alt="">4.8/5</span>
-        <span>•</span><span>192 avis</span><span>•</span>
-        <span class="item"><img src="https://www.figma.com/api/mcp/asset/9c8dc7ce-f747-4404-8aad-ff98174b37f2.svg" alt=""><span class="phone-val">04 78 24 00 10</span></span>
-      </div>
-      <div class="agency-collapsed-row">
-        <button class="btn-itinerary-outline" type="button">Itinéraire</button>
-        <button class="expand-btn" type="button" data-collapse="agency-ecully"><img src="https://www.figma.com/api/mcp/asset/d08f1a93-c806-49db-bdaa-2591e060b8d8.svg" alt="Développer"></button>
       </div>
       <div class="agency-hidden">
         <hr class="divider">
@@ -878,7 +793,7 @@
   <!-- Team -->
   <section class="team-section">
     <div class="team-header">
-      <h2>L'ÉQUIPE de Martin Immo</h2>
+      <h2>L'équipe de Maison &amp; Patrimoine Immobilier</h2>
       <p class="sub">Les personnes qui vous accompagnent au quotidien dans cette agence.</p>
     </div>
     <div class="team-scroll">
@@ -944,19 +859,19 @@
     </div>
     <div class="faq-list">
       <div class="faq-item">
-        <button class="faq-q" type="button"><span class="faq-icon">+</span><span class="faq-label">Martin Immo est-elle une entreprise fiable ?</span></button>
+        <button class="faq-q" type="button"><span class="faq-icon">+</span><span class="faq-label">Maison &amp; Patrimoine Immobilier est-elle une entreprise fiable ?</span></button>
         <div class="faq-a">Oui&nbsp;: sa note de 4,7/5 repose sur 312 avis contrôlés et certifiés par un tiers indépendant.</div>
       </div>
       <div class="faq-item">
-        <button class="faq-q" type="button"><span class="faq-icon">+</span><span class="faq-label">Les avis de Martin Immo peuvent-ils être truqués ?</span></button>
+        <button class="faq-q" type="button"><span class="faq-icon">+</span><span class="faq-label">Les avis de Maison &amp; Patrimoine Immobilier peuvent-ils être truqués ?</span></button>
         <div class="faq-a">Non&nbsp;: les avis contrôlés sont collectés directement auprès de clients identifiés et ne peuvent être ni modifiés ni supprimés par l'entreprise.</div>
       </div>
       <div class="faq-item open">
-        <button class="faq-q" type="button"><span class="faq-icon">−</span><span class="faq-label">Qui contrôle les avis de Martin Immo ?</span></button>
+        <button class="faq-q" type="button"><span class="faq-icon">−</span><span class="faq-label">Qui contrôle les avis de Maison &amp; Patrimoine Immobilier ?</span></button>
         <div class="faq-a">Opinion System, organisme de sondage indépendant. C'est le seul acteur en Europe à disposer d'une triple-certification AFNOR pour des avis clients&nbsp;: ISO 20252 (organisme de sondage) et ISO 9001 (organisation interne).</div>
       </div>
       <div class="faq-item">
-        <button class="faq-q" type="button"><span class="faq-icon">+</span><span class="faq-label">Martin Immo répond-elle aux avis clients ?</span></button>
+        <button class="faq-q" type="button"><span class="faq-icon">+</span><span class="faq-label">Maison &amp; Patrimoine Immobilier répond-elle aux avis clients ?</span></button>
         <div class="faq-a">L'entreprise peut répondre publiquement à chaque avis contrôlé depuis son espace professionnel.</div>
       </div>
     </div>
@@ -1014,10 +929,317 @@
 
 <script>
 (function(){
+  // ---------- Reviews: fictional Martin Immo data + skeleton-loaded rendering ----------
+  // 13 reviews per tab = 3 shown initially + two "Voir plus" rounds of 5. Real counts (312 /
+  // 1 529) aren't hand-authorable; this is enough to demonstrate paging, "Voir moins", and
+  // genuinely varied content instead of one card cloned repeatedly.
+  var AVATAR_COLORS = [
+    ['#ede7f6','#4527a0'], ['#e0f2f1','#00695c'], ['#fff3e0','#e65100'],
+    ['#e3f2fd','#0d47a1'], ['#fce4ec','#ad1457'], ['#f1f8e9','#33691e'],
+    ['#fff8e1','#8d6e00']
+  ];
+
+  var reviewsControles = [
+    { initial:'S', name:'Sophie M.', date:'il y a 3 jours', pct:90, rating:4.5, useful:24,
+      content:"Une expérience fantastique du début à la fin ! L'équipe était professionnelle, réactive et a vraiment compris ce que je voulais atteindre.",
+      tags:['Habitation','Conseil','Acceuil'], satisfaction:95, recommend:92,
+      subratings:[{lbl:'Acceuil',val:5.0},{lbl:'Qualité du conseil',val:4.5},{lbl:'Réactivité',val:5.0},{lbl:'Rapport qualité prix',val:4.6},{lbl:'Aide Suivi',val:4.4}],
+      collaborateur:'Angela Belle', service:'Vente de propriété', numero:'101923' },
+    { initial:'J', name:'Julien R.', date:'il y a 5 jours', pct:100, rating:5.0, useful:18,
+      content:"Dossier de prêt bouclé en deux semaines, taux négocié bien en dessous de ce que j'espérais. Un vrai gain de temps.",
+      tags:['Réactivité','Emprunteur'], satisfaction:98, recommend:96,
+      subratings:[{lbl:'Acceuil',val:5.0},{lbl:'Qualité du conseil',val:5.0},{lbl:'Réactivité',val:5.0},{lbl:'Rapport qualité prix',val:4.8},{lbl:'Aide Suivi',val:4.9}],
+      collaborateur:'Marc Dubois', service:'Prêt immobilier', numero:'101940' },
+    { initial:'C', name:'Camille B.', date:'il y a 1 semaine', pct:90, rating:4.5, useful:12,
+      content:"Achat de notre premier appartement sans mauvaise surprise : tous les frais annoncés dès le départ, rien de caché.",
+      tags:['Acceuil','Tarifs'], satisfaction:91, recommend:88,
+      subratings:[{lbl:'Acceuil',val:4.8},{lbl:'Qualité du conseil',val:4.4},{lbl:'Réactivité',val:4.5},{lbl:'Rapport qualité prix',val:4.7},{lbl:'Aide Suivi',val:4.3}],
+      collaborateur:'Julie Renard', service:'Achat appartement', numero:'101955' },
+    { initial:'N', name:'Nicolas F.', date:'il y a 2 semaines', pct:60, rating:3.0, useful:7,
+      content:"Relances nécessaires à plusieurs reprises pour faire avancer le dossier de location. Ça a fini par se débloquer mais ça a pris trop de temps.",
+      tags:['Réactivité'], satisfaction:62, recommend:55,
+      subratings:[{lbl:'Acceuil',val:3.8},{lbl:'Qualité du conseil',val:3.5},{lbl:'Réactivité',val:2.2},{lbl:'Rapport qualité prix',val:3.6},{lbl:'Aide Suivi',val:3.0}],
+      collaborateur:'Thomas Petit', service:'Location', numero:'101972' },
+    { initial:'A', name:'Amandine T.', date:'il y a 2 semaines', pct:100, rating:5.0, useful:31,
+      content:"Premier achat immobilier et j'avais mille questions : Angela a pris le temps de tout expliquer, jamais eu l'impression de déranger.",
+      tags:['Conseil','Habitation'], satisfaction:97, recommend:95,
+      subratings:[{lbl:'Acceuil',val:5.0},{lbl:'Qualité du conseil',val:5.0},{lbl:'Réactivité',val:4.9},{lbl:'Rapport qualité prix',val:4.7},{lbl:'Aide Suivi',val:4.9}],
+      collaborateur:'Angela Belle', service:'Vente de propriété', numero:'101988' },
+    { initial:'K', name:'Karim L.', date:'il y a 3 semaines', pct:80, rating:4.0, useful:9,
+      content:"Devis assurance auto reçu en moins de 24h, tarif compétitif par rapport à mon ancien contrat.",
+      tags:['Auto','Tarifs'], satisfaction:84, recommend:80,
+      subratings:[{lbl:'Acceuil',val:4.2},{lbl:'Qualité du conseil',val:4.0},{lbl:'Réactivité',val:4.5},{lbl:'Rapport qualité prix',val:4.3},{lbl:'Aide Suivi',val:3.9}],
+      collaborateur:'Claire Fontaine', service:'Assurance auto', numero:'102001' },
+    { initial:'É', name:'Élodie P.', date:'il y a 1 mois', pct:100, rating:5.0, useful:15,
+      content:"Accueil chaleureux dès le premier appel, et une réponse le jour même à chaque message pendant toute la gestion locative.",
+      tags:['Acceuil','Réactivité'], satisfaction:96, recommend:94,
+      subratings:[{lbl:'Acceuil',val:5.0},{lbl:'Qualité du conseil',val:4.7},{lbl:'Réactivité',val:5.0},{lbl:'Rapport qualité prix',val:4.6},{lbl:'Aide Suivi',val:4.8}],
+      collaborateur:'Marc Dubois', service:'Gestion locative', numero:'102019' },
+    { initial:'T', name:'Thomas G.', date:'il y a 5 semaines', pct:90, rating:4.5, useful:6,
+      content:"Renouvellement de ma mutuelle santé géré sans accroc, meilleures garanties pour un tarif quasi identique.",
+      tags:['Santé'], satisfaction:90, recommend:87,
+      subratings:[{lbl:'Acceuil',val:4.5},{lbl:'Qualité du conseil',val:4.6},{lbl:'Réactivité',val:4.4},{lbl:'Rapport qualité prix',val:4.5},{lbl:'Aide Suivi',val:4.3}],
+      collaborateur:'Sébastien Roy', service:'Assurance santé', numero:'102033' },
+    { initial:'N', name:'Nathalie D.', date:'il y a 6 semaines', pct:50, rating:2.5, useful:11,
+      content:"Les frais d'estimation n'étaient pas clairs au départ, il a fallu que j'appelle pour comprendre la facture. Réglé ensuite, mais ça devrait être plus transparent dès le début.",
+      tags:['Tarifs'], satisfaction:48, recommend:40,
+      subratings:[{lbl:'Acceuil',val:3.5},{lbl:'Qualité du conseil',val:3.0},{lbl:'Réactivité',val:3.2},{lbl:'Rapport qualité prix',val:1.8},{lbl:'Aide Suivi',val:2.8}],
+      collaborateur:'Thomas Petit', service:'Estimation bien', numero:'102047' },
+    { initial:'Y', name:'Yanis B.', date:'il y a 2 mois', pct:100, rating:5.0, useful:27,
+      content:"Comparatif de plusieurs banques fait pour moi, meilleur taux trouvé et plusieurs milliers d'euros économisés sur la durée du prêt.",
+      tags:['Emprunteur','Conseil'], satisfaction:99, recommend:98,
+      subratings:[{lbl:'Acceuil',val:5.0},{lbl:'Qualité du conseil',val:5.0},{lbl:'Réactivité',val:4.9},{lbl:'Rapport qualité prix',val:4.9},{lbl:'Aide Suivi',val:4.8}],
+      collaborateur:'Angela Belle', service:'Prêt immobilier', numero:'102060' },
+    { initial:'C', name:'Claire V.', date:'il y a 2 mois', pct:90, rating:4.5, useful:19,
+      content:"Vente de la maison familiale gérée du début à la fin sans stress, chaque étape expliquée à l'avance.",
+      tags:['Habitation','Acceuil'], satisfaction:93, recommend:90,
+      subratings:[{lbl:'Acceuil',val:4.8},{lbl:'Qualité du conseil',val:4.5},{lbl:'Réactivité',val:4.4},{lbl:'Rapport qualité prix',val:4.5},{lbl:'Aide Suivi',val:4.6}],
+      collaborateur:'Julie Renard', service:'Vente de propriété', numero:'102074' },
+    { initial:'M', name:'Mehdi A.', date:'12 mai 2026', pct:80, rating:4.0, useful:8,
+      content:"Petit accrochage sur le parking, dossier de sinistre traité en trois jours, indemnisation rapide.",
+      tags:['Réactivité','Auto'], satisfaction:85, recommend:82,
+      subratings:[{lbl:'Acceuil',val:4.2},{lbl:'Qualité du conseil',val:4.0},{lbl:'Réactivité',val:4.6},{lbl:'Rapport qualité prix',val:3.9},{lbl:'Aide Suivi',val:4.1}],
+      collaborateur:'Claire Fontaine', service:'Assurance auto', numero:'102089' },
+    { initial:'L', name:'Laura S.', date:'28 avril 2026', pct:100, rating:5.0, useful:22,
+      content:"Négociation du prix menée avec brio, plusieurs milliers d'euros économisés sur l'achat de l'appartement.",
+      tags:['Conseil','Habitation'], satisfaction:97, recommend:95,
+      subratings:[{lbl:'Acceuil',val:4.9},{lbl:'Qualité du conseil',val:5.0},{lbl:'Réactivité',val:4.8},{lbl:'Rapport qualité prix',val:4.9},{lbl:'Aide Suivi',val:4.7}],
+      collaborateur:'Marc Dubois', service:'Achat appartement', numero:'102103' }
+  ];
+
+  var reviewsNonVerifies = [
+    { initial:'P', name:'Pauline K.', date:'il y a 1 jour', pct:90, rating:4.5, useful:5, content:"Très bonne première impression, accueil sympathique et locaux agréables.", tags:['Acceuil'] },
+    { initial:'V', name:'Vincent H.', date:'il y a 4 jours', pct:80, rating:4.0, useful:3, content:"Tarifs corrects par rapport à ce que j'avais vu ailleurs, rien à redire.", tags:['Tarifs'] },
+    { initial:'I', name:'Inès D.', date:'il y a 6 jours', pct:100, rating:5.0, useful:9, content:"Équipe très à l'écoute, ils ont pris le temps de répondre à toutes mes questions.", tags:['Conseil'] },
+    { initial:'R', name:'Romain F.', date:'il y a 1 semaine', pct:70, rating:3.5, useful:4, content:"Un peu long avant d'avoir un retour d'appel, mais le suivi a été correct une fois lancé.", tags:['Réactivité'] },
+    { initial:'L', name:'Léa M.', date:'il y a 10 jours', pct:100, rating:5.0, useful:14, content:"Location trouvée en quelques jours seulement, exactement ce que je cherchais.", tags:['Habitation'] },
+    { initial:'B', name:'Bastien C.', date:'il y a 2 semaines', pct:90, rating:4.5, useful:2, content:"Souscription de l'assurance auto faite en ligne en dix minutes, très simple.", tags:['Auto'] },
+    { initial:'C', name:'Chloé R.', date:'il y a 3 semaines', pct:40, rating:2.0, useful:6, content:"Frais supplémentaires découverts sur la facture finale, je m'attendais à plus de transparence.", tags:['Tarifs'] },
+    { initial:'H', name:'Hugo P.', date:'il y a 1 mois', pct:80, rating:4.0, useful:5, content:"Bon accompagnement pour changer de mutuelle, dossier suivi correctement.", tags:['Santé'] },
+    { initial:'M', name:'Manon B.', date:'il y a 5 semaines', pct:100, rating:5.0, useful:11, content:"Personnel très accueillant, explications claires à chaque étape du dossier.", tags:['Acceuil','Conseil'] },
+    { initial:'D', name:'Damien L.', date:'il y a 6 semaines', pct:90, rating:4.5, useful:7, content:"Simulation de prêt utile pour y voir clair avant de se lancer, merci pour le temps passé.", tags:['Emprunteur'] },
+    { initial:'A', name:'Anaïs T.', date:'il y a 2 mois', pct:80, rating:4.0, useful:3, content:"Réponse obtenue en moins d'une journée à ma demande, bon point.", tags:['Réactivité'] },
+    { initial:'Q', name:'Quentin V.', date:'9 mai 2026', pct:60, rating:3.0, useful:8, content:"Recherche d'appartement plus longue que prévu, mais le bien trouvé correspondait bien à la demande.", tags:['Habitation'] },
+    { initial:'S', name:'Sarah N.', date:'22 avril 2026', pct:100, rating:5.0, useful:13, content:"Devis clair et détaillé dès le premier échange, je recommande sans hésiter.", tags:['Conseil','Tarifs'] }
+  ];
+
+  // Recommendation bucket (Promoteurs / Neutres / Détracteurs) for the Contrôlés tab's
+  // tap-to-filter stats. No per-review classification exists anywhere in the data model or
+  // fixtures/martin-immo.json — that fixture only carries the aggregate split (300/10/2,
+  // "inferred": false, i.e. given for the whole 312-review corpus, not derived per review).
+  // This is a reasonable standard convention (4-5★ promoter / 3★ neutral / <3★ detractor),
+  // not a settled business rule — confirm with product before this ships past prototype.
+  function recommendationBucket(r){
+    if(r.rating >= 4) return 'promoter';
+    if(r.rating >= 3) return 'neutral';
+    return 'detractor';
+  }
+
+  function starsHTML(pct){
+    return '<span class="stars" style="--pct:'+pct+'%"><span class="bg">★★★★★</span><span class="fillstars" style="width:'+pct+'%">★★★★★</span></span>';
+  }
+
+  function reviewCardHTML(r, i, verified){
+    var av = AVATAR_COLORS[i % AVATAR_COLORS.length];
+    var checkBadge = verified
+      ? '<img src="https://www.figma.com/api/mcp/asset/2016f0c0-3d16-4d37-984f-21bfc5755f7e.svg" alt="">'
+      : '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#e4e9f0"/><rect x="7.5" y="6" width="9" height="12.5" rx="1.6" stroke="#8ea1b2" stroke-width="1.4"/><rect x="9.5" y="4.8" width="5" height="2.4" rx="0.8" fill="#8ea1b2"/><path d="M9.5 11h5M9.5 13.5h5M9.5 16h3" stroke="#8ea1b2" stroke-width="1.2" stroke-linecap="round"/></svg>';
+    var tagsHTML = r.tags.map(function(t){ return '<span class="tag-chip">#'+t+'</span>'; }).join('');
+    var detailHTML = '';
+    if(verified){
+      var subHTML = r.subratings.map(function(s){
+        var subPct = Math.round(s.val/5*100);
+        return '<div class="subrating-row"><span class="lbl">'+s.lbl+'</span><div class="track"><div class="fill" style="width:'+subPct+'%"></div></div><span class="val">'+s.val.toFixed(1)+'</span></div>';
+      }).join('');
+      detailHTML =
+        '<div class="review-detail">'+
+          '<div class="detail-kpis">'+
+            '<div class="detail-kpi"><p class="kpi-lbl">Satisfaction générale</p><div class="kpi-bar-row"><div class="progress-track"><div class="progress-fill" style="width:'+r.satisfaction+'%;background:var(--blue-200)"></div></div><span class="val">'+r.satisfaction+'<small style="color:var(--gray-l2)">%</small></span></div></div>'+
+            '<div class="detail-kpi"><p class="kpi-lbl">Clients qui recommandent</p><div class="kpi-bar-row"><div class="progress-track"><div class="progress-fill" style="width:'+r.recommend+'%"></div></div><span class="val">'+r.recommend+'<small style="color:var(--gray-l2)">%</small></span></div></div>'+
+          '</div>'+
+          '<div class="subratings"><h4>Répartition des notes</h4>'+subHTML+'</div>'+
+          '<hr class="divider">'+
+          '<div class="detail-meta"><h4>Information de l\'avis</h4>'+
+            '<div class="meta-row"><span>Type de questionnaire</span><span class="v"><img src="https://www.figma.com/api/mcp/asset/6514082d-ebe8-4e20-b6ff-3721df3a6256.svg" alt="">Contrôlé</span></div>'+
+            '<div class="meta-row"><span>Collaborateur</span><span class="v"><img src="https://www.figma.com/api/mcp/asset/b0e20eb7-19ee-4365-abfc-7bf972b8dea5.svg" alt="">'+r.collaborateur+'</span></div>'+
+            '<div class="meta-row"><span>Service</span><span class="v">'+r.service+'</span></div>'+
+            '<div class="meta-row"><span>Numero de l\'avis</span><span class="v"><span class="meta-chip">'+r.numero+'</span></span></div>'+
+          '</div>'+
+        '</div>';
+    }
+    return (
+      '<article class="review-card collapsed">'+
+        '<div class="review-top">'+
+          '<div class="review-avatar" style="background:'+av[0]+';color:'+av[1]+'">'+r.initial+'</div>'+
+          '<div class="review-id">'+
+            '<div class="review-line"><p class="review-name">'+r.name+'</p><span class="review-check">'+checkBadge+r.rating.toFixed(1)+'</span></div>'+
+            '<div class="review-line"><p class="review-date">'+r.date+'</p>'+starsHTML(r.pct)+'</div>'+
+          '</div>'+
+        '</div>'+
+        '<p class="review-content">'+r.content+'</p>'+
+        '<div class="review-tags">'+tagsHTML+'</div>'+
+        '<div class="review-actions">'+
+          '<button class="act">👍 Utile ('+r.useful+')</button>'+
+          '<button class="act"><img src="https://www.figma.com/api/mcp/asset/a2c035fa-d585-4af4-b478-8bed2e30a0ca.svg" alt="" style="width:20px;height:20px">Signaler</button>'+
+          (verified ? '<button class="act toggle" data-toggle-detail>Voir plus <img src="https://www.figma.com/api/mcp/asset/78f4a3e2-15c1-4155-94f2-2e1b23ffc9a4.svg" alt=""></button>' : '')+
+        '</div>'+
+        detailHTML+
+      '</article>'
+    );
+  }
+
+  function skeletonCardHTML(){
+    return (
+      '<article class="review-card collapsed skeleton-card">'+
+        '<div class="review-top">'+
+          '<div class="skeleton skeleton-avatar"></div>'+
+          '<div class="review-id">'+
+            '<div class="skeleton skeleton-line" style="width:42%"></div>'+
+            '<div class="skeleton skeleton-line" style="width:30%;margin-top:8px"></div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="skeleton skeleton-line" style="width:88%;margin:12px 16px 0"></div>'+
+        '<div class="skeleton skeleton-line" style="width:64%;margin:8px 16px 0"></div>'+
+        '<div class="skeleton-tags-row"><div class="skeleton skeleton-chip"></div><div class="skeleton skeleton-chip"></div><div class="skeleton skeleton-chip"></div></div>'+
+        '<div class="skeleton-actions-row"><div class="skeleton skeleton-line" style="width:40%"></div></div>'+
+      '</article>'
+    );
+  }
+
+  function makeReviewState(tabKey, listId, moreId, lessId, pool, verified){
+    return {
+      tabKey: tabKey, verified: verified, pool: pool, source: pool, initial: 3, shown: 3,
+      listEl: document.getElementById(listId),
+      moreBtn: document.getElementById(moreId),
+      lessBtn: document.getElementById(lessId)
+    };
+  }
+
+  // Recommendation status + themes + sort (Contrôlés tab only — Non vérifiés has no stats
+  // block to make interactive, see the plan note above). Sort keys map to the existing
+  // .sort-menu labels already in the markup; there's no numeric date field in this data, and
+  // the array is already authored most-recent-first, so 'recent' is just the original order.
+  function computeSource(state){
+    if(!state.filters){ state.source = state.pool; return; }
+    var f = state.filters;
+    var list = state.pool.filter(function(r){
+      if(f.recommendation && recommendationBucket(r) !== f.recommendation) return false;
+      if(f.themes.size && !r.tags.some(function(t){ return f.themes.has(t); })) return false;
+      return true;
+    });
+    if(f.sort === 'best') list = list.slice().sort(function(a,b){ return b.rating - a.rating; });
+    else if(f.sort === 'worst') list = list.slice().sort(function(a,b){ return a.rating - b.rating; });
+    state.source = list;
+  }
+
+  function emptyStateHTML(){
+    return (
+      '<div class="empty-state">'+
+        '<p>Aucun avis ne correspond à cette sélection.</p>'+
+        '<button type="button" class="btn-outline-block" data-reset-controles style="width:auto">Réinitialiser les filtres</button>'+
+      '</div>'
+    );
+  }
+
+  function setReviewButtons(state){
+    var exhausted = state.shown >= state.source.length;
+    state.moreBtn.style.display = (exhausted || state.source.length === 0) ? 'none' : '';
+    state.moreBtn.disabled = false;
+    state.lessBtn.style.display = state.shown > state.initial ? '' : 'none';
+  }
+
+  function renderShown(state){
+    state.listEl.innerHTML = state.source.length
+      ? state.source.slice(0, state.shown).map(function(r,i){ return reviewCardHTML(r, i, state.verified); }).join('')
+      : emptyStateHTML();
+    setReviewButtons(state);
+  }
+
+  // Full re-fetch: used for the very first load of a tab and every time you switch back to
+  // it, so each visit reads as its own network round trip rather than an instant swap.
+  function refetchReviews(state, delay){
+    var skel = '';
+    for(var i=0;i<state.shown;i++) skel += skeletonCardHTML();
+    state.listEl.innerHTML = skel;
+    window.setTimeout(function(){ renderShown(state); }, delay);
+  }
+
+  // Filter/sort changes re-render instantly — no skeleton delay, per "the list updates
+  // immediately" — only tab switches and pagination keep the skeleton beat.
+  function reapplyFilters(state){
+    computeSource(state);
+    state.shown = state.initial;
+    renderShown(state);
+  }
+
+  function loadMoreReviews(state){
+    if(state.shown >= state.source.length) return;
+    var next = Math.min(5, state.source.length - state.shown);
+    var skelNodes = [];
+    for(var i=0;i<next;i++){
+      var wrap = document.createElement('div');
+      wrap.innerHTML = skeletonCardHTML();
+      var node = wrap.firstElementChild;
+      skelNodes.push(node);
+      state.listEl.appendChild(node);
+    }
+    state.moreBtn.disabled = true;
+    window.setTimeout(function(){
+      skelNodes.forEach(function(node, idx){
+        var wrap = document.createElement('div');
+        wrap.innerHTML = reviewCardHTML(state.source[state.shown+idx], state.shown+idx, state.verified);
+        node.replaceWith(wrap.firstElementChild);
+      });
+      state.shown += next;
+      setReviewButtons(state);
+    }, 600);
+  }
+
+  function loadLessReviews(state){
+    state.shown = state.initial;
+    renderShown(state);
+    state.listEl.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  var stateControles = makeReviewState('controles', 'reviewListControles', 'loadMoreReviews', 'loadLessReviews', reviewsControles, true);
+  var stateNv = makeReviewState('non-verifies', 'reviewListNv', 'loadMoreReviewsNv', 'loadLessReviewsNv', reviewsNonVerifies, false);
+  var reviewStates = { 'controles': stateControles, 'non-verifies': stateNv };
+
+  // Filter state for the Contrôlés tab (recommendation status, themes, sort) — a single
+  // shared object so the review list, live count and reset link all derive from one source
+  // of truth instead of each control keeping its own logic.
+  stateControles.filters = { recommendation: null, themes: new Set(), sort: 'recent' };
+  var controlesCountEl = document.getElementById('controlesCount');
+  var controlesResetBtn = document.getElementById('controlesReset');
+
+  function controlesFiltersActive(){
+    var f = stateControles.filters;
+    return !!f.recommendation || f.themes.size > 0 || f.sort !== 'recent';
+  }
+
+  function refreshControlesMeta(){
+    computeSource(stateControles);
+    controlesCountEl.textContent = stateControles.source.length + ' avis'; // "avis" is invariant in French, no pluralization needed
+    controlesResetBtn.style.display = controlesFiltersActive() ? '' : 'none';
+  }
+
+  stateControles.moreBtn.addEventListener('click', function(){ loadMoreReviews(stateControles); });
+  stateControles.lessBtn.addEventListener('click', function(){ loadLessReviews(stateControles); });
+  stateNv.moreBtn.addEventListener('click', function(){ loadMoreReviews(stateNv); });
+  stateNv.lessBtn.addEventListener('click', function(){ loadLessReviews(stateNv); });
+
+  refreshControlesMeta();
+  refetchReviews(stateControles, 700); // initial page load
+
   // Tabs
+  var currentTab = 'controles';
   function activateTab(name){
     document.querySelectorAll('.tab').forEach(function(t){ t.classList.toggle('active', t.dataset.tab === name); });
     document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.toggle('active', p.id === 'panel-' + name); });
+    if(name !== currentTab){
+      currentTab = name;
+      refetchReviews(reviewStates[name], 500); // every tab switch reads as its own fetch
+    }
   }
   document.querySelectorAll('.tab').forEach(function(tab){
     tab.addEventListener('click', function(){ activateTab(tab.dataset.tab); });
@@ -1045,30 +1267,88 @@
     btn.childNodes[0].textContent = isOpen ? 'Voir moins ' : 'Voir plus ';
   });
 
-  // Populate the 2 extra default-visible collapsed cards for each tab (Figma shows 3 total)
-  ['defaultExtraCards','defaultExtraCardsNv'].forEach(function(hostId, i){
-    var tpl = document.getElementById(i === 0 ? 'collapsedCardTpl' : 'collapsedCardTplNv');
-    var host = document.getElementById(hostId);
-    host.appendChild(tpl.content.cloneNode(true));
-    host.appendChild(tpl.content.cloneNode(true));
-  });
-
-  // Sort dropdown (Contrôlés tab)
+  // Sort dropdown (Contrôlés tab) — now actually re-sorts reviewsControles, it previously
+  // only relabeled the trigger.
+  var SORT_LABELS = { recent: 'Les plus récents', best: 'Meilleures notes', worst: 'Moins bonnes notes' };
   var sortDropdown = document.getElementById('sortDropdown');
   document.getElementById('sortTrigger').addEventListener('click', function(){
+    document.getElementById('themeDropdown').classList.remove('open');
     sortDropdown.classList.toggle('open');
   });
   sortDropdown.querySelectorAll('.sort-menu button').forEach(function(opt){
     opt.addEventListener('click', function(){
-      document.getElementById('sortValue').textContent = opt.dataset.sort;
+      stateControles.filters.sort = opt.dataset.sort;
+      document.getElementById('sortValue').textContent = SORT_LABELS[opt.dataset.sort];
       sortDropdown.classList.remove('open');
+      reapplyFilters(stateControles);
+      refreshControlesMeta();
+    });
+  });
+
+  // Thèmes dropdown (Contrôlés tab) — same sort-dropdown component, multi-select: stays open
+  // so more than one theme can be picked, closes on an outside click like the sort menu does.
+  var themeDropdown = document.getElementById('themeDropdown');
+  var themeValueEl = document.getElementById('themeValue');
+  document.getElementById('themeTrigger').addEventListener('click', function(){
+    sortDropdown.classList.remove('open');
+    themeDropdown.classList.toggle('open');
+  });
+  document.getElementById('themeMenu').querySelectorAll('button').forEach(function(opt){
+    opt.addEventListener('click', function(){
+      var t = opt.dataset.theme;
+      var themes = stateControles.filters.themes;
+      if(themes.has(t)) themes.delete(t); else themes.add(t);
+      opt.classList.toggle('active', themes.has(t));
+      themeValueEl.textContent = themes.size === 0 ? 'Tous' : ('Thèmes (' + themes.size + ')');
+      reapplyFilters(stateControles);
+      refreshControlesMeta();
     });
   });
   document.addEventListener('click', function(e){
     if(!sortDropdown.contains(e.target)) sortDropdown.classList.remove('open');
+    if(!themeDropdown.contains(e.target)) themeDropdown.classList.remove('open');
   });
 
-  // Filter chips — single select, scoped per panel
+  // Tap-to-filter recommendation stats (Concept 6 behaviour) — single-select among the three
+  // existing Promoteurs/Neutres/Détracteurs tiles; tapping the active one again clears it,
+  // since there's no fourth "Tous" tile to return to (mirrors how the old single-select filter
+  // chips used a dedicated "Tous" chip — here the toggle-off *is* that "Tous" state).
+  document.getElementById('recommendationStats').querySelectorAll('.stat-col').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var rec = btn.dataset.rec;
+      var next = stateControles.filters.recommendation === rec ? null : rec;
+      stateControles.filters.recommendation = next;
+      document.getElementById('recommendationStats').querySelectorAll('.stat-col').forEach(function(b){
+        var isSelected = b.dataset.rec === next;
+        b.classList.toggle('selected', isSelected);
+        b.setAttribute('aria-pressed', String(isSelected));
+      });
+      reapplyFilters(stateControles);
+      refreshControlesMeta();
+    });
+  });
+
+  // Réinitialiser — clears all three axes and returns to the default Contrôlés view. Reachable
+  // both from the meta row (once a filter is active) and from the empty state.
+  function resetControlesFilters(){
+    stateControles.filters = { recommendation: null, themes: new Set(), sort: 'recent' };
+    document.getElementById('recommendationStats').querySelectorAll('.stat-col').forEach(function(b){
+      b.classList.remove('selected');
+      b.setAttribute('aria-pressed', 'false');
+    });
+    document.getElementById('themeMenu').querySelectorAll('button').forEach(function(b){ b.classList.remove('active'); });
+    themeValueEl.textContent = 'Tous';
+    document.getElementById('sortValue').textContent = SORT_LABELS.recent;
+    reapplyFilters(stateControles);
+    refreshControlesMeta();
+  }
+  controlesResetBtn.addEventListener('click', resetControlesFilters);
+  document.body.addEventListener('click', function(e){
+    if(e.target.closest('[data-reset-controles]')) resetControlesFilters();
+  });
+
+  // Filter chips — single select, scoped per panel (Non vérifiés tab only now; Contrôlés
+  // moved to the Thèmes dropdown above)
   document.querySelectorAll('.filter-row').forEach(function(row){
     row.querySelectorAll('.chip-filter').forEach(function(chip){
       chip.addEventListener('click', function(){
@@ -1092,27 +1372,6 @@
     });
   });
 
-  // "Voir plus d'avis contrôlés" — appends two more collapsed review cards
-  document.getElementById('loadMoreReviews').addEventListener('click', function(){
-    var tpl = document.getElementById('collapsedCardTpl');
-    var host = document.getElementById('collapsedCardsHost');
-    host.appendChild(tpl.content.cloneNode(true));
-    host.appendChild(tpl.content.cloneNode(true));
-    this.textContent = 'Toutes les 312 avis ne sont pas chargées dans ce prototype';
-    this.disabled = true;
-    this.style.opacity = '.5';
-  });
-
-  // "Voir plus d'avis simples" — same pattern for the Non vérifiés tab
-  document.getElementById('loadMoreReviewsNv').addEventListener('click', function(){
-    var tpl = document.getElementById('collapsedCardTplNv');
-    var host = document.getElementById('collapsedCardsHostNv');
-    host.appendChild(tpl.content.cloneNode(true));
-    host.appendChild(tpl.content.cloneNode(true));
-    this.textContent = 'Tous les 1 529 avis ne sont pas chargés dans ce prototype';
-    this.disabled = true;
-    this.style.opacity = '.5';
-  });
 })();
 </script>
 
