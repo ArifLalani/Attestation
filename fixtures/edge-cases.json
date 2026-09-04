@@ -1,0 +1,57 @@
+{
+  "$comment": "inferred:true for the ENTIRE FILE — no source document defines edge-case data. These fixtures exist to let design work proceed on states the requirements explicitly flag as needing definition (see product/open-questions.md) without waiting for those questions to be answered. Treat every value here as a design placeholder to validate with the Product Owner, not a confirmed spec.",
+
+  "zero_verified_reviews": {
+    "$comment": "Needed to design the Trust Verdict empty state — product/open-questions.md #2 explicitly defers this to a future UX workshop that hasn't happened yet. This fixture is a starting point for that workshop, not its output.",
+    "business": {
+      "name": "Nouvelle Agence Test",
+      "industry": "Real estate agency",
+      "member_since": "this month"
+    },
+    "ratings": {
+      "verified": { "rating": null, "count": 0 },
+      "unverified": { "rating": 4.1, "count": 8 },
+      "all_sources_blended": { "rating": null, "count": 8 }
+    },
+    "design_question": "requirements.md §5 block 4.3 says the Trust Verdict block renders only if verified reviews exist; what shows instead is undefined. Candidate copy (NOT approved, drafted only to unblock layout): 'Martin Immo n'a pas encore reçu d'avis vérifié par Opinion System.' — mark [NEEDS LEGAL REVIEW] before use per CLAUDE.md working rules."
+  },
+
+  "all_unverified_no_external": {
+    "$comment": "Stress-tests whether a page reads as trustworthy when it has real volume but zero verified reviews — the opposite failure mode from the main fixture, useful for checking the unverified block doesn't accidentally dominate the layout.",
+    "business": { "name": "Agence Sans Controle", "industry": "Driving school" },
+    "ratings": {
+      "verified": { "rating": null, "count": 0 },
+      "unverified": { "rating": 3.8, "count": 214 },
+      "all_sources_blended": { "rating": 3.8, "count": 214 }
+    }
+  },
+
+  "single_agency_vs_multi_agency": {
+    "$comment": "requirements.md §5 block 4.11 (store locator) implies a group rating exists only when there is more than one agency. No source document specifies the single-agency behavior explicitly.",
+    "single_agency": {
+      "agencies": [
+        { "name": "Martin Immo — Siège", "is_current": true, "rating": 4.9, "verified_count": 312 }
+      ],
+      "group_rating_shown": false
+    },
+    "multi_agency": {
+      "agencies": [
+        { "name": "Martin Immo — Bordeaux Centre", "is_current": true, "rating": 4.9, "verified_count": 312 },
+        { "name": "Martin Immo — Mérignac", "is_current": false, "rating": 4.6, "verified_count": 118 },
+        { "name": "Martin Immo — Pessac", "is_current": false, "rating": 4.8, "verified_count": 76 }
+      ],
+      "group_rating_shown": true,
+      "group_rating": 4.8,
+      "group_verified_count_total": 506
+    }
+  },
+
+  "high_volume_low_rating": {
+    "$comment": "Tests the 'no arbitrary filtering' honesty principle from research/competitive-landscape.md — a business with a genuinely mixed record, to check the design doesn't visually apologize for or hide negative reviews.",
+    "business": { "name": "Services Rapides SARL", "industry": "Personal services" },
+    "ratings": {
+      "verified": { "rating": 3.2, "count": 89, "recommendation_rate": 0.61 },
+      "unverified": { "rating": 2.9, "count": 340 }
+    }
+  }
+}

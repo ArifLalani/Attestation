@@ -1,0 +1,62 @@
+{
+  "$comment": "Canonical fake-business fixture, so every prototype uses the same numbers instead of each variant inventing its own. Derived from the figures actually stated in ../research/concept-teardown.md (from the client-supplied 'mob 8 1.pdf' concept) and ../Prototypes/index.html's comparison table, which both already use the name 'Martin Immo'. Fields with no source figure are marked inferred:true with a note. Not sourced from a real business.",
+
+  "business": {
+    "name": "Martin Immo",
+    "industry": "Real estate agency",
+    "industry_note": "inferred:true — the concepts use a real-estate business; the written spec's Schema.org example is InsuranceAgency (see product/open-questions.md #6, vertical generalization)",
+    "city": null,
+    "city_note": "inferred:false — not stated in any source document; leave null rather than invent a placemark",
+    "member_number": null,
+    "member_number_note": "inferred:false — not stated for Martin Immo; the only member number in the source material is OS's own (#00129), which belongs to a different fixture entirely"
+  },
+
+  "ratings": {
+    "verified": {
+      "rating": 4.9,
+      "count": 312,
+      "recommendation_rate": 0.94,
+      "source": "research/concept-teardown.md §1 (reputation card 'Réputation source contrôlée')"
+    },
+    "unverified": {
+      "rating": 4.4,
+      "count": 1529,
+      "count_note": "derived: total_all_sources.count (1841) minus verified.count (312), per research/concept-teardown.md §1",
+      "distinct_sources": 6,
+      "source": "research/concept-teardown.md §1 (reputation card 'Réputation sources non vérifiées')"
+    },
+    "all_sources_blended": {
+      "rating": 4.7,
+      "count": 1841,
+      "label": "toutes sources confondues",
+      "source": "research/concept-teardown.md §1 and §4 — this is the hero number in the client concepts, but requirements.md AC1 forbids using it as the page's hero. See product/decisions.md."
+    }
+  },
+
+  "nps": {
+    "promoters": 300,
+    "neutrals": 10,
+    "detractors": 2,
+    "source": "research/concept-teardown.md §1 — flagged there as something the concepts add that the written spec does not mention; confirm in scope before building.",
+    "inferred": false
+  },
+
+  "topics": {
+    "$comment": "inferred:true — chip labels named in research/concept-teardown.md §1 as an example, not a confirmed final taxonomy",
+    "chips": ["Accueil", "Conseil", "Tarifs", "Réactivité"]
+  },
+
+  "sub_rating_criteria": {
+    "$comment": "product/open-questions.md #8 flags a mismatch between two different criteria sets found in the source material. Both are recorded here rather than picking one.",
+    "spec_4_6": ["Welcome", "Quality of advice", "Responsiveness", "Value for money"],
+    "live_site": ["Onboarding & follow-up", "Simplicity", "Customer relationship", "Visibility of reviews", "Benefit/cost ratio"],
+    "resolved": false
+  },
+
+  "certification": {
+    "standards": ["NF Service 522 / ISO 20488", "ISO 20252", "ISO 9001"],
+    "confidence_index": "95%",
+    "margin_of_error": "5%",
+    "source": "product/business-context.md §2"
+  }
+}

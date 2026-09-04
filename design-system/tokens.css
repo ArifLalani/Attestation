@@ -1,0 +1,138 @@
+/* ==========================================================================
+   Opinion System — Public Review Page
+   Canonical design tokens
+   --------------------------------------------------------------------------
+   SOURCE OF TRUTH for prototyping. As of 2026-08-27 this file is aligned to
+   the Opinion System Figma Design System (design-system/figma-source.md),
+   which is now the canonical visual reference for this workspace — see
+   CLAUDE.md's "Source-of-truth hierarchy". Product requirements/user stories
+   still govern function, content, legal and accessibility requirements;
+   Figma governs appearance and established component behavior.
+
+   PROVENANCE KEY (used in the comments below):
+     [FIGMA-CONFIRMED] — verified directly against the Figma Design System;
+                          safe to trust and reuse.
+     [LEGACY]           — extracted from the live opinionsystem.fr DOM before
+                          Figma access existed. Superseded where a
+                          FIGMA-CONFIRMED equivalent exists.
+     [LOCAL-DERIVED]    — computed from a FIGMA-CONFIRMED value to satisfy a
+                          requirement (usually WCAG AA contrast) that the raw
+                          Figma value doesn't meet on its own. The derivation
+                          is documented inline.
+     [LOCAL-ONLY]       — used by our prototypes, no Figma counterpart found
+                          yet (the public certificate page has no frames of
+                          its own in Figma — see design-system/principles.md).
+     [UNCONFIRMED]      — still the old assumed/legacy value; nobody has
+                          checked Figma for this one yet. Don't treat as
+                          settled.
+
+   Neither Prototypes/assets/os-mui.css nor os-mui-poppins.css has been
+   edited by this pass — the ten built prototypes still render exactly as
+   before. This file is the target for the NEXT prototype pass, not a
+   retroactive change to the existing ones.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* ---------- Brand ---------- */
+  --os-navy: #041B44;          /* [FIGMA-CONFIRMED] identical to Figma's --bleu-fonce. Opinion System, the certifier. */
+  --os-navy-700: #0A2B63;      /* [LOCAL-ONLY] darker navy variant for gradients/hover; no Figma counterpart found yet */
+  --os-blue: #004F9F;          /* [LOCAL-ONLY] no direct Figma equivalent found yet */
+  --os-blue-light: #2C95FF;    /* [FIGMA-CONFIRMED] identical to Figma's --bleu-400 */
+  --os-yellow: #FFD500;        /* [FIGMA-CONFIRMED] identical to Figma's --yellow. The ONE primary CTA. Keep rare. */
+  --os-yellow-dark: #E6C000;   /* [LOCAL-ONLY] hover-state darkening; no Figma counterpart found yet */
+  --os-amber: #FFC107;         /* [LOCAL-ONLY] stars only — keep visually distinct from the yellow CTA. NOTE: Figma's star fill uses --jaune-400, which is the SAME hex as --yellow (#FFD500) — Figma does not distinguish star-amber from CTA-yellow the way we do. Re-confirm this distinction is intentional before treating it as settled. */
+  --os-tint-1: #F5F9FE;        /* [LOCAL-ONLY] lighter surface tint; no Figma equivalent inspected yet */
+  --os-tint-2: #ECF3FB;        /* [LOCAL-ONLY] page background tint; no Figma equivalent inspected yet */
+  --os-border: #DCE7F5;        /* [LOCAL-ONLY] no Figma equivalent inspected yet */
+
+  /* ---------- Verified — the trust semantic. Never decorative. ---------- */
+  --os-green: #43B6A3;         /* [FIGMA-CONFIRMED] Figma's --vert-os. Replaces legacy #2DB38A (2026-08-27, product/decisions.md). Fills and borders only — fails AA as text (~2.48:1 on white). */
+  --os-green-text: #2D7B6E;    /* [LOCAL-DERIVED] darkened from #43B6A3 at the same hue/saturation to reach ~5.0:1 on white (passes AA) — same technique used for the value it replaces. Text/icon use only. */
+  --os-green-bg: #E9FFF2;      /* [FIGMA-CONFIRMED] Figma's --success-light-2, the paired background for the "Promoteur" chip. Replaces legacy #E8F7F1 (near-identical). */
+  --os-green-legacy: #2DB38A;  /* [LEGACY] retired 2026-08-27. Kept only so past screenshots/comparisons stay explainable — do not use in new work. */
+
+  /* ---------- Error / warning — new, fills a real gap ---------- */
+  --os-error: #FC6530;         /* [FIGMA-CONFIRMED] Figma's --error3. Used there for warning/expiry/validation states (e.g. an unanswered review invitation, a rejected review, a form validation error). We had no token for this before. */
+
+  /* ---------- Unverified — deliberately outside the brand palette ---------- */
+  --os-grey-bg: #F4F6F9;       /* [LOCAL-ONLY] */
+  --os-grey-border: #B0BCCF;   /* [LOCAL-ONLY] used with a DASHED border, never solid */
+  --os-grey-chip: #E4E9F0;     /* [LOCAL-ONLY] */
+
+  /* ---------- Text ---------- */
+  --os-text: #041B44;                    /* [FIGMA-CONFIRMED] same as --os-navy */
+  --os-text-secondary: #5A6B85;          /* [LOCAL-DERIVED] darkened from the raw brand token #8392A8 (3.16:1, fails AA) to reach 5.42:1. Figma's own muted-text token (--gris #8EA1B2) has not been checked for AA compliance — re-verify before treating it as a replacement. */
+  --os-text-disabled: #90A0B7;           /* [LOCAL-ONLY] */
+  --os-on-dark: #FFFFFF;
+  --os-on-dark-secondary: #B9C7DD;       /* [LOCAL-ONLY] */
+
+  /* ---------- Shape ---------- */
+  --r: 8px;                    /* [FIGMA-CONFIRMED] base interactive-component radius — Button, Chip, and Text Input all use 8px in Figma. Replaces the assumed legacy value of 4px (2026-08-27, product/decisions.md). */
+  --r-card: 12px;              /* [UNCONFIRMED] no generic "Card" component has been inspected in Figma yet — stays at its legacy value until one is. Do NOT assume this should become 16px; see --r-card-review. */
+  --r-card-review: 16px;       /* [FIGMA-CONFIRMED] Review Card specifically uses 16px in Figma (node 416:13164). Scoped to review cards only — not a general card-radius change. */
+  --r-pill: 999px;             /* [LOCAL-ONLY] */
+
+  /* ---------- Spacing ---------- */
+  --sp: 8px;                   /* [LOCAL-ONLY] carried over from the assumed MUI 8px spacing unit; consistent with Figma's own padding/gap values (multiples of 8/16px) but not independently verified as a named spacing token */
+
+  /* ---------- Elevation ---------- */
+  --e1: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
+  --e2: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+  --e4: 0 2px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12);
+  --e8: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
+  /* [LOCAL-ONLY] MUI shadow scale — not yet cross-checked against Figma effect styles */
+}
+
+/* ==========================================================================
+   Type scale — Poppins throughout (headings AND body)
+   --------------------------------------------------------------------------
+   [FIGMA-CONFIRMED] as the canonical direction (product/decisions.md,
+   2026-08-27): the Figma Design System uses Poppins for every text role —
+   headings, body, captions, even numerals — with no Roboto anywhere.
+
+   [LEGACY]: the Roboto-body/Poppins-heading split this replaces was
+   extracted from the live opinionsystem.fr DOM before Figma access existed.
+   It still lives, completely unedited, in Prototypes/assets/os-mui.css (the
+   stylesheet actually linked by all ten built prototypes) — this change
+   does NOT retroactively touch those files. Migrating them is a separate,
+   not-yet-scheduled piece of work. Prototypes/assets/os-mui-poppins.css
+   already exists as a partial trial of this direction for variants 6+.
+
+   Sizes, line-heights and letter-spacing are unchanged from the legacy
+   scale — only the family changed. Those numeric values were not part of
+   this decision and haven't been independently re-verified against Figma's
+   named text styles (OS/Heading 4-6, etc.) yet — treat them as [UNCONFIRMED].
+   ========================================================================== */
+
+.t-h4       { font: 400 34px/1.235 Poppins, sans-serif; letter-spacing: .00735em; margin: 0; }
+.t-h5       { font: 400 24px/1.334 Poppins, sans-serif; letter-spacing: 0; margin: 0; }
+.t-h6       { font: 500 20px/1.6 Poppins, sans-serif;   letter-spacing: .0075em; margin: 0; }
+.t-sub1     { font: 400 16px/1.75 Poppins, sans-serif;  letter-spacing: .00938em; margin: 0; }
+.t-sub2     { font: 500 14px/1.57 Poppins, sans-serif;  letter-spacing: .00714em; margin: 0; }
+.t-body1    { font: 400 16px/1.5 Poppins, sans-serif;   letter-spacing: .00938em; margin: 0; }
+.t-body2    { font: 400 14px/1.43 Poppins, sans-serif;  letter-spacing: .01071em; margin: 0; }
+.t-caption  { font: 400 12px/1.66 Poppins, sans-serif;  letter-spacing: .03333em; margin: 0; }
+.t-overline { font: 500 10px/2.66 Poppins, sans-serif;  letter-spacing: .08333em; text-transform: uppercase; margin: 0; }
+.t-brand    { font-family: Poppins, sans-serif; font-weight: 600; }
+
+/* ==========================================================================
+   Named palette roles — quick lookup. Full rationale: design-system/principles.md.
+   Full provenance: the comments above.
+   ========================================================================== */
+
+/*
+  Semantic            | Token(s)                              | Rule
+  --------------------|----------------------------------------|--------------------------------
+  Navy (certifier)     | --os-navy, --os-navy-700               | Trust banner, Quality Approach band, body text
+  Verified             | --os-green, --os-green-text/-bg        | Verified badges, Trust Verdict border, dashboard border. NEVER on unverified cards.
+  Error / warning      | --os-error                              | Validation errors, expiring/pending states. New — not yet used anywhere on the public page.
+  Stars                | --os-amber                              | Star fills ONLY — never the CTA (Figma itself doesn't draw this distinction; see comment above)
+  Primary action       | --os-yellow / --os-yellow-dark         | The single primary CTA. Keep rare — power comes from scarcity.
+  Secondary action     | --os-blue / --os-blue-light            | Secondary buttons, icons, links
+  Surface tints        | --os-tint-1, --os-tint-2                | Page ground, card separation
+  Unverified           | --os-grey-bg/-border/-chip               | Dashed border. Deliberately outside the brand palette.
+  Base radius          | --r (8px, FIGMA-CONFIRMED)               | Buttons, chips, inputs
+  Card radius          | --r-card (12px, UNCONFIRMED) / --r-card-review (16px, FIGMA-CONFIRMED) | Don't conflate the two
+*/

@@ -30,8 +30,12 @@ review**, which is the entire product. That is the design problem; everything el
 | [opinion-system.md](opinion-system.md) | Company, business model, audiences, competitors, current-page teardown, and the extracted brand palette + typography | You need brand, tone, color, or audience context |
 | [design.md](design.md) | Requirements distilled from the two client documents: review typology, legal constraints, block-by-block page structure, business rules, NFRs, acceptance criteria, open questions | You are making a layout, component, or copy decision |
 | [research-best-practices.md](research-best-practices.md) | Teardown of the supplied concepts, how Trustpilot/Google/Avis Vérifiés solve the same problem, trust-signal and review-UX research, concrete recommendations | Before designing anything |
-| [Prototypes/](Prototypes/index.html) | Five mobile HTML/CSS prototypes on an MUI-flavored design system, plus a gallery index | You want to see or extend the current design direction |
-| **CLAUDE.md** (this file) | Task overview, source of truth, working rules | Start here |
+| [Prototypes/](Prototypes/index.html) | HTML/CSS prototypes on an MUI-flavored design system, plus a gallery index and the A-7 exploration subfolder | You want to see or extend the current design direction — as an experiment, never as a source of truth |
+| [product/](product/requirements.md) | PRD, user stories, business context, open questions, decision log | You need the current requirement, story, or a record of what's already been decided |
+| [research/](research/recommendations.md) | Competitive/UX research, concept teardown, recommendations | Before designing something new — for evidence and rationale, not for settled values |
+| [design-system/](design-system/tokens.css) | Canonical tokens, usage principles, component inventory, Figma reference | Any visual decision — colors, type, spacing, radii, component states |
+| [fixtures/](fixtures/martin-immo.json) | Canonical Martin Immo data + edge cases | Building or comparing a prototype |
+| **CLAUDE.md** (this file) | Task overview, source-of-truth hierarchy, working rules | Start here |
 
 ### Concepts (client-supplied, in `Concepts/`)
 
@@ -73,6 +77,29 @@ Three concrete consequences:
 
 ---
 
+## Source-of-truth hierarchy
+
+Five kinds of source live in this repo, and they answer different questions — don't let one
+substitute for another:
+
+| Source | Answers | Location |
+|---|---|---|
+| **Product requirements / user stories** | *What* the experience must accomplish — functionality, content, legal constraints, accessibility, business rules | [product/requirements.md](product/requirements.md), [product/user-stories.md](product/user-stories.md) |
+| **Figma Design System** | *How* it looks, and how established UI components behave — color, type, spacing, radii, component states | [design-system/figma-source.md](design-system/figma-source.md) |
+| **Research** | *Evidence and rationale* — why a direction is recommended, what competitors do, what usability research says | [research/](research/recommendations.md) |
+| **Decisions** | The record of *deliberate design choices already made*, with status (confirmed / proposed) | [product/decisions.md](product/decisions.md) |
+| **Prototypes** | *Experiments.* Never a source of truth for anything — they test an idea, they don't settle one | [Prototypes/](Prototypes/index.html) |
+
+If two sources disagree: requirements/stories win on function, Figma wins on visuals, and a
+prototype never outranks either — a prototype having done something a certain way is not a
+reason it must stay that way.
+
+Before inventing a visual value: check [design-system/tokens.css](design-system/tokens.css)
+first. If it's not there, consult [design-system/figma-source.md](design-system/figma-source.md)
+for where to look in Figma, then log what you find back into tokens.css with a provenance tag.
+
+---
+
 ## Audiences the page serves simultaneously
 
 - **Consumers** comparing two or three local providers — mostly mobile, low patience, don't
@@ -85,23 +112,14 @@ Three concrete consequences:
 
 ## Design system quick reference
 
-Full detail and rationale in [opinion-system.md §6](opinion-system.md).
+Canonical values: [design-system/tokens.css](design-system/tokens.css). Usage rules:
+[design-system/principles.md](design-system/principles.md). Component inventory:
+[design-system/components.md](design-system/components.md). Figma source:
+[design-system/figma-source.md](design-system/figma-source.md).
 
-| Semantic | Hex | Use |
-|---|---|---|
-| Navy — Opinion System / certifier | `#041B44` | Trust banner, Quality Approach band, body text |
-| Verified green | `#2DB38A` | Verified badges, Trust Verdict border, Verified dashboard border |
-| Star amber | `#FFC107` | Star fills only |
-| Action yellow | `#FFD500` | The single primary CTA ("Leave My Review"). Keep rare. |
-| Deep blue | `#004F9F` | Secondary buttons, icons |
-| Accent blue | `#2C95FF` | Links |
-| Surface tints | `#ECF3FB` / `#F5F9FE` | Page ground, card separation |
-| Unverified | Neutral gray + **dashed** border | Deliberately outside the brand palette |
-
-Type: **Poppins** for headings and buttons, **Roboto** for body and data.
-
-**Hard rule:** green is a trust semantic on this page. It must never appear on an unverified
-review card.
+**Hard rule, restated because it's load-bearing:** green is a trust semantic on this page. It
+must never appear on an unverified review card — regardless of which green wins any future
+token update.
 
 ---
 
@@ -156,6 +174,10 @@ layout.
   standard numbers *are* the credibility. Modernize the form, not the register.
 - **Bilingual from the start.** The page ships FR and EN (and the live EN build currently
   leaks untranslated French). Don't hardcode strings or assume French string lengths.
+- **Figma is the visual source of truth; a prototype is not.** Check
+  [design-system/tokens.css](design-system/tokens.css)'s provenance tags before trusting a
+  value pulled from an existing prototype file — several legacy values are flagged there and
+  should not be propagated into new work without checking Figma first.
 
 ---
 
