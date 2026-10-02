@@ -884,8 +884,14 @@
     .identity-row{height:80px;gap:10px;}
     .logo-tile{width:80px;height:80px;}
     .biz-name{font-size:40px;line-height:60px;}
-    .about-row{height:24px;}
-    .about-list{height:24px;flex-direction:row;gap:16px;align-items:center;}
+    /* Constrained to column 1's width (matches .dashboard-block below it) — the social icons
+       row shares this same visual line but lives further right, over column 2; without this
+       width cap flex-end pushes the address text into and under the social icons. */
+    .about-row{height:24px;width:500px;}
+    /* Base .about-list sets justify-content:center for its mobile column layout (vertical
+       centering); flipping to a row here re-reads that as horizontal centering, so it must
+       be re-specified — flex-end right-aligns the row within the full 1020px identity-block. */
+    .about-list{height:24px;flex-direction:row;gap:16px;align-items:center;justify-content:flex-end;}
     .about-item{height:24px;font-size:16px;line-height:24px;gap:4px;}
     .about-item img{width:24px;height:24px;}
     .share-btn{position:absolute;right:0;top:20px;width:40px;height:40px;padding:8px;}
@@ -897,8 +903,11 @@
     .note-global{height:146px;padding:16px;gap:8px;}
     .note-global.expanded{height:314px;position:relative;z-index:5;box-shadow:0 8px 22px rgba(4,27,68,.16);}
     .note-global-row{flex:1;padding:4px 0;}
-    .source-card{height:80px;flex:none;}
-    .source-card.verified{height:82px;}
+    /* 80/82px clipped the current 2-row content (title+wrapping subtitle, rating stacked
+       over its count chip) at desktop's larger font sizes — measured natural content
+       height is ~94-98px depending on subtitle wrap; 102px gives a safety margin. */
+    .source-card{height:102px;flex:none;}
+    .source-card.verified{height:102px;}
     .source-row{height:100%;}
     .source-title{font-size:16px;line-height:24px;}
     .source-sub{font-size:14px;line-height:21px;}
