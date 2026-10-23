@@ -25,7 +25,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="fr" className={poppins.variable}>
+    <html lang="fr" className={poppins.variable} data-scroll-behavior="smooth">
       <body>
         <AppRouterCacheProvider>
           <NextIntlClientProvider>

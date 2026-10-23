@@ -19,5 +19,5 @@ export async function generateMetadata({ params }: PageProps<"/fr-fr/certificate
 export default async function Page({ params }: PageProps<"/fr-fr/certificate/[id]">) {
   const { id } = await params;
   if (!getAgency(id)) notFound();
-  return <CertificatePage agencyId={id} />;
+  return <CertificatePage key={id} agencyId={id} />;
 }

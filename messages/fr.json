@@ -142,6 +142,40 @@
     "transparence": "Transparence",
     "honoraires": "Honoraires"
   },
+  "Team": {
+    "eyebrow": "L’ÉQUIPE",
+    "heading": "Les personnes qui vous accompagnent",
+    "showMore": "Voir toute l’équipe",
+    "showLess": "Voir moins",
+    "openProfile": "Voir le profil de {name}",
+    "profile": "Profil du collaborateur",
+    "close": "Fermer le profil",
+    "reviewCount": "{count} avis",
+    "recentReviews": "Ses derniers avis",
+    "seeReviews": "Voir tous ses avis",
+    "empty": "Les profils seront affichés dès qu’ils auront reçu suffisamment d’avis.",
+    "social": "{network} de {name}",
+    "networks": {
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "linkedin": "LinkedIn"
+    }
+  },
+  "Agencies": {
+    "eyebrow": "NOS AGENCES",
+    "heading": "Voici où nous trouver",
+    "description": "Trouvez l’agence {name} la plus proche de chez vous.",
+    "mapLabel": "Carte de nos agences",
+    "mapLoading": "Chargement de la carte…",
+    "mapUnavailable": "La carte est indisponible. Retrouvez nos agences avec le bouton ci-dessous.",
+    "retryMap": "Réessayer",
+    "selectAgency": "Sélectionner l’agence de {city}",
+    "toggleHours": "Afficher ou masquer les horaires",
+    "verifiedCount": "{count} avis contrôlés",
+    "seeCertificate": "Voir le certificat de {city}",
+    "showMore": "Voir les autres agences",
+    "showLess": "Masquer les agences"
+  },
   "Placeholder": {
     "agences": "L'équipe et les agences arrivent à l'étape 3.",
     "qualite": "Démarche qualité, présentation et pied de page arrivent à l'étape 4."

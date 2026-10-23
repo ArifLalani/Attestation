@@ -11,6 +11,8 @@ import { AppHeader, pageColumnSx } from "./AppHeader";
 import { BusinessCard } from "./BusinessCard";
 import { CertificateProvider, sectionIds, type SectionId } from "./CertificateContext";
 import { ReputationCard } from "./ReputationCard";
+import { TeamSection } from "./TeamSection";
+import { AgenciesSection } from "./AgenciesSection";
 
 const sectionSx = {
   display: "flex",
@@ -19,7 +21,7 @@ const sectionSx = {
   scrollMarginTop: `${tokens.headerHeight + 16}px`,
 } as const;
 
-function Placeholder({ id }: { id: "agences" | "qualite" }) {
+function Placeholder({ id }: { id: "qualite" }) {
   const t = useTranslations("Placeholder");
   return (
     <Box sx={{ bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCardSoft, p: 3, minHeight: 240, display: "grid", placeItems: "center" }}>
@@ -45,7 +47,8 @@ export function CertificatePage({ agencyId }: { agencyId: string }) {
           <ReviewsSection />
         </Box>
         <Box id="agences" sx={sectionSx}>
-          <Placeholder id="agences" />
+          <TeamSection />
+          <AgenciesSection />
         </Box>
         <Box id="qualite" sx={sectionSx}>
           <Placeholder id="qualite" />
