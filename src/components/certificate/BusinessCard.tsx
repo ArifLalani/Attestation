@@ -11,7 +11,6 @@ import { useState } from "react";
 import { FigmaIcon } from "@/components/ui/FigmaIcon";
 import { tokens } from "@/theme/theme";
 import { useCertificate } from "./CertificateContext";
-import { ContactSheet } from "./ContactSheet";
 import { OpenStatus } from "./OpenStatus";
 
 export const cardSx = {
@@ -44,8 +43,7 @@ function directionsUrl(address: string) {
 /** Figma "Business card" (1353:11257). */
 export function BusinessCard() {
   const t = useTranslations("Business");
-  const { agency } = useCertificate();
-  const [contactOpen, setContactOpen] = useState(false);
+  const { agency, setPanel } = useCertificate();
   const [copied, setCopied] = useState(false);
 
   const share = async () => {
@@ -64,8 +62,8 @@ export function BusinessCard() {
 
   return (
     <Box component="article" sx={{ ...cardSx, overflow: "hidden", display: "flex", flexDirection: "column", gap: 2 }}>
-      <Box sx={{ position: "relative", height: 150, background: "linear-gradient(147.875deg, rgb(143,178,219) 0%, rgb(201,219,240) 71.429%)" }}>
-        <Image src={agency.coverPhoto} alt={t("coverAlt", { name: agency.name })} fill priority sizes="(min-width: 640px) 640px, 100vw" style={{ objectFit: "cover" }} />
+      <Box sx={{ position: "relative", height: { xs: 150, md: 220, lg: 280 }, background: "linear-gradient(147.875deg, rgb(143,178,219) 0%, rgb(201,219,240) 71.429%)" }}>
+        <Image src={agency.coverPhoto} alt={t("coverAlt", { name: agency.name })} fill priority sizes="(min-width: 1200px) 864px, (min-width: 900px) calc(100vw - 328px), (min-width: 640px) 616px, 100vw" style={{ objectFit: "cover" }} />
       </Box>
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1, px: 1.5 }}>
@@ -105,7 +103,7 @@ export function BusinessCard() {
       </Box>
 
       <Box sx={{ display: "flex", gap: 2, px: 1.5, pb: 1.5 }}>
-        <Button sx={chipButtonSx} onClick={() => setContactOpen(true)}>
+        <Button sx={chipButtonSx} onClick={() => setPanel("contact")}>
           {t("contact")}
         </Button>
         <Button sx={chipButtonSx} href={agency.website} target="_blank" rel="noopener noreferrer">
@@ -124,7 +122,6 @@ export function BusinessCard() {
         </Button>
       </Box>
 
-      <ContactSheet agency={agency} open={contactOpen} onClose={() => setContactOpen(false)} />
       <Snackbar open={copied} autoHideDuration={2500} onClose={() => setCopied(false)} message={t("linkCopied")} anchorOrigin={{ vertical: "bottom", horizontal: "center" }} />
     </Box>
   );

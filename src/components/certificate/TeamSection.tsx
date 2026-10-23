@@ -69,7 +69,7 @@ export function TeamSection() {
   return (
     <Box component="section" aria-labelledby="team-title" sx={{ bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCard, px: 1.5, py: 2, display: "flex", flexDirection: "column", gap: 2 }}>
       <CardTitle id="team-title" eyebrow={t("eyebrow")} heading={t("heading")} />
-      <Box id="team-grid" sx={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 2 }}>
+      <Box id="team-grid" sx={{ display: "grid", gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", lg: "repeat(4, minmax(0, 1fr))" }, gap: 2 }}>
         {(expanded ? people : people.slice(0, 4)).map(({ person, summary }) => (
           <Box key={person.id} component="article" sx={{ position: "relative", bgcolor: tokens.grisClair1, border: `1px solid ${tokens.grisMoyen1}`, borderRadius: "12px", py: 1.5, minWidth: 0 }}>
             <ButtonBase onClick={() => setSelectedId(person.id)} aria-label={t("openProfile", { name: person.name })} sx={{ display: "flex", flexDirection: "column", gap: 0.5, width: "100%", px: 0.5, borderRadius: 1, "&:focus-visible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 } }}>

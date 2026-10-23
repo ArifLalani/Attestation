@@ -16,7 +16,6 @@ import { ActiveFilterChips } from "./ActiveFilterChips";
 import { FiltersSheet } from "./FiltersSheet";
 import { ReportSheet } from "./ReportSheet";
 import { ReviewCard } from "./ReviewCard";
-import { ReviewRequestSheet } from "./ReviewRequestSheet";
 import { ReviewToolbar } from "./ReviewToolbar";
 
 const PAGE_SIZE = 10;
@@ -81,12 +80,12 @@ export function ReviewsSection() {
         <ActiveFilterChips />
       </Box>
 
-      <Box>
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", lg: "repeat(2, minmax(0, 1fr))" }, alignItems: "start", "& > article:nth-of-type(even)": { borderLeft: { lg: `1px solid ${tokens.grisMoyen1}` } } }}>
         {list.slice(0, visible).map((review) => (
           <ReviewCard key={review.id} review={review} onReport={setReporting} />
         ))}
         {!list.length && (
-          <Box sx={{ borderTop: `1px solid ${tokens.grisMoyen1}`, px: 2, py: 4, textAlign: "center" }}>
+          <Box sx={{ gridColumn: "1 / -1", borderTop: `1px solid ${tokens.grisMoyen1}`, px: 2, py: 4, textAlign: "center" }}>
             <Typography sx={{ fontSize: 14, color: tokens.gris, mb: 1 }}>{t("empty")}</Typography>
             <Link component="button" onClick={() => setFilters(emptyFilters)} sx={{ fontSize: 14, fontWeight: 500, color: tokens.bleu600 }}>
               {t("clearFilters")}
@@ -113,7 +112,6 @@ export function ReviewsSection() {
         options={sorts.map((value) => ({ value, label: ts(value), hint: ts(`${value}Hint`) }))}
       />
       <ReportSheet review={reporting} onClose={() => setReporting(null)} />
-      <ReviewRequestSheet />
     </Box>
   );
 }

@@ -12,7 +12,7 @@ import { FigmaIcon } from "@/components/ui/FigmaIcon";
 import { tokens } from "@/theme/theme";
 import { sectionIds, useCertificate, type SectionId } from "./CertificateContext";
 
-export const pageColumnSx = { width: "100%", maxWidth: 640, mx: "auto" } as const;
+export const pageColumnSx = { width: "100%", maxWidth: { xs: 640, md: 1200 }, mx: "auto" } as const;
 
 /** Figma "Top Header": trust banner + section tabs, pinned to the top (Sticky variant once scrolled). */
 export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (id: SectionId) => void }) {
@@ -35,7 +35,7 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
           <Typography sx={{ flex: 1, fontSize: 16, fontWeight: 600, color: tokens.blanc, lineHeight: "normal" }}>
             {t("brand")}
           </Typography>
-          <Typography sx={{ fontSize: 12, fontWeight: 600, color: tokens.vertOs, letterSpacing: "0.8px", lineHeight: "normal", whiteSpace: "nowrap" }}>
+          <Typography sx={{ fontSize: { xs: 10, sm: 12 }, fontWeight: 600, color: tokens.vertOs, letterSpacing: { xs: "0.5px", sm: "0.8px" }, lineHeight: "normal", whiteSpace: "nowrap", "@media (min-width:400px)": { fontSize: 12, letterSpacing: "0.8px" } }}>
             {t("badge")}
           </Typography>
         </Box>
@@ -84,7 +84,7 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
         {/* Figma "Top Header" Sticky + showFilteres: the review toolbar follows while scrolling the reviews. */}
         <Collapse in={toolbarPinned} timeout={180}>
           <Box sx={{ ...pageColumnSx, bgcolor: tokens.blanc, px: 2, py: 1 }}>
-            <ReviewToolbar />
+            <Box sx={{ width: { xs: "100%", md: "calc(100% - 304px)", lg: "calc(100% - 312px)" } }}><ReviewToolbar /></Box>
           </Box>
         </Collapse>
       </Box>

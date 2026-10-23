@@ -117,10 +117,11 @@ export function useScrollSpy(ids: readonly string[], offset: number) {
   const goTo = useCallback((id: string) => {
     const element = document.getElementById(id);
     if (!element) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     setActive(id);
-    lockUntil.current = performance.now() + 900;
+    lockUntil.current = performance.now() + (reduced ? 0 : 900);
     const top = element.getBoundingClientRect().top + window.scrollY - offset;
-    window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+    window.scrollTo({ top: Math.max(0, top), behavior: reduced ? "instant" : "smooth" });
   }, [offset]);
 
   return { active, goTo };

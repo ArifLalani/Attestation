@@ -1,8 +1,6 @@
 "use client";
 
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import { useTranslations } from "next-intl";
 import { ReviewsSection } from "@/components/reviews/ReviewsSection";
 import { getAgency } from "@/data/agencies";
 import { useScrollSpy } from "@/lib/hooks";
@@ -13,6 +11,10 @@ import { CertificateProvider, sectionIds, type SectionId } from "./CertificateCo
 import { ReputationCard } from "./ReputationCard";
 import { TeamSection } from "./TeamSection";
 import { AgenciesSection } from "./AgenciesSection";
+import { QualitySection } from "./QualitySection";
+import { BusinessPitch } from "./BusinessPitch";
+import { CertificateFooter } from "./CertificateFooter";
+import { CertificateActions, DesktopActions } from "./CertificateActions";
 
 const sectionSx = {
   display: "flex",
@@ -20,15 +22,6 @@ const sectionSx = {
   gap: 2,
   scrollMarginTop: `${tokens.headerHeight + 16}px`,
 } as const;
-
-function Placeholder({ id }: { id: "qualite" }) {
-  const t = useTranslations("Placeholder");
-  return (
-    <Box sx={{ bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCardSoft, p: 3, minHeight: 240, display: "grid", placeItems: "center" }}>
-      <Typography sx={{ color: tokens.gris, fontSize: 14, textAlign: "center" }}>{t(id)}</Typography>
-    </Box>
-  );
-}
 
 export function CertificatePage({ agencyId }: { agencyId: string }) {
   const agency = getAgency(agencyId)!;
@@ -38,22 +31,28 @@ export function CertificatePage({ agencyId }: { agencyId: string }) {
   return (
     <CertificateProvider agency={agency} goToSection={goToSection}>
       <AppHeader active={active as SectionId} onSelect={goToSection} />
-      <Box component="main" sx={{ ...pageColumnSx, px: 1.5, pt: 2, pb: 4, display: "flex", flexDirection: "column", gap: 2 }}>
-        <Box id="synthese" sx={sectionSx}>
-          <BusinessCard />
-          <ReputationCard />
+      <Box component="main" sx={{ ...pageColumnSx, px: 1.5, pt: { xs: 2, md: 3 }, pb: 2, display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1fr) 280px", lg: "minmax(0, 1fr) 288px" }, gap: { xs: 2, md: 3 }, alignItems: "start" }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: { xs: 2, md: 3 }, minWidth: 0 }}>
+          <Box id="synthese" sx={sectionSx}>
+            <BusinessCard />
+            <ReputationCard />
+          </Box>
+          <Box id="avis" sx={sectionSx}>
+            <ReviewsSection />
+          </Box>
+          <Box id="agences" sx={sectionSx}>
+            <TeamSection />
+            <AgenciesSection />
+          </Box>
+          <Box id="qualite" sx={sectionSx}>
+            <QualitySection />
+            <BusinessPitch />
+          </Box>
         </Box>
-        <Box id="avis" sx={sectionSx}>
-          <ReviewsSection />
-        </Box>
-        <Box id="agences" sx={sectionSx}>
-          <TeamSection />
-          <AgenciesSection />
-        </Box>
-        <Box id="qualite" sx={sectionSx}>
-          <Placeholder id="qualite" />
-        </Box>
+        <DesktopActions />
       </Box>
+      <CertificateFooter />
+      <CertificateActions />
     </CertificateProvider>
   );
 }

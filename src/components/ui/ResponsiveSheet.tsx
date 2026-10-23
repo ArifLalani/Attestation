@@ -80,7 +80,7 @@ export function ResponsiveSheet({ open, onClose, title, closeLabel, actions, hea
       onOpen={() => {}}
       disableSwipeToOpen
       aria-labelledby={titleId}
-      slotProps={{ paper: { sx: { borderTopLeftRadius: 20, borderTopRightRadius: 20, overflow: "hidden", maxWidth: 640, mx: "auto" } } }}
+      slotProps={{ paper: { role: "dialog", "aria-modal": true, "aria-labelledby": titleId, sx: { borderTopLeftRadius: 20, borderTopRightRadius: 20, overflow: "hidden", maxWidth: 640, mx: "auto" } } }}
     >
       {body}
     </SwipeableDrawer>

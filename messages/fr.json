@@ -176,9 +176,51 @@
     "showMore": "Voir les autres agences",
     "showLess": "Masquer les agences"
   },
-  "Placeholder": {
-    "agences": "L'équipe et les agences arrivent à l'étape 3.",
-    "qualite": "Démarche qualité, présentation et pied de page arrivent à l'étape 4."
+  "Quality": {
+    "eyebrow": "DÉMARCHE QUALITÉ",
+    "heading": "{name} a choisi Opinion System pour des avis fiables.",
+    "description": "Cette agence est engagée dans une démarche qualité. Opinion System, organisme indépendant qui collecte et contrôle ses avis, est triplement certifié par AFNOR Certification pour sa méthode de collecte, ses processus et la publication des avis clients.",
+    "badgeAlt": "Avis contrôlés Opinion System — ISO 20252",
+    "verified": "Avis contrôlés · identité et achat vérifiés",
+    "recommendation": "Recommandation",
+    "readReviews": "Lire les avis clients",
+    "certifications": {
+      "nf": { "title": "NF Service 522 / ISO 20488", "description": "Avis de consommateurs en ligne, collecte et contrôle" },
+      "iso20252": { "title": "ISO 20252", "description": "Organisme de sondage, rigueur statistique des résultats" },
+      "iso9001": { "title": "ISO 9001", "description": "Qualité de l’organisation interne" }
+    }
+  },
+  "BusinessPitch": {
+    "title": "Vous êtes une entreprise ?",
+    "heading": "Affichez une e-réputation vérifiée et incontestable.",
+    "description": "Rejoignez les entreprises qui collectent des avis contrôlés par le seul organisme triplement certifié AFNOR en Europe.",
+    "signup": "Inscrire mon entreprise"
+  },
+  "Actions": {
+    "menuLabel": "Actions rapides",
+    "openMenu": "Ouvrir les actions rapides",
+    "closeMenu": "Fermer les actions rapides",
+    "contact": "Contacter",
+    "leaveReview": "Déposer un avis",
+    "signup": "Inscrire mon entreprise"
+  },
+  "Footer": {
+    "home": "Accueil Opinion System",
+    "description": "Le tiers de confiance des avis clients, triplement certifié AFNOR en Europe.",
+    "groups": { "opinionSystem": "Opinion System", "business": "Entreprises", "consumers": "Consommateurs" },
+    "links": {
+      "history": "Notre histoire",
+      "certifications": "Nos certifications",
+      "team": "Nos équipes",
+      "reputation": "Votre réputation",
+      "signup": "S’inscrire",
+      "pricing": "Tarifs",
+      "findPro": "Trouver un pro",
+      "account": "Mon espace",
+      "leaveReview": "Déposer un avis"
+    },
+    "legalLabel": "Informations légales",
+    "legal": { "legal": "Mentions légales", "terms": "Conditions d’utilisation", "privacy": "Politique de confidentialité" }
   },
   "SourceNames": {
     "os_certified": "Opinion System",

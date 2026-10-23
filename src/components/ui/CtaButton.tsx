@@ -1,4 +1,5 @@
 import Button, { type ButtonProps } from "@mui/material/Button";
+import type { AnchorHTMLAttributes } from "react";
 import { tokens } from "@/theme/theme";
 import { FigmaIcon, type FigmaIconName } from "./FigmaIcon";
 
@@ -12,7 +13,7 @@ export function CtaButton({
   disabled,
   sx,
   ...props
-}: Omit<ButtonProps, "variant"> & { variant?: Variant; icon?: FigmaIconName | null }) {
+}: Omit<ButtonProps, "variant"> & Pick<AnchorHTMLAttributes<HTMLAnchorElement>, "target" | "rel"> & { variant?: Variant; icon?: FigmaIconName | null }) {
   const iconName: FigmaIconName | null = disabled ? "icon-right-disabled" : icon;
   return (
     <Button
