@@ -229,6 +229,7 @@
     "google": "Google"
   },
   "Reviews": {
+    "backToStart": "{count} avis : revenir au début de la section Avis",
     "eyebrow": "LES AVIS",
     "heading": "Ce que les gens disent…",
     "count": "{count} avis",

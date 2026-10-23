@@ -6,7 +6,7 @@ import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import Typography from "@mui/material/Typography";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ReviewToolbar } from "@/components/reviews/ReviewToolbar";
 import { FigmaIcon } from "@/components/ui/FigmaIcon";
 import { tokens } from "@/theme/theme";
@@ -19,6 +19,7 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
   const t = useTranslations("Header");
   const [scrolled, setScrolled] = useState(false);
   const { toolbarPinned } = useCertificate();
+  const returningToReviews = useRef(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 4);
@@ -82,9 +83,15 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
           ))}
         </Tabs>
         {/* Figma "Top Header" Sticky + showFilteres: the review toolbar follows while scrolling the reviews. */}
-        <Collapse in={toolbarPinned} timeout={180}>
+        <Collapse in={toolbarPinned} timeout={180} onExited={() => {
+          if (returningToReviews.current) {
+            returningToReviews.current = false;
+            // Collapsing the toolbar changes the header's height in the page flow.
+            onSelect("avis");
+          }
+        }}>
           <Box sx={{ ...pageColumnSx, bgcolor: tokens.blanc, px: 2, py: 1 }}>
-            <Box sx={{ width: { xs: "100%", md: "calc(100% - 304px)", lg: "calc(100% - 312px)" } }}><ReviewToolbar /></Box>
+            <Box sx={{ width: { xs: "100%", md: "calc(100% - 304px)", lg: "calc(100% - 312px)" } }}><ReviewToolbar onCountClick={() => { returningToReviews.current = true; onSelect("avis"); }} /></Box>
           </Box>
         </Collapse>
       </Box>

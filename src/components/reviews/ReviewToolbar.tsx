@@ -2,6 +2,7 @@
 
 import Badge from "@mui/material/Badge";
 import Box from "@mui/material/Box";
+import ButtonBase from "@mui/material/ButtonBase";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { useTranslations } from "next-intl";
@@ -13,16 +14,18 @@ import { applyFilters, countActiveFilters } from "@/lib/reviewFilters";
 import { tokens } from "@/theme/theme";
 
 /** Count chip + filter (with badge) + sort. Figma "Filteres" → "Filters Row". Used in the card and in the pinned header. */
-export function ReviewToolbar() {
+export function ReviewToolbar({ onCountClick }: { onCountClick?: () => void } = {}) {
   const t = useTranslations("Reviews");
-  const { reviews, filters, setPanel } = useCertificate();
+  const { reviews, filters, setPanel, goToSection } = useCertificate();
   const count = useMemo(() => applyFilters(reviews, filters).length, [reviews, filters]);
   const active = countActiveFilters(filters);
 
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
       <Box sx={{ flex: 1, minWidth: 0 }}>
-        <Box
+        <ButtonBase
+          onClick={onCountClick ?? (() => goToSection("avis"))}
+          aria-label={t("backToStart", { count: formatCount(count) })}
           sx={{
             display: "inline-flex",
             px: "10px",
@@ -30,12 +33,14 @@ export function ReviewToolbar() {
             borderRadius: "4px",
             bgcolor: tokens.grisClair2,
             border: `1px solid ${tokens.grisMoyen1}`,
+            "&:hover": { bgcolor: tokens.bleu10 },
+            "&:focus-visible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 },
           }}
         >
           <Typography aria-live="polite" sx={{ fontSize: 14, fontWeight: 600, lineHeight: "normal", color: tokens.bleuFonce, whiteSpace: "nowrap" }}>
             {t("count", { count: formatCount(count) })}
           </Typography>
-        </Box>
+        </ButtonBase>
       </Box>
       <IconButton
         onClick={() => setPanel("filters")}
