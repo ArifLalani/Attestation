@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { ReviewToolbar } from "@/components/reviews/ReviewToolbar";
+import { ActiveFilterChips } from "@/components/reviews/ActiveFilterChips";
 import { FigmaIcon } from "@/components/ui/FigmaIcon";
 import { tokens } from "@/theme/theme";
 import { sectionIds, useCertificate, type SectionId } from "./CertificateContext";
@@ -20,6 +21,20 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
   const [scrolled, setScrolled] = useState(false);
   const { toolbarPinned } = useCertificate();
   const returningToReviews = useRef(false);
+  const headerRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+    const observer = new ResizeObserver(() => {
+      document.documentElement.style.setProperty("--certificate-header-height", `${header.getBoundingClientRect().height}px`);
+    });
+    observer.observe(header);
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.removeProperty("--certificate-header-height");
+    };
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 4);
@@ -29,7 +44,7 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
   }, []);
 
   return (
-    <Box component="header" sx={{ position: "sticky", top: 0, zIndex: (theme) => theme.zIndex.appBar }}>
+    <Box component="header" ref={headerRef} sx={{ position: "sticky", top: 0, zIndex: (theme) => theme.zIndex.appBar }}>
       <Box sx={{ background: "linear-gradient(to right, #001c4e, #11141a)", boxShadow: tokens.elevation3 }}>
         <Box sx={{ ...pageColumnSx, display: "flex", alignItems: "center", gap: 1, p: 2 }}>
           <FigmaIcon name="os-icon-logo" />
@@ -91,7 +106,10 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
           }
         }}>
           <Box sx={{ ...pageColumnSx, bgcolor: tokens.blanc, px: 2, py: 1 }}>
-            <Box sx={{ width: { xs: "100%", md: "calc(100% - 304px)", lg: "calc(100% - 312px)" } }}><ReviewToolbar onCountClick={() => { returningToReviews.current = true; onSelect("avis"); }} /></Box>
+            <Box sx={{ width: { xs: "100%", md: "calc(100% - 304px)", lg: "calc(100% - 312px)" }, display: "flex", flexDirection: "column", gap: 1 }}>
+              <ReviewToolbar onCountClick={() => { returningToReviews.current = true; onSelect("avis"); }} />
+              <ActiveFilterChips />
+            </Box>
           </Box>
         </Collapse>
       </Box>

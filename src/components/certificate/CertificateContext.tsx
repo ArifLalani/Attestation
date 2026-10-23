@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { getAgencyDataset } from "@/data/reviews";
 import type { Agency, Collaborator, Review } from "@/data/types";
 import { emptyFilters, type ReviewFilters, type ReviewSort } from "@/lib/reviewFilters";
@@ -48,8 +48,11 @@ export function CertificateProvider({
 }) {
   const { team, reviews } = useMemo(() => getAgencyDataset(agency), [agency]);
   const [scoreView, setScoreView] = useState<ScoreView>("global");
-  const [scoreCollaboratorId, setScoreCollaboratorId] = useState<string>();
   const [filters, setFilters] = useState<ReviewFilters>(emptyFilters);
+  const scoreCollaboratorId = filters.collaboratorId;
+  const setScoreCollaboratorId = useCallback((id: string | undefined) => {
+    setFilters((current) => ({ ...current, collaboratorId: id }));
+  }, []);
   const [reviewSort, setReviewSort] = useState<ReviewSort>("recent");
   const [panel, setPanel] = useState<SharedPanel | null>(null);
   const [toolbarPinned, setToolbarPinned] = useState(false);
@@ -73,7 +76,7 @@ export function CertificateProvider({
       setToolbarPinned,
       goToSection,
     }),
-    [agency, team, reviews, scoreView, scoreCollaboratorId, filters, reviewSort, panel, toolbarPinned, goToSection],
+    [agency, team, reviews, scoreView, scoreCollaboratorId, setScoreCollaboratorId, filters, reviewSort, panel, toolbarPinned, goToSection],
   );
 
   return <CertificateContext value={value}>{children}</CertificateContext>;

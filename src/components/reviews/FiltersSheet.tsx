@@ -6,12 +6,10 @@ import Typography from "@mui/material/Typography";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useCertificate } from "@/components/certificate/CertificateContext";
-import { CollaboratorPicker } from "@/components/certificate/CollaboratorPicker";
 import { CtaButton } from "@/components/ui/CtaButton";
 import { ChoiceChip, StarLabel } from "@/components/ui/FilterChip";
 import { FigmaIcon } from "@/components/ui/FigmaIcon";
 import { ResponsiveSheet } from "@/components/ui/ResponsiveSheet";
-import { StaffAvatar } from "@/components/ui/StaffAvatar";
 import type { Criterion, Product } from "@/data/types";
 import { countActiveFilters, emptyFilters, sameFilters, type Period, type ReviewFilters } from "@/lib/reviewFilters";
 import type { StarBucket } from "@/lib/scoring";
@@ -38,10 +36,9 @@ export function FiltersSheet() {
   const t = useTranslations("Filters");
   const tp = useTranslations("Products");
   const tc = useTranslations("Criteria");
-  const { filters, setFilters, panel, setPanel, team, scoreView } = useCertificate();
+  const { filters, setFilters, panel, setPanel } = useCertificate();
   const open = panel === "filters";
   const [draft, setDraft] = useState<ReviewFilters>(filters);
-  const [pickerOpen, setPickerOpen] = useState(false);
   const [wasOpen, setWasOpen] = useState(open);
 
   // Start from the applied filters each time the panel opens.
@@ -61,7 +58,6 @@ export function FiltersSheet() {
 
   const changed = !sameFilters(draft, filters);
   const count = countActiveFilters(draft);
-  const person = team.find((member) => member.id === draft.collaboratorId);
   const noteSelected = (stars: StarBucket) => draft.note?.stars === stars;
 
   return (
@@ -72,7 +68,7 @@ export function FiltersSheet() {
         title={t("title")}
         closeLabel={t("close")}
         actions={
-          <ButtonBase onClick={() => setDraft(emptyFilters)} sx={{ px: 3, gap: 0, borderRadius: "8px", fontSize: 16, fontWeight: 600, color: tokens.bleuFonce }}>
+          <ButtonBase onClick={() => setDraft({ ...emptyFilters, collaboratorId: filters.collaboratorId })} sx={{ px: 3, gap: 0, borderRadius: "8px", fontSize: 16, fontWeight: 600, color: tokens.bleuFonce }}>
             <Box sx={{ p: 0.5, display: "flex" }}>
               <FigmaIcon name="reset" />
             </Box>
@@ -148,40 +144,9 @@ export function FiltersSheet() {
             ))}
           </Group>
 
-          {/* Figma "Collaborateur" (1395:92356) */}
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-            <Typography sx={{ fontSize: 16, fontWeight: 600, lineHeight: "normal", color: tokens.bleuFonce }}>{t("collaborator")}</Typography>
-            <ButtonBase
-              onClick={() => setPickerOpen(true)}
-              aria-haspopup="dialog"
-              sx={{
-                justifyContent: "flex-start",
-                gap: 1,
-                px: 2,
-                py: person ? 0.5 : 1.5,
-                minHeight: 45,
-                border: `1px solid ${tokens.grisMoyen1}`,
-                borderRadius: "8px",
-                textAlign: "left",
-              }}
-            >
-              {person && <StaffAvatar person={person} />}
-              <Typography component="span" sx={{ flex: 1, fontSize: 14, fontWeight: 600, lineHeight: "normal", color: tokens.bleuFonce }}>
-                {person ? person.name : t("wholeTeam")}
-              </Typography>
-              <FigmaIcon name={person ? "arrows-clockwise" : "expand-more"} />
-            </ButtonBase>
-          </Box>
         </Box>
       </ResponsiveSheet>
 
-      <CollaboratorPicker
-        open={pickerOpen}
-        onClose={() => setPickerOpen(false)}
-        selectedId={draft.collaboratorId}
-        onSelect={(id) => setDraft((current) => ({ ...current, collaboratorId: id }))}
-        view={scoreView}
-      />
     </>
   );
 }

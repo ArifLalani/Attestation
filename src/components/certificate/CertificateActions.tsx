@@ -29,12 +29,12 @@ import { OpenStatus } from "./OpenStatus";
 export function DesktopActions() {
   const t = useTranslations("Actions");
   const tr = useTranslations("Reputation");
-  const { agency, team, reviews, scoreView, scoreCollaboratorId, setPanel, toolbarPinned } = useCertificate();
+  const { agency, team, reviews, scoreView, scoreCollaboratorId, setPanel } = useCertificate();
   const summary = useMemo(() => summarize(reviewsForScore(reviews, scoreView, scoreCollaboratorId)), [reviews, scoreView, scoreCollaboratorId]);
   const person = team.find((member) => member.id === scoreCollaboratorId);
   const visible = summary.average !== null && isPublic(summary.count, agency.publicThreshold);
   return (
-    <Box component="aside" aria-labelledby="quick-actions-title" sx={{ display: { xs: "none", md: "flex" }, position: "sticky", top: tokens.headerHeight + (toolbarPinned ? 76 : 16), alignSelf: "start", bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCard, p: 2.5, flexDirection: "column", gap: 2, transition: "top 180ms ease" }}>
+    <Box component="aside" aria-labelledby="quick-actions-title" sx={{ display: { xs: "none", md: "flex" }, position: "sticky", top: "calc(var(--certificate-header-height, 104px) + 16px)", alignSelf: "start", bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCard, p: 2.5, flexDirection: "column", gap: 2 }}>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
         <Image src={agency.logo} alt="" width={44} height={44} style={{ objectFit: "contain", borderRadius: "50%" }} />
         <Box sx={{ minWidth: 0 }}>
