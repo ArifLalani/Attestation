@@ -1,0 +1,150 @@
+{
+  "Header": {
+    "brand": "Opinion System",
+    "badge": "RÉPUTATION VÉRIFIÉE",
+    "tabsLabel": "Sections de la page",
+    "tabs": {
+      "synthese": "Synthèse",
+      "avis": "Avis",
+      "agences": "Agences",
+      "qualite": "Qualité"
+    }
+  },
+  "Business": {
+    "share": "Partager",
+    "linkCopied": "Lien copié",
+    "shareText": "Découvrez les avis contrôlés de {name} sur Opinion System",
+    "contact": "Contacter",
+    "website": "Site web",
+    "directions": "Itinéraire",
+    "logoAlt": "Logo {name}",
+    "coverAlt": "Photo de l'agence {name}"
+  },
+  "Hours": {
+    "openUntil": "Ouvert · Ferme à {time}",
+    "closedOpensToday": "Fermé · Ouvre à {time}",
+    "closedOpensOn": "Fermé · Ouvre {day} à {time}",
+    "closed": "Fermé",
+    "days": [
+      "lundi",
+      "mardi",
+      "mercredi",
+      "jeudi",
+      "vendredi",
+      "samedi",
+      "dimanche"
+    ],
+    "daysTitle": [
+      "Lundi",
+      "Mardi",
+      "Mercredi",
+      "Jeudi",
+      "Vendredi",
+      "Samedi",
+      "Dimanche"
+    ]
+  },
+  "Reputation": {
+    "eyebrow": "RÉPUTATION",
+    "heading": {
+      "excellent": "Une entreprise jugée excellente",
+      "good": "Une entreprise bien jugée",
+      "start": "Une entreprise avec un bon début"
+    },
+    "scoreFor": "Score affiché pour",
+    "wholeTeam": "Toute l'équipe",
+    "changeCollaborator": "Changer de collaborateur",
+    "views": {
+      "global": "Score global",
+      "controle": "Avis Contrôlés"
+    },
+    "outOf": "/5",
+    "reviewCount": "{count} avis",
+    "bucketLabel": "{stars} étoiles : {count} avis. Voir ces avis",
+    "explainGlobal": "Cette note regroupe les <b>avis contrôlés par Opinion System</b> et ceux provenant de toutes les sources.",
+    "explainControle": "Cette note regroupe les <b>avis contrôlés par Opinion System</b>, tous <b>certifiés AFNOR</b> et authentifiés par Opinion System depuis {since}.",
+    "learnMore": "En savoir plus.",
+    "notPublic": "Pas encore assez d'avis pour afficher un score.",
+    "scoreAria": "Note de {score} sur 5"
+  },
+  "LearnMore": {
+    "titleGlobal": "Comment est calculé le score global ?",
+    "titleControle": "Qu'est-ce qu'un avis contrôlé ?",
+    "introGlobal": "Le score global est la moyenne de tous les avis de l'agence, quelle que soit leur source. Aucun avis ne peut être masqué par l'agence.",
+    "introControle": "Les avis contrôlés viennent des propres clients de l'agence. Chaque questionnaire est conçu et géré par Opinion System, organisme certifié AFNOR, puis contrôlé avant publication.",
+    "sourcesTitle": "D'où viennent ces avis ?",
+    "controlTitle": "Comment Opinion System les contrôle",
+    "controlSteps": [
+      "L'agence envoie le questionnaire Opinion System à son client, après une vente, une location ou un rendez-vous.",
+      "Le client répond. Son identité et son achat sont vérifiés.",
+      "Opinion System contrôle les réponses et publie l'avis, positif ou négatif.",
+      "Les avis importés de sources certifiées ISO suivent le même contrôle."
+    ],
+    "close": "Fermer",
+    "count": "{count} avis"
+  },
+  "Sources": {
+    "os_certified": "Questionnaires certifiés Opinion System",
+    "os_simple": "Questionnaires internes de l'agence",
+    "import_iso": "Avis importés certifiés ISO",
+    "google": "Google",
+    "controleBadge": "Avis contrôlé",
+    "nonControleBadge": "Non contrôlé"
+  },
+  "Collaborators": {
+    "title": "Sélectionner un collaborateur",
+    "searchPlaceholder": "Entrez le nom d'un collaborateur",
+    "searchLabel": "Rechercher un collaborateur",
+    "all": "Tous les collaborateurs",
+    "sort": "Trier",
+    "noResult": "Aucun collaborateur ne correspond à « {query} ».",
+    "close": "Fermer"
+  },
+  "Sort": {
+    "title": "Trier par",
+    "alpha": "Ordre alphabétique",
+    "alphaHint": "A → Z par nom",
+    "best": "Meilleures notes d'abord",
+    "bestHint": "De la note la plus élevée à la plus faible",
+    "worst": "Moins bonnes notes d'abord",
+    "worstHint": "De la note la plus faible à la plus élevée",
+    "close": "Fermer"
+  },
+  "Contact": {
+    "title": "Contacter {name}",
+    "call": "Appeler",
+    "email": "Envoyer un e-mail",
+    "whatsapp": "WhatsApp",
+    "close": "Fermer"
+  },
+  "Products": {
+    "vente": "Vente",
+    "achat": "Achat",
+    "location": "Location",
+    "gestion_locative": "Gestion locative",
+    "syndic": "Syndic",
+    "estimation": "Estimation"
+  },
+  "Activities": {
+    "vente": "Vente de propriété",
+    "achat": "Achat de propriété",
+    "location": "Location d'un logement",
+    "gestion_locative": "Gestion locative",
+    "syndic": "Syndic de copropriété",
+    "estimation": "Estimation de bien"
+  },
+  "Criteria": {
+    "accueil": "Accueil",
+    "conseil": "Conseil",
+    "competence": "Compétence",
+    "reactivite": "Réactivité",
+    "suivi": "Suivi",
+    "transparence": "Transparence",
+    "honoraires": "Honoraires"
+  },
+  "Placeholder": {
+    "avis": "Les avis arrivent à l'étape 2.",
+    "agences": "L'équipe et les agences arrivent à l'étape 3.",
+    "qualite": "Démarche qualité, présentation et pied de page arrivent à l'étape 4."
+  }
+}
