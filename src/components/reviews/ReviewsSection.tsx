@@ -18,7 +18,7 @@ import { ReportSheet } from "./ReportSheet";
 import { ReviewCard } from "./ReviewCard";
 import { ReviewToolbar } from "./ReviewToolbar";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 3;
 const sorts: ReviewSort[] = ["recent", "oldest", "best", "worst", "useful", "verified"];
 
 /** Figma "Reviews" (1380:121663). */
