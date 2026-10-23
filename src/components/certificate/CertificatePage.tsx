@@ -3,6 +3,7 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useTranslations } from "next-intl";
+import { ReviewsSection } from "@/components/reviews/ReviewsSection";
 import { getAgency } from "@/data/agencies";
 import { useScrollSpy } from "@/lib/hooks";
 import { tokens } from "@/theme/theme";
@@ -18,7 +19,7 @@ const sectionSx = {
   scrollMarginTop: `${tokens.headerHeight + 16}px`,
 } as const;
 
-function Placeholder({ id }: { id: "avis" | "agences" | "qualite" }) {
+function Placeholder({ id }: { id: "agences" | "qualite" }) {
   const t = useTranslations("Placeholder");
   return (
     <Box sx={{ bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCardSoft, p: 3, minHeight: 240, display: "grid", placeItems: "center" }}>
@@ -41,7 +42,7 @@ export function CertificatePage({ agencyId }: { agencyId: string }) {
           <ReputationCard />
         </Box>
         <Box id="avis" sx={sectionSx}>
-          <Placeholder id="avis" />
+          <ReviewsSection />
         </Box>
         <Box id="agences" sx={sectionSx}>
           <Placeholder id="agences" />

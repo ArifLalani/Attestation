@@ -2,22 +2,14 @@
 
 import { createContext, useContext, useMemo, useState } from "react";
 import { getAgencyDataset } from "@/data/reviews";
-import type { Agency, Collaborator, Criterion, Product, Review, ReviewStatus } from "@/data/types";
-import type { ScoreView, StarBucket } from "@/lib/scoring";
+import type { Agency, Collaborator, Review } from "@/data/types";
+import { emptyFilters, type ReviewFilters, type ReviewSort } from "@/lib/reviewFilters";
+import type { ScoreView } from "@/lib/scoring";
 
-/** Review list filters, shared by the Avis section and the Réputation star rows. */
-export interface ReviewFilters {
-  type?: ReviewStatus;
-  source?: "opinion_system" | "imported";
-  /** Filter panel: ≥ stars. Réputation star rows: exactly that bucket. */
-  note?: { stars: StarBucket; exact: boolean };
-  period?: "today" | "week" | "month" | "year";
-  products: Product[];
-  criteria: Criterion[];
-  collaboratorId?: string;
-}
+export { emptyFilters, type ReviewFilters } from "@/lib/reviewFilters";
 
-export const emptyFilters: ReviewFilters = { products: [], criteria: [] };
+/** Panels that several places can open (toolbar in the card and in the pinned header, floating button…). */
+export type SharedPanel = "filters" | "sort" | "reviewRequest";
 
 interface CertificateState {
   agency: Agency;
@@ -30,6 +22,13 @@ interface CertificateState {
   setScoreCollaboratorId: (id: string | undefined) => void;
   filters: ReviewFilters;
   setFilters: (filters: ReviewFilters) => void;
+  reviewSort: ReviewSort;
+  setReviewSort: (sort: ReviewSort) => void;
+  panel: SharedPanel | null;
+  setPanel: (panel: SharedPanel | null) => void;
+  /** True while the review toolbar is pinned under the header (Figma "Top Header" Sticky + filters). */
+  toolbarPinned: boolean;
+  setToolbarPinned: (pinned: boolean) => void;
   goToSection: (id: SectionId) => void;
 }
 
@@ -51,6 +50,9 @@ export function CertificateProvider({
   const [scoreView, setScoreView] = useState<ScoreView>("global");
   const [scoreCollaboratorId, setScoreCollaboratorId] = useState<string>();
   const [filters, setFilters] = useState<ReviewFilters>(emptyFilters);
+  const [reviewSort, setReviewSort] = useState<ReviewSort>("recent");
+  const [panel, setPanel] = useState<SharedPanel | null>(null);
+  const [toolbarPinned, setToolbarPinned] = useState(false);
 
   const value = useMemo(
     () => ({
@@ -63,9 +65,15 @@ export function CertificateProvider({
       setScoreCollaboratorId,
       filters,
       setFilters,
+      reviewSort,
+      setReviewSort,
+      panel,
+      setPanel,
+      toolbarPinned,
+      setToolbarPinned,
       goToSection,
     }),
-    [agency, team, reviews, scoreView, scoreCollaboratorId, filters, goToSection],
+    [agency, team, reviews, scoreView, scoreCollaboratorId, filters, reviewSort, panel, toolbarPinned, goToSection],
   );
 
   return <CertificateContext value={value}>{children}</CertificateContext>;

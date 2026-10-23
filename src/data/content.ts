@@ -64,7 +64,7 @@ type Mood = "positive" | "neutral" | "negative";
 export const openings: Record<Mood, string[]> = {
   positive: [
     "Une expérience fantastique du début à la fin !",
-    "Très satisfaite de l'accompagnement.",
+    "Un accompagnement parfait du début à la fin.",
     "Agence sérieuse et vraiment à l'écoute.",
     "Un grand merci à toute l'équipe.",
     "Rien à redire, tout s'est très bien passé.",
@@ -79,7 +79,7 @@ export const openings: Record<Mood, string[]> = {
     "Prestation conforme à ce qui était annoncé.",
   ],
   negative: [
-    "Déçu par le suivi de mon dossier.",
+    "Le suivi de mon dossier a été décevant.",
     "Très difficile de joindre l'agence.",
     "Expérience décevante.",
     "Je m'attendais à beaucoup mieux.",
@@ -140,7 +140,7 @@ export const middles: Record<Mood, Record<Product, string[]>> = {
 export const closings: Record<Mood, string[]> = {
   positive: ["Je recommande vivement.", "Merci encore !", "Nous referons appel à eux sans hésiter.", "Bravo et merci."],
   neutral: ["Peut mieux faire sur le suivi.", "Correct, mais sans plus.", ""],
-  negative: ["Je ne recommande pas.", "Dommage, l'accueil était pourtant agréable.", "Très déçu."],
+  negative: ["Je ne recommande pas.", "Dommage, l'accueil était pourtant agréable.", "Vraiment décevant."],
 };
 
 /** Criteria tags that fit each mood. */
@@ -150,4 +150,22 @@ export const moodCriteria: Record<Mood, Criterion[]> = {
   negative: ["reactivite", "suivi", "honoraires", "transparence"],
 };
 
-export const moodOf = (rating: number): Mood => (rating >= 4 ? "positive" : rating >= 3 ? "neutral" : "negative");
+/** Public replies from the agency, by mood of the review. {name} = the customer's first name. */
+export const replies: Record<Mood, string[]> = {
+  positive: [
+    "Merci beaucoup {name} pour ce retour ! Toute l'équipe est ravie d'avoir pu vous accompagner dans votre projet.",
+    "Un grand merci {name}, c'était un plaisir de travailler avec vous. À très bientôt à l'agence !",
+    "Merci {name} pour votre confiance et pour ce message qui fait plaisir à toute l'équipe.",
+  ],
+  neutral: [
+    "Merci {name} pour votre retour. Nous prenons note de vos remarques sur le suivi et en avons parlé en équipe pour nous améliorer.",
+    "Bonjour {name}, merci pour cet avis. N'hésitez pas à nous contacter directement si un point reste à éclaircir.",
+  ],
+  negative: [
+    "Bonjour {name}, nous sommes sincèrement désolés de cette expérience. Je vous invite à me contacter directement à l'agence afin que nous trouvions ensemble une solution.",
+    "Bonjour {name}, merci d'avoir pris le temps de nous écrire. Votre dossier a pris du retard et nous le regrettons. Nous avons revu notre organisation pour que cela ne se reproduise pas, et je reste disponible pour en parler de vive voix.",
+    "Bonjour {name}, nous comprenons votre déception. Un membre de l'équipe va vous recontacter cette semaine pour faire le point sur votre dossier.",
+  ],
+};
+
+export const moodOf =(rating: number): Mood => (rating >= 4 ? "positive" : rating >= 3 ? "neutral" : "negative");

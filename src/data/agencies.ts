@@ -20,7 +20,7 @@ const sisters = (id: string) => ids.filter((other) => other !== id);
 const base = {
   name: "La Boîte Immo",
   sector: "Agence immobilière",
-  website: "https://www.laboiteimmo.com",
+  website: "https://www.la-boite-immo.com/",
   coverPhoto: "/images/cover.jpg",
   logo: "/images/logo-lbi.png",
   memberSince: "mars 2022",

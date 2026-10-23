@@ -52,6 +52,15 @@ export interface Review {
   usefulCount: number;
   reviewNumber: string;
   survey?: SurveyDetails;
+  /** Public reply from the agency (written in the members area, a later phase). */
+  reply?: ReviewReply;
+}
+
+export interface ReviewReply {
+  collaboratorId: string;
+  /** Days after the review. */
+  daysAfter: number;
+  text: string;
 }
 
 export interface Collaborator {

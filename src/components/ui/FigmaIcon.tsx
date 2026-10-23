@@ -21,6 +21,20 @@ const icons = {
   check: [16, 16],
   "star-small": [16, 16],
   "arrows-clockwise": [20, 20],
+  "thumbs-up": [18, 18],
+  flag: [18, 18],
+  "expand-more-blue": [18, 18],
+  "expand-less-blue": [18, 18],
+  "certified-badge": [20, 20],
+  "x-circle": [16, 16],
+  "icon-right-more": [20, 20],
+  "icon-right-arrow": [20, 20],
+  "icon-right-disabled": [20, 20],
+  reset: [20, 20],
+  "source-os-certified": [17.3333, 17.3333],
+  "source-os-simple": [20, 20],
+  "source-imported": [20, 20],
+  "source-google": [24, 24],
 } as const;
 
 export type FigmaIconName = keyof typeof icons;

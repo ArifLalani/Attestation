@@ -1,4 +1,4 @@
-import { closings, firstNames, lastInitials, middles, moodCriteria, moodOf, openings, questionnaireCriteria } from "./content";
+import { closings, firstNames, lastInitials, middles, moodCriteria, moodOf, openings, questionnaireCriteria, replies } from "./content";
 import { createRng, seedFrom, type Rng } from "./rng";
 import { lbiTeam, type TeamMemberSeed } from "./team";
 import type { Agency, Collaborator, Product, Review, ReviewSource } from "./types";
@@ -10,7 +10,9 @@ const oneDecimal = (value: number) => Math.round(value * 10) / 10;
 /** Skewed toward 5 like real review sites: most ratings sit near 5, a long tail goes down to 0. */
 function drawRating(rng: Rng, mean: number) {
   const spread = Math.max(0.32, 5 - clamp(mean, 0, 5));
-  return oneDecimal(clamp(5 + Math.log(1 - rng.next()) * spread, 0, 5));
+  const raw = 5 + Math.log(1 - rng.next()) * spread;
+  // Very unhappy customers still give something (live page: 0,4 … 1,4), not a pile of exact zeros.
+  return oneDecimal(raw < 0.5 ? 0.3 + rng.next() * 1.1 : Math.min(5, raw));
 }
 
 const sisterNames = [
@@ -91,6 +93,9 @@ function survey(rng: Rng, rating: number, product: Product, questionnaire: "cont
   };
 }
 
+/** The agency manager answers reviews that aren't linked to a staff member. */
+const managerOf = (seeds: TeamMemberSeed[]) => seeds.find((seed) => seed.role.startsWith("Direct")) ?? seeds[0];
+
 export interface AgencyDataset {
   team: Collaborator[];
   reviews: Review[];
@@ -124,21 +129,34 @@ export function getAgencyDataset(agency: Agency): AgencyDataset {
     const mood = moodOf(rating);
     const id = `${agency.id}-${reviews.length + 1}`;
 
-    reviews.push({
+    const daysAgo = Math.min(1300, Math.floor(-Math.log(1 - rng.next()) * 260));
+    const firstName = rng.pick(firstNames);
+    const review: Review = {
       id,
       status: source === "os_certified" || source === "import_iso" ? "controle" : "non_controle",
       source,
       rating,
-      daysAgo: Math.min(1300, Math.floor(-Math.log(1 - rng.next()) * 260)),
-      authorName: `${rng.pick(firstNames)} ${rng.pick(lastInitials)}.`,
+      daysAgo,
+      authorName: `${firstName} ${rng.pick(lastInitials)}.`,
       comment: writeComment(rng, rating, product),
-      product: product,
+      product,
       criteria: rng.sample(moodCriteria[mood], rng.int(1, 3)),
       collaboratorId: staff?.id,
       usefulCount: rng.chance(0.3) ? 0 : rng.int(1, 48),
       reviewNumber: String(100000000000 + Math.floor(rng.next() * 899999999999)),
       survey: fromOs ? survey(rng, rating, product, source === "os_certified" ? "controle" : "simple") : undefined,
-    });
+    };
+
+    // Agencies answer unhappy customers more often. Imported reviews are answered by the agency manager.
+    const replyChance = mood === "negative" ? 0.6 : mood === "neutral" ? 0.25 : 0.08;
+    if (rng.chance(replyChance)) {
+      review.reply = {
+        collaboratorId: (staff ?? managerOf(seeds)).id,
+        daysAfter: Math.min(daysAgo, rng.int(0, 4)),
+        text: rng.pick(replies[mood]).replace("{name}", firstName),
+      };
+    }
+    reviews.push(review);
   };
 
   (Object.keys(counts) as ReviewSource[]).forEach((source) => {

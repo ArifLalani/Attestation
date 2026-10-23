@@ -143,8 +143,147 @@
     "honoraires": "Honoraires"
   },
   "Placeholder": {
-    "avis": "Les avis arrivent à l'étape 2.",
     "agences": "L'équipe et les agences arrivent à l'étape 3.",
     "qualite": "Démarche qualité, présentation et pied de page arrivent à l'étape 4."
+  },
+  "SourceNames": {
+    "os_certified": "Opinion System",
+    "os_simple": "Opinion System",
+    "import_iso": "Import certifié ISO 20488",
+    "google": "Google"
+  },
+  "Reviews": {
+    "eyebrow": "LES AVIS",
+    "heading": "Ce que les gens disent…",
+    "count": "{count} avis",
+    "filters": "Filtres",
+    "filtersActive": "Filtres, {count} actifs",
+    "sort": "Trier les avis",
+    "removeFilter": "Retirer le filtre {label}",
+    "empty": "Aucun avis ne correspond à ces filtres.",
+    "clearFilters": "Effacer les filtres",
+    "showMore": "Afficher plus d’avis",
+    "leaveReview": "Déposer un avis",
+    "noComment": "Pas de commentaire",
+    "controle": "Contrôlé",
+    "nonControle": "Non contrôlé",
+    "useful": "Utile",
+    "usefulAria": "Utile, {count} personnes ont trouvé cet avis utile",
+    "report": "Signaler",
+    "details": "Détails",
+    "less": "Voir moins",
+    "ratingAria": "Note de {score} sur 5",
+    "readMore": "Lire la suite",
+    "sourceIcon": {
+      "os_certified": "Questionnaire certifié Opinion System",
+      "os_simple": "Questionnaire interne",
+      "import_iso": "Avis importé",
+      "google": "Avis Google"
+    },
+    "date": {
+      "today": "Aujourd’hui",
+      "yesterday": "Hier",
+      "days": "Il y a {n} jours",
+      "weeks": "Il y a {n, plural, one {# semaine} other {# semaines}}",
+      "months": "Il y a {n} mois",
+      "years": "Il y a {n, plural, one {# an} other {# ans}}"
+    },
+    "detail": {
+      "recommendation": "Recommandation",
+      "satisfaction": "Satisfaction",
+      "breakdown": "Répartition des notes",
+      "source": "Source de l’avis",
+      "questionnaire": "Questionnaire",
+      "questionnaireControle": "Contrôlé",
+      "questionnaireSimple": "Simple",
+      "collaborator": "Collaborateur",
+      "activity": "Activité professionnelle",
+      "number": "Numéro d’avis"
+    },
+    "reply": {
+      "from": "Réponse de {name}",
+      "agency": "{agency}",
+      "readMore": "Lire la suite",
+      "readLess": "Réduire"
+    }
+  },
+  "Filters": {
+    "title": "Filtres",
+    "reset": "Réinitialiser",
+    "close": "Fermer",
+    "type": "Type d’avis",
+    "typeControle": "Contrôlés par Opinion System",
+    "typeNonControle": "Non contrôlés",
+    "source": "Source de l’avis",
+    "sourceOs": "Opinion System",
+    "sourceImported": "Avis importés",
+    "note": "Note",
+    "period": "Période",
+    "periods": {
+      "today": "Aujourd’hui",
+      "week": "Cette semaine",
+      "month": "Ce mois",
+      "year": "Cette année"
+    },
+    "product": "Produit",
+    "criterion": "Critère",
+    "collaborator": "Collaborateur",
+    "wholeTeam": "Toute l’équipe",
+    "apply": "Appliquer les filtres",
+    "applyCount": "Appliquer les filtres ({count})",
+    "chip": {
+      "controle": "Contrôlés",
+      "nonControle": "Non contrôlés",
+      "noteAtLeast": ">{stars}",
+      "noteExact": "{stars}"
+    }
+  },
+  "ReviewSort": {
+    "recent": "Plus récents d’abord",
+    "recentHint": "Du plus récent au plus ancien",
+    "oldest": "Plus anciens d’abord",
+    "oldestHint": "Du plus ancien au plus récent",
+    "best": "Meilleures notes d’abord",
+    "bestHint": "De la note la plus élevée à la plus faible",
+    "worst": "Moins bonnes notes d’abord",
+    "worstHint": "De la note la plus faible à la plus élevée",
+    "useful": "Les plus utiles",
+    "usefulHint": "Les avis jugés utiles par le plus de visiteurs",
+    "verified": "Avis contrôlés d’abord",
+    "verifiedHint": "Les avis contrôlés par Opinion System en premier"
+  },
+  "Report": {
+    "title": "Signaler cet avis",
+    "intro": "Dites-nous pourquoi cet avis pose problème. Opinion System examinera votre signalement.",
+    "reasons": {
+      "inappropriate": "Contenu injurieux ou inapproprié",
+      "fake": "Je pense que cet avis est faux",
+      "personal": "Il contient des informations personnelles",
+      "offTopic": "Il ne concerne pas cette agence",
+      "other": "Autre raison"
+    },
+    "commentLabel": "Précisions (facultatif)",
+    "submit": "Envoyer le signalement",
+    "close": "Fermer",
+    "doneTitle": "Merci pour votre signalement",
+    "doneText": "Opinion System va examiner cet avis. Il reste visible pendant l’examen.",
+    "doneButton": "Fermer"
+  },
+  "ReviewRequest": {
+    "title": "Déposer un avis",
+    "intro": "Pour garantir des avis authentiques, Opinion System vous envoie un questionnaire certifié AFNOR par e-mail. Votre avis sera publié après contrôle.",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "email": "E-mail",
+    "product": "Votre projet avec {agency}",
+    "collaborator": "Votre conseiller (facultatif)",
+    "consent": "J’accepte de recevoir le questionnaire Opinion System par e-mail.",
+    "submit": "Recevoir le questionnaire",
+    "close": "Fermer",
+    "required": "Champ obligatoire",
+    "invalidEmail": "Adresse e-mail invalide",
+    "doneTitle": "C’est envoyé !",
+    "doneText": "{firstName}, vous allez recevoir le questionnaire Opinion System à l’adresse {email}. Merci de prendre quelques minutes pour y répondre.",
+    "doneButton": "Fermer"
   }
 }

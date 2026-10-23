@@ -1,14 +1,16 @@
 "use client";
 
 import Box from "@mui/material/Box";
+import Collapse from "@mui/material/Collapse";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import Typography from "@mui/material/Typography";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import { ReviewToolbar } from "@/components/reviews/ReviewToolbar";
 import { FigmaIcon } from "@/components/ui/FigmaIcon";
 import { tokens } from "@/theme/theme";
-import { sectionIds, type SectionId } from "./CertificateContext";
+import { sectionIds, useCertificate, type SectionId } from "./CertificateContext";
 
 export const pageColumnSx = { width: "100%", maxWidth: 640, mx: "auto" } as const;
 
@@ -16,6 +18,7 @@ export const pageColumnSx = { width: "100%", maxWidth: 640, mx: "auto" } as cons
 export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (id: SectionId) => void }) {
   const t = useTranslations("Header");
   const [scrolled, setScrolled] = useState(false);
+  const { toolbarPinned } = useCertificate();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 4);
@@ -78,6 +81,12 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
             />
           ))}
         </Tabs>
+        {/* Figma "Top Header" Sticky + showFilteres: the review toolbar follows while scrolling the reviews. */}
+        <Collapse in={toolbarPinned} timeout={180}>
+          <Box sx={{ ...pageColumnSx, bgcolor: tokens.blanc, px: 2, py: 1 }}>
+            <ReviewToolbar />
+          </Box>
+        </Collapse>
       </Box>
     </Box>
   );
