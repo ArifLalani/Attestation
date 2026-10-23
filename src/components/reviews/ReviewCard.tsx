@@ -232,12 +232,11 @@ export function ReviewCard({ review, onReport }: { review: Review; onReport: (re
         sx={{ ...actionSx, color: tokens.bleu600, fontWeight: voted ? 700 : 500 }}
       >
         <FigmaIcon name="thumbs-up" />
-        {t("useful")}
-        {usefulCount > 0 && ` (${formatCount(usefulCount)})`}
+        {expanded ? <>{t("useful")}{usefulCount > 0 && ` (${formatCount(usefulCount)})`}</> : formatCount(usefulCount)}
       </ButtonBase>
-      <ButtonBase onClick={() => onReport(review)} sx={{ ...actionSx, color: tokens.error3, ml: 1 }}>
+      <ButtonBase onClick={() => onReport(review)} aria-label={t("report")} sx={{ ...actionSx, color: tokens.error3, ml: 1 }}>
         <FigmaIcon name="flag" />
-        {t("report")}
+        {expanded && t("report")}
       </ButtonBase>
       <ButtonBase
         onClick={() => setExpanded(!expanded)}
