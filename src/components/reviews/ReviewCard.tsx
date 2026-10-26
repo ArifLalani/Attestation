@@ -6,7 +6,8 @@ import Collapse from "@mui/material/Collapse";
 import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { useCertificate } from "@/components/certificate/CertificateContext";
 import { FigmaIcon, type FigmaIconName } from "@/components/ui/FigmaIcon";
 import { StaffAvatar } from "@/components/ui/StaffAvatar";
@@ -219,7 +220,39 @@ export function ReviewCard({ review, onReport }: { review: Review; onReport: (re
   const tc = useTranslations("Criteria");
   const relative = useRelativeDate();
   const [expanded, setExpanded] = useState(false);
+  // True when the card closed itself off-screen: skip the collapse animation so the scroll can be corrected at once.
+  const [closedOffscreen, setClosedOffscreen] = useState(false);
+  const cardRef = useRef<HTMLElement>(null);
   const { voted, toggle } = useUsefulVote(review.id);
+
+  // Once an open review has scrolled entirely above the pinned header, close it, and keep what the reader sees in place.
+  useEffect(() => {
+    if (!expanded) return;
+    let frame = 0;
+    const check = () => {
+      frame = 0;
+      const card = cardRef.current;
+      if (!card) return;
+      const headerHeight =
+        parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--certificate-header-height")) || tokens.headerHeight;
+      const before = card.getBoundingClientRect();
+      if (before.bottom > headerHeight) return;
+      flushSync(() => {
+        setClosedOffscreen(true);
+        setExpanded(false);
+      });
+      const shrink = before.height - card.getBoundingClientRect().height;
+      if (shrink > 0) window.scrollBy({ top: -shrink, behavior: "instant" });
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(check);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [expanded]);
   const usefulCount = review.usefulCount + (voted ? 1 : 0);
   const detailsId = `review-details-${review.id}`;
 
@@ -239,7 +272,10 @@ export function ReviewCard({ review, onReport }: { review: Review; onReport: (re
         {expanded && t("report")}
       </ButtonBase>
       <ButtonBase
-        onClick={() => setExpanded(!expanded)}
+        onClick={() => {
+          setClosedOffscreen(false);
+          setExpanded(!expanded);
+        }}
         aria-expanded={expanded}
         aria-controls={detailsId}
         sx={{ ...actionSx, ml: "auto", color: tokens.bleu600 }}
@@ -254,6 +290,7 @@ export function ReviewCard({ review, onReport }: { review: Review; onReport: (re
   return (
     <Box
       component="article"
+      ref={cardRef}
       sx={{
         borderTop: `1px solid ${tokens.grisMoyen1}`,
         p: 1.5,
@@ -325,12 +362,14 @@ export function ReviewCard({ review, onReport }: { review: Review; onReport: (re
         {!expanded && actions}
       </Box>
 
-      <Collapse in={expanded} unmountOnExit timeout={250}>
-        <Box id={detailsId} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <ReviewDetails review={review} />
-          {review.reply && <ReviewReplyBlock review={review} />}
-        </Box>
-      </Collapse>
+      {!closedOffscreen && (
+        <Collapse in={expanded} unmountOnExit timeout={250}>
+          <Box id={detailsId} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <ReviewDetails review={review} />
+            {review.reply && <ReviewReplyBlock review={review} />}
+          </Box>
+        </Collapse>
+      )}
 
       {expanded && actions}
     </Box>
