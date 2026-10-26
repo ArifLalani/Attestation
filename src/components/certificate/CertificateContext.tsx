@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import type { AiModel } from "@/components/ui/AiLogo";
 import { getAgencyDataset } from "@/data/reviews";
 import type { Agency, Collaborator, Review } from "@/data/types";
 import { emptyFilters, type ReviewFilters, type ReviewSort } from "@/lib/reviewFilters";
@@ -9,7 +10,7 @@ import type { ScoreView } from "@/lib/scoring";
 export { emptyFilters, type ReviewFilters } from "@/lib/reviewFilters";
 
 /** Panels that several places can open (toolbar in the card and in the pinned header, floating button…). */
-export type SharedPanel = "filters" | "sort" | "reviewRequest" | "contact";
+export type SharedPanel = "filters" | "sort" | "reviewRequest" | "contact" | "assistant";
 
 interface CertificateState {
   agency: Agency;
@@ -33,6 +34,11 @@ interface CertificateState {
   /** True while the review toolbar is pinned under the header (Figma "Top Header" Sticky + filters). */
   toolbarPinned: boolean;
   setToolbarPinned: (pinned: boolean) => void;
+  /** AI the "Demander à l'IA" chat answers with (cosmetic: the answers are simulated). */
+  assistantModel: AiModel;
+  setAssistantModel: (model: AiModel) => void;
+  /** Opens the AI chat, optionally switching to the AI the user tapped. */
+  openAssistant: (model?: AiModel) => void;
   goToSection: (id: SectionId) => void;
 }
 
@@ -82,6 +88,12 @@ export function CertificateProvider({
     }
   }, []);
   const [toolbarPinned, setToolbarPinned] = useState(false);
+  const [assistantModel, setAssistantModel] = useState<AiModel>("chatgpt");
+  const openAssistant = useCallback((model?: AiModel) => {
+    if (model) setAssistantModel(model);
+    setPanelAnchor(null);
+    setPanelState("assistant");
+  }, []);
 
   const value = useMemo(
     () => ({
@@ -102,9 +114,12 @@ export function CertificateProvider({
       openPanel,
       toolbarPinned,
       setToolbarPinned,
+      assistantModel,
+      setAssistantModel,
+      openAssistant,
       goToSection,
     }),
-    [agency, team, reviews, scoreView, scoreCollaboratorId, setScoreCollaboratorId, filters, reviewSort, panel, setPanel, panelAnchor, openPanel, toolbarPinned, goToSection],
+    [agency, team, reviews, scoreView, scoreCollaboratorId, setScoreCollaboratorId, filters, reviewSort, panel, setPanel, panelAnchor, openPanel, toolbarPinned, assistantModel, openAssistant, goToSection],
   );
 
   return <CertificateContext value={value}>{children}</CertificateContext>;

@@ -212,7 +212,8 @@
     "closeMenu": "Fermer les actions rapides",
     "contact": "Contacter",
     "leaveReview": "Déposer un avis",
-    "signup": "Inscrire mon entreprise"
+    "signup": "Inscrire mon entreprise",
+    "askAi": "Demander à l'IA"
   },
   "Footer": {
     "home": "Accueil Opinion System",
@@ -387,5 +388,122 @@
     "google": "Google",
     "facebook": "Facebook",
     "pagesjaunes": "Pages Jaunes"
+  },
+  "Assistant": {
+    "title": "Assistant IA",
+    "close": "Fermer l'assistant",
+    "stripTitle": "Une question sur cette agence ? Demandez à l'IA",
+    "stripHint": "Choisissez votre assistant :",
+    "answerWith": "Répondre avec",
+    "models": {
+      "chatgpt": "ChatGPT",
+      "claude": "Claude",
+      "gemini": "Gemini",
+      "lechat": "Le Chat",
+      "perplexity": "Perplexity"
+    },
+    "openWith": "Poser une question à {model}",
+    "welcome": "Bonjour ! Je réponds à partir des {count} avis publiés sur ce certificat de {name}. Que voulez-vous savoir ?",
+    "suggestions": "Suggestions",
+    "quick": {
+      "summary": "Résume les avis clients",
+      "strengths": "Points forts et points faibles ?",
+      "sell": "Cette agence est-elle adaptée pour vendre mon bien ?",
+      "team": "Que disent les clients de l'équipe ?"
+    },
+    "placeholder": "Posez votre question…",
+    "send": "Envoyer",
+    "typing": "{model} écrit…",
+    "disclaimer": "Réponses générées par l'IA à partir des avis publiés. Elles peuvent contenir des erreurs.",
+    "restart": "Nouvelle conversation",
+    "criterionPhrase": {
+      "accueil": "l'accueil",
+      "conseil": "le conseil",
+      "competence": "la compétence",
+      "reactivite": "la réactivité",
+      "suivi": "le suivi",
+      "transparence": "la transparence",
+      "honoraires": "les honoraires"
+    },
+    "productPhrase": {
+      "vente": "la vente",
+      "achat": "l'achat",
+      "location": "la location",
+      "gestion_locative": "la gestion locative",
+      "syndic": "le syndic",
+      "estimation": "l'estimation"
+    },
+    "answers": {
+      "noReviews": "{name} n'a pas encore d'avis publiés : je ne peux pas encore répondre.",
+      "staffLine": "<b>{name}</b>, {role} : {score}/5 ({count} avis)",
+      "criterionPositive": "<b>{criterion}</b> : cité dans {share} % des avis positifs",
+      "criterionNegative": "<b>{criterion}</b> : cité dans {share} % des avis négatifs",
+      "summary": {
+        "intro": "<b>{name}</b> obtient <b>{score}/5</b> sur {count} avis. {positive} % des clients lui donnent 4 ou 5 étoiles.",
+        "controle": "Sur les {count} <b>avis contrôlés</b> (vérifiés par Opinion System), la note est de <b>{score}/5</b>.",
+        "strengths": "Les clients citent surtout {list}.",
+        "trend": {
+          "up": "Sur les 12 derniers mois, la note est de {score}/5 ({count} avis) : elle progresse par rapport à l'année précédente.",
+          "down": "Sur les 12 derniers mois, la note est de {score}/5 ({count} avis) : elle baisse un peu par rapport à l'année précédente.",
+          "stable": "Sur les 12 derniers mois, la note est de {score}/5 ({count} avis), stable par rapport à l'année précédente."
+        }
+      },
+      "strengths": {
+        "good": "<b>Points forts</b>",
+        "bad": "<b>Points faibles</b>",
+        "rare": "Ces critiques restent rares : {share} % des avis ont moins de 3 étoiles, et l'agence a répondu publiquement à {replied} % d'entre eux."
+      },
+      "product": {
+        "intro": "Pour {product}, <b>{name}</b> obtient <b>{score}/5</b> sur {count} avis, dont {positive} % à 4 ou 5 étoiles.",
+        "verdict": {
+          "great": "Les clients sont très satisfaits : c'est l'un des points forts de l'agence.",
+          "good": "Les clients sont globalement satisfaits.",
+          "mixed": "Les avis sont plus partagés : lisez-les avant de vous décider."
+        },
+        "best": "Les mieux notés pour {product} :",
+        "none": "{name} n'a pas encore assez d'avis sur {product} pour que je puisse répondre."
+      },
+      "team": {
+        "intro": "L'équipe compte {count} personnes. Les mieux notées par les clients :",
+        "praised": "Dans les avis positifs, les clients saluent surtout {list} de l'équipe."
+      },
+      "person": {
+        "intro": "<b>{name}</b> ({role}) obtient <b>{score}/5</b> sur {count} avis.",
+        "cited": "Les clients satisfaits citent surtout {list}.",
+        "none": "{name} n'a pas encore assez d'avis pour afficher une note."
+      },
+      "criterion": {
+        "intro": "{count} avis mentionnent {criterion}, avec une note moyenne de <b>{score}/5</b>.",
+        "verdict": {
+          "strength": "C'est un point fort de l'agence.",
+          "mixed": "Les avis sont partagés sur ce point.",
+          "weakness": "C'est l'un des points les plus souvent critiqués."
+        },
+        "none": "Aucun avis ne mentionne encore {criterion}."
+      },
+      "verified": {
+        "what": "Un <b>avis contrôlé</b> vient d'un vrai client : Opinion System vérifie la transaction puis interroge le client lui-même, selon une démarche certifiée AFNOR.",
+        "agency": "{name} compte {count} avis contrôlés, notés {score}/5. Les {others} autres avis viennent de questionnaires internes ou de plateformes comme Google."
+      },
+      "contact": {
+        "intro": "{name} se trouve au {address}. Vous pouvez joindre l'agence au {phone}."
+      },
+      "recent": {
+        "month": "Ce mois-ci, l'agence a reçu {count} avis, notés {score}/5 en moyenne.",
+        "noMonth": "L'agence n'a pas reçu de nouvel avis ce mois-ci.",
+        "year": "Sur les 12 derniers mois : {count} avis, notés {score}/5 (contre {all}/5 au total)."
+      },
+      "fallback": "Je réponds uniquement à partir des avis publiés sur ce certificat, et je n'ai pas trouvé de réponse à cette question. Essayez plutôt :",
+      "actions": {
+        "recentYear": "Voir les avis des 12 derniers mois",
+        "recentMonth": "Voir les avis du mois",
+        "criterion": "Voir les avis sur {criterion}",
+        "product": "Voir les avis sur {product}",
+        "team": "Voir l'équipe",
+        "person": "Voir les avis de {name}",
+        "verified": "Voir les avis contrôlés",
+        "contact": "Contacter l'agence"
+      }
+    }
   }
 }

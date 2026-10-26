@@ -10,6 +10,7 @@ import Rating from "@mui/material/Rating";
 import SpeedDial from "@mui/material/SpeedDial";
 import SpeedDialAction from "@mui/material/SpeedDialAction";
 import Typography from "@mui/material/Typography";
+import AutoAwesome from "@mui/icons-material/AutoAwesome";
 import Close from "@mui/icons-material/Close";
 import PersonAddOutlined from "@mui/icons-material/PersonAddOutlined";
 import PhoneOutlined from "@mui/icons-material/PhoneOutlined";
@@ -22,6 +23,7 @@ import { opinionSystemLinks } from "@/data/opinionSystem";
 import { formatCount, formatScore } from "@/lib/format";
 import { isPublic, reviewsForScore, summarize } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
+import { AssistantPanel } from "./AssistantPanel";
 import { useCertificate } from "./CertificateContext";
 import { ContactSheet } from "./ContactSheet";
 
@@ -33,7 +35,7 @@ import { ContactSheet } from "./ContactSheet";
 export function DesktopScorePill() {
   const t = useTranslations("Actions");
   const tr = useTranslations("Reputation");
-  const { agency, reviews, scoreView, scoreCollaboratorId, setPanel, goToSection } = useCertificate();
+  const { agency, reviews, scoreView, scoreCollaboratorId, setPanel, openAssistant, goToSection } = useCertificate();
   const summary = useMemo(() => summarize(reviewsForScore(reviews, scoreView, scoreCollaboratorId)), [reviews, scoreView, scoreCollaboratorId]);
   const visible = summary.average !== null && isPublic(summary.count, agency.publicThreshold);
   const [shown, setShown] = useState(false);
@@ -51,6 +53,7 @@ export function DesktopScorePill() {
     { key: "contact", icon: <PhoneOutlined fontSize="small" />, label: t("contact"), action: () => setPanel("contact") },
     { key: "review", icon: <RateReviewOutlined fontSize="small" />, label: t("leaveReview"), action: () => setPanel("reviewRequest") },
     { key: "signup", icon: <PersonAddOutlined fontSize="small" />, label: t("signup"), action: () => window.open(opinionSystemLinks.signup, "_blank", "noopener,noreferrer") },
+    { key: "ai", icon: <AutoAwesome fontSize="small" sx={{ color: tokens.vertOs }} />, label: t("askAi"), action: () => openAssistant() },
   ];
   const controle = scoreView === "controle";
 
@@ -127,7 +130,7 @@ export function DesktopScorePill() {
 /** Figma closed FAB (1243:89101), expanded using MUI's accessible speed dial. */
 export function CertificateActions() {
   const t = useTranslations("Actions");
-  const { agency, panel, setPanel } = useCertificate();
+  const { agency, panel, setPanel, openAssistant } = useCertificate();
   const [open, setOpen] = useState(false);
   useEffect(() => {
     const desktop = window.matchMedia("(min-width:900px)");
@@ -136,7 +139,9 @@ export function CertificateActions() {
     return () => desktop.removeEventListener("change", closeOnDesktop);
   }, []);
 
+  // Listed from the button upwards: "Demander à l'IA" sits closest to the thumb, last in the desktop menu.
   const actions = [
+    { key: "ai", icon: <AutoAwesome sx={{ color: tokens.vertOs }} />, label: t("askAi"), action: () => openAssistant() },
     { key: "signup", icon: <PersonAddOutlined />, label: t("signup"), action: () => window.open(opinionSystemLinks.signup, "_blank", "noopener,noreferrer") },
     { key: "review", icon: <RateReviewOutlined />, label: t("leaveReview"), action: () => setPanel("reviewRequest") },
     { key: "contact", icon: <PhoneOutlined />, label: t("contact"), action: () => setPanel("contact") },
@@ -154,6 +159,7 @@ export function CertificateActions() {
       </SpeedDial>
       <ContactSheet agency={agency} open={panel === "contact"} onClose={() => setPanel(null)} />
       <ReviewRequestSheet />
+      <AssistantPanel />
     </>
   );
 }

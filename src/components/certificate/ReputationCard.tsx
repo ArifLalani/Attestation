@@ -7,6 +7,7 @@ import Link from "@mui/material/Link";
 import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import AutoAwesome from "@mui/icons-material/AutoAwesome";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { FigmaIcon } from "@/components/ui/FigmaIcon";
@@ -16,6 +17,7 @@ import { useCountUp } from "@/lib/hooks";
 import { displayScore, headingFor, isPublic, reviewsForScore, summarize, type ScoreView, type StarBucket } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
 import { emptyFilters, useCertificate } from "./CertificateContext";
+import { AiModelChips } from "./AssistantPanel";
 import { CollaboratorPicker } from "./CollaboratorPicker";
 import { LearnMoreContent, LearnMoreSheet } from "./LearnMoreSheet";
 
@@ -117,6 +119,33 @@ function ScoreNumber({ value, color }: { value: number; color: string }) {
       <Box component="span" sx={{ fontSize: 32, lineHeight: 0.6 }}>,</Box>
       <Box component="span" sx={{ fontSize: 68 }}>{decimal}</Box>
       <Box component="span" sx={{ fontSize: 24, color: tokens.gris, lineHeight: 0.8 }}>/5</Box>
+    </Box>
+  );
+}
+
+/** "Demandez à l'IA": tapping an AI opens the chat answered "by" that AI. */
+function AskAiStrip() {
+  const t = useTranslations("Assistant");
+  const { openAssistant } = useCertificate();
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: { xs: "column", md: "row" },
+        alignItems: { md: "center" },
+        justifyContent: "space-between",
+        gap: 1.5,
+        p: 1.5,
+        borderRadius: "12px",
+        bgcolor: tokens.grisClair1,
+        border: `1px solid ${tokens.grisMoyen1}`,
+      }}
+    >
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <AutoAwesome sx={{ fontSize: 20, color: tokens.vertOs }} />
+        <Typography sx={{ fontSize: 14, fontWeight: 600, lineHeight: "normal", color: tokens.bleuFonce }}>{t("stripTitle")}</Typography>
+      </Box>
+      <AiModelChips onSelect={openAssistant} label={t("stripTitle")} />
     </Box>
   );
 }
@@ -304,6 +333,8 @@ export function ReputationCard() {
           </Box>
         </Collapse>
       )}
+
+      <AskAiStrip />
 
       <CollaboratorPicker
         open={pickerOpen}
