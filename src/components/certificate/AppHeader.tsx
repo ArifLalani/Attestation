@@ -13,9 +13,9 @@ import { FigmaIcon } from "@/components/ui/FigmaIcon";
 import { tokens } from "@/theme/theme";
 import { sectionIds, useCertificate, type SectionId } from "./CertificateContext";
 
-export const pageColumnSx = { width: "100%", maxWidth: { xs: 640, md: 1200 }, mx: "auto" } as const;
-/** Reading column: phone width up to 640 px, then 720 px on desktop so nothing looks stretched. */
-export const contentColumnSx = { width: "100%", maxWidth: { xs: 640, md: 720 }, mx: "auto" } as const;
+export const pageColumnSx = { width: "100%", maxWidth: { xs: 640, md: 1100 }, mx: "auto" } as const;
+/** Content column: phone width up to 640 px, then 1100 px centred on desktop. */
+export const contentColumnSx = { width: "100%", maxWidth: { xs: 640, md: 1100 }, mx: "auto" } as const;
 
 /** Figma "Top Header": trust banner + section tabs, pinned to the top (Sticky variant once scrolled). */
 export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (id: SectionId) => void }) {
