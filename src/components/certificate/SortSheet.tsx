@@ -21,16 +21,19 @@ export function SortSheet<T extends string>({
   options,
   value,
   onChange,
+  anchorEl,
 }: {
   open: boolean;
   onClose: () => void;
   options: SortOption<T>[];
   value: T;
   onChange: (value: T) => void;
+  /** Desktop: show as a dropdown under this button. */
+  anchorEl?: HTMLElement | null;
 }) {
   const t = useTranslations("Sort");
   return (
-    <ResponsiveSheet open={open} onClose={onClose} title={t("title")} closeLabel={t("close")}>
+    <ResponsiveSheet open={open} onClose={onClose} title={t("title")} closeLabel={t("close")} anchorEl={anchorEl} dropdownWidth={360}>
       <Box component="ul" role="listbox" aria-label={t("title")} sx={{ listStyle: "none", m: 0, p: 0, pb: 2 }}>
         {options.map((option) => {
           const selected = option.value === value;

@@ -26,6 +26,10 @@ interface CertificateState {
   setReviewSort: (sort: ReviewSort) => void;
   panel: SharedPanel | null;
   setPanel: (panel: SharedPanel | null) => void;
+  /** Desktop: the button a panel was opened from; the panel shows as a dropdown under it. */
+  panelAnchor: HTMLElement | null;
+  /** Opens a panel. On desktop, with an anchor, it first scrolls so the dropdown has room below the button. */
+  openPanel: (panel: SharedPanel, anchor?: HTMLElement) => void;
   /** True while the review toolbar is pinned under the header (Figma "Top Header" Sticky + filters). */
   toolbarPinned: boolean;
   setToolbarPinned: (pinned: boolean) => void;
@@ -54,7 +58,29 @@ export function CertificateProvider({
     setFilters((current) => ({ ...current, collaboratorId: id }));
   }, []);
   const [reviewSort, setReviewSort] = useState<ReviewSort>("recent");
-  const [panel, setPanel] = useState<SharedPanel | null>(null);
+  const [panel, setPanelState] = useState<SharedPanel | null>(null);
+  const [panelAnchor, setPanelAnchor] = useState<HTMLElement | null>(null);
+  const setPanel = useCallback((next: SharedPanel | null) => {
+    setPanelState(next);
+    if (!next) setPanelAnchor(null);
+  }, []);
+  const openPanel = useCallback((next: SharedPanel, anchor?: HTMLElement) => {
+    const show = () => {
+      setPanelAnchor(anchor ?? null);
+      setPanelState(next);
+    };
+    if (!anchor || !window.matchMedia("(min-width:900px)").matches || anchor.closest("header")) return show();
+    // Keep the button below the pinned header, and scroll just enough for a dropdown of ~520 px.
+    const headerHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--certificate-header-height")) || 104;
+    const rect = anchor.getBoundingClientRect();
+    const scroll = Math.min(rect.bottom + 520 - window.innerHeight, rect.top - headerHeight - 12);
+    if (scroll > 0) {
+      window.scrollBy({ top: scroll, behavior: "smooth" });
+      window.setTimeout(show, 350);
+    } else {
+      show();
+    }
+  }, []);
   const [toolbarPinned, setToolbarPinned] = useState(false);
 
   const value = useMemo(
@@ -72,11 +98,13 @@ export function CertificateProvider({
       setReviewSort,
       panel,
       setPanel,
+      panelAnchor,
+      openPanel,
       toolbarPinned,
       setToolbarPinned,
       goToSection,
     }),
-    [agency, team, reviews, scoreView, scoreCollaboratorId, setScoreCollaboratorId, filters, reviewSort, panel, toolbarPinned, goToSection],
+    [agency, team, reviews, scoreView, scoreCollaboratorId, setScoreCollaboratorId, filters, reviewSort, panel, setPanel, panelAnchor, openPanel, toolbarPinned, goToSection],
   );
 
   return <CertificateContext value={value}>{children}</CertificateContext>;

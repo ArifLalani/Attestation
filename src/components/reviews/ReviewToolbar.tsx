@@ -19,7 +19,7 @@ const desktopLabelSx = { display: { xs: "none", md: "inline" }, ml: 0.75, fontSi
 /** Count chip + filter (with badge) + sort. Figma "Filteres" → "Filters Row". Used in the card and in the pinned header. */
 export function ReviewToolbar({ onCountClick }: { onCountClick?: () => void } = {}) {
   const t = useTranslations("Reviews");
-  const { reviews, filters, setPanel, goToSection } = useCertificate();
+  const { reviews, filters, openPanel, goToSection } = useCertificate();
   const count = useMemo(() => applyFilters(reviews, filters).length, [reviews, filters]);
   const active = countActiveFilters(filters);
 
@@ -46,7 +46,7 @@ export function ReviewToolbar({ onCountClick }: { onCountClick?: () => void } = 
         </ButtonBase>
       </Box>
       <IconButton
-        onClick={() => setPanel("filters")}
+        onClick={(event) => openPanel("filters", event.currentTarget)}
         aria-label={active ? t("filtersActive", { count: active }) : t("filters")}
         sx={{ p: 0.5, borderRadius: "8px", bgcolor: tokens.blanc }}
       >
@@ -73,7 +73,7 @@ export function ReviewToolbar({ onCountClick }: { onCountClick?: () => void } = 
         </Badge>
         <Box component="span" sx={desktopLabelSx}>{t("filters")}</Box>
       </IconButton>
-      <IconButton onClick={() => setPanel("sort")} aria-label={t("sort")} sx={{ p: 0.5, borderRadius: "8px", bgcolor: tokens.blanc }}>
+      <IconButton onClick={(event) => openPanel("sort", event.currentTarget)} aria-label={t("sort")} sx={{ p: 0.5, borderRadius: "8px", bgcolor: tokens.blanc }}>
         <FigmaIcon name="sort-ascending" />
         <Box component="span" sx={desktopLabelSx}>{t("sortShort")}</Box>
       </IconButton>

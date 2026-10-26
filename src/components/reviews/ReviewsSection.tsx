@@ -26,7 +26,7 @@ const sorts: ReviewSort[] = ["recent", "oldest", "best", "worst", "useful", "ver
 export function ReviewsSection() {
   const t = useTranslations("Reviews");
   const ts = useTranslations("ReviewSort");
-  const { reviews, filters, setFilters, reviewSort, setReviewSort, panel, setPanel, setToolbarPinned } = useCertificate();
+  const { reviews, filters, setFilters, reviewSort, setReviewSort, panel, setPanel, panelAnchor, setToolbarPinned } = useCertificate();
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [reporting, setReporting] = useState<Review | null>(null);
   const [listKey, setListKey] = useState({ filters, reviewSort });
@@ -95,8 +95,8 @@ export function ReviewsSection() {
         )}
       </Box>
 
-      {/* Desktop: the two buttons side by side, centred, sized to their text. */}
-      <Box sx={{ px: 1.5, display: "flex", flexDirection: { xs: "column", md: "row" }, justifyContent: "center", gap: 2 }}>
+      {/* Desktop: the two buttons side by side, aligned right, sized to their text. */}
+      <Box sx={{ px: 1.5, display: "flex", flexDirection: { xs: "column", md: "row" }, justifyContent: { md: "flex-end" }, gap: 2 }}>
         {visible < list.length && (
           <CtaButton variant="secondary" onClick={() => setVisible((count) => count + PAGE_SIZE)} sx={desktopCtaSx}>
             {t("showMore")}
@@ -109,6 +109,7 @@ export function ReviewsSection() {
       <SortSheet<ReviewSort>
         open={panel === "sort"}
         onClose={() => setPanel(null)}
+        anchorEl={panelAnchor}
         value={reviewSort}
         onChange={setReviewSort}
         options={sorts.map((value) => ({ value, label: ts(value), hint: ts(`${value}Hint`) }))}

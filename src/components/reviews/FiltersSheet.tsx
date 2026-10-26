@@ -36,7 +36,7 @@ export function FiltersSheet() {
   const t = useTranslations("Filters");
   const tp = useTranslations("Products");
   const tc = useTranslations("Criteria");
-  const { filters, setFilters, panel, setPanel } = useCertificate();
+  const { filters, setFilters, panel, setPanel, panelAnchor } = useCertificate();
   const open = panel === "filters";
   const [draft, setDraft] = useState<ReviewFilters>(filters);
   const [wasOpen, setWasOpen] = useState(open);
@@ -65,6 +65,8 @@ export function FiltersSheet() {
       <ResponsiveSheet
         open={open}
         onClose={close}
+        anchorEl={panelAnchor}
+        dropdownWidth={440}
         title={t("title")}
         closeLabel={t("close")}
         actions={

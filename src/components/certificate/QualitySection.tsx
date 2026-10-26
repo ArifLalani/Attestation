@@ -43,21 +43,24 @@ export function QualitySection() {
           </Box>}
         </Box>
       </Box>
-      <Box component="ul" sx={{ listStyle: "none", m: 0, p: 0, display: "flex", flexDirection: "column", gap: 2, gridColumn: { xs: 1, lg: 2 }, gridRow: { lg: "1 / span 3" } }}>
-        {certifications.map((certification) => <Box component="li" key={certification.key}>
-          <Link href={opinionSystemLinks.certifications} target="_blank" rel="noopener noreferrer" underline="none" sx={{ display: "flex", gap: { xs: 1.5, sm: 2 }, alignItems: "center", p: 1.5, borderRadius: "16px", border: `1px solid ${tokens.grisMoyen1}`, color: tokens.bleuFonce, "&:hover": { bgcolor: tokens.grisClair1, borderColor: tokens.bleu30 }, "&:focus-visible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 } }}>
-            <Box sx={{ width: 49, flexShrink: 0, display: "flex", justifyContent: "center" }}>
-              <Image src={certification.image} alt="" width={certification.width} height={certification.height} unoptimized />
-            </Box>
-            <Box sx={{ flex: 1, minWidth: 0 }}>
-              <Typography component="h3" sx={{ fontSize: 16, fontWeight: 600, mb: 0.5 }}>{t(`certifications.${certification.key}.title`)}</Typography>
-              <Typography sx={{ fontSize: 14 }}>{t(`certifications.${certification.key}.description`)}</Typography>
-            </Box>
-            <FigmaIcon name="certification-chevron" />
-          </Link>
-        </Box>)}
+      {/* Right column on desktop: the certifications, then "Lire les avis clients" right under them. */}
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 2, gridColumn: { xs: 1, lg: 2 }, gridRow: { lg: "1 / span 3" } }}>
+        <Box component="ul" sx={{ listStyle: "none", m: 0, p: 0, display: "flex", flexDirection: "column", gap: 2 }}>
+          {certifications.map((certification) => <Box component="li" key={certification.key}>
+            <Link href={opinionSystemLinks.certifications} target="_blank" rel="noopener noreferrer" underline="none" sx={{ display: "flex", gap: { xs: 1.5, sm: 2 }, alignItems: "center", p: 1.5, borderRadius: "16px", border: `1px solid ${tokens.grisMoyen1}`, color: tokens.bleuFonce, "&:hover": { bgcolor: tokens.grisClair1, borderColor: tokens.bleu30 }, "&:focus-visible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 } }}>
+              <Box sx={{ width: 49, flexShrink: 0, display: "flex", justifyContent: "center" }}>
+                <Image src={certification.image} alt="" width={certification.width} height={certification.height} unoptimized />
+              </Box>
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography component="h3" sx={{ fontSize: 16, fontWeight: 600, mb: 0.5 }}>{t(`certifications.${certification.key}.title`)}</Typography>
+                <Typography sx={{ fontSize: 14 }}>{t(`certifications.${certification.key}.description`)}</Typography>
+              </Box>
+              <FigmaIcon name="certification-chevron" />
+            </Link>
+          </Box>)}
+        </Box>
+        <CtaButton onClick={() => { setFilters(emptyFilters); setScoreCollaboratorId(undefined); goToSection("avis"); }}>{t("readReviews")}</CtaButton>
       </Box>
-      <CtaButton sx={{ gridColumn: "1 / -1" }} onClick={() => { setFilters(emptyFilters); setScoreCollaboratorId(undefined); goToSection("avis"); }}>{t("readReviews")}</CtaButton>
     </Box>
   );
 }
