@@ -11,13 +11,14 @@ import type { ScoreView } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
 import { useCertificate } from "./CertificateContext";
 
-const globalSources: ReviewSource[] = ["os_certified", "import_iso", "os_simple", "google"];
+const globalSources: ReviewSource[] = ["os_certified", "import_iso", "os_simple", "import_other"];
 const controleSources: ReviewSource[] = ["os_certified", "import_iso"];
 
 /** "En savoir plus" (not in the Figma): explains the score of the active tab. */
 export function LearnMoreSheet({ open, onClose, view }: { open: boolean; onClose: () => void; view: ScoreView }) {
   const t = useTranslations("LearnMore");
   const ts = useTranslations("Sources");
+  const tp = useTranslations("Platforms");
   const { reviews } = useCertificate();
   const controle = view === "controle";
 
@@ -25,6 +26,13 @@ export function LearnMoreSheet({ open, onClose, view }: { open: boolean; onClose
     const result: Partial<Record<ReviewSource, number>> = {};
     for (const review of reviews) result[review.source] = (result[review.source] ?? 0) + 1;
     return result;
+  }, [reviews]);
+
+  // Platforms behind the non-ISO imports, most reviews first.
+  const platforms = useMemo(() => {
+    const byPlatform = new Map<string, number>();
+    for (const review of reviews) if (review.platform) byPlatform.set(review.platform, (byPlatform.get(review.platform) ?? 0) + 1);
+    return [...byPlatform.entries()].sort((a, b) => b[1] - a[1]).map(([platform]) => platform);
   }, [reviews]);
 
   const sources = controle ? controleSources : globalSources;
@@ -45,7 +53,12 @@ export function LearnMoreSheet({ open, onClose, view }: { open: boolean; onClose
               return (
                 <Box component="li" key={source}>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
-                    <Typography sx={{ flex: 1, fontSize: 14, fontWeight: 500 }}>{ts(source)}</Typography>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography sx={{ fontSize: 14, fontWeight: 500 }}>{ts(source)}</Typography>
+                      {source === "import_other" && platforms.length > 0 && (
+                        <Typography sx={{ fontSize: 12, color: tokens.gris }}>{platforms.map((platform) => tp(platform)).join(", ")}</Typography>
+                      )}
+                    </Box>
                     <Typography sx={{ fontSize: 14, fontWeight: 600 }}>{t("count", { count: formatCount(count) })}</Typography>
                   </Box>
                   <Box sx={{ height: 6, borderRadius: "3px", bgcolor: tokens.grisMoyen1, overflow: "hidden" }}>

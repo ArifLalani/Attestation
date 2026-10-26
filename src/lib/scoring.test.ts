@@ -7,7 +7,7 @@ import { bucketOf, displayScore, headingFor, isPublic, reviewsForScore, summariz
 const review = (rating: number, status: Review["status"] = "controle", collaboratorId?: string): Review => ({
   id: String(rating),
   status,
-  source: status === "controle" ? "os_certified" : "google",
+  source: status === "controle" ? "os_certified" : "import_other",
   rating,
   daysAgo: 0,
   authorName: "Test T.",

@@ -1,7 +1,7 @@
 import { closings, firstNames, lastInitials, middles, moodCriteria, moodOf, openings, questionnaireCriteria, replies } from "./content";
 import { createRng, seedFrom, type Rng } from "./rng";
 import { lbiTeam, type TeamMemberSeed } from "./team";
-import type { Agency, Collaborator, Product, Review, ReviewSource } from "./types";
+import type { Agency, Collaborator, ImportPlatform, Product, Review, ReviewSource } from "./types";
 import { mainAgencyId } from "./agencies";
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
@@ -53,14 +53,14 @@ function teamSeeds(agency: Agency): TeamMemberSeed[] {
 
 /** How many reviews of each source an agency has. The main agency matches the Figma totals (2 500 / 800). */
 function sourceCounts(agency: Agency): Record<ReviewSource, number> {
-  if (agency.id === mainAgencyId) return { os_certified: 720, import_iso: 80, os_simple: 900, google: 800 };
+  if (agency.id === mainAgencyId) return { os_certified: 720, import_iso: 80, os_simple: 900, import_other: 800 };
   const rng = createRng(seedFrom(`counts-${agency.id}`));
   const scale = 0.12 + rng.next() * 0.25;
   return {
     os_certified: Math.round(720 * scale),
     import_iso: Math.round(80 * scale),
     os_simple: Math.round(900 * scale),
-    google: Math.round(800 * scale),
+    import_other: Math.round(800 * scale),
   };
 }
 
@@ -91,6 +91,11 @@ function survey(rng: Rng, rating: number, product: Product, questionnaire: "cont
       score: Math.round(clamp(rating * 2 + (rng.next() - 0.55) * 2.4, 0, 10)),
     })),
   };
+}
+
+/** Non-ISO imports: mostly Google, then Facebook and Pages Jaunes. Own seed, so the rest of the data doesn't move. */
+function platformOf(reviewId: string): ImportPlatform {
+  return createRng(seedFrom(`platform-${reviewId}`)).weighted<ImportPlatform>(["google", "facebook", "pagesjaunes"], [6, 2.5, 1.5]);
 }
 
 /** The agency manager answers reviews that aren't linked to a staff member. */
@@ -156,6 +161,7 @@ export function getAgencyDataset(agency: Agency): AgencyDataset {
         text: rng.pick(replies[mood]).replace("{name}", firstName),
       };
     }
+    if (source === "import_other") review.platform = platformOf(id);
     reviews.push(review);
   };
 

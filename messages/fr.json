@@ -87,9 +87,9 @@
     "os_certified": "Questionnaires certifiés Opinion System",
     "os_simple": "Questionnaires internes de l'agence",
     "import_iso": "Avis importés certifiés ISO",
-    "google": "Google",
     "controleBadge": "Avis contrôlé",
-    "nonControleBadge": "Non contrôlé"
+    "nonControleBadge": "Non contrôlé",
+    "import_other": "Avis importés non ISO"
   },
   "Collaborators": {
     "title": "Sélectionner un collaborateur",
@@ -243,7 +243,7 @@
     "os_certified": "Opinion System",
     "os_simple": "Opinion System",
     "import_iso": "Import certifié ISO 20488",
-    "google": "Google"
+    "import_other": "Avis importé non ISO"
   },
   "Reviews": {
     "backToStart": "{count} avis : revenir au début de la section Avis",
@@ -272,7 +272,8 @@
       "os_certified": "Questionnaire certifié Opinion System",
       "os_simple": "Questionnaire interne",
       "import_iso": "Avis importé",
-      "google": "Avis Google"
+      "import_other": "Avis importé non ISO",
+      "platform": "Avis {platform}"
     },
     "date": {
       "today": "Aujourd’hui",
@@ -379,5 +380,10 @@
     "doneTitle": "C’est envoyé !",
     "doneText": "{firstName}, vous allez recevoir le questionnaire Opinion System à l’adresse {email}. Merci de prendre quelques minutes pour y répondre.",
     "doneButton": "Fermer"
+  },
+  "Platforms": {
+    "google": "Google",
+    "facebook": "Facebook",
+    "pagesjaunes": "Pages Jaunes"
   }
 }

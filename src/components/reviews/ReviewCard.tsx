@@ -16,18 +16,20 @@ import { formatCount, formatScore } from "@/lib/format";
 import { tokens } from "@/theme/theme";
 import { useUsefulVote } from "./useUsefulVotes";
 
-export const sourceIcons: Record<ReviewSource, FigmaIconName> = {
+const sourceIcons: Record<ReviewSource, FigmaIconName> = {
   os_certified: "source-os-certified",
   os_simple: "source-os-simple",
   import_iso: "source-imported",
-  google: "source-google",
+  import_other: "source-imported",
 };
 
 /** Figma "Source Icon" (1376:92924): a 24 px slot. */
-export function SourceIcon({ source, alt = "" }: { source: ReviewSource; alt?: string }) {
+export function SourceIcon({ review, alt = "" }: { review: Pick<Review, "source" | "platform">; alt?: string }) {
+  // The Figma has a Google variant; other non-ISO platforms use the generic "Importé" icon.
+  const icon = review.platform === "google" ? "source-google" : sourceIcons[review.source];
   return (
     <Box sx={{ width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-      <FigmaIcon name={sourceIcons[source]} alt={alt} />
+      <FigmaIcon name={icon} alt={alt} />
     </Box>
   );
 }
@@ -118,6 +120,7 @@ function DetailRow({ label, children }: { label: string; children: React.ReactNo
 function ReviewDetails({ review }: { review: Review }) {
   const t = useTranslations("Reviews.detail");
   const ts = useTranslations("SourceNames");
+  const tp = useTranslations("Platforms");
   const ta = useTranslations("Activities");
   const { team } = useCertificate();
   const survey = review.survey;
@@ -153,10 +156,10 @@ function ReviewDetails({ review }: { review: Review }) {
           </Box>
         )}
         <Box component="dl" sx={{ m: 0, display: "flex", flexDirection: "column", gap: 0.5 }}>
-          <DetailRow label={t("source")}>{ts(review.source)}</DetailRow>
+          <DetailRow label={t("source")}>{review.platform ? tp(review.platform) : ts(review.source)}</DetailRow>
           {survey && (
             <DetailRow label={t("questionnaire")}>
-              <SourceIcon source={review.source} />
+              <SourceIcon review={review} />
               {t(survey.questionnaire === "controle" ? "questionnaireControle" : "questionnaireSimple")}
             </DetailRow>
           )}
@@ -218,6 +221,7 @@ export function ReviewCard({ review, onReport }: { review: Review; onReport: (re
   const t = useTranslations("Reviews");
   const tp = useTranslations("Products");
   const tc = useTranslations("Criteria");
+  const tpCard = useTranslations("Platforms");
   const relative = useRelativeDate();
   const [expanded, setExpanded] = useState(false);
   // True when the card closed itself off-screen: skip the collapse animation so the scroll can be corrected at once.
@@ -310,7 +314,7 @@ export function ReviewCard({ review, onReport }: { review: Review; onReport: (re
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <TypeChip status={review.status} />
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <SourceIcon source={review.source} alt={t(`sourceIcon.${review.source}`)} />
+              <SourceIcon review={review} alt={review.platform ? t("sourceIcon.platform", { platform: tpCard(review.platform) }) : t(`sourceIcon.${review.source}`)} />
               <Typography component="span" sx={{ fontSize: 16, fontWeight: 600, lineHeight: "normal", color: tokens.bleuFonce }}>
                 {formatScore(review.rating)}
               </Typography>

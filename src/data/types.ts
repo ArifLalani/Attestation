@@ -1,7 +1,10 @@
 export type ReviewStatus = "controle" | "non_controle";
 
 /** Where a review comes from. Drives the badge, the source icon and which details exist. */
-export type ReviewSource = "os_certified" | "os_simple" | "import_iso" | "google";
+export type ReviewSource = "os_certified" | "os_simple" | "import_iso" | "import_other";
+
+/** Platform of an imported review that isn't ISO-approved (source "import_other"). */
+export type ImportPlatform = "google" | "facebook" | "pagesjaunes";
 
 export type Product =
   | "vente"
@@ -51,6 +54,8 @@ export interface Review {
   collaboratorId?: string;
   usefulCount: number;
   reviewNumber: string;
+  /** Non-ISO imports only. */
+  platform?: ImportPlatform;
   survey?: SurveyDetails;
   /** Public reply from the agency (written in the members area, a later phase). */
   reply?: ReviewReply;
