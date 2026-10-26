@@ -124,6 +124,20 @@ export function ReputationCard() {
   const t = useTranslations("Reputation");
   const { agency, team, reviews, scoreView, setScoreView, scoreCollaboratorId, setScoreCollaboratorId, setFilters, goToSection } = useCertificate();
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [scoreForEl, setScoreForEl] = useState<HTMLButtonElement | null>(null);
+
+  // Desktop dropdown: make room under the selector first, so the list always opens downwards.
+  const openPicker = () => {
+    const DROPDOWN_HEIGHT = 470;
+    const rect = scoreForEl?.getBoundingClientRect();
+    const missing = rect && window.matchMedia("(min-width:900px)").matches ? rect.bottom + DROPDOWN_HEIGHT - window.innerHeight : 0;
+    if (missing > 0) {
+      window.scrollBy({ top: missing + 16, behavior: "smooth" });
+      window.setTimeout(() => setPickerOpen(true), 350);
+    } else {
+      setPickerOpen(true);
+    }
+  };
   const [learnMoreOpen, setLearnMoreOpen] = useState(false);
 
   const summary = useMemo(
@@ -150,38 +164,44 @@ export function ReputationCard() {
     <Box component="section" aria-labelledby="reputation-heading" sx={cardSx}>
       <CardTitle id="reputation-heading" eyebrow={t("eyebrow")} heading={t(`heading.${visible ? headingFor(summary.average!) : "start"}`)} />
 
-      {/* Score affiché pour. Desktop: half width, so it ends where the Avis global tab ends. */}
-      <Box sx={{ width: { md: "50%" } }}>
-        <Typography component="label" htmlFor="score-for" sx={{ display: "block", fontSize: 12, fontWeight: 600, color: tokens.gris, lineHeight: "normal" }}>
-          {t("scoreFor")}
-        </Typography>
-        <ButtonBase
-          id="score-for"
-          onClick={() => setPickerOpen(true)}
-          aria-haspopup="dialog"
-          sx={{
-            width: "100%",
-            justifyContent: "flex-start",
-            gap: 1,
-            px: 2,
-            py: person ? 0.5 : 1.5,
-            minHeight: 45,
-            bgcolor: tokens.blanc,
-            border: `1px solid ${tokens.grisMoyen1}`,
-            borderRadius: "8px",
-            textAlign: "left",
-            "&:hover": { borderColor: tokens.bleu30 },
-          }}
-        >
-          {person && <StaffAvatar person={person} />}
-          <Typography component="span" sx={{ flex: 1, fontSize: 14, fontWeight: 600, color: tokens.bleuFonce, lineHeight: "normal" }}>
-            {person ? person.name : t("wholeTeam")}
+      {/* Phones: selector, then the switch. Desktop: the switch on the left half, "Score affiché pour" on the right half. */}
+      <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, alignItems: { md: "flex-end" }, gap: 2 }}>
+        <Box sx={{ order: { md: 2 }, flex: { md: "1 1 0" }, minWidth: 0 }}>
+          <Typography component="label" htmlFor="score-for" sx={{ display: "block", fontSize: 12, fontWeight: 600, color: tokens.gris, lineHeight: "normal" }}>
+            {t("scoreFor")}
           </Typography>
-          <FigmaIcon name={person ? "arrows-clockwise" : "expand-more"} alt={person ? t("changeCollaborator") : ""} />
-        </ButtonBase>
+          <ButtonBase
+            id="score-for"
+            ref={setScoreForEl}
+            onClick={openPicker}
+            aria-haspopup="listbox"
+            aria-expanded={pickerOpen}
+            sx={{
+              width: "100%",
+              justifyContent: "flex-start",
+              gap: 1,
+              px: 2,
+              py: person ? 0.5 : 1.5,
+              minHeight: { xs: 45, md: 50 },
+              bgcolor: tokens.blanc,
+              border: `1px solid ${tokens.grisMoyen1}`,
+              borderRadius: "8px",
+              textAlign: "left",
+              "&:hover": { borderColor: tokens.bleu30 },
+            }}
+          >
+            {person && <StaffAvatar person={person} />}
+            <Typography component="span" sx={{ flex: 1, fontSize: 14, fontWeight: 600, color: tokens.bleuFonce, lineHeight: "normal" }}>
+              {person ? person.name : t("wholeTeam")}
+            </Typography>
+            <FigmaIcon name={person ? "arrows-clockwise" : "expand-more"} alt={person ? t("changeCollaborator") : ""} />
+          </ButtonBase>
+        </Box>
+  
+        <Box sx={{ order: { md: 1 }, flex: { md: "1 1 0" }, minWidth: 0 }}>
+          <ViewToggle view={scoreView} onChange={setScoreView} />
+        </Box>
       </Box>
-
-      <ViewToggle view={scoreView} onChange={setScoreView} />
 
       {visible ? (
         <Box sx={{ display: "flex", gap: 2, alignItems: "stretch" }}>
@@ -277,6 +297,7 @@ export function ReputationCard() {
         selectedId={scoreCollaboratorId}
         onSelect={setScoreCollaboratorId}
         view={scoreView}
+        anchorEl={pickerOpen ? scoreForEl : null}
       />
       <LearnMoreSheet open={learnMoreOpen} onClose={() => setLearnMoreOpen(false)} view={scoreView} />
     </Box>

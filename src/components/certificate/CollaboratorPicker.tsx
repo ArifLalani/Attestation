@@ -4,7 +4,9 @@ import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import IconButton from "@mui/material/IconButton";
 import InputBase from "@mui/material/InputBase";
+import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { FigmaIcon } from "@/components/ui/FigmaIcon";
@@ -34,20 +36,27 @@ const rowSx = (selected: boolean) => ({
   "&:hover": { bgcolor: selected ? tokens.bleu10 : tokens.bleu5 },
 });
 
-/** Figma "Collaborator select" (726:15618). Lists staff above the publication threshold. */
+/**
+ * Figma "Collaborator select" (726:15618). Lists staff above the publication threshold.
+ * Phones: bottom sheet. Desktop with an anchor: a dropdown right under the selector.
+ */
 export function CollaboratorPicker({
   open,
   onClose,
   selectedId,
   onSelect,
   view,
+  anchorEl,
 }: {
   open: boolean;
   onClose: () => void;
   selectedId?: string;
   onSelect: (id: string | undefined) => void;
   view: ScoreView;
+  anchorEl?: HTMLElement | null;
 }) {
+  const desktop = useMediaQuery("(min-width:900px)", { noSsr: true });
+  const dropdown = desktop && Boolean(anchorEl);
   const t = useTranslations("Collaborators");
   const ts = useTranslations("Sort");
   const { team, reviews, agency } = useCertificate();
@@ -71,79 +80,98 @@ export function CollaboratorPicker({
     onClose();
   };
 
+  const search = (
+    <Box sx={{ display: "flex", alignItems: "center", gap: 2, p: 2, bgcolor: tokens.grisClair2, flexShrink: 0 }}>
+      <Box sx={{ flex: 1, display: "flex", alignItems: "center", gap: 1, px: 2, py: 1.5, bgcolor: tokens.blanc, borderRadius: "10px" }}>
+        <Box sx={{ p: 0.5 }}>
+          <FigmaIcon name="search" />
+        </Box>
+        <InputBase
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder={t("searchPlaceholder")}
+          inputProps={{ "aria-label": t("searchLabel") }}
+          sx={{
+            flex: 1,
+            fontSize: 16,
+            color: tokens.bleuFonce,
+            "& input": { p: 0, height: "auto", lineHeight: "normal" },
+            "& input::placeholder": { color: tokens.gris, opacity: 1 },
+          }}
+        />
+      </Box>
+      <IconButton aria-label={t("sort")} onClick={() => setSortOpen(true)} sx={{ p: 0, borderRadius: "8px" }}>
+        <FigmaIcon name="sort-ascending" />
+      </IconButton>
+    </Box>
+  );
+
+  const list = (
+    <Box component="ul" role="listbox" aria-label={t("title")} sx={{ listStyle: "none", m: 0, p: 0 }}>
+      {!query && (
+        <li>
+          <ButtonBase role="option" aria-selected={!selectedId} onClick={() => choose(undefined)} sx={rowSx(!selectedId)}>
+            <Box sx={{ p: 0.5 }}>
+              <FigmaIcon name="group" />
+            </Box>
+            <Typography sx={{ flex: 1, fontSize: 16, fontWeight: 500, lineHeight: "16px", color: tokens.bleuFonce }}>{t("all")}</Typography>
+            {!selectedId && (
+              <Box sx={{ width: 24, height: 24, p: 0.5 }}>
+                <FigmaIcon name="check" />
+              </Box>
+            )}
+          </ButtonBase>
+        </li>
+      )}
+      {people.map(({ person, summary }) => {
+        const selected = person.id === selectedId;
+        return (
+          <li key={person.id}>
+            <ButtonBase role="option" aria-selected={selected} onClick={() => choose(person.id)} sx={rowSx(selected)}>
+              <StaffAvatar person={person} />
+              <Box sx={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 0.5 }}>
+                <Typography sx={{ fontSize: 16, fontWeight: 500, lineHeight: "16px", color: tokens.bleuFonce }}>{person.name}</Typography>
+                <Typography sx={{ fontSize: 14, fontWeight: 500, lineHeight: "14px", color: tokens.gris, overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {person.email}
+                </Typography>
+              </Box>
+              {summary.average !== null && <RatingChip value={summary.average} />}
+            </ButtonBase>
+          </li>
+        );
+      })}
+      {query && !people.length && (
+        <Typography component="li" sx={{ p: 2, color: tokens.gris, fontSize: 14 }}>
+          {t("noResult", { query })}
+        </Typography>
+      )}
+    </Box>
+  );
+
   return (
     <>
-      <ResponsiveSheet
-        open={open}
-        onClose={onClose}
-        title={t("title")}
-        closeLabel={t("close")}
-        header={
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2, p: 2, bgcolor: tokens.grisClair2, flexShrink: 0 }}>
-            <Box sx={{ flex: 1, display: "flex", alignItems: "center", gap: 1, px: 2, py: 1.5, bgcolor: tokens.blanc, borderRadius: "10px" }}>
-              <Box sx={{ p: 0.5 }}>
-                <FigmaIcon name="search" />
-              </Box>
-              <InputBase
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder={t("searchPlaceholder")}
-                inputProps={{ "aria-label": t("searchLabel") }}
-                sx={{
-                  flex: 1,
-                  fontSize: 16,
-                  color: tokens.bleuFonce,
-                  "& input": { p: 0, height: "auto", lineHeight: "normal" },
-                  "& input::placeholder": { color: tokens.gris, opacity: 1 },
-                }}
-              />
-            </Box>
-            <IconButton aria-label={t("sort")} onClick={() => setSortOpen(true)} sx={{ p: 0, borderRadius: "8px" }}>
-              <FigmaIcon name="sort-ascending" />
-            </IconButton>
-          </Box>
-        }
-      >
-        <Box component="ul" role="listbox" aria-label={t("title")} sx={{ listStyle: "none", m: 0, p: 0 }}>
-          {!query && (
-            <li>
-              <ButtonBase role="option" aria-selected={!selectedId} onClick={() => choose(undefined)} sx={rowSx(!selectedId)}>
-                <Box sx={{ p: 0.5 }}>
-                  <FigmaIcon name="group" />
-                </Box>
-                <Typography sx={{ flex: 1, fontSize: 16, fontWeight: 500, lineHeight: "16px", color: tokens.bleuFonce }}>{t("all")}</Typography>
-                {!selectedId && (
-                  <Box sx={{ width: 24, height: 24, p: 0.5 }}>
-                    <FigmaIcon name="check" />
-                  </Box>
-                )}
-              </ButtonBase>
-            </li>
-          )}
-          {people.map(({ person, summary }) => {
-            const selected = person.id === selectedId;
-            return (
-              <li key={person.id}>
-                <ButtonBase role="option" aria-selected={selected} onClick={() => choose(person.id)} sx={rowSx(selected)}>
-                  <StaffAvatar person={person} />
-                  <Box sx={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 0.5 }}>
-                    <Typography sx={{ fontSize: 16, fontWeight: 500, lineHeight: "16px", color: tokens.bleuFonce }}>{person.name}</Typography>
-                    <Typography sx={{ fontSize: 14, fontWeight: 500, lineHeight: "14px", color: tokens.gris, overflow: "hidden", textOverflow: "ellipsis" }}>
-                      {person.email}
-                    </Typography>
-                  </Box>
-                  {summary.average !== null && <RatingChip value={summary.average} />}
-                </ButtonBase>
-              </li>
-            );
-          })}
-          {query && !people.length && (
-            <Typography component="li" sx={{ p: 2, color: tokens.gris, fontSize: 14 }}>
-              {t("noResult", { query })}
-            </Typography>
-          )}
-        </Box>
-      </ResponsiveSheet>
+      {dropdown ? (
+        <Popover
+          open={open}
+          anchorEl={anchorEl}
+          onClose={onClose}
+          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+          transformOrigin={{ vertical: "top", horizontal: "left" }}
+          slotProps={{
+            paper: {
+              "aria-label": t("title"),
+              sx: { mt: 1, width: anchorEl?.offsetWidth, maxHeight: 460, display: "flex", flexDirection: "column", borderRadius: "12px", overflow: "hidden" },
+            },
+          }}
+        >
+          {search}
+          <Box sx={{ overflowY: "auto", overscrollBehavior: "contain" }}>{list}</Box>
+        </Popover>
+      ) : (
+        <ResponsiveSheet open={open} onClose={onClose} title={t("title")} closeLabel={t("close")} header={search}>
+          {list}
+        </ResponsiveSheet>
+      )}
 
       <SortSheet<StaffSort>
         open={sortOpen}
