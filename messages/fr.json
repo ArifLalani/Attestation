@@ -65,7 +65,8 @@
     "explainControle": "Cette note regroupe les <b>avis contrôlés par Opinion System</b>, tous <b>certifiés AFNOR</b> et authentifiés par Opinion System depuis {since}.",
     "learnMore": "En savoir plus.",
     "notPublic": "Pas encore assez d'avis pour afficher un score.",
-    "scoreAria": "Note de {score} sur 5"
+    "scoreAria": "Note de {score} sur 5",
+    "learnLess": "Masquer les détails."
   },
   "LearnMore": {
     "titleGlobal": "Avis global : comment est calculée la note ?",

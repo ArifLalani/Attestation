@@ -2,9 +2,11 @@
 
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
+import Collapse from "@mui/material/Collapse";
 import Link from "@mui/material/Link";
 import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { FigmaIcon } from "@/components/ui/FigmaIcon";
@@ -15,7 +17,7 @@ import { displayScore, headingFor, isPublic, reviewsForScore, summarize, type Sc
 import { tokens } from "@/theme/theme";
 import { emptyFilters, useCertificate } from "./CertificateContext";
 import { CollaboratorPicker } from "./CollaboratorPicker";
-import { LearnMoreSheet } from "./LearnMoreSheet";
+import { LearnMoreContent, LearnMoreSheet } from "./LearnMoreSheet";
 
 const cardSx = {
   bgcolor: tokens.blanc,
@@ -139,6 +141,8 @@ export function ReputationCard() {
     }
   };
   const [learnMoreOpen, setLearnMoreOpen] = useState(false);
+  // Desktop: "En savoir plus" expands under the text instead of opening a window.
+  const desktop = useMediaQuery("(min-width:900px)", { noSsr: true });
 
   const summary = useMemo(
     () => summarize(reviewsForScore(reviews, scoreView, scoreCollaboratorId)),
@@ -284,12 +288,22 @@ export function ReputationCard() {
         </Typography>
         <Link
           component="button"
-          onClick={() => setLearnMoreOpen(true)}
+          onClick={() => setLearnMoreOpen((value) => !value)}
+          aria-expanded={desktop ? learnMoreOpen : undefined}
+          aria-controls={desktop ? "learn-more-inline" : undefined}
           sx={{ fontSize: 14, fontWeight: 500, lineHeight: "normal", color: tokens.bleu600, textDecorationColor: "currentColor", verticalAlign: "baseline" }}
         >
-          {t("learnMore")}
+          {desktop && learnMoreOpen ? t("learnLess") : t("learnMore")}
         </Link>
       </Box>
+
+      {desktop && (
+        <Collapse in={learnMoreOpen} unmountOnExit timeout={250}>
+          <Box id="learn-more-inline">
+            <LearnMoreContent view={scoreView} inline />
+          </Box>
+        </Collapse>
+      )}
 
       <CollaboratorPicker
         open={pickerOpen}
@@ -299,7 +313,7 @@ export function ReputationCard() {
         view={scoreView}
         anchorEl={pickerOpen ? scoreForEl : null}
       />
-      <LearnMoreSheet open={learnMoreOpen} onClose={() => setLearnMoreOpen(false)} view={scoreView} />
+      <LearnMoreSheet open={!desktop && learnMoreOpen} onClose={() => setLearnMoreOpen(false)} view={scoreView} />
     </Box>
   );
 }
