@@ -14,6 +14,8 @@ import { tokens } from "@/theme/theme";
 import { sectionIds, useCertificate, type SectionId } from "./CertificateContext";
 
 export const pageColumnSx = { width: "100%", maxWidth: { xs: 640, md: 1200 }, mx: "auto" } as const;
+/** Reading column: phone width up to 640 px, then 720 px on desktop so nothing looks stretched. */
+export const contentColumnSx = { width: "100%", maxWidth: { xs: 640, md: 720 }, mx: "auto" } as const;
 
 /** Figma "Top Header": trust banner + section tabs, pinned to the top (Sticky variant once scrolled). */
 export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (id: SectionId) => void }) {
@@ -71,7 +73,7 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
           variant="fullWidth"
           aria-label={t("tabsLabel")}
           sx={{
-            ...pageColumnSx,
+            ...contentColumnSx,
             px: 2,
             minHeight: 48,
             "& .MuiTabs-indicator": { height: 3, bgcolor: tokens.vertOs },
@@ -105,8 +107,8 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
             onSelect("avis");
           }
         }}>
-          <Box sx={{ ...pageColumnSx, bgcolor: tokens.blanc, px: 2, py: 1 }}>
-            <Box sx={{ width: { xs: "100%", md: "calc(100% - 304px)", lg: "calc(100% - 312px)" }, display: "flex", flexDirection: "column", gap: 1 }}>
+          <Box sx={{ ...contentColumnSx, bgcolor: tokens.blanc, px: 2, py: 1 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
               <ReviewToolbar onCountClick={() => { returningToReviews.current = true; onSelect("avis"); }} />
               <ActiveFilterChips />
             </Box>

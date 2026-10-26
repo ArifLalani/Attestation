@@ -18,6 +18,7 @@ import { ReportSheet } from "./ReportSheet";
 import { ReviewCard } from "./ReviewCard";
 import { ReviewToolbar } from "./ReviewToolbar";
 
+const desktopCtaSx = { width: { xs: "100%", md: "auto" }, minWidth: { md: 220 }, px: { md: 3 } } as const;
 const PAGE_SIZE = 3;
 const sorts: ReviewSort[] = ["recent", "oldest", "best", "worst", "useful", "verified"];
 
@@ -80,7 +81,7 @@ export function ReviewsSection() {
         <ActiveFilterChips />
       </Box>
 
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", lg: "repeat(2, minmax(0, 1fr))" }, alignItems: "start", "& > article:nth-of-type(even)": { borderLeft: { lg: `1px solid ${tokens.grisMoyen1}` } } }}>
+      <Box>
         {list.slice(0, visible).map((review) => (
           <ReviewCard key={review.id} review={review} onReport={setReporting} />
         ))}
@@ -94,13 +95,14 @@ export function ReviewsSection() {
         )}
       </Box>
 
-      <Box sx={{ px: 1.5, display: "flex", flexDirection: "column", gap: 2 }}>
+      {/* Desktop: the two buttons side by side, centred, sized to their text. */}
+      <Box sx={{ px: 1.5, display: "flex", flexDirection: { xs: "column", md: "row" }, justifyContent: "center", gap: 2 }}>
         {visible < list.length && (
-          <CtaButton variant="secondary" onClick={() => setVisible((count) => count + PAGE_SIZE)}>
+          <CtaButton variant="secondary" onClick={() => setVisible((count) => count + PAGE_SIZE)} sx={desktopCtaSx}>
             {t("showMore")}
           </CtaButton>
         )}
-        <CtaButton onClick={() => setPanel("reviewRequest")}>{t("leaveReview")}</CtaButton>
+        <CtaButton onClick={() => setPanel("reviewRequest")} sx={desktopCtaSx}>{t("leaveReview")}</CtaButton>
       </Box>
 
       <FiltersSheet />

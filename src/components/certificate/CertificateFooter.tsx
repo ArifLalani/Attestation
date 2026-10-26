@@ -8,7 +8,7 @@ import { useTranslations } from "next-intl";
 import { FigmaIcon } from "@/components/ui/FigmaIcon";
 import { opinionSystemLinks as links } from "@/data/opinionSystem";
 import { tokens } from "@/theme/theme";
-import { pageColumnSx } from "./AppHeader";
+import { contentColumnSx } from "./AppHeader";
 import { useCertificate } from "./CertificateContext";
 
 const groups = [
@@ -22,7 +22,7 @@ export function CertificateFooter() {
   const t = useTranslations("Footer");
   const { setPanel } = useCertificate();
   return (
-    <Box component="footer" sx={{ ...pageColumnSx, px: 1.5, pb: { xs: "calc(104px + env(safe-area-inset-bottom))", md: 4 } }}>
+    <Box component="footer" sx={{ ...contentColumnSx, px: 1.5, pb: { xs: "calc(104px + env(safe-area-inset-bottom))", md: 12 } }}>
       <Box sx={{ bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCardSoft, px: { xs: 1.5, md: 3 }, py: { xs: 2, md: 3 }, display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1fr) minmax(0, 1.4fr)" }, gap: { xs: 2, md: 4 } }}>
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 2 }}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>

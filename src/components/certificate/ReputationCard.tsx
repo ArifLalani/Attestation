@@ -185,7 +185,8 @@ export function ReputationCard() {
 
       {visible ? (
         <Box sx={{ display: "flex", gap: 2, alignItems: "stretch" }}>
-          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
+          {/* Desktop: score and rating bars split the card 50/50. */}
+          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between", flex: { xs: "0 0 auto", md: "1 1 0" } }}>
             <Box sx={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 1 }}>
               <ScoreNumber value={summary.average!} color={controle ? tokens.vertOs : tokens.bleuFonce} />
               <Rating
@@ -198,9 +199,9 @@ export function ReputationCard() {
             </Box>
             <Box
               sx={{
-                width: "100%",
+                width: { xs: "100%", md: "auto" },
                 textAlign: "center",
-                px: "10px",
+                px: { xs: "10px", md: 2 },
                 py: "2px",
                 borderRadius: "4px",
                 bgcolor: controle ? tokens.successLight2 : tokens.grisClair2,
@@ -216,7 +217,7 @@ export function ReputationCard() {
 
           <Box sx={{ width: "1px", bgcolor: tokens.grisMoyen1, flexShrink: 0 }} />
 
-          <Box component="ul" sx={{ listStyle: "none", m: 0, p: 0, flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 1 }}>
+          <Box component="ul" sx={{ listStyle: "none", m: 0, p: 0, flex: "1 1 0", minWidth: 0, display: "flex", flexDirection: "column", gap: 1 }}>
             {([5, 4, 3, 2, 1] as StarBucket[]).map((stars) => {
               const count = summary.buckets[stars];
               return (

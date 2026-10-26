@@ -5,7 +5,7 @@ import { ReviewsSection } from "@/components/reviews/ReviewsSection";
 import { getAgency } from "@/data/agencies";
 import { useScrollSpy } from "@/lib/hooks";
 import { tokens } from "@/theme/theme";
-import { AppHeader, pageColumnSx } from "./AppHeader";
+import { AppHeader, contentColumnSx } from "./AppHeader";
 import { BusinessCard } from "./BusinessCard";
 import { CertificateProvider, sectionIds, type SectionId } from "./CertificateContext";
 import { ReputationCard } from "./ReputationCard";
@@ -14,7 +14,7 @@ import { AgenciesSection } from "./AgenciesSection";
 import { QualitySection } from "./QualitySection";
 import { BusinessPitch } from "./BusinessPitch";
 import { CertificateFooter } from "./CertificateFooter";
-import { CertificateActions, DesktopActions } from "./CertificateActions";
+import { CertificateActions, DesktopScorePill } from "./CertificateActions";
 
 const sectionSx = {
   display: "flex",
@@ -31,7 +31,7 @@ export function CertificatePage({ agencyId }: { agencyId: string }) {
   return (
     <CertificateProvider agency={agency} goToSection={goToSection}>
       <AppHeader active={active as SectionId} onSelect={goToSection} />
-      <Box component="main" sx={{ ...pageColumnSx, px: 1.5, pt: { xs: 2, md: 3 }, pb: 2, display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1fr) 280px", lg: "minmax(0, 1fr) 288px" }, gap: { xs: 2, md: 3 }, alignItems: "start" }}>
+      <Box component="main" sx={{ ...contentColumnSx, px: 1.5, pt: { xs: 2, md: 3 }, pb: 2 }}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: { xs: 2, md: 3 }, minWidth: 0 }}>
           <Box id="synthese" sx={sectionSx}>
             <BusinessCard />
@@ -49,10 +49,10 @@ export function CertificatePage({ agencyId }: { agencyId: string }) {
             <BusinessPitch />
           </Box>
         </Box>
-        <DesktopActions />
       </Box>
       <CertificateFooter />
       <CertificateActions />
+      <DesktopScorePill />
     </CertificateProvider>
   );
 }

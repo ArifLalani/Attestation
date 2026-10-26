@@ -2,6 +2,10 @@
 
 import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
+import ButtonBase from "@mui/material/ButtonBase";
+import Fade from "@mui/material/Fade";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import Rating from "@mui/material/Rating";
 import SpeedDial from "@mui/material/SpeedDial";
 import SpeedDialAction from "@mui/material/SpeedDialAction";
@@ -10,52 +14,113 @@ import Close from "@mui/icons-material/Close";
 import PersonAddOutlined from "@mui/icons-material/PersonAddOutlined";
 import PhoneOutlined from "@mui/icons-material/PhoneOutlined";
 import RateReviewOutlined from "@mui/icons-material/RateReviewOutlined";
-import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { ReviewRequestSheet } from "@/components/reviews/ReviewRequestSheet";
-import { CtaButton } from "@/components/ui/CtaButton";
 import { FigmaIcon } from "@/components/ui/FigmaIcon";
-import { StaffAvatar } from "@/components/ui/StaffAvatar";
 import { opinionSystemLinks } from "@/data/opinionSystem";
 import { formatCount, formatScore } from "@/lib/format";
 import { isPublic, reviewsForScore, summarize } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
 import { useCertificate } from "./CertificateContext";
 import { ContactSheet } from "./ContactSheet";
-import { OpenStatus } from "./OpenStatus";
 
-/** Desktop companion to the mobile FAB, using the same active score and shared actions. */
-export function DesktopActions() {
+/**
+ * Desktop floating pill (900 px and up), replacing the side widget: the active score on the left
+ * (follows the Avis global / Avis Contrôlés switch and the selected advisor), a yellow "Contacter" on the
+ * right that opens the same actions as the phone FAB. Shown once the business card has scrolled away.
+ */
+export function DesktopScorePill() {
   const t = useTranslations("Actions");
   const tr = useTranslations("Reputation");
-  const { agency, team, reviews, scoreView, scoreCollaboratorId, setPanel } = useCertificate();
+  const { agency, reviews, scoreView, scoreCollaboratorId, setPanel, goToSection } = useCertificate();
   const summary = useMemo(() => summarize(reviewsForScore(reviews, scoreView, scoreCollaboratorId)), [reviews, scoreView, scoreCollaboratorId]);
-  const person = team.find((member) => member.id === scoreCollaboratorId);
   const visible = summary.average !== null && isPublic(summary.count, agency.publicThreshold);
+  const [shown, setShown] = useState(false);
+  const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const card = document.querySelector("#synthese article");
+    if (!card) return;
+    const observer = new IntersectionObserver(([entry]) => setShown(!entry.isIntersecting && entry.boundingClientRect.top < 0));
+    observer.observe(card);
+    return () => observer.disconnect();
+  }, []);
+
+  const actions = [
+    { key: "contact", icon: <PhoneOutlined fontSize="small" />, label: t("contact"), action: () => setPanel("contact") },
+    { key: "review", icon: <RateReviewOutlined fontSize="small" />, label: t("leaveReview"), action: () => setPanel("reviewRequest") },
+    { key: "signup", icon: <PersonAddOutlined fontSize="small" />, label: t("signup"), action: () => window.open(opinionSystemLinks.signup, "_blank", "noopener,noreferrer") },
+  ];
+  const controle = scoreView === "controle";
+
   return (
-    <Box component="aside" aria-labelledby="quick-actions-title" sx={{ display: { xs: "none", md: "flex" }, position: "sticky", top: "calc(var(--certificate-header-height, 104px) + 16px)", alignSelf: "start", bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCard, p: 2.5, flexDirection: "column", gap: 2 }}>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-        <Image src={agency.logo} alt="" width={44} height={44} style={{ objectFit: "contain", borderRadius: "50%" }} />
-        <Box sx={{ minWidth: 0 }}>
-          <Typography id="quick-actions-title" component="h2" sx={{ fontSize: 16, fontWeight: 600 }}>{agency.name}</Typography>
-          <Typography sx={{ fontSize: 12, color: tokens.gris }}>{agency.city}</Typography>
-        </Box>
+    <Fade in={shown}>
+      <Box
+        sx={{
+          display: { xs: "none", md: "flex" },
+          position: "fixed",
+          right: 24,
+          bottom: 24,
+          zIndex: (theme) => theme.zIndex.speedDial,
+          alignItems: "center",
+          gap: 1,
+          p: 0.5,
+          pl: visible ? 2 : 0.5,
+          borderRadius: "999px",
+          bgcolor: tokens.bleuFonce,
+          boxShadow: tokens.elevation6,
+        }}
+      >
+        {visible && (
+          <ButtonBase
+            onClick={() => goToSection("synthese")}
+            aria-label={`${tr(`views.${scoreView}`)} : ${tr("scoreAria", { score: formatScore(summary.average!) })}`}
+            sx={{ gap: 1, borderRadius: "999px", color: tokens.blanc }}
+          >
+            <Typography component="span" sx={{ fontSize: 18, fontWeight: 700, lineHeight: 1, color: controle ? tokens.vertOs : tokens.blanc }}>
+              {formatScore(summary.average!)}
+            </Typography>
+            <Rating readOnly value={summary.average} precision={0.1} sx={{ fontSize: 16, "& .MuiRating-iconEmpty": { color: "rgba(255,255,255,0.35)" } }} />
+            <Typography component="span" sx={{ fontSize: 12, color: "rgba(255,255,255,0.7)", whiteSpace: "nowrap" }}>
+              {tr("reviewCount", { count: formatCount(summary.count) })}
+            </Typography>
+          </ButtonBase>
+        )}
+        <ButtonBase
+          onClick={(event) => setMenuAnchor(event.currentTarget)}
+          aria-haspopup="menu"
+          aria-expanded={Boolean(menuAnchor)}
+          aria-label={t("openMenu")}
+          sx={{ gap: 0.5, px: 2, py: 1.25, borderRadius: "999px", bgcolor: tokens.jaune400, color: tokens.bleuFonce, fontSize: 14, fontWeight: 600, "&:hover": { bgcolor: tokens.jaune600 } }}
+        >
+          {t("contact")}
+          <FigmaIcon name="expand-more" />
+        </ButtonBase>
+        <Menu
+          anchorEl={menuAnchor}
+          open={Boolean(menuAnchor)}
+          onClose={() => setMenuAnchor(null)}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+          transformOrigin={{ vertical: "bottom", horizontal: "right" }}
+          slotProps={{ paper: { sx: { mb: 1, borderRadius: "12px", minWidth: 240 } }, list: { "aria-label": t("menuLabel") } }}
+        >
+          {actions.map((action) => (
+            <MenuItem
+              key={action.key}
+              onClick={() => {
+                setMenuAnchor(null);
+                action.action();
+              }}
+              sx={{ gap: 1.5, py: 1.25, fontSize: 14, fontWeight: 500, color: tokens.bleuFonce }}
+            >
+              {action.icon}
+              {action.label}
+            </MenuItem>
+          ))}
+        </Menu>
       </Box>
-      <Box sx={{ "& p": { whiteSpace: "normal" } }}><OpenStatus hours={agency.hours} /></Box>
-      <Box sx={{ py: 2, borderTop: `1px solid ${tokens.grisMoyen1}`, borderBottom: `1px solid ${tokens.grisMoyen1}`, display: "flex", flexDirection: "column", alignItems: "center", gap: 1 }}>
-        <Typography sx={{ fontSize: 12, color: tokens.gris, fontWeight: 600 }}>{tr(`views.${scoreView}`)}</Typography>
-        {person && <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}><StaffAvatar person={person} /><Typography sx={{ fontSize: 13, fontWeight: 500 }}>{person.name}</Typography></Box>}
-        {visible ? <>
-          <Typography sx={{ fontSize: 40, lineHeight: 1.2, fontWeight: 700, color: scoreView === "controle" ? tokens.vertOs : tokens.bleuFonce }}>{formatScore(summary.average!)}<Box component="span" sx={{ fontSize: 16, color: tokens.gris }}>/5</Box></Typography>
-          <Rating readOnly value={summary.average} precision={0.1} aria-label={tr("scoreAria", { score: formatScore(summary.average!) })} />
-          <Typography sx={{ fontSize: 13, color: tokens.gris }}>{tr("reviewCount", { count: formatCount(summary.count) })}</Typography>
-        </> : <Typography sx={{ fontSize: 13, color: tokens.gris }}>{tr("notPublic")}</Typography>}
-      </Box>
-      <CtaButton onClick={() => setPanel("contact")} icon={null}>{t("contact")}</CtaButton>
-      <CtaButton variant="secondary" onClick={() => setPanel("reviewRequest")} icon={null}>{t("leaveReview")}</CtaButton>
-      <CtaButton variant="secondary" href={opinionSystemLinks.signup} target="_blank" rel="noopener noreferrer" icon={null} sx={{ fontSize: 13 }}>{t("signup")}</CtaButton>
-    </Box>
+    </Fade>
   );
 }
 

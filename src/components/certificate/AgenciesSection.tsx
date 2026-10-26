@@ -86,8 +86,8 @@ export function AgenciesSection() {
     <Box component="section" aria-labelledby="agencies-title" sx={{ bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCard, px: 1.5, py: 2, display: "flex", flexDirection: "column", gap: 2 }}>
       <CardTitle id="agencies-title" eyebrow={t("eyebrow")} heading={t("heading")} />
       <Typography sx={{ fontSize: 14, color: tokens.gris }}>{t("description", { name: agency.name })}</Typography>
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", lg: "minmax(0, 1fr) minmax(0, 1fr)" }, gap: 2, alignItems: "start" }}>
-      <Box ref={mapContainer} role="region" aria-label={t("mapLabel")} sx={{ height: { xs: 215, lg: 440 }, width: "100%", borderRadius: "12px", overflow: "hidden", bgcolor: tokens.grisClair2, position: { lg: "sticky" }, top: { lg: tokens.headerHeight + 16 } }}>
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1fr) minmax(0, 1fr)" }, gap: 2, alignItems: "start" }}>
+      <Box ref={mapContainer} role="region" aria-label={t("mapLabel")} sx={{ height: { xs: 215, md: 400 }, width: "100%", borderRadius: "12px", overflow: "hidden", bgcolor: tokens.grisClair2, position: { md: "sticky" }, top: { md: tokens.headerHeight + 16 } }}>
         {mapVisible ? <AgencyMap agencies={locations} selectedId={selected.id} onSelect={setSelectedId} /> : <Box sx={{ height: "100%", display: "grid", placeItems: "center", fontSize: 14, color: tokens.gris }}>{t("mapLoading")}</Box>}
       </Box>
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
