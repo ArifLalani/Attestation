@@ -300,7 +300,8 @@
       "agency": "{agency}",
       "readMore": "Lire la suite",
       "readLess": "Réduire"
-    }
+    },
+    "sortShort": "Trier"
   },
   "Filters": {
     "title": "Filtres",

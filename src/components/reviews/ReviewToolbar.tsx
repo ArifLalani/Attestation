@@ -13,6 +13,9 @@ import { formatCount } from "@/lib/format";
 import { applyFilters, countActiveFilters } from "@/lib/reviewFilters";
 import { tokens } from "@/theme/theme";
 
+/** Desktop only: the word next to the filter and sort icons. */
+const desktopLabelSx = { display: { xs: "none", md: "inline" }, ml: 0.75, fontSize: 14, fontWeight: 500, lineHeight: "normal", color: tokens.bleuFonce } as const;
+
 /** Count chip + filter (with badge) + sort. Figma "Filteres" → "Filters Row". Used in the card and in the pinned header. */
 export function ReviewToolbar({ onCountClick }: { onCountClick?: () => void } = {}) {
   const t = useTranslations("Reviews");
@@ -68,9 +71,11 @@ export function ReviewToolbar({ onCountClick }: { onCountClick?: () => void } = 
         >
           <FigmaIcon name="funnel" />
         </Badge>
+        <Box component="span" sx={desktopLabelSx}>{t("filters")}</Box>
       </IconButton>
       <IconButton onClick={() => setPanel("sort")} aria-label={t("sort")} sx={{ p: 0.5, borderRadius: "8px", bgcolor: tokens.blanc }}>
         <FigmaIcon name="sort-ascending" />
+        <Box component="span" sx={desktopLabelSx}>{t("sortShort")}</Box>
       </IconButton>
     </Box>
   );
