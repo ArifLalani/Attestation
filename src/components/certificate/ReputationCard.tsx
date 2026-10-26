@@ -150,8 +150,8 @@ export function ReputationCard() {
     <Box component="section" aria-labelledby="reputation-heading" sx={cardSx}>
       <CardTitle id="reputation-heading" eyebrow={t("eyebrow")} heading={t(`heading.${visible ? headingFor(summary.average!) : "start"}`)} />
 
-      {/* Score affiché pour */}
-      <Box>
+      {/* Score affiché pour. Desktop: half width, so it ends where the Avis global tab ends. */}
+      <Box sx={{ width: { md: "50%" } }}>
         <Typography component="label" htmlFor="score-for" sx={{ display: "block", fontSize: 12, fontWeight: 600, color: tokens.gris, lineHeight: "normal" }}>
           {t("scoreFor")}
         </Typography>
