@@ -102,7 +102,8 @@ export function BusinessCard() {
         </Box>
       </Box>
 
-      <Box sx={{ display: "flex", gap: 2, px: 1.5, pb: 1.5 }}>
+      {/* Desktop: the three buttons take the left half of the card. */}
+      <Box sx={{ display: "flex", gap: { xs: 2, md: 1.5 }, px: 1.5, pb: 1.5, width: { md: "50%" } }}>
         <Button sx={chipButtonSx} onClick={() => setPanel("contact")}>
           {t("contact")}
         </Button>
