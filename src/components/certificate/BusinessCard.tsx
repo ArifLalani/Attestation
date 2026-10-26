@@ -60,13 +60,35 @@ export function BusinessCard() {
     setCopied(true);
   };
 
+  const actionButtons = (
+    <>
+      <Button sx={chipButtonSx} onClick={() => setPanel("contact")}>
+        {t("contact")}
+      </Button>
+      <Button sx={chipButtonSx} href={agency.website} target="_blank" rel="noopener noreferrer">
+        {t("website")}
+      </Button>
+      <Button
+        sx={chipButtonSx}
+        href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(agency.address)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={(event) => {
+          event.currentTarget.setAttribute("href", directionsUrl(agency.address));
+        }}
+      >
+        {t("directions")}
+      </Button>
+      </>
+  );
+
   return (
     <Box component="article" sx={{ ...cardSx, overflow: "hidden", display: "flex", flexDirection: "column", gap: 2 }}>
       <Box sx={{ position: "relative", height: { xs: 150, md: 220, lg: 280 }, background: "linear-gradient(147.875deg, rgb(143,178,219) 0%, rgb(201,219,240) 71.429%)" }}>
         <Image src={agency.coverPhoto} alt={t("coverAlt", { name: agency.name })} fill priority sizes="(min-width: 1200px) 864px, (min-width: 900px) calc(100vw - 328px), (min-width: 640px) 616px, 100vw" style={{ objectFit: "cover" }} />
       </Box>
 
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 1, px: 1.5 }}>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 1, px: 1.5, pb: { md: 2 } }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <Box sx={{ width: 40, height: 40, borderRadius: "100px", overflow: "hidden", flexShrink: 0, py: "2px" }}>
             {/* Crop of the logo image as set in Figma ("image 4"). */}
@@ -95,32 +117,18 @@ export function BusinessCard() {
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, minHeight: 21 }}>
             <FigmaIcon name="map-pin" />
-            <Typography component="address" sx={{ fontSize: 14, fontStyle: "normal", color: tokens.gris, lineHeight: "normal" }}>
+            <Typography component="address" sx={{ flex: 1, fontSize: 14, fontStyle: "normal", color: tokens.gris, lineHeight: "normal" }}>
               {agency.address}
             </Typography>
+            {/* Desktop: the buttons sit on the address line, on the right, under the open/closed status. */}
+            <Box sx={{ display: { xs: "none", md: "flex" }, gap: 1.5, "& > .MuiButton-root": { flex: "0 0 128px" } }}>{actionButtons}</Box>
           </Box>
         </Box>
       </Box>
 
-      {/* Desktop: the three buttons take the left half of the card. */}
-      <Box sx={{ display: "flex", gap: { xs: 2, md: 1.5 }, px: 1.5, pb: 1.5, width: { md: "50%" } }}>
-        <Button sx={chipButtonSx} onClick={() => setPanel("contact")}>
-          {t("contact")}
-        </Button>
-        <Button sx={chipButtonSx} href={agency.website} target="_blank" rel="noopener noreferrer">
-          {t("website")}
-        </Button>
-        <Button
-          sx={chipButtonSx}
-          href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(agency.address)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={(event) => {
-            event.currentTarget.setAttribute("href", directionsUrl(agency.address));
-          }}
-        >
-          {t("directions")}
-        </Button>
+      {/* Phones and tablets: the three buttons on their own row, as in the Figma. */}
+      <Box sx={{ display: { xs: "flex", md: "none" }, gap: 2, px: 1.5, pb: 1.5 }}>
+        {actionButtons}
       </Box>
 
       <Snackbar open={copied} autoHideDuration={2500} onClose={() => setCopied(false)} message={t("linkCopied")} anchorOrigin={{ vertical: "bottom", horizontal: "center" }} />
