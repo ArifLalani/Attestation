@@ -92,6 +92,7 @@ export function LearnMoreContent({ view, inline = false }: { view: ScoreView; in
 
   const sources = controle ? controleSources : globalSources;
   const largest = Math.max(1, ...sources.map((source) => counts[source] ?? 0));
+  const steps = t.raw("controlSteps") as string[];
 
   return (
     <Box
@@ -136,6 +137,22 @@ export function LearnMoreContent({ view, inline = false }: { view: ScoreView; in
             );
           })}
         </Box>
+
+        {controle && (
+          <Box sx={{ mt: 1, display: "flex", flexDirection: "column", gap: 2 }}>
+            <Typography component="h3" sx={{ fontSize: 16, fontWeight: 600, lineHeight: 1.5 }}>{t("controlTitle")}</Typography>
+            <Box component="ol" sx={{ listStyle: "none", m: 0, p: 0, display: "flex", flexDirection: "column", gap: 1.5 }}>
+              {steps.map((step, index) => (
+                <Box component="li" key={step} sx={{ display: "flex", gap: 1.5, alignItems: "flex-start" }}>
+                  <Box aria-hidden sx={{ width: 22, height: 22, flexShrink: 0, borderRadius: "50%", bgcolor: tokens.vertOs, color: tokens.blanc, display: "grid", placeItems: "center", fontSize: 12, fontWeight: 700 }}>
+                    {index + 1}
+                  </Box>
+                  <Typography sx={{ fontSize: 14, lineHeight: 1.5 }}>{step}</Typography>
+                </Box>
+              ))}
+            </Box>
+          </Box>
+        )}
       </Box>
     </Box>
   );

@@ -76,6 +76,13 @@
     "introGlobal": "La note Avis global est la moyenne de tous les avis de l’agence, quelle que soit leur source. Aucun avis ne peut être masqué par l’agence.",
     "introControle": "Les avis contrôlés viennent des propres clients de l'agence. Chaque questionnaire est conçu et géré par Opinion System, organisme certifié AFNOR, puis contrôlé avant publication.",
     "sourcesTitle": "D'où viennent ces avis ?",
+    "controlTitle": "Comment Opinion System les contrôle",
+    "controlSteps": [
+      "L'agence envoie le questionnaire Opinion System à son client, après une vente, une location ou un rendez-vous.",
+      "Le client répond. Son identité et son achat sont vérifiés.",
+      "Opinion System contrôle les réponses et publie l'avis, positif ou négatif.",
+      "Les avis importés de sources certifiées ISO suivent le même contrôle."
+    ],
     "close": "Fermer",
     "count": "{count} avis"
   },
