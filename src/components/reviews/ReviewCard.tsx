@@ -5,12 +5,15 @@ import ButtonBase from "@mui/material/ButtonBase";
 import Collapse from "@mui/material/Collapse";
 import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { useCertificate } from "@/components/certificate/CertificateContext";
 import { FigmaIcon, type FigmaIconName } from "@/components/ui/FigmaIcon";
 import { StaffAvatar } from "@/components/ui/StaffAvatar";
+import { womenFirstNames } from "@/data/content";
 import type { Review, ReviewSource } from "@/data/types";
 import { formatCount, formatScore } from "@/lib/format";
 import { tokens } from "@/theme/theme";
@@ -30,6 +33,36 @@ export function SourceIcon({ review, alt = "" }: { review: Pick<Review, "source"
   return (
     <Box sx={{ width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
       <FigmaIcon name={icon} alt={alt} />
+    </Box>
+  );
+}
+
+const womenPhotos = [21, 33, 44, 47, 52, 63, 68, 75, 79, 90];
+const menPhotos = [12, 22, 32, 41, 46, 52, 57, 64, 75, 85];
+
+function hashOf(text: string) {
+  let hash = 0;
+  for (const char of text) hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+  return hash;
+}
+
+/** Figma "<Avatar>" (1502:30351): first-name initial. Google reviewers show a demo profile photo, as Google does. */
+function ReviewerAvatar({ review }: { review: Review }) {
+  const firstName = review.authorName.split(" ")[0];
+  const sx = { width: 40, height: 40, borderRadius: "50%", flexShrink: 0, overflow: "hidden" } as const;
+  if (review.platform === "google") {
+    const woman = womenFirstNames.has(firstName);
+    const photos = woman ? womenPhotos : menPhotos;
+    const src = `/images/reviewers/${woman ? "w" : "m"}${photos[hashOf(review.id) % photos.length]}.jpg`;
+    return (
+      <Box sx={{ ...sx, position: "relative" }}>
+        <Image src={src} alt="" fill sizes="40px" />
+      </Box>
+    );
+  }
+  return (
+    <Box aria-hidden sx={{ ...sx, display: "grid", placeItems: "center", bgcolor: "#ede7f6", color: "#4527a0", fontSize: 16, fontWeight: 700, lineHeight: 1 }}>
+      {firstName[0]}
     </Box>
   );
 }
@@ -172,6 +205,108 @@ function ReviewDetails({ review }: { review: Review }) {
   );
 }
 
+/** Figma "RatingBar" in the desktop review card (1478:36211): big percentage over its label. */
+function LevelBox({ label, value, tone }: { label: string; value: number; tone: "blue" | "gold" }) {
+  const blue = tone === "blue";
+  return (
+    <Box
+      sx={{
+        flex: "1 1 0",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        p: 1.5,
+        borderRadius: "12px",
+        border: `1px solid ${tokens.grisMoyen1}`,
+        bgcolor: blue ? "rgba(44, 149, 255, 0.2)" : "#efeade",
+        color: blue ? tokens.bleuFonce : "#bf872c",
+        textAlign: "center",
+      }}
+    >
+      <Typography sx={{ fontSize: 24, fontWeight: 700, lineHeight: 1.5 }}>{value}%</Typography>
+      <Typography sx={{ fontSize: 12, fontWeight: 600, lineHeight: 1.5, maxWidth: 130 }}>{label}</Typography>
+    </Box>
+  );
+}
+
+const columnDividerSx = { width: "1px", flexShrink: 0, bgcolor: tokens.grisMoyen1 } as const;
+
+/**
+ * Desktop "Détails" (Figma 1478:36205): "Répartition des notes" over three columns: the two levels, the scores and the facts.
+ * Imports have no survey: their facts are spread over two columns.
+ */
+function DesktopReviewDetails({ review }: { review: Review }) {
+  const t = useTranslations("Reviews.detail");
+  const ts = useTranslations("SourceNames");
+  const tp = useTranslations("Platforms");
+  const ta = useTranslations("Activities");
+  const { team } = useCertificate();
+  const survey = review.survey;
+  const person = team.find((member) => member.id === review.collaboratorId);
+
+  const facts = (
+    <>
+      <DetailRow label={t("source")}>
+        {/* Opinion System surveys show the Opinion System mark, as in the Figma; imports show their own icon. */}
+        <SourceIcon review={survey ? { source: "os_certified" } : review} />
+        {review.platform ? tp(review.platform) : ts(review.source)}
+      </DetailRow>
+      {survey && (
+        <DetailRow label={t("questionnaire")}>
+          <SourceIcon review={review} />
+          {t(survey.questionnaire === "controle" ? "questionnaireControle" : "questionnaireSimple")}
+        </DetailRow>
+      )}
+      {person && <DetailRow label={t("collaborator")}>{person.name}</DetailRow>}
+      <DetailRow label={t("activity")}>{ta(review.product)}</DetailRow>
+      <DetailRow label={t("number")}>{review.reviewNumber}</DetailRow>
+    </>
+  );
+
+  if (!survey) {
+    return (
+      <Box component="dl" sx={{ m: 0, display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", columnGap: 5, rowGap: 1 }}>
+        {facts}
+      </Box>
+    );
+  }
+
+  return (
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+      <Typography component="h4" sx={{ fontSize: 14, fontWeight: 600, lineHeight: 1.5, color: tokens.bleuFonce }}>
+        {t("breakdown")}
+      </Typography>
+      <Box sx={{ display: "flex", gap: 2.5 }}>
+        <Box sx={{ width: 182, flexShrink: 0, display: "flex", flexDirection: "column", gap: 2 }}>
+          <LevelBox label={t("recommendationLevel")} value={survey.recommendation} tone="blue" />
+          <LevelBox label={t("satisfactionLevel")} value={survey.satisfaction} tone="gold" />
+        </Box>
+        <Box sx={columnDividerSx} />
+        <Box sx={{ flex: "442 1 0", minWidth: 0, display: "flex", flexDirection: "column", gap: 1 }}>
+          {survey.scores.map((score) => (
+            <Box key={score.label}>
+              <Typography sx={{ fontSize: 14, lineHeight: "17px", color: tokens.gris }}>{score.label}</Typography>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 2, minHeight: 21 }}>
+                <Box sx={{ flex: 1, height: 6, borderRadius: "3px", bgcolor: tokens.grisMoyen1, overflow: "hidden" }}>
+                  <Box sx={{ height: "100%", width: `${score.score * 10}%`, borderRadius: "3px", bgcolor: tokens.bleu400 }} />
+                </Box>
+                <Typography component="span" sx={{ minWidth: 16, textAlign: "right", fontSize: 14, fontWeight: 600, lineHeight: "normal", color: tokens.bleuFonce }}>
+                  {score.score}
+                </Typography>
+              </Box>
+            </Box>
+          ))}
+        </Box>
+        <Box sx={columnDividerSx} />
+        <Box component="dl" sx={{ flex: "362 1 0", minWidth: 0, m: 0, display: "flex", flexDirection: "column", gap: 2 }}>
+          {facts}
+        </Box>
+      </Box>
+    </Box>
+  );
+}
+
 /** Public reply (not in the Figma yet): green rule, staff avatar, name · agency, date, text. */
 function ReviewReplyBlock({ review }: { review: Review }) {
   const t = useTranslations("Reviews.reply");
@@ -228,6 +363,8 @@ export function ReviewCard({ review, onReport }: { review: Review; onReport: (re
   const [closedOffscreen, setClosedOffscreen] = useState(false);
   const cardRef = useRef<HTMLElement>(null);
   const { voted, toggle } = useUsefulVote(review.id);
+  // Desktop: the open details use three columns. They only render after a tap, so this never runs on the server.
+  const desktop = useMediaQuery("(min-width:900px)", { noSsr: true });
 
   // Once an open review has scrolled entirely above the pinned header, close it, and keep what the reader sees in place.
   useEffect(() => {
@@ -259,6 +396,8 @@ export function ReviewCard({ review, onReport }: { review: Review; onReport: (re
   }, [expanded]);
   const usefulCount = review.usefulCount + (voted ? 1 : 0);
   const detailsId = `review-details-${review.id}`;
+  const labelSx = { display: { xs: expanded ? "inline" : "none", md: "inline" } } as const;
+  const phoneOnlySx = { display: { md: "none" } } as const;
 
   const actions = (
     <Box sx={{ display: "flex", alignItems: "center", gap: "6px" }}>
@@ -269,11 +408,21 @@ export function ReviewCard({ review, onReport }: { review: Review; onReport: (re
         sx={{ ...actionSx, color: tokens.bleu600, fontWeight: voted ? 700 : 500 }}
       >
         <FigmaIcon name="thumbs-up" />
-        {expanded ? <>{t("useful")}{usefulCount > 0 && ` (${formatCount(usefulCount)})`}</> : formatCount(usefulCount)}
+        {/* Phones: "8" when closed, "Utile (8)" when open. Desktop: always "Utile 8". Done in CSS so the server HTML matches. */}
+        <Box component="span" sx={labelSx}>{t("useful")}</Box>
+        {usefulCount > 0 ? (
+          <Box component="span">
+            {expanded && <Box component="span" sx={phoneOnlySx}>(</Box>}
+            {formatCount(usefulCount)}
+            {expanded && <Box component="span" sx={phoneOnlySx}>)</Box>}
+          </Box>
+        ) : (
+          !expanded && <Box component="span" sx={phoneOnlySx}>0</Box>
+        )}
       </ButtonBase>
-      <ButtonBase onClick={() => onReport(review)} aria-label={t("report")} sx={{ ...actionSx, color: tokens.error3, ml: 1 }}>
+      <ButtonBase onClick={() => onReport(review)} aria-label={t("report")} sx={{ ...actionSx, color: tokens.error3, ml: { xs: 1, md: 1.25 } }}>
         <FigmaIcon name="flag" />
-        {expanded && t("report")}
+        <Box component="span" sx={labelSx}>{t("report")}</Box>
       </ButtonBase>
       <ButtonBase
         onClick={() => {
@@ -297,7 +446,8 @@ export function ReviewCard({ review, onReport }: { review: Review; onReport: (re
       ref={cardRef}
       sx={{
         borderTop: `1px solid ${tokens.grisMoyen1}`,
-        p: 1.5,
+        px: { xs: 1.5, md: 2 },
+        py: 1.5,
         bgcolor: expanded ? tokens.bleu5 : tokens.blanc,
         transition: "background-color 200ms ease",
         display: "flex",
@@ -305,12 +455,15 @@ export function ReviewCard({ review, onReport }: { review: Review; onReport: (re
         gap: expanded ? 2 : 0,
       }}
     >
-      {/* Title information */}
+      {/* Title information: avatar and name, then the date under the name. */}
       <Box>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Typography component="h3" sx={{ flex: 1, minWidth: 0, fontSize: 16, fontWeight: 600, lineHeight: "normal", color: tokens.bleuFonce }}>
-            {review.authorName}
-          </Typography>
+          <Box sx={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: { xs: 1.5, md: 2 } }}>
+            <ReviewerAvatar review={review} />
+            <Typography component="h3" sx={{ minWidth: 0, fontSize: 16, fontWeight: 600, lineHeight: "normal", color: tokens.bleuFonce }}>
+              {review.authorName}
+            </Typography>
+          </Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <TypeChip status={review.status} />
             <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -322,7 +475,7 @@ export function ReviewCard({ review, onReport }: { review: Review; onReport: (re
           </Box>
         </Box>
         <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-          <Typography sx={{ flex: 1, fontSize: 14, lineHeight: "normal", color: tokens.gris }}>{relative(review.daysAgo)}</Typography>
+          <Typography sx={{ flex: 1, pl: { xs: "52px", md: "56px" }, fontSize: 14, lineHeight: "normal", color: tokens.gris }}>{relative(review.daysAgo)}</Typography>
           <Rating
             value={review.rating}
             precision={0.1}
@@ -369,7 +522,7 @@ export function ReviewCard({ review, onReport }: { review: Review; onReport: (re
       {!closedOffscreen && (
         <Collapse in={expanded} unmountOnExit timeout={250}>
           <Box id={detailsId} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <ReviewDetails review={review} />
+            {desktop ? <DesktopReviewDetails review={review} /> : <ReviewDetails review={review} />}
             {review.reply && <ReviewReplyBlock review={review} />}
           </Box>
         </Collapse>

@@ -291,6 +291,8 @@
       "recommendation": "Recommandation",
       "satisfaction": "Satisfaction",
       "breakdown": "Répartition des notes",
+      "recommendationLevel": "Niveau de Recommandation",
+      "satisfactionLevel": "Niveau de Satisfaction",
       "source": "Source de l’avis",
       "questionnaire": "Questionnaire",
       "questionnaireControle": "Contrôlé",

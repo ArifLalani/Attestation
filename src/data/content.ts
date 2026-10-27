@@ -11,6 +11,12 @@ export const firstNames = [
   "Brigitte", "Kevin", "Morgane", "Gilles", "Océane", "Bernard", "Léa", "Damien", "Chantal", "Florian",
 ];
 
+/** Reviewer first names that are women, to give Google reviewers a matching demo photo. */
+export const womenFirstNames = new Set([
+  "Camille", "Nathalie", "Sophie", "Isabelle", "Céline", "Marion", "Aurélie", "Élodie", "Laure", "Sandrine", "Claire", "Valérie", "Delphine", "Anne", "Hélène",
+  "Manon", "Pauline", "Émilie", "Charlotte", "Agnès", "Sylvie", "Mélanie", "Lucie", "Caroline", "Juliette", "Brigitte", "Morgane", "Océane", "Léa", "Chantal",
+]);
+
 export const lastInitials = "ABCDEFGHJLMNPRSTV".split("");
 
 /** Criteria of each product's questionnaire, scored out of 10 in Détails. */
