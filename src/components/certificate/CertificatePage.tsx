@@ -9,6 +9,7 @@ import { AppHeader, contentColumnSx } from "./AppHeader";
 import { BusinessCard } from "./BusinessCard";
 import { CertificateProvider, sectionIds, type SectionId } from "./CertificateContext";
 import { ReputationCard } from "./ReputationCard";
+import { AskAiCard } from "./AskAiCard";
 import { TeamSection } from "./TeamSection";
 import { AgenciesSection } from "./AgenciesSection";
 import { QualitySection } from "./QualitySection";
@@ -36,6 +37,7 @@ export function CertificatePage({ agencyId }: { agencyId: string }) {
           <Box id="synthese" sx={sectionSx}>
             <BusinessCard />
             <ReputationCard />
+            <AskAiCard />
           </Box>
           <Box id="avis" sx={sectionSx}>
             <ReviewsSection />

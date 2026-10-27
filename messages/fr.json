@@ -393,7 +393,9 @@
   "Assistant": {
     "title": "Assistant IA",
     "close": "Fermer l'assistant",
-    "stripTitle": "Une question sur cette agence ? Demandez à l'IA",
+    "cardEyebrow": "Assistant IA",
+    "cardHeading": "Une question sur cette agence ?",
+    "cardText": "Demandez à l'IA : elle vous répond à partir des avis clients.",
     "stripHint": "Choisissez votre assistant :",
     "answerWith": "Répondre avec",
     "models": {
