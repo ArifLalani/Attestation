@@ -141,14 +141,9 @@ export function LearnMoreContent({ view, inline = false }: { view: ScoreView; in
         {controle && (
           <Box sx={{ mt: 1, display: "flex", flexDirection: "column", gap: 2 }}>
             <Typography component="h3" sx={{ fontSize: 16, fontWeight: 600, lineHeight: 1.5 }}>{t("controlTitle")}</Typography>
-            <Box component="ol" sx={{ listStyle: "none", m: 0, p: 0, display: "flex", flexDirection: "column", gap: 1.5 }}>
-              {steps.map((step, index) => (
-                <Box component="li" key={step} sx={{ display: "flex", gap: 1.5, alignItems: "flex-start" }}>
-                  <Box aria-hidden sx={{ width: 22, height: 22, flexShrink: 0, borderRadius: "50%", bgcolor: tokens.vertOs, color: tokens.blanc, display: "grid", placeItems: "center", fontSize: 12, fontWeight: 700 }}>
-                    {index + 1}
-                  </Box>
-                  <Typography sx={{ fontSize: 14, lineHeight: 1.5 }}>{step}</Typography>
-                </Box>
+            <Box component="ol" sx={{ m: 0, pl: 2.5, display: "flex", flexDirection: "column", gap: 1, "& li": { fontSize: 14, lineHeight: 1.5 }, "& li::marker": { fontWeight: 700 } }}>
+              {steps.map((step) => (
+                <li key={step}>{step}</li>
               ))}
             </Box>
           </Box>
