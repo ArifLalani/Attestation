@@ -13,6 +13,7 @@
   "Business": {
     "share": "Partager",
     "linkCopied": "Lien copié",
+    "addressLink": "{address} — voir sur la carte de nos agences",
     "shareText": "Découvrez les avis contrôlés de {name} sur Opinion System",
     "contact": "Contacter",
     "website": "Site web",

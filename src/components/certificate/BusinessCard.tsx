@@ -3,6 +3,7 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
+import Link from "@mui/material/Link";
 import Snackbar from "@mui/material/Snackbar";
 import Typography from "@mui/material/Typography";
 import Image from "next/image";
@@ -118,7 +119,21 @@ export function BusinessCard() {
           <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, minHeight: 21 }}>
             <FigmaIcon name="map-pin" />
             <Typography component="address" sx={{ flex: 1, fontSize: 14, fontStyle: "normal", color: tokens.gris, lineHeight: "normal" }}>
-              {agency.address}
+              {/* Jumps to the map and hours in Nos Agences. */}
+              <Link
+                href="#nos-agences"
+                aria-label={t("addressLink", { address: agency.address })}
+                onClick={(event) => {
+                  const target = document.getElementById("nos-agences");
+                  if (!target) return;
+                  event.preventDefault();
+                  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+                  target.scrollIntoView({ behavior: reduced ? "instant" : "smooth" });
+                }}
+                sx={{ color: "inherit", textDecoration: "none", textUnderlineOffset: "3px", "&:hover": { textDecoration: "underline" } }}
+              >
+                {agency.address}
+              </Link>
             </Typography>
             {/* Desktop: the buttons sit on the address line, on the right, under the open/closed status. */}
             <Box sx={{ display: { xs: "none", md: "flex" }, gap: 1.5, "& > .MuiButton-root": { flex: "0 0 128px" } }}>{actionButtons}</Box>

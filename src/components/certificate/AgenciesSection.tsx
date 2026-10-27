@@ -83,7 +83,7 @@ export function AgenciesSection() {
   }, []);
 
   return (
-    <Box component="section" aria-labelledby="agencies-title" sx={{ bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCard, px: 1.5, py: 2, display: "flex", flexDirection: "column", gap: 2 }}>
+    <Box component="section" id="nos-agences" aria-labelledby="agencies-title" sx={{ scrollMarginTop: `${tokens.headerHeight + 16}px`, bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCard, px: 1.5, py: 2, display: "flex", flexDirection: "column", gap: 2 }}>
       <CardTitle id="agencies-title" eyebrow={t("eyebrow")} heading={t("heading")} />
       <Typography sx={{ fontSize: 14, color: tokens.gris }}>{t("description", { name: agency.name })}</Typography>
       <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1fr) minmax(0, 1fr)" }, gap: 2, alignItems: "start" }}>
