@@ -57,6 +57,12 @@ export function CollaboratorPicker({
 }) {
   const desktop = useMediaQuery("(min-width:900px)", { noSsr: true });
   const dropdown = desktop && Boolean(anchorEl);
+  // A field low in the window (e.g. inside the Filtres dropdown) opens the list upwards instead of covering the field.
+  const rect = dropdown && open && anchorEl ? anchorEl.getBoundingClientRect() : null;
+  const spaceBelow = rect ? window.innerHeight - rect.bottom - 24 : 460;
+  const spaceAbove = rect ? rect.top - 24 : 0;
+  const upward = spaceBelow < 300 && spaceAbove > spaceBelow;
+  const placement = { upward, maxHeight: Math.min(460, upward ? spaceAbove : Math.max(spaceBelow, 300)) };
   const t = useTranslations("Collaborators");
   const ts = useTranslations("Sort");
   const { team, reviews, agency } = useCertificate();
@@ -155,12 +161,12 @@ export function CollaboratorPicker({
           open={open}
           anchorEl={anchorEl}
           onClose={onClose}
-          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-          transformOrigin={{ vertical: "top", horizontal: "left" }}
+          anchorOrigin={{ vertical: placement.upward ? "top" : "bottom", horizontal: "left" }}
+          transformOrigin={{ vertical: placement.upward ? "bottom" : "top", horizontal: "left" }}
           slotProps={{
             paper: {
               "aria-label": t("title"),
-              sx: { mt: 1, width: anchorEl?.offsetWidth, maxHeight: 460, display: "flex", flexDirection: "column", borderRadius: "12px", overflow: "hidden" },
+              sx: { mt: placement.upward ? -1 : 1, width: anchorEl?.offsetWidth, maxHeight: placement.maxHeight, display: "flex", flexDirection: "column", borderRadius: "12px", overflow: "hidden" },
             },
           }}
         >

@@ -6,10 +6,12 @@ import Typography from "@mui/material/Typography";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useCertificate } from "@/components/certificate/CertificateContext";
+import { CollaboratorPicker } from "@/components/certificate/CollaboratorPicker";
 import { CtaButton } from "@/components/ui/CtaButton";
 import { ChoiceChip, StarLabel } from "@/components/ui/FilterChip";
 import { FigmaIcon } from "@/components/ui/FigmaIcon";
 import { ResponsiveSheet } from "@/components/ui/ResponsiveSheet";
+import { StaffAvatar } from "@/components/ui/StaffAvatar";
 import type { Criterion, Product } from "@/data/types";
 import { countActiveFilters, emptyFilters, sameFilters, type Period, type ReviewFilters } from "@/lib/reviewFilters";
 import type { StarBucket } from "@/lib/scoring";
@@ -36,10 +38,12 @@ export function FiltersSheet() {
   const t = useTranslations("Filters");
   const tp = useTranslations("Products");
   const tc = useTranslations("Criteria");
-  const { filters, setFilters, panel, setPanel, panelAnchor } = useCertificate();
+  const { filters, setFilters, panel, setPanel, panelAnchor, team, scoreView } = useCertificate();
   const open = panel === "filters";
   const [draft, setDraft] = useState<ReviewFilters>(filters);
   const [wasOpen, setWasOpen] = useState(open);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [collaboratorEl, setCollaboratorEl] = useState<HTMLButtonElement | null>(null);
 
   // Start from the applied filters each time the panel opens.
   if (open !== wasOpen) {
@@ -59,6 +63,7 @@ export function FiltersSheet() {
   const changed = !sameFilters(draft, filters);
   const count = countActiveFilters(draft);
   const noteSelected = (stars: StarBucket) => draft.note?.stars === stars;
+  const person = team.find((member) => member.id === draft.collaboratorId);
 
   return (
     <>
@@ -70,7 +75,7 @@ export function FiltersSheet() {
         title={t("title")}
         closeLabel={t("close")}
         actions={
-          <ButtonBase onClick={() => setDraft({ ...emptyFilters, collaboratorId: filters.collaboratorId })} sx={{ px: 3, gap: 0, borderRadius: "8px", fontSize: 16, fontWeight: 600, color: tokens.bleuFonce }}>
+          <ButtonBase onClick={() => setDraft(emptyFilters)} sx={{ px: 3, gap: 0, borderRadius: "8px", fontSize: 16, fontWeight: 600, color: tokens.bleuFonce }}>
             <Box sx={{ p: 0.5, display: "flex" }}>
               <FigmaIcon name="reset" />
             </Box>
@@ -146,9 +151,49 @@ export function FiltersSheet() {
             ))}
           </Group>
 
+          {/* Figma "Collaborateur" (1395:92356): lets a collaborator removed from the chips be chosen again. */}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <Typography component="label" htmlFor="filter-collaborator" sx={{ fontSize: 16, fontWeight: 600, lineHeight: "normal", color: tokens.bleuFonce }}>
+              {t("collaborator")}
+            </Typography>
+            <ButtonBase
+              id="filter-collaborator"
+              ref={setCollaboratorEl}
+              onClick={() => setPickerOpen(true)}
+              aria-haspopup="listbox"
+              aria-expanded={pickerOpen}
+              sx={{
+                justifyContent: "flex-start",
+                gap: 1,
+                px: 2,
+                py: person ? 0.5 : 1.5,
+                minHeight: 45,
+                bgcolor: tokens.blanc,
+                border: `1px solid ${tokens.grisMoyen1}`,
+                borderRadius: "8px",
+                textAlign: "left",
+                "&:hover": { borderColor: tokens.bleu30 },
+              }}
+            >
+              {person && <StaffAvatar person={person} />}
+              <Typography component="span" sx={{ flex: 1, fontSize: 14, fontWeight: 600, lineHeight: "normal", color: tokens.bleuFonce }}>
+                {person ? person.name : t("wholeTeam")}
+              </Typography>
+              <FigmaIcon name={person ? "arrows-clockwise" : "expand-more"} />
+            </ButtonBase>
+          </Box>
         </Box>
       </ResponsiveSheet>
 
+      {/* Phones: a second sheet over the filters. Desktop: a dropdown under the field. */}
+      <CollaboratorPicker
+        open={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        selectedId={draft.collaboratorId}
+        onSelect={(id) => setDraft((current) => ({ ...current, collaboratorId: id }))}
+        view={scoreView}
+        anchorEl={pickerOpen ? collaboratorEl : null}
+      />
     </>
   );
 }
