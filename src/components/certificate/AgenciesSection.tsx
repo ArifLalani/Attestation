@@ -5,7 +5,7 @@ import ButtonBase from "@mui/material/ButtonBase";
 import Collapse from "@mui/material/Collapse";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-import NextLink from "next/link";
+import OpenInNew from "@mui/icons-material/OpenInNew";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
@@ -20,6 +20,7 @@ import { useNow } from "@/lib/hooks";
 import { localClock } from "@/lib/hours";
 import { isPublic, reviewsForScore, summarize } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
+import { AgencyPhotos } from "./AgencyPhotos";
 import { useCertificate } from "./CertificateContext";
 import { OpenStatus } from "./OpenStatus";
 import { CardTitle } from "./ReputationCard";
@@ -34,7 +35,8 @@ function AgencyLetter({ index }: { index: number }) {
 function OpeningHours({ agency }: { agency: Agency }) {
   const t = useTranslations("Agencies");
   const th = useTranslations("Hours");
-  const [expanded, setExpanded] = useState(true);
+  // Collapsed to one line, as in the Figma; the arrow shows the week.
+  const [expanded, setExpanded] = useState(false);
   const hoursId = useId();
   const now = useNow();
   const today = now ? localClock(now).weekday : -1;
@@ -43,8 +45,8 @@ function OpeningHours({ agency }: { agency: Agency }) {
       <ButtonBase onClick={() => setExpanded((value) => !value)} aria-label={t("toggleHours")} aria-expanded={expanded} aria-controls={hoursId}
         sx={{ display: "flex", gap: 2, width: "100%", justifyContent: "flex-start", textAlign: "left", py: 0.5, borderRadius: 1 }}>
         <Box sx={{ p: 0.5, display: "flex" }}><FigmaIcon name="agency-clock" /></Box>
-        <Box sx={{ flex: 1, minWidth: 0, "& p": { whiteSpace: "normal" } }}><OpenStatus hours={agency.hours} /></Box>
-        <Box sx={{ transform: expanded ? "none" : "rotate(180deg)", display: "flex" }}><FigmaIcon name="agency-collapse" /></Box>
+        <Box sx={{ flex: "0 1 auto", minWidth: 0, "& p": { whiteSpace: "normal" } }}><OpenStatus hours={agency.hours} /></Box>
+        <Box sx={{ transform: expanded ? "none" : "rotate(180deg)", display: "flex", ml: -1 }}><FigmaIcon name="agency-collapse" /></Box>
       </ButtonBase>
       <Collapse in={expanded}>
         <Box id={hoursId} component="dl" sx={{ m: 0, ml: 4, p: 1, bgcolor: tokens.grisClair1, borderRadius: "12px" }}>
@@ -72,6 +74,7 @@ export function AgenciesSection() {
   const selected = locations.find((location) => location.id === selectedId) ?? agency;
   const selectedIndex = locations.indexOf(selected);
   const summary = summaries.get(selected.id)!;
+  const certificateUrl = `/fr-fr/certificate/${selected.id}`;
 
   // The WebGL map is below the reviews; load it only as the visitor approaches it.
   useEffect(() => {
@@ -90,51 +93,77 @@ export function AgenciesSection() {
       <Box ref={mapContainer} role="region" aria-label={t("mapLabel")} sx={{ height: { xs: 215, md: 400 }, width: "100%", borderRadius: "12px", overflow: "hidden", bgcolor: tokens.grisClair2, position: { md: "sticky" }, top: { md: tokens.headerHeight + 16 } }}>
         {mapVisible ? <AgencyMap agencies={locations} selectedId={selected.id} onSelect={setSelectedId} /> : <Box sx={{ height: "100%", display: "grid", placeItems: "center", fontSize: 14, color: tokens.gris }}>{t("mapLoading")}</Box>}
       </Box>
+      {/* Figma "Company Information" (1463:21156): name, photos, details, then the other agencies. */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2, px: 0.25 }}>
-        <AgencyLetter index={selectedIndex} />
-        <Typography component="h3" aria-live="polite" sx={{ fontSize: 16, fontWeight: 600 }}>{selected.name} · {selected.city}</Typography>
-      </Box>
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2, px: 0.25 }}>
+          <AgencyLetter index={selectedIndex} />
+          <Typography component="h3" aria-live="polite" sx={{ fontSize: 16, fontWeight: 600, minWidth: 0 }}>
+            <Link
+              href={certificateUrl}
+              target="_blank"
+              rel="noopener"
+              aria-label={t("certificateLink", { name: selected.name, city: selected.city })}
+              sx={{ display: "inline-flex", alignItems: "center", gap: 2, color: tokens.bleuFonce, textDecorationColor: "currentColor", textUnderlineOffset: "3px" }}
+            >
+              <Box component="span" sx={{ textDecoration: "underline", textDecorationColor: "inherit" }}>{selected.name} · {selected.city}</Box>
+              <OpenInNew sx={{ fontSize: 20 }} />
+            </Link>
+          </Typography>
+        </Box>
+
+        <AgencyPhotos key={selected.id} agency={selected} />
+
         <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
           <Box sx={{ p: 0.5, display: "flex" }}><FigmaIcon name="agency-pin" /></Box>
-          <Typography component="address" sx={{ fontSize: 14, fontWeight: 600, fontStyle: "normal", flex: 1 }}>{selected.address}</Typography>
+          <Typography component="address" sx={{ fontSize: 14, fontWeight: 600, fontStyle: "normal", flex: 1, pt: "4px" }}>{selected.address}</Typography>
         </Box>
-        <OpeningHours key={selected.id} agency={selected} />
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <Box sx={{ p: 0.5, display: "flex" }}><FigmaIcon name="agency-phone" /></Box>
-          <Link href={`tel:${selected.phone.replace(/\s/g, "")}`} sx={{ fontSize: 14, fontWeight: 600 }}>{selected.phone}</Link>
-        </Box>
+        <OpeningHours key={`hours-${selected.id}`} agency={selected} />
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <Box sx={{ p: 0.5, display: "flex" }}><FigmaIcon name="agency-star" /></Box>
           <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 1 }}>
-            {isPublic(summary.count, selected.publicThreshold) && summary.average !== null && <RatingChip value={summary.average} />}
-            <Typography sx={{ fontSize: 14, fontWeight: 600, color: tokens.gris }}>{t("verifiedCount", { count: formatCount(summary.count) })}</Typography>
+            {isPublic(summary.count, selected.publicThreshold) && summary.average !== null && (
+              <>
+                <RatingChip value={summary.average} />
+                <Box component="span" aria-hidden sx={{ fontSize: 14, fontWeight: 600 }}>•</Box>
+              </>
+            )}
+            <Link
+              href={certificateUrl}
+              target="_blank"
+              rel="noopener"
+              aria-label={t("reviewsLink", { count: formatCount(summary.count), city: selected.city })}
+              sx={{ fontSize: 14, fontWeight: 600, color: tokens.bleuFonce, textDecorationColor: "currentColor", textUnderlineOffset: "3px" }}
+            >
+              {t("verifiedCount", { count: formatCount(summary.count) })}
+            </Link>
           </Box>
         </Box>
-        {selected.id !== agency.id && <Link component={NextLink} href={`/fr-fr/certificate/${selected.id}`} sx={{ fontSize: 14, fontWeight: 600, textAlign: "center", py: 1 }}>{t("seeCertificate", { city: selected.city })}</Link>}
-      </Box>
-      </Box>
-      </Box>
-      <CtaButton variant="secondary" aria-expanded={expanded} aria-controls={listId} onClick={() => setExpanded((value) => !value)} sx={{ "& img": { transform: expanded ? "rotate(180deg)" : "none" } }}>{t(expanded ? "showLess" : "showMore")}</CtaButton>
-      <Collapse in={expanded} unmountOnExit>
-        <Box id={listId} component="ul" sx={{ listStyle: "none", m: 0, p: 0, display: "flex", flexDirection: "column", gap: 1 }}>
-          {locations.map((location, index) => {
-            const stats = summaries.get(location.id)!;
-            return <Box component="li" key={location.id}>
-              <ButtonBase onClick={() => setSelectedId(location.id)} aria-pressed={location.id === selected.id} aria-label={t("selectAgency", { city: location.city })}
-                sx={{ display: "flex", gap: 1.5, width: "100%", p: 1.5, borderRadius: "12px", border: `1px solid ${location.id === selected.id ? tokens.bleu400 : tokens.grisMoyen1}`, bgcolor: location.id === selected.id ? tokens.bleu5 : tokens.blanc, textAlign: "left" }}>
-                <AgencyLetter index={index} />
-                <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <Typography sx={{ fontSize: 14, fontWeight: 600 }}>{location.city}</Typography>
-                  <Typography sx={{ fontSize: 12, color: tokens.gris }}>{t("verifiedCount", { count: formatCount(stats.count) })}</Typography>
-                </Box>
-                {isPublic(stats.count, location.publicThreshold) && stats.average !== null && <RatingChip value={stats.average} />}
-              </ButtonBase>
-            </Box>;
-          })}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <Box sx={{ p: 0.5, display: "flex" }}><FigmaIcon name="agency-phone" /></Box>
+          <Link href={`tel:${selected.phone.replace(/\s/g, "")}`} sx={{ fontSize: 14, fontWeight: 600, color: tokens.bleuFonce, textDecorationColor: "currentColor", textUnderlineOffset: "3px" }}>{selected.phone}</Link>
         </Box>
-      </Collapse>
+
+        <CtaButton variant="secondary" aria-expanded={expanded} aria-controls={listId} onClick={() => setExpanded((value) => !value)} sx={{ "& img": { transform: expanded ? "rotate(180deg)" : "none" } }}>{t(expanded ? "showLess" : "showMore")}</CtaButton>
+        <Collapse in={expanded} unmountOnExit>
+          <Box id={listId} component="ul" sx={{ listStyle: "none", m: 0, p: 0, display: "flex", flexDirection: "column", gap: 1 }}>
+            {locations.map((location, index) => {
+              const stats = summaries.get(location.id)!;
+              return <Box component="li" key={location.id}>
+                <ButtonBase onClick={() => setSelectedId(location.id)} aria-pressed={location.id === selected.id} aria-label={t("selectAgency", { city: location.city })}
+                  sx={{ display: "flex", gap: 1.5, width: "100%", p: 1.5, borderRadius: "12px", border: `1px solid ${location.id === selected.id ? tokens.bleu400 : tokens.grisMoyen1}`, bgcolor: location.id === selected.id ? tokens.bleu5 : tokens.blanc, textAlign: "left" }}>
+                  <AgencyLetter index={index} />
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Typography sx={{ fontSize: 14, fontWeight: 600 }}>{location.city}</Typography>
+                    <Typography sx={{ fontSize: 12, color: tokens.gris }}>{t("verifiedCount", { count: formatCount(stats.count) })}</Typography>
+                  </Box>
+                  {isPublic(stats.count, location.publicThreshold) && stats.average !== null && <RatingChip value={stats.average} />}
+                </ButtonBase>
+              </Box>;
+            })}
+          </Box>
+        </Collapse>
+      </Box>
+      </Box>
     </Box>
   );
 }

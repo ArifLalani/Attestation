@@ -16,6 +16,18 @@ const standardHours: WeekHours = [
 const ids = ["20871", "20872", "20873", "20874", "20875"];
 const sisters = (id: string) => ids.filter((other) => other !== id);
 
+// Demo stand-ins for Google Maps photos: free Pexels images, exteriors and interiors alternating.
+const photoPool = [
+  106399, 1080721, 1396122, 1457842, 186077, 1571460, 210617, 1643383, 259588, 1918291, 280222, 2121121,
+  323780, 2635038, 3555615, 271624, 2102587, 2724749, 1438832, 534151, 2462015, 6782567, 1029599, 1170412,
+].map((id) => `/images/agencies/p${id}.jpg`);
+
+/** Six photos per agency, starting with an exterior; neighbouring agencies share at most two. */
+const photosFor = (id: string) => {
+  const start = ids.indexOf(id) * 4;
+  return Array.from({ length: 6 }, (_, k) => photoPool[(start + k) % photoPool.length]);
+};
+
 // Phone numbers use 04 65 71 xx xx, the range ARCEP reserves for fiction, so a tap never calls a real person.
 const base = {
   name: "La Boîte Immo",
@@ -39,6 +51,7 @@ export const agencies: Agency[] = [
     email: "hyeres@lbi.fr",
     whatsapp: "+33465712400",
     sisterAgencyIds: sisters("20871"),
+    photos: photosFor("20871"),
   },
   {
     ...base,
@@ -49,6 +62,7 @@ export const agencies: Agency[] = [
     phone: "+33 4 65 71 24 10",
     email: "toulon@lbi.fr",
     sisterAgencyIds: sisters("20872"),
+    photos: photosFor("20872"),
   },
   {
     ...base,
@@ -59,6 +73,7 @@ export const agencies: Agency[] = [
     phone: "+33 4 65 71 24 20",
     email: "lacrau@lbi.fr",
     sisterAgencyIds: sisters("20873"),
+    photos: photosFor("20873"),
   },
   {
     ...base,
@@ -69,6 +84,7 @@ export const agencies: Agency[] = [
     phone: "+33 4 65 71 24 30",
     email: "carqueiranne@lbi.fr",
     sisterAgencyIds: sisters("20874"),
+    photos: photosFor("20874"),
   },
   {
     ...base,
@@ -79,6 +95,7 @@ export const agencies: Agency[] = [
     phone: "+33 4 65 71 24 40",
     email: "lavandou@lbi.fr",
     sisterAgencyIds: sisters("20875"),
+    photos: photosFor("20875"),
   },
 ];
 

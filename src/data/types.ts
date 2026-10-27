@@ -94,6 +94,8 @@ export interface Agency {
   whatsapp?: string;
   hours: WeekHours;
   coverPhoto: string;
+  /** Demo stand-ins for the agency’s Google Maps photos (free Pexels images). */
+  photos: string[];
   logo: string;
   /** Month the agency started collecting verified reviews, e.g. "mars 2022". */
   memberSince: string;

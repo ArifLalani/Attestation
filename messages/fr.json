@@ -175,7 +175,18 @@
     "selectAgency": "Sélectionner l’agence de {city}",
     "toggleHours": "Afficher ou masquer les horaires",
     "verifiedCount": "{count} avis contrôlés",
-    "seeCertificate": "Voir le certificat de {city}",
+    "certificateLink": "{name} · {city} : voir son certificat Opinion System (nouvel onglet)",
+    "reviewsLink": "{count} avis contrôlés : voir le certificat de {city} (nouvel onglet)",
+    "gallery": {
+      "label": "Photos de {name} · {city}",
+      "source": "Photos Google",
+      "counter": "{index} / {total}",
+      "open": "Agrandir la photo {index} sur {total}",
+      "photoAlt": "Photo {index} de l’agence de {city}",
+      "previous": "Photo précédente",
+      "next": "Photo suivante",
+      "close": "Fermer les photos"
+    },
     "showMore": "Voir les autres agences",
     "showLess": "Masquer les agences"
   },
