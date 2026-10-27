@@ -234,7 +234,7 @@ const columnDividerSx = { width: "1px", flexShrink: 0, bgcolor: tokens.grisMoyen
 
 /**
  * Desktop "Détails" (Figma 1478:36205): "Répartition des notes" over three columns: the two levels, the scores and the facts.
- * Imports have no survey: their facts are spread over two columns.
+ * Imports have no survey: their facts are listed one under the other, in the left half.
  */
 function DesktopReviewDetails({ review }: { review: Review }) {
   const t = useTranslations("Reviews.detail");
@@ -266,7 +266,7 @@ function DesktopReviewDetails({ review }: { review: Review }) {
 
   if (!survey) {
     return (
-      <Box component="dl" sx={{ m: 0, display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", columnGap: 5, rowGap: 1 }}>
+      <Box component="dl" sx={{ m: 0, width: "50%", display: "flex", flexDirection: "column", gap: 1 }}>
         {facts}
       </Box>
     );
