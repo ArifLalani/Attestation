@@ -61,7 +61,11 @@
     },
     "outOf": "/5",
     "reviewCount": "{count} avis",
-    "scoreCount": "Sur {count} avis",
+    "viewCountAria": "{view} : {count} avis",
+    "scoreSource": {
+      "global": "Toutes sources confondues",
+      "controle": "Uniquement les avis contrôlés Opinion System"
+    },
     "bucketLabel": "{stars} étoiles : {count} avis. Voir ces avis",
     "explainGlobal": "Cette note regroupe les avis contrôlés par Opinion System et ceux provenant de toutes les sources.",
     "explainControle": "Cette note regroupe les avis contrôlés par Opinion System, tous certifiés AFNOR et authentifiés par Opinion System depuis {since}.",

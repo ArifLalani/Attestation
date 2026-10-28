@@ -6,7 +6,6 @@ import Collapse from "@mui/material/Collapse";
 import Link from "@mui/material/Link";
 import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
-import { alpha } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
@@ -45,8 +44,9 @@ export function CardTitle({ eyebrow, heading, id }: { eyebrow: string; heading: 
   );
 }
 
-function ViewToggle({ view, onChange }: { view: ScoreView; onChange: (view: ScoreView) => void }) {
+function ViewToggle({ view, counts, onChange }: { view: ScoreView; counts: Record<ScoreView, number>; onChange: (view: ScoreView) => void }) {
   const t = useTranslations("Reputation.views");
+  const tr = useTranslations("Reputation");
   const segments: { value: ScoreView; icon: React.ReactNode; iconBox: number }[] = [
     { value: "global", icon: <FigmaIcon name={view === "global" ? "globe-white" : "globe-navy"} />, iconBox: 4 },
     { value: "controle", icon: <FigmaIcon name={view === "controle" ? "check-badge-white" : "check-badge-navy"} />, iconBox: 3.429 },
@@ -86,21 +86,25 @@ function ViewToggle({ view, onChange }: { view: ScoreView; onChange: (view: Scor
             key={segment.value}
             role="radio"
             aria-checked={active}
+            aria-label={tr("viewCountAria", { view: t(segment.value), count: formatCount(counts[segment.value]) })}
             onClick={() => onChange(segment.value)}
             sx={{
               position: "relative",
               flex: "1 1 0",
+              minWidth: 0,
               minHeight: 44,
-              px: 1.5,
+              px: { xs: 1, sm: 1.5 },
               borderRadius: "9px",
               gap: 0,
               color: active ? tokens.blanc : tokens.bleuFonce,
               transition: "color 200ms ease",
             }}
           >
-            <Box sx={{ p: `${segment.iconBox}px`, display: "flex" }}>{segment.icon}</Box>
-            <Typography component="span" sx={{ fontSize: 14, lineHeight: "normal", fontWeight: active || segment.value === "global" ? 600 : 500, whiteSpace: "nowrap" }}>
-              {t(segment.value)}
+            <Box sx={{ p: `${segment.iconBox}px`, display: "flex", flexShrink: 0 }}>{segment.icon}</Box>
+            {/* The count is smaller than the name, so the name still leads; on narrow phones it drops under the name. */}
+            <Typography component="span" sx={{ minWidth: 0, display: "inline-flex", flexWrap: "wrap", justifyContent: "center", alignItems: "baseline", columnGap: 0.5, fontSize: 14, lineHeight: "normal", fontWeight: active || segment.value === "global" ? 600 : 500, whiteSpace: "nowrap" }}>
+              <span>{t(segment.value)}</span>
+              <Box component="span" sx={{ fontSize: 12, fontWeight: 400 }}>({formatCount(counts[segment.value])})</Box>
             </Typography>
           </ButtonBase>
         );
@@ -149,6 +153,13 @@ export function ReputationCard() {
     () => summarize(reviewsForScore(reviews, scoreView, scoreCollaboratorId)),
     [reviews, scoreView, scoreCollaboratorId],
   );
+  const counts = useMemo(
+    () => ({
+      global: reviewsForScore(reviews, "global", scoreCollaboratorId).length,
+      controle: reviewsForScore(reviews, "controle", scoreCollaboratorId).length,
+    }),
+    [reviews, scoreCollaboratorId],
+  );
   const person = team.find((member) => member.id === scoreCollaboratorId);
   const visible = summary.average !== null && isPublic(summary.count, agency.publicThreshold);
   const controle = scoreView === "controle";
@@ -164,8 +175,6 @@ export function ReputationCard() {
     });
     goToSection("avis");
   };
-
-  const chipColor = controle ? tokens.vertOs : tokens.bleu400;
   const scoreBoxBackground = controle
     ? "linear-gradient(120deg, rgba(67, 182, 163, 0.01) 0%, rgba(38, 128, 112, 0.10) 100%)"
     : "linear-gradient(120deg, rgba(44, 149, 255, 0.01) 0%, rgba(26, 89, 153, 0.10) 100%)";
@@ -187,7 +196,7 @@ export function ReputationCard() {
       >
         <Box sx={columnSx}>
           <Box sx={{ gridArea: "toggle" }}>
-            <ViewToggle view={scoreView} onChange={setScoreView} />
+            <ViewToggle view={scoreView} counts={counts} onChange={setScoreView} />
           </Box>
           {visible ? (
             <Box
@@ -216,21 +225,8 @@ export function ReputationCard() {
                   sx={{ fontSize: "26.667px" }}
                 />
               </Box>
-              <Typography
-                sx={{
-                  px: "10px",
-                  py: "2px",
-                  borderRadius: "4px",
-                  border: `1px solid ${chipColor}`,
-                  bgcolor: alpha(chipColor, 0.1),
-                  color: chipColor,
-                  fontSize: 14,
-                  fontWeight: 600,
-                  lineHeight: "normal",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {t("scoreCount", { count: formatCount(summary.count) })}
+              <Typography sx={{ maxWidth: 260, fontSize: 14, color: tokens.gris, lineHeight: "normal", textAlign: "center" }}>
+                {t(`scoreSource.${scoreView}`)}
               </Typography>
             </Box>
           ) : (
