@@ -2,7 +2,6 @@
 
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
-import Link from "next/link";
 import { useState } from "react";
 import { variants, type VariantId } from "./registry";
 
@@ -48,7 +47,7 @@ export function VariantSwitcher({ current, agencyId }: { current: VariantId; age
           return (
             <Box
               key={variant.id}
-              component={Link}
+              component="a"
               href={variant.href(agencyId)}
               aria-current={selected ? "page" : undefined}
               title={variant.name}
