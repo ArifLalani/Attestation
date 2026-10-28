@@ -67,9 +67,13 @@ function QuestionChips({ questions, onAsk, row }: { questions: QuickQuestionKey[
   );
 }
 
-/** Row of AI chips: white, outlined, with each tool's logo. Shared by the chat and the Réputation strip. */
-export function AiModelChips({ selected, onSelect, label, row }: { selected?: AiModel; onSelect: (model: AiModel) => void; label?: string; row?: boolean }) {
+/**
+ * The AIs, each with its logo. "chips": the pill selector inside the chat.
+ * "buttons": the "Assistant IA" card, styled like the outlined CTA (45 px, 8 px corners).
+ */
+export function AiModelChips({ selected, onSelect, label, row, variant = "chips" }: { selected?: AiModel; onSelect: (model: AiModel) => void; label?: string; row?: boolean; variant?: "chips" | "buttons" }) {
   const t = useTranslations("Assistant");
+  const buttons = variant === "buttons";
   return (
     <Box
       role={selected ? "radiogroup" : undefined}
@@ -85,7 +89,25 @@ export function AiModelChips({ selected, onSelect, label, row }: { selected?: Ai
             aria-checked={selected ? active : undefined}
             aria-label={selected ? undefined : t("openWith", { model: t(`models.${model}`) })}
             onClick={() => onSelect(model)}
-            sx={{
+            sx={buttons ? {
+              // Phones: the buttons share each row's width. Desktop: natural width, in one row.
+              flex: { xs: "1 1 auto", md: "0 0 auto" },
+              minHeight: 45,
+              gap: 1,
+              px: 1.5,
+              py: "11px",
+              borderRadius: "8px",
+              bgcolor: tokens.blanc,
+              border: `1px solid ${tokens.grisMoyen1}`,
+              color: tokens.bleuFonce,
+              fontSize: 14,
+              fontWeight: 600,
+              lineHeight: "normal",
+              whiteSpace: "nowrap",
+              transition: "background-color 150ms ease, border-color 150ms ease",
+              "&:hover": { bgcolor: tokens.grisClair1, borderColor: tokens.bleu30 },
+              "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 },
+            } : {
               gap: 0.75,
               px: 1.25,
               py: 0.75,
@@ -103,7 +125,7 @@ export function AiModelChips({ selected, onSelect, label, row }: { selected?: Ai
               "&:hover": { borderColor: active ? tokens.bleuFonce : tokens.gris },
             }}
           >
-            <AiLogo model={model} />
+            <AiLogo model={model} sx={buttons ? { fontSize: 20 } : undefined} />
             {t(`models.${model}`)}
           </ButtonBase>
         );

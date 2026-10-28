@@ -20,7 +20,7 @@ export function AskAiCard() {
         bgcolor: tokens.blanc,
         borderRadius: "20px",
         boxShadow: tokens.shadowCardSoft,
-        px: 1.5,
+        px: { xs: 1.5, md: 2 },
         py: 2,
         display: "flex",
         flexDirection: { xs: "column", md: "row" },
@@ -34,7 +34,7 @@ export function AskAiCard() {
         <Typography sx={{ fontSize: 14, color: tokens.gris, lineHeight: "normal" }}>{t("cardText")}</Typography>
       </Box>
       <Box sx={{ flexShrink: 0 }}>
-        <AiModelChips onSelect={openAssistant} label={t("cardHeading")} />
+        <AiModelChips variant="buttons" onSelect={openAssistant} label={t("cardHeading")} />
       </Box>
     </Box>
   );
