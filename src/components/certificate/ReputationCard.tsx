@@ -11,7 +11,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { FigmaIcon } from "@/components/ui/FigmaIcon";
-import { StaffAvatar } from "@/components/ui/StaffAvatar";
+import { StaffAvatar, TeamAvatar } from "@/components/ui/StaffAvatar";
 import { formatCount, formatScore } from "@/lib/format";
 import { useCountUp } from "@/lib/hooks";
 import { displayScore, headingFor, isPublic, reviewsForScore, summarize, type ScoreView, type StarBucket } from "@/lib/scoring";
@@ -254,19 +254,21 @@ export function ReputationCard() {
               sx={{
                 width: "100%",
                 justifyContent: "flex-start",
-                gap: 1,
-                px: 2,
-                py: person ? 0.5 : 1.5,
-                minHeight: 45,
-                bgcolor: tokens.blanc,
+                gap: 1.5,
+                pl: 1,
+                pr: 2,
+                py: 0.75,
+                minHeight: 48,
+                bgcolor: tokens.grisClair1,
                 border: `1px solid ${tokens.grisMoyen1}`,
                 borderRadius: "8px",
                 textAlign: "left",
-                "&:hover": { borderColor: tokens.bleu30 },
+                transition: "border-color 150ms ease, background-color 150ms ease",
+                "&:hover": { borderColor: tokens.bleu30, bgcolor: tokens.blanc },
               }}
             >
-              {person && <StaffAvatar person={person} />}
-              <Typography component="span" sx={{ flex: 1, fontSize: 14, fontWeight: 600, color: tokens.bleuFonce, lineHeight: "normal" }}>
+              {person ? <StaffAvatar person={person} /> : <TeamAvatar />}
+              <Typography component="span" sx={{ flex: 1, fontSize: 16, fontWeight: 600, color: tokens.bleuFonce, lineHeight: "normal" }}>
                 {person ? person.name : t("wholeTeam")}
               </Typography>
               <FigmaIcon name={person ? "arrows-clockwise" : "expand-more"} alt={person ? t("changeCollaborator") : ""} />

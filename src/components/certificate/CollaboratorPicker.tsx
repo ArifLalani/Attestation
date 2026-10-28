@@ -12,7 +12,7 @@ import { useMemo, useState } from "react";
 import { FigmaIcon } from "@/components/ui/FigmaIcon";
 import { RatingChip } from "@/components/ui/RatingChip";
 import { ResponsiveSheet } from "@/components/ui/ResponsiveSheet";
-import { StaffAvatar } from "@/components/ui/StaffAvatar";
+import { StaffAvatar, TeamAvatar } from "@/components/ui/StaffAvatar";
 import { isPublic, reviewsForScore, summarize, type ScoreView } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
 import { useCertificate } from "./CertificateContext";
@@ -117,9 +117,7 @@ export function CollaboratorPicker({
       {!query && (
         <li>
           <ButtonBase role="option" aria-selected={!selectedId} onClick={() => choose(undefined)} sx={rowSx(!selectedId)}>
-            <Box sx={{ p: 0.5 }}>
-              <FigmaIcon name="group" />
-            </Box>
+            <TeamAvatar />
             <Typography sx={{ flex: 1, fontSize: 16, fontWeight: 500, lineHeight: "16px", color: tokens.bleuFonce }}>{t("all")}</Typography>
             {!selectedId && (
               <Box sx={{ width: 24, height: 24, p: 0.5 }}>
