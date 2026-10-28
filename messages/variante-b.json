@@ -1,1 +1,70 @@
-{ "VarianteB": {} }
+{
+  "VarianteB": {
+    "header": {
+      "badge": "Réputation vérifiée",
+      "contact": "Contacter"
+    },
+    "bar": {
+      "count": "{count} avis"
+    },
+    "hero": {
+      "showAll": "Afficher toutes les photos",
+      "verifiedPill": "Réputation vérifiée"
+    },
+    "banner": {
+      "aria": "{heading} : {score} sur 5, {count} avis. Voir le détail de la réputation",
+      "reviews": "avis"
+    },
+    "highlights": {
+      "hostTitle": "Certificat de {name} · {city}",
+      "hostText": "Avis collectés par Opinion System depuis {since}",
+      "verifiedTitle": "Avis contrôlés par Opinion System",
+      "verifiedText": "{count} avis vérifiés : identité et achat contrôlés.",
+      "hoursShow": "Voir les horaires de la semaine",
+      "hoursHide": "Masquer les horaires",
+      "mapLink": "Voir sur la carte · {count} agences dans le Var"
+    },
+    "picker": {
+      "allHint": "{count} collaborateurs",
+      "count": "{count} avis"
+    },
+    "reputation": {
+      "title": "Réputation",
+      "basedOn": "{count} avis",
+      "distribution": "Répartition des notes",
+      "criteria": "Notes par critère",
+      "criterionLink": "{criterion} : {score} sur 5 dans {count} avis. Voir ces avis",
+      "recommendation": "Recommandation"
+    },
+    "card": {
+      "label": "Contacter l'agence",
+      "title": "Parlons de votre projet",
+      "today": "Aujourd'hui",
+      "contact": "Contacter l'agence",
+      "note": "Vous êtes mis en relation directement avec l'agence."
+    },
+    "reviews": {
+      "subtitle": "Des expériences vraies, racontées par les clients de l'agence.",
+      "more": "Afficher plus",
+      "less": "Afficher moins",
+      "emptyTitle": "Aucun avis",
+      "showMore": "Afficher {count} avis de plus"
+    },
+    "filters": {
+      "clear": "Tout effacer",
+      "show": "Afficher {count} avis"
+    },
+    "team": {
+      "subtitle": "Chaque note vient des avis de leurs propres clients chez {name}.",
+      "showAll": "Afficher les {count} conseillers",
+      "reviews": "Avis",
+      "agency": "Agence"
+    },
+    "agencies": {
+      "selected": "Affichée sur la carte"
+    },
+    "quality": {
+      "eyebrow": "Démarche qualité"
+    }
+  }
+}

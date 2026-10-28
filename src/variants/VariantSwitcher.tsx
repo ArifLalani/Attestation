@@ -19,7 +19,7 @@ export function VariantSwitcher({ current, agencyId }: { current: VariantId; age
       sx={{
         position: "fixed",
         left: 12,
-        bottom: 12,
+        bottom: { xs: 96, md: 12 },
         zIndex: 2000,
         display: "flex",
         alignItems: "center",

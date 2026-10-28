@@ -1,1 +1,55 @@
-{ "VarianteC": {} }
+{
+  "VarianteC": {
+    "tabs": {
+      "synthese": "Présentation",
+      "avis": "Avis",
+      "equipe": "Équipe",
+      "agences": "Agences",
+      "qualite": "Qualité"
+    },
+    "verifiedProfile": "Profil vérifié par Opinion System",
+    "photosLabel": "Photos de {name}",
+    "photosCount": "{count} photos",
+    "ratingLink": "Note de {score} sur 5, {count} avis. Voir les avis",
+    "actionsLabel": "Actions rapides",
+    "actions": {
+      "contact": "Contacter",
+      "directions": "Itinéraire",
+      "website": "Site web",
+      "share": "Partager",
+      "review": "Noter"
+    },
+    "hoursToggle": "Afficher ou masquer les horaires de la semaine",
+    "reputationTitle": "Réputation",
+    "reviewsTitle": "Avis clients",
+    "reviewsShort": "{count} avis",
+    "staffSort": {
+      "alpha": "A → Z",
+      "best": "Meilleures notes",
+      "worst": "Notes les plus basses"
+    },
+    "aiChoose": "Ou choisissez votre assistant :",
+    "topics": "Sujets fréquents",
+    "topicAria": "{topic} : {count} avis",
+    "sortShort": {
+      "recent": "Plus récents",
+      "oldest": "Plus anciens",
+      "best": "Meilleures notes",
+      "worst": "Notes les plus basses",
+      "useful": "Plus utiles",
+      "verified": "Contrôlés d’abord"
+    },
+    "noteExactAria": "{stars} étoiles",
+    "noteAtLeastAria": "{stars} étoiles et plus",
+    "via": "via {source}",
+    "moreActions": "Plus d’actions sur l’avis de {name}",
+    "readLess": "Réduire",
+    "tagsLabel": "Projet et critères",
+    "replyFrom": "Réponse de {agency}",
+    "teamTitle": "L’équipe",
+    "seeAll": "Tout voir ({count})",
+    "agenciesTitle": "Nos agences",
+    "seeCertificate": "Voir son certificat",
+    "qualityTitle": "Démarche qualité"
+  }
+}

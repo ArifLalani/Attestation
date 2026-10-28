@@ -1,1 +1,35 @@
-{ "VarianteA": {} }
+{
+  "VarianteA": {
+    "brand": {
+      "home": "Accueil Opinion System (nouvel onglet)",
+      "verified": "Réputation vérifiée"
+    },
+    "hero": {
+      "category": "{sector} · {city}",
+      "verifiedBadge": "Vérifiée par Opinion System",
+      "since": "Avis contrôlés depuis {since}",
+      "hours": "Horaires"
+    },
+    "verdict": {
+      "excellent": "Excellent",
+      "good": "Très bien",
+      "start": "Bon début"
+    },
+    "score": {
+      "label": "Note de l'agence",
+      "basedOn": "{count} avis"
+    },
+    "reputation": {
+      "teamOf": "Équipe {name}",
+      "distribution": "Répartition des notes",
+      "stars": "{stars, plural, one {# étoile} other {# étoiles}}"
+    },
+    "reviews": {
+      "quickFilters": "Filtres rapides",
+      "ofTotal": "sur {total}"
+    },
+    "agencies": {
+      "certificate": "Voir son certificat"
+    }
+  }
+}
