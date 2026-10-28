@@ -86,11 +86,11 @@ export function AgenciesSection() {
   }, []);
 
   return (
-    <Box component="section" id="nos-agences" aria-labelledby="agencies-title" sx={{ scrollMarginTop: `${tokens.headerHeight + 16}px`, bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCard, px: 1.5, py: 2, display: "flex", flexDirection: "column", gap: 2 }}>
+    <Box component="section" id="nos-agences" aria-labelledby="agencies-title" sx={{ scrollMarginTop: `${tokens.headerHeight + 16}px`, bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCard, px: { xs: 1.5, md: 2 }, py: 2, display: "flex", flexDirection: "column", gap: 2 }}>
       <CardTitle id="agencies-title" eyebrow={t("eyebrow")} heading={t("heading")} />
       <Typography sx={{ fontSize: 14, color: tokens.gris }}>{t("description", { name: agency.name })}</Typography>
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1fr) minmax(0, 1fr)" }, gap: 2, alignItems: "start" }}>
-      <Box ref={mapContainer} role="region" aria-label={t("mapLabel")} sx={{ height: { xs: 215, md: 400 }, width: "100%", borderRadius: "12px", overflow: "hidden", bgcolor: tokens.grisClair2, position: { md: "sticky" }, top: { md: tokens.headerHeight + 16 } }}>
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1fr) minmax(0, 1fr)" }, columnGap: 4, rowGap: 2, alignItems: "stretch" }}>
+      <Box ref={mapContainer} role="region" aria-label={t("mapLabel")} sx={{ height: { xs: 215, md: 400 }, width: "100%", alignSelf: "start", borderRadius: "12px", overflow: "hidden", bgcolor: tokens.grisClair2, position: { md: "sticky" }, top: { md: tokens.headerHeight + 16 } }}>
         {mapVisible ? <AgencyMap agencies={locations} selectedId={selected.id} onSelect={setSelectedId} /> : <Box sx={{ height: "100%", display: "grid", placeItems: "center", fontSize: 14, color: tokens.gris }}>{t("mapLoading")}</Box>}
       </Box>
       {/* Figma "Company Information" (1463:21156): name, photos, details, then the other agencies. */}
@@ -153,7 +153,7 @@ export function AgenciesSection() {
           <Link href={`tel:${selected.phone.replace(/\s/g, "")}`} sx={{ fontSize: 14, fontWeight: 600, color: tokens.bleuFonce, textDecorationColor: "currentColor", textUnderlineOffset: "3px" }}>{selected.phone}</Link>
         </Box>
 
-        <CtaButton variant="secondary" aria-expanded={expanded} aria-controls={listId} onClick={() => setExpanded((value) => !value)} sx={{ "& img": { transform: expanded ? "rotate(180deg)" : "none" } }}>{t(expanded ? "showLess" : "showMore")}</CtaButton>
+        <CtaButton variant="secondary" aria-expanded={expanded} aria-controls={listId} onClick={() => setExpanded((value) => !value)} sx={{ mt: { md: "auto" }, "& img": { transform: expanded ? "rotate(180deg)" : "none" } }}>{t(expanded ? "showLess" : "showMore")}</CtaButton>
       </Box>
       </Box>
       {/* The other agencies take the full width under the map and the details (3 per row on desktop).

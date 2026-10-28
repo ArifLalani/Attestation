@@ -31,7 +31,8 @@ export function CtaButton({
         color: tokens.bleuFonce,
         ...(variant === "primary"
           ? { bgcolor: tokens.jaune400, "&:hover": { bgcolor: "#f5cc00" } }
-          : { border: `1px solid ${tokens.grisMoyen1}`, bgcolor: tokens.blanc, "&:hover": { bgcolor: tokens.grisClair1 } }),
+          : // 11 px padding + the 1 px border keeps it 45 px tall, like the primary button.
+            { py: "11px", border: `1px solid ${tokens.grisMoyen1}`, bgcolor: tokens.blanc, "&:hover": { bgcolor: tokens.grisClair1 } }),
         "&.Mui-disabled": { bgcolor: tokens.grisClair2, color: tokens.gris, border: "none" },
         ...sx,
       }}

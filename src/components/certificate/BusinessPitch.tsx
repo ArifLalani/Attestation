@@ -12,14 +12,19 @@ import { tokens } from "@/theme/theme";
 export function BusinessPitch() {
   const t = useTranslations("BusinessPitch");
   return (
-    <Box component="section" aria-labelledby="business-pitch-title" sx={{ bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCardSoft, px: 1.5, py: 2, display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", lg: "minmax(0, 1fr) minmax(0, 1fr)" }, gap: 2, alignItems: "center" }}>
-      <Typography id="business-pitch-title" component="h2" sx={{ gridColumn: "1 / -1", fontSize: 20, fontWeight: 600, lineHeight: "22.8px", letterSpacing: "-0.475px", textAlign: "center" }}>{t("title")}</Typography>
-      <Box sx={{ position: "relative", height: { xs: 176.7, lg: "100%" }, minHeight: 176.7, borderRadius: "20px", overflow: "hidden", gridColumn: 1, gridRow: { lg: "2 / span 3" } }}>
-        <Image src="/figma/business-illustration.png" alt="" fill sizes="(min-width: 1200px) 410px, (min-width: 900px) 600px, (min-width: 640px) 616px, 100vw" style={{ objectFit: "cover" }} />
+    <Box component="section" aria-labelledby="business-pitch-title" sx={{ bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCardSoft, px: { xs: 1.5, md: 2 }, py: 2, display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", lg: "minmax(0, 1fr) minmax(0, 1fr)" }, columnGap: 4, rowGap: 2 }}>
+      <Box sx={{ position: "relative", height: { xs: 176.7, lg: "auto" }, aspectRatio: { lg: "522 / 274" }, borderRadius: "20px", overflow: "hidden" }}>
+        <Image src="/figma/business-illustration.png" alt="" fill sizes="(min-width: 1200px) 530px, (min-width: 640px) 616px, 100vw" style={{ objectFit: "cover" }} />
       </Box>
-      <Typography component="h3" sx={{ fontSize: 20, fontWeight: 600, lineHeight: "22.8px", letterSpacing: "-0.475px", textAlign: "center" }}>{t("heading")}</Typography>
-      <Typography sx={{ fontSize: 14, color: tokens.gris }}>{t("description")}</Typography>
-      <CtaButton href={opinionSystemLinks.signup} target="_blank" rel="noopener noreferrer">{t("signup")}</CtaButton>
+      {/* Phones: these flow into the card (title first, above the illustration). Desktop: one column, button at the bottom. */}
+      <Box sx={{ display: { xs: "contents", lg: "flex" }, flexDirection: "column", gap: 2 }}>
+        <Typography id="business-pitch-title" component="h2" sx={{ order: { xs: -1, lg: 0 }, fontSize: 20, fontWeight: 600, lineHeight: "22.8px", letterSpacing: "-0.475px", textAlign: "center" }}>{t("title")}</Typography>
+        <Box sx={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", gap: 1 }}>
+          <Typography component="h3" sx={{ fontSize: 20, fontWeight: 600, lineHeight: "22.8px", letterSpacing: "-0.475px", textAlign: "center" }}>{t("heading")}</Typography>
+          <Typography sx={{ fontSize: 14, color: tokens.gris, textAlign: { lg: "center" } }}>{t("description")}</Typography>
+        </Box>
+        <CtaButton href={opinionSystemLinks.signup} target="_blank" rel="noopener noreferrer">{t("signup")}</CtaButton>
+      </Box>
     </Box>
   );
 }

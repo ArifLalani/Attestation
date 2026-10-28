@@ -29,10 +29,11 @@ export function QualitySection() {
   }, [reviews]);
 
   return (
-    <Box component="section" aria-labelledby="quality-title" sx={{ bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCardSoft, px: { xs: 1.5, lg: 2.5 }, py: 2, display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", lg: "minmax(0, 1fr) minmax(0, 1.15fr)" }, gap: 2, alignItems: "start" }}>
+    <Box component="section" aria-labelledby="quality-title" sx={{ bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCardSoft, px: { xs: 1.5, md: 2 }, py: 2, display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", lg: "minmax(0, 1fr) minmax(0, 1fr)" }, columnGap: 4, rowGap: 2, alignItems: "start" }}>
       <CardTitle id="quality-title" eyebrow={t("eyebrow")} heading={t("heading", { name: agency.name })} />
       <Typography sx={{ fontSize: 14, color: tokens.gris, lineHeight: "normal", gridColumn: 1 }}>{t("description")}</Typography>
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, alignItems: "center", gridColumn: 1, py: 1 }}>
+      <Box component="hr" sx={{ gridColumn: 1, m: 0, border: 0, borderTop: `1px solid ${tokens.grisMoyen1}` }} />
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, alignItems: "center", gridColumn: 1 }}>
         <Image src="/figma/quality-badge.png" alt={t("badgeAlt")} width={134} height={134} unoptimized />
         <Box sx={{ flex: "1 1 139px", minWidth: 0, display: "flex", flexDirection: "column", gap: 1 }}>
           <Image src="/figma/os-logo.png" alt="Opinion System" width={139} height={56} unoptimized />
@@ -49,8 +50,8 @@ export function QualitySection() {
           </Box>}
         </Box>
       </Box>
-      {/* Right column on desktop: the certifications, then "Lire les avis clients" right under them. */}
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 2, gridColumn: { xs: 1, lg: 2 }, gridRow: { lg: "1 / span 3" } }}>
+      {/* Right column on desktop: the certifications, then "Lire les avis clients" at the bottom, level with the badge. */}
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 2, gridColumn: { xs: 1, lg: 2 }, gridRow: { lg: "1 / span 4" }, alignSelf: "stretch" }}>
         <Box component="ul" sx={{ listStyle: "none", m: 0, p: 0, display: "flex", flexDirection: "column", gap: 2 }}>
           {certifications.map((certification) => <Box component="li" key={certification.key}>
             <Link href={opinionSystemLinks.certifications} target="_blank" rel="noopener noreferrer" underline="none" sx={{ display: "flex", gap: { xs: 1.5, sm: 2 }, alignItems: "center", p: 1.5, borderRadius: "16px", border: `1px solid ${tokens.grisMoyen1}`, color: tokens.bleuFonce, "&:hover": { bgcolor: tokens.grisClair1, borderColor: tokens.bleu30 }, "&:focus-visible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 } }}>
@@ -65,7 +66,7 @@ export function QualitySection() {
             </Link>
           </Box>)}
         </Box>
-        <CtaButton onClick={() => { setFilters(emptyFilters); setScoreCollaboratorId(undefined); goToSection("avis"); }}>{t("readReviews")}</CtaButton>
+        <CtaButton variant="secondary" sx={{ mt: { lg: "auto" } }} onClick={() => { setFilters(emptyFilters); setScoreCollaboratorId(undefined); goToSection("avis"); }}>{t("readReviews")}</CtaButton>
       </Box>
     </Box>
   );
