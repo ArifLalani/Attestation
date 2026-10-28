@@ -92,6 +92,8 @@ export interface Agency {
   email: string;
   website: string;
   whatsapp?: string;
+  /** Company pages, listed under "Réseaux sociaux" in Contacter. */
+  socials: { linkedin?: string; facebook?: string; instagram?: string; x?: string };
   hours: WeekHours;
   coverPhoto: string;
   /** Demo stand-ins for the agency’s Google Maps photos (free Pexels images). */

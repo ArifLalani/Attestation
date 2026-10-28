@@ -118,6 +118,12 @@
     "call": "Appeler",
     "email": "Envoyer un e-mail",
     "whatsapp": "WhatsApp",
+    "socialsTitle": "Réseaux sociaux",
+    "linkedin": "LinkedIn",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "x": "X",
+    "newTab": "{label} : {name} (nouvel onglet)",
     "close": "Fermer"
   },
   "Products": {

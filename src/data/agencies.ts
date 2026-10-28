@@ -33,6 +33,13 @@ const base = {
   name: "La Boîte Immo",
   sector: "Agence immobilière",
   website: "https://www.la-boite-immo.com/",
+  // The company's own pages weren't found (its site lists none), so these open each network's home page, like the staff links.
+  socials: {
+    linkedin: "https://www.linkedin.com",
+    facebook: "https://www.facebook.com",
+    instagram: "https://www.instagram.com",
+    x: "https://x.com",
+  },
   coverPhoto: "/images/cover.jpg",
   logo: "/images/logo-lbi.png",
   memberSince: "mars 2022",
