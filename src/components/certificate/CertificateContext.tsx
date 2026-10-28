@@ -57,8 +57,13 @@ export function CertificateProvider({
   children: React.ReactNode;
 }) {
   const { team, reviews } = useMemo(() => getAgencyDataset(agency), [agency]);
-  const [scoreView, setScoreView] = useState<ScoreView>("global");
   const [filters, setFilters] = useState<ReviewFilters>(emptyFilters);
+  // The Réputation switch and the "Type" filter are one setting: Avis Contrôlés lists only verified reviews,
+  // and removing the "Contrôlé" filter brings the score back to Avis global.
+  const scoreView: ScoreView = filters.type === "controle" ? "controle" : "global";
+  const setScoreView = useCallback((view: ScoreView) => {
+    setFilters((current) => ({ ...current, type: view === "controle" ? "controle" : undefined }));
+  }, []);
   const scoreCollaboratorId = filters.collaboratorId;
   const setScoreCollaboratorId = useCallback((id: string | undefined) => {
     setFilters((current) => ({ ...current, collaboratorId: id }));
@@ -119,7 +124,7 @@ export function CertificateProvider({
       openAssistant,
       goToSection,
     }),
-    [agency, team, reviews, scoreView, scoreCollaboratorId, setScoreCollaboratorId, filters, reviewSort, panel, setPanel, panelAnchor, openPanel, toolbarPinned, assistantModel, openAssistant, goToSection],
+    [agency, team, reviews, scoreView, setScoreView, scoreCollaboratorId, setScoreCollaboratorId, filters, reviewSort, panel, setPanel, panelAnchor, openPanel, toolbarPinned, assistantModel, openAssistant, goToSection],
   );
 
   return <CertificateContext value={value}>{children}</CertificateContext>;
