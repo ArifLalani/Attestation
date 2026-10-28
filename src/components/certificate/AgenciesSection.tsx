@@ -115,7 +115,17 @@ export function AgenciesSection() {
 
         <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
           <Box sx={{ p: 0.5, display: "flex" }}><FigmaIcon name="agency-pin" /></Box>
-          <Typography component="address" sx={{ fontSize: 14, fontWeight: 600, fontStyle: "normal", flex: 1, pt: "4px" }}>{selected.address}</Typography>
+          <Typography component="address" sx={{ fontSize: 14, fontWeight: 600, fontStyle: "normal", flex: 1, pt: "4px" }}>
+            <Link
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selected.address)}`}
+              target="_blank"
+              rel="noopener"
+              aria-label={t("addressMapsLink", { address: selected.address })}
+              sx={{ color: tokens.bleuFonce, textDecorationColor: "currentColor", textUnderlineOffset: "3px" }}
+            >
+              {selected.address}
+            </Link>
+          </Typography>
         </Box>
         <OpeningHours key={`hours-${selected.id}`} agency={selected} />
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>

@@ -182,6 +182,7 @@
     "toggleHours": "Afficher ou masquer les horaires",
     "verifiedCount": "{count} avis contrôlés",
     "certificateLink": "{name} · {city} : voir son certificat Opinion System (nouvel onglet)",
+    "addressMapsLink": "{address} : ouvrir dans Google Maps (nouvel onglet)",
     "reviewsLink": "{count} avis contrôlés : voir le certificat de {city} (nouvel onglet)",
     "gallery": {
       "label": "Photos de {name} · {city}",
