@@ -203,7 +203,7 @@
     "description": "Cette agence est engagée dans une démarche qualité. Opinion System, organisme indépendant qui collecte et contrôle ses avis, est triplement certifié par AFNOR Certification pour sa méthode de collecte, ses processus et la publication des avis clients.",
     "badgeAlt": "Avis contrôlés Opinion System — ISO 20252",
     "verified": "Avis contrôlés · identité et achat vérifiés",
-    "recommendation": "Recommandation",
+    "recommendation": "Niveau de Recommandation",
     "readReviews": "Lire les avis clients",
     "certifications": {
       "nf": {

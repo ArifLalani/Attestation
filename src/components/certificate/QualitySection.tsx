@@ -37,9 +37,15 @@ export function QualitySection() {
         <Box sx={{ flex: "1 1 139px", minWidth: 0, display: "flex", flexDirection: "column", gap: 1 }}>
           <Image src="/figma/os-logo.png" alt="Opinion System" width={139} height={56} unoptimized />
           <Typography sx={{ fontSize: 14, fontWeight: 600 }}>{t("verified")}</Typography>
-          {recommendation !== null && <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "baseline", columnGap: 1, px: 1.5, py: 0.5, borderRadius: "4px", bgcolor: tokens.bleu20, border: `1px solid ${tokens.bleu400}` }}>
-            <Typography component="span" sx={{ fontSize: 12, fontWeight: 600 }}>{t("recommendation")}</Typography>
-            <Typography component="span" sx={{ fontSize: 20, fontWeight: 600 }}>{recommendation}<Box component="span" sx={{ fontSize: 14 }}>%</Box></Typography>
+          {/* "Niveau de Recommandation": a label over a blue bar, with the percentage at the end of the bar. */}
+          {recommendation !== null && <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 0.5 }}>
+            <Typography sx={{ fontSize: 14, fontWeight: 600 }}>{t("recommendation")}</Typography>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Box aria-hidden sx={{ flex: 1, height: 8, borderRadius: "4px", bgcolor: tokens.grisMoyen1, overflow: "hidden" }}>
+                <Box sx={{ width: `${recommendation}%`, height: "100%", borderRadius: "4px", bgcolor: tokens.bleu400 }} />
+              </Box>
+              <Typography component="span" sx={{ fontSize: 16, fontWeight: 700, minWidth: 40, textAlign: "right" }}>{recommendation}%</Typography>
+            </Box>
           </Box>}
         </Box>
       </Box>
