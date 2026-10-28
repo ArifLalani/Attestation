@@ -154,26 +154,28 @@ export function AgenciesSection() {
         </Box>
 
         <CtaButton variant="secondary" aria-expanded={expanded} aria-controls={listId} onClick={() => setExpanded((value) => !value)} sx={{ "& img": { transform: expanded ? "rotate(180deg)" : "none" } }}>{t(expanded ? "showLess" : "showMore")}</CtaButton>
-        <Collapse in={expanded} unmountOnExit>
-          <Box id={listId} component="ul" sx={{ listStyle: "none", m: 0, p: 0, display: "flex", flexDirection: "column", gap: 1 }}>
-            {locations.map((location, index) => {
-              const stats = summaries.get(location.id)!;
-              return <Box component="li" key={location.id}>
-                <ButtonBase onClick={() => setSelectedId(location.id)} aria-pressed={location.id === selected.id} aria-label={t("selectAgency", { city: location.city })}
-                  sx={{ display: "flex", gap: 1.5, width: "100%", p: 1.5, borderRadius: "12px", border: `1px solid ${location.id === selected.id ? tokens.bleu400 : tokens.grisMoyen1}`, bgcolor: location.id === selected.id ? tokens.bleu5 : tokens.blanc, textAlign: "left" }}>
-                  <AgencyLetter index={index} />
-                  <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <Typography sx={{ fontSize: 14, fontWeight: 600 }}>{location.city}</Typography>
-                    <Typography sx={{ fontSize: 12, color: tokens.gris }}>{t("verifiedCount", { count: formatCount(stats.count) })}</Typography>
-                  </Box>
-                  {isPublic(stats.count, location.publicThreshold) && stats.average !== null && <RatingChip value={stats.average} />}
-                </ButtonBase>
-              </Box>;
-            })}
-          </Box>
-        </Collapse>
       </Box>
       </Box>
+      {/* The other agencies take the full width under the map and the details (3 per row on desktop).
+          mt -2 cancels the section gap, so the space opens with the animation. */}
+      <Collapse in={expanded} unmountOnExit sx={{ mt: -2 }}>
+        <Box id={listId} component="ul" sx={{ listStyle: "none", m: 0, p: 0, pt: 2, display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", sm: "repeat(2, minmax(0, 1fr))", md: "repeat(3, minmax(0, 1fr))" }, gap: 1 }}>
+          {locations.map((location, index) => {
+            const stats = summaries.get(location.id)!;
+            return <Box component="li" key={location.id}>
+              <ButtonBase onClick={() => setSelectedId(location.id)} aria-pressed={location.id === selected.id} aria-label={t("selectAgency", { city: location.city })}
+                sx={{ display: "flex", gap: 1.5, width: "100%", height: "100%", p: 1.5, borderRadius: "12px", border: `1px solid ${location.id === selected.id ? tokens.bleu400 : tokens.grisMoyen1}`, bgcolor: location.id === selected.id ? tokens.bleu5 : tokens.blanc, textAlign: "left" }}>
+                <AgencyLetter index={index} />
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Typography sx={{ fontSize: 14, fontWeight: 600 }}>{location.city}</Typography>
+                  <Typography sx={{ fontSize: 12, color: tokens.gris }}>{t("verifiedCount", { count: formatCount(stats.count) })}</Typography>
+                </Box>
+                {isPublic(stats.count, location.publicThreshold) && stats.average !== null && <RatingChip value={stats.average} />}
+              </ButtonBase>
+            </Box>;
+          })}
+        </Box>
+      </Collapse>
     </Box>
   );
 }
