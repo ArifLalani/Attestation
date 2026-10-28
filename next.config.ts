@@ -5,6 +5,8 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
+  // The design-option switcher sits bottom left, where the dev indicator would cover it.
+  devIndicators: false,
   partialPrefetching: true,
   async redirects() {
     return [

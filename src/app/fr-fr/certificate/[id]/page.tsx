@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CertificatePage } from "@/components/certificate/CertificatePage";
 import { agencies, getAgency } from "@/data/agencies";
+import { VariantSwitcher } from "@/variants/VariantSwitcher";
 
 // Every agency page is prerendered; switching agencies may wait for the next page instead of streaming a shell.
 export const instant = false;
@@ -19,5 +20,10 @@ export async function generateMetadata({ params }: PageProps<"/fr-fr/certificate
 export default async function Page({ params }: PageProps<"/fr-fr/certificate/[id]">) {
   const { id } = await params;
   if (!getAgency(id)) notFound();
-  return <CertificatePage key={id} agencyId={id} />;
+  return (
+    <>
+      <CertificatePage key={id} agencyId={id} />
+      <VariantSwitcher current="original" agencyId={id} />
+    </>
+  );
 }
