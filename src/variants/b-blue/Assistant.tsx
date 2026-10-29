@@ -91,7 +91,7 @@ export function AskAiCard() {
         </Box>
         <Box>
           <Typography id="b-ai-title" component="h2" sx={{ fontFamily: b.serif, fontWeight: 600, fontSize: { xs: 21, md: 24 }, lineHeight: 1.2 }}>
-            {t("cardHeading").replace(" ?", "00a0?")}
+            {t("cardHeading").replace(" ?", "\u00a0?")}
           </Typography>
           <Typography sx={{ fontSize: 14, color: b.muted }}>{t("cardText")}</Typography>
         </Box>
