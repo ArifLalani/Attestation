@@ -134,7 +134,7 @@ export function Reviews() {
       </Box>
 
       {list.length ? (
-        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "repeat(2, minmax(0, 1fr))" }, gap: { xs: 1.5, md: 2.5 }, alignItems: "start" }}>
+        <Box sx={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr)", gap: { xs: 1.5, md: 2.5 }, alignItems: "start" }}>
           {list.slice(0, visible).map((review) => (
             <ReviewCardB key={review.id} review={review} onReport={setReporting} />
           ))}
