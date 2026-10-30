@@ -1,0 +1,13 @@
+{
+  "VarianteF": {
+    "taglineTop": "N°1 des avis contrôlés",
+    "taglineBottom": "pour les professionnels du service",
+    "signup": "Inscrire mon entreprise",
+    "homeLabel": "Opinion System, accueil",
+    "illustrationAlt": "",
+    "scoreAria": "Note de {score} sur 5",
+    "scoreText": "Note calculée à partir des {total} avis, dont {controle} avis contrôlés par Opinion System.",
+    "scoreDetails": "Voir le détail de la note",
+    "pitchEyebrow": "Pour les entreprises"
+  }
+}

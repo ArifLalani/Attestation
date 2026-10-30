@@ -6,6 +6,7 @@ export const variants = [
   { id: "c", label: "C", name: "C · Pratique", href: (agencyId: string) => `/fr-fr/variantes/c/${agencyId}` },
   { id: "d", label: "D", name: "D · La Boîte Immo", href: (agencyId: string) => `/fr-fr/variantes/d/${agencyId}` },
   { id: "e", label: "E", name: "E · Essentiel", href: (agencyId: string) => `/fr-fr/variantes/e/${agencyId}` },
+  { id: "f", label: "F", name: "F · Classique", href: (agencyId: string) => `/fr-fr/variantes/f/${agencyId}` },
 ] as const;
 
 export type VariantId = (typeof variants)[number]["id"];
