@@ -15,7 +15,7 @@ import { AgenciesSection } from "./AgenciesSection";
 import { QualitySection } from "./QualitySection";
 import { BusinessPitch } from "./BusinessPitch";
 import { CertificateFooter } from "./CertificateFooter";
-import { CertificateActions, DesktopScorePill } from "./CertificateActions";
+import { CertificateActions } from "./CertificateActions";
 
 const sectionSx = {
   display: "flex",
@@ -54,7 +54,6 @@ export function CertificatePage({ agencyId }: { agencyId: string }) {
       </Box>
       <CertificateFooter />
       <CertificateActions />
-      <DesktopScorePill />
     </CertificateProvider>
   );
 }

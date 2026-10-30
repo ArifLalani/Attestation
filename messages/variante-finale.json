@@ -23,6 +23,19 @@
         "worst": "Notes les plus basses"
       },
       "detail": "{role} · {count} avis"
+    },
+    "widget": {
+      "label": "Contacter l’agence",
+      "title": "Parlons de votre projet",
+      "today": "Aujourd’hui",
+      "contact": "Contacter l’agence",
+      "note": "Vous êtes mis en relation directement avec l’agence.",
+      "share": "Partager",
+      "expand": "Afficher les infos et les actions",
+      "collapse": "Réduire",
+      "hoursToggle": "Afficher ou masquer les horaires de la semaine",
+      "count": "{count} avis",
+      "scoreLink": "{score} sur 5, {count}. Voir les avis"
     }
   }
 }
