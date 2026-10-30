@@ -27,13 +27,19 @@ export const cardSx = {
   boxShadow: tokens.shadowCard,
 } as const;
 
+/** Grey text on the frosted sign: darker than tokens.gris so it stays readable over the blurred photo. */
+const glassMuted = "rgba(4, 27, 68, 0.64)";
+
+/** Faint diagonal light reflection across the frosted sign. */
+const sheen = "linear-gradient(115deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 34%, rgba(255,255,255,0) 62%, rgba(255,255,255,0.28) 72%, rgba(255,255,255,0) 84%)";
+
 const metaLinkSx = {
   display: "inline-flex",
   alignItems: "center",
   gap: 0.5,
   fontSize: 14,
   lineHeight: "normal",
-  color: tokens.gris,
+  color: glassMuted,
   textDecoration: "none",
   textUnderlineOffset: "3px",
   "&:hover": { textDecoration: "underline" },
@@ -76,9 +82,48 @@ export function BusinessCard() {
   return (
     <Box
       component="article"
-      sx={{ ...cardSx, overflow: "hidden", display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1.1fr) minmax(0, 1fr)" } }}
+      sx={{
+        ...cardSx,
+        position: "relative",
+        overflow: "hidden",
+        isolation: "isolate",
+        display: "grid",
+        // Phone: the photo shows above the sign, which overlaps its lower part. Desktop: the sign floats on the left.
+        gridTemplateAreas: { xs: '"caption" "sign"', md: '"sign caption"' },
+        gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1.05fr) minmax(0, 1fr)" },
+        minHeight: { md: 540 },
+        p: { xs: 1.5, sm: 2, md: 4 },
+        columnGap: 4,
+        background: { xs: tokens.bleuFonce, md: "linear-gradient(147.875deg, rgb(143,178,219) 0%, rgb(201,219,240) 71.429%)" },
+      }}
     >
-      <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: { xs: 2, md: 2.5 }, p: { xs: 2, sm: 3, lg: 5 }, minWidth: 0 }}>
+      {/* The team photo runs behind the whole hero on desktop; on phones and tablets it fills the top and fades into navy under the sign. */}
+      <Box sx={{ position: "absolute", zIndex: -1, inset: { xs: "0 0 auto 0", md: 0 }, height: { xs: 380, sm: 540, md: "auto" } }}>
+        <Image src={agency.coverPhoto} alt={t("coverAlt", { name: agency.name })} fill priority sizes="(min-width: 1200px) 1100px, 100vw" style={{ objectFit: "cover", objectPosition: "70% center" }} />
+        <Box aria-hidden sx={{ position: "absolute", inset: 0, background: { xs: "linear-gradient(rgba(4,27,68,0) 25%, rgba(4,27,68,0.55) 60%, #041b44 100%)", md: "linear-gradient(rgba(4,27,68,0) 40%, rgba(4,27,68,0.6) 100%)" } }} />
+      </Box>
+
+      <Box
+        sx={{
+          gridArea: "sign",
+          alignSelf: "center",
+          display: "flex",
+          flexDirection: "column",
+          gap: { xs: 2, md: 2.5 },
+          p: { xs: 2, sm: 3, lg: 4.5 },
+          minWidth: 0,
+          borderRadius: "16px",
+          // Frosted plastic: mostly white, a strong blur of the photo behind, and a faint diagonal sheen.
+          // A little whiter on phones and tablets, where the lower part of the sign sits on navy instead of the photo.
+          background: {
+            xs: `${sheen}, rgba(255,255,255,0.88)`,
+            md: `${sheen}, rgba(255,255,255,0.8)`,
+          },
+          backdropFilter: "blur(22px) saturate(160%)",
+          WebkitBackdropFilter: "blur(22px) saturate(160%)",
+          boxShadow: "0 32px 64px -16px rgba(4,27,68,0.45), 0 12px 24px -8px rgba(4,27,68,0.25)",
+        }}
+      >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
           <Box sx={{ width: 48, height: 48, borderRadius: "12px", overflow: "hidden", flexShrink: 0, bgcolor: tokens.blanc, border: `1px solid ${tokens.grisMoyen1}`, display: "grid", placeItems: "center" }}>
             {/* Crop of the logo image as set in Figma ("image 4"). */}
@@ -88,7 +133,7 @@ export function BusinessCard() {
               </Box>
             </Box>
           </Box>
-          <Typography sx={{ flex: 1, fontSize: 14, color: tokens.gris, lineHeight: "normal" }}>{th("sector", { sector: agency.sector, city: agency.city })}</Typography>
+          <Typography sx={{ flex: 1, fontSize: 14, color: glassMuted, lineHeight: "normal" }}>{th("sector", { sector: agency.sector, city: agency.city })}</Typography>
           <IconButton onClick={share} aria-label={t("share")} sx={{ p: 1, borderRadius: "8px" }}>
             <FigmaIcon name="share" />
           </IconButton>
@@ -107,15 +152,15 @@ export function BusinessCard() {
           <ButtonBase
             onClick={() => goToSection("avis")}
             aria-label={th("scoreAria", { score: formatScore(summary.average!), count: countLabel })}
-            sx={{ alignSelf: "flex-start", gap: 1.5, py: 1.25, pl: 1.75, pr: 2, borderRadius: "12px", bgcolor: tokens.grisClair2, border: `1px solid ${tokens.grisMoyen1}`, textAlign: "left", "&:hover": { borderColor: tokens.gris } }}
+            sx={{ alignSelf: "flex-start", gap: 1.5, py: 1.25, pl: 1.75, pr: 2, borderRadius: "12px", bgcolor: "rgba(255,255,255,0.72)", border: `1px solid ${tokens.grisMoyen1}`, textAlign: "left", "&:hover": { bgcolor: tokens.blanc } }}
           >
             <Typography component="span" sx={{ fontSize: 40, fontWeight: 700, lineHeight: 1, letterSpacing: "-0.03em", color: tokens.bleuFonce, whiteSpace: "nowrap" }}>
               {formatScore(summary.average!)}
-              <Box component="span" sx={{ fontSize: 16, fontWeight: 500, letterSpacing: 0, color: tokens.gris }}>/5</Box>
+              <Box component="span" sx={{ fontSize: 16, fontWeight: 500, letterSpacing: 0, color: glassMuted }}>/5</Box>
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
               <Rating readOnly value={summary.average} precision={0.1} sx={{ fontSize: 20 }} />
-              <Typography component="span" sx={{ display: "flex", alignItems: "center", gap: 0.5, fontSize: 13, color: tokens.gris, lineHeight: "normal" }}>
+              <Typography component="span" sx={{ display: "flex", alignItems: "center", gap: 0.5, fontSize: 13, color: glassMuted, lineHeight: "normal" }}>
                 {scoreView === "controle" && <Verified sx={{ fontSize: 15, color: tokens.vertOs }} />}
                 {countLabel}
               </Typography>
@@ -163,16 +208,12 @@ export function BusinessCard() {
         </Box>
       </Box>
 
-      <Box sx={{ position: "relative", minHeight: { xs: 240, sm: 320, md: 480 }, background: "linear-gradient(147.875deg, rgb(143,178,219) 0%, rgb(201,219,240) 71.429%)" }}>
-        <Image src={agency.coverPhoto} alt={t("coverAlt", { name: agency.name })} fill priority sizes="(min-width: 1200px) 560px, (min-width: 900px) 46vw, (min-width: 640px) 616px, 100vw" style={{ objectFit: "cover" }} />
-        <Box aria-hidden sx={{ position: "absolute", inset: "45% 0 0", background: "linear-gradient(rgba(4,27,68,0), rgba(4,27,68,0.72))" }} />
-        <Box sx={{ position: "absolute", left: { xs: 16, md: 32 }, right: { xs: 16, md: 32 }, bottom: { xs: 16, md: 32 }, color: tokens.blanc }}>
-          <Typography sx={{ display: "flex", alignItems: "center", gap: 0.75, mb: 0.75, fontSize: 13, lineHeight: "normal" }}>
-            <Verified sx={{ fontSize: 18, color: tokens.vertOs }} />
-            {th("photoKicker")}
-          </Typography>
-          <Typography sx={{ maxWidth: 420, fontSize: { xs: 20, md: 26 }, fontWeight: 600, lineHeight: 1.2, letterSpacing: "-0.02em", textWrap: "balance" }}>{th("photoTitle")}</Typography>
-        </Box>
+      <Box sx={{ gridArea: "caption", alignSelf: "end", minHeight: { xs: 220, sm: 280, md: 0 }, display: "flex", flexDirection: "column", justifyContent: "flex-end", px: { xs: 1, md: 0 }, pb: { xs: 2, md: 0 }, color: tokens.blanc, textShadow: "0 1px 12px rgba(4,27,68,0.45)" }}>
+        <Typography sx={{ display: "flex", alignItems: "center", gap: 0.75, mb: 0.75, fontSize: 13, lineHeight: "normal" }}>
+          <Verified sx={{ fontSize: 18, color: tokens.vertOs }} />
+          {th("photoKicker")}
+        </Typography>
+        <Typography sx={{ maxWidth: 420, fontSize: { xs: 20, md: 26 }, fontWeight: 600, lineHeight: 1.2, letterSpacing: "-0.02em", textWrap: "balance" }}>{th("photoTitle")}</Typography>
       </Box>
 
       <Snackbar open={copied} autoHideDuration={2500} onClose={() => setCopied(false)} message={t("linkCopied")} anchorOrigin={{ vertical: "bottom", horizontal: "center" }} />
