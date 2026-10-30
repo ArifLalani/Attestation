@@ -136,21 +136,7 @@ export function ReputationCard() {
   const tf = useTranslations("VarianteFinale.reputation");
   const { agency, team, reviews, scoreView, setScoreView, scoreCollaboratorId, setScoreCollaboratorId, setFilters, goToSection } = useCertificate();
   const [pickerOpen, setPickerOpen] = useState(false);
-  const [scoreForEl, setScoreForEl] = useState<HTMLButtonElement | null>(null);
   const [learnMoreOpen, setLearnMoreOpen] = useState(false);
-
-  // Desktop dropdown: make room under the selector first, so the list always opens downwards.
-  const openPicker = () => {
-    const DROPDOWN_HEIGHT = 470;
-    const rect = scoreForEl?.getBoundingClientRect();
-    const missing = rect && window.matchMedia("(min-width:900px)").matches ? rect.bottom + DROPDOWN_HEIGHT - window.innerHeight : 0;
-    if (missing > 0) {
-      window.scrollBy({ top: missing + 16, behavior: "smooth" });
-      window.setTimeout(() => setPickerOpen(true), 350);
-    } else {
-      setPickerOpen(true);
-    }
-  };
 
   const summary = useMemo(
     () => summarize(reviewsForScore(reviews, scoreView, scoreCollaboratorId)),
@@ -193,8 +179,7 @@ export function ReputationCard() {
       <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1fr) 1px minmax(0, 1fr)" }, gap: { xs: 2, md: 3 } }}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, minWidth: 0 }}>
           <ButtonBase
-            ref={setScoreForEl}
-            onClick={openPicker}
+            onClick={() => setPickerOpen(true)}
             aria-haspopup="listbox"
             aria-expanded={pickerOpen}
             aria-label={`${t("scoreFor")} : ${person ? person.name : t("wholeTeam")}`}
@@ -342,7 +327,6 @@ export function ReputationCard() {
         selectedId={scoreCollaboratorId}
         onSelect={setScoreCollaboratorId}
         view={scoreView}
-        anchorEl={pickerOpen ? scoreForEl : null}
       />
       <LearnMoreSheet open={learnMoreOpen} onClose={() => setLearnMoreOpen(false)} view={scoreView} />
     </Box>

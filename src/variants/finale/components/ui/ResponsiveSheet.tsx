@@ -25,6 +25,8 @@ interface ResponsiveSheetProps {
   children: React.ReactNode;
   /** Desktop: open as a dropdown under this element instead of a centred window. */
   anchorEl?: HTMLElement | null;
+  /** Width of the centred desktop window, when narrower than the default 600 px. */
+  dialogWidth?: number;
   /** Width of the desktop dropdown. */
   dropdownWidth?: number;
 }
@@ -33,7 +35,7 @@ interface ResponsiveSheetProps {
  * Figma "Bottom Sheet": a swipeable bottom sheet on phones and tablets in portrait.
  * From 900 px: a dropdown under `anchorEl` when given, otherwise a centred modal.
  */
-export function ResponsiveSheet({ open, onClose, title, closeLabel, actions, header, footer, children, anchorEl, dropdownWidth = 420 }: ResponsiveSheetProps) {
+export function ResponsiveSheet({ open, onClose, title, closeLabel, actions, header, footer, children, anchorEl, dropdownWidth = 420, dialogWidth }: ResponsiveSheetProps) {
   const desktop = useMediaQuery("(min-width:900px)", { noSsr: true });
   const titleId = useId();
   const dropdown = desktop && Boolean(anchorEl);
@@ -89,7 +91,7 @@ export function ResponsiveSheet({ open, onClose, title, closeLabel, actions, hea
 
   if (desktop) {
     return (
-      <Dialog open={open} onClose={onClose} aria-labelledby={titleId} fullWidth maxWidth="sm" slotProps={{ paper: { sx: { borderRadius: "20px", overflow: "hidden" } } }}>
+      <Dialog open={open} onClose={onClose} aria-labelledby={titleId} fullWidth maxWidth="sm" slotProps={{ paper: { sx: { borderRadius: "20px", overflow: "hidden", ...(dialogWidth && { maxWidth: dialogWidth }) } } }}>
         {body}
       </Dialog>
     );

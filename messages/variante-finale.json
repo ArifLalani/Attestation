@@ -15,6 +15,14 @@
     "reputation": {
       "distribution": "Répartition des notes",
       "basedOn": "{count} avis"
+    },
+    "picker": {
+      "sort": {
+        "alpha": "A → Z",
+        "best": "Meilleures notes",
+        "worst": "Notes les plus basses"
+      },
+      "detail": "{role} · {count} avis"
     }
   }
 }

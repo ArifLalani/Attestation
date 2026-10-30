@@ -43,7 +43,6 @@ export function FiltersSheet() {
   const [draft, setDraft] = useState<ReviewFilters>(filters);
   const [wasOpen, setWasOpen] = useState(open);
   const [pickerOpen, setPickerOpen] = useState(false);
-  const [collaboratorEl, setCollaboratorEl] = useState<HTMLButtonElement | null>(null);
 
   // Start from the applied filters each time the panel opens.
   if (open !== wasOpen) {
@@ -158,7 +157,6 @@ export function FiltersSheet() {
             </Typography>
             <ButtonBase
               id="filter-collaborator"
-              ref={setCollaboratorEl}
               onClick={() => setPickerOpen(true)}
               aria-haspopup="listbox"
               aria-expanded={pickerOpen}
@@ -185,14 +183,13 @@ export function FiltersSheet() {
         </Box>
       </ResponsiveSheet>
 
-      {/* Phones: a second sheet over the filters. Desktop: a dropdown under the field. */}
+      {/* Phones: a second sheet over the filters. Desktop: a window over the filters. */}
       <CollaboratorPicker
         open={pickerOpen}
         onClose={() => setPickerOpen(false)}
         selectedId={draft.collaboratorId}
         onSelect={(id) => setDraft((current) => ({ ...current, collaboratorId: id }))}
         view={scoreView}
-        anchorEl={pickerOpen ? collaboratorEl : null}
       />
     </>
   );

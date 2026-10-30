@@ -2,21 +2,19 @@
 
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
-import IconButton from "@mui/material/IconButton";
 import InputBase from "@mui/material/InputBase";
-import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import Check from "@mui/icons-material/Check";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
 import { RatingChip } from "@/variants/finale/components/ui/RatingChip";
 import { ResponsiveSheet } from "@/variants/finale/components/ui/ResponsiveSheet";
 import { StaffAvatar, TeamAvatar } from "@/variants/finale/components/ui/StaffAvatar";
+import { formatCount } from "@/lib/format";
 import { isPublic, reviewsForScore, summarize, type ScoreView } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
 import { useCertificate } from "@/components/certificate/CertificateContext";
-import { SortSheet } from "./SortSheet";
 
 type StaffSort = "alpha" | "best" | "worst";
 
@@ -26,19 +24,50 @@ const normalize = (text: string) =>
 const rowSx = (selected: boolean) => ({
   width: "100%",
   justifyContent: "flex-start",
-  gap: 1,
+  gap: 1.5,
   px: 2,
-  pt: 1.5,
-  pb: "13px",
+  py: 1.25,
+  minHeight: 60,
   textAlign: "left" as const,
-  borderBottom: `1px solid ${tokens.grisMoyen1}`,
-  bgcolor: selected ? tokens.bleu10 : tokens.blanc,
+  bgcolor: selected ? tokens.bleu10 : "transparent",
   "&:hover": { bgcolor: selected ? tokens.bleu10 : tokens.bleu5 },
+  "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleuFonce}`, outlineOffset: -2 },
 });
 
+/** Sort choice as a chip (layout from option C): navy when chosen, with a check. */
+function SortChip({ selected, onClick, children }: { selected: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <ButtonBase
+      role="radio"
+      aria-checked={selected}
+      onClick={onClick}
+      sx={{
+        flexShrink: 0,
+        gap: 0.5,
+        height: 36,
+        px: 1.5,
+        borderRadius: "8px",
+        bgcolor: selected ? tokens.bleuFonce : tokens.grisClair2,
+        border: `1px solid ${selected ? tokens.bleuFonce : tokens.grisMoyen1}`,
+        color: selected ? tokens.blanc : tokens.bleuFonce,
+        fontFamily: "inherit",
+        fontSize: 14,
+        fontWeight: selected ? 600 : 500,
+        whiteSpace: "nowrap",
+        transition: "background-color 150ms ease, color 150ms ease",
+        "&:hover": { bgcolor: selected ? tokens.bleuFonce : tokens.grisMoyen1 },
+        "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleuFonce}`, outlineOffset: 2 },
+      }}
+    >
+      {selected && <Check sx={{ fontSize: 18 }} />}
+      {children}
+    </ButtonBase>
+  );
+}
+
 /**
- * Figma "Collaborator select" (726:15618). Lists staff above the publication threshold.
- * Phones: bottom sheet. Desktop with an anchor: a dropdown right under the selector.
+ * Staff above the publication threshold, with a search field and the sort as chips (layout from option C).
+ * A window on desktop, a bottom sheet on phones.
  */
 export function CollaboratorPicker({
   open,
@@ -46,29 +75,18 @@ export function CollaboratorPicker({
   selectedId,
   onSelect,
   view,
-  anchorEl,
 }: {
   open: boolean;
   onClose: () => void;
   selectedId?: string;
   onSelect: (id: string | undefined) => void;
   view: ScoreView;
-  anchorEl?: HTMLElement | null;
 }) {
-  const desktop = useMediaQuery("(min-width:900px)", { noSsr: true });
-  const dropdown = desktop && Boolean(anchorEl);
-  // A field low in the window (e.g. inside the Filtres dropdown) opens the list upwards instead of covering the field.
-  const rect = dropdown && open && anchorEl ? anchorEl.getBoundingClientRect() : null;
-  const spaceBelow = rect ? window.innerHeight - rect.bottom - 24 : 460;
-  const spaceAbove = rect ? rect.top - 24 : 0;
-  const upward = spaceBelow < 300 && spaceAbove > spaceBelow;
-  const placement = { upward, maxHeight: Math.min(460, upward ? spaceAbove : Math.max(spaceBelow, 300)) };
   const t = useTranslations("Collaborators");
-  const ts = useTranslations("Sort");
+  const tp = useTranslations("VarianteFinale.picker");
   const { team, reviews, agency } = useCertificate();
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<StaffSort>("alpha");
-  const [sortOpen, setSortOpen] = useState(false);
 
   const people = useMemo(() => {
     const scored = team
@@ -86,12 +104,23 @@ export function CollaboratorPicker({
     onClose();
   };
 
-  const search = (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 2, p: 2, bgcolor: tokens.grisClair2, flexShrink: 0 }}>
-      <Box sx={{ flex: 1, display: "flex", alignItems: "center", gap: 1, px: 2, py: 1.5, bgcolor: tokens.blanc, borderRadius: "10px" }}>
-        <Box sx={{ p: 0.5 }}>
-          <FigmaIcon name="search" />
-        </Box>
+  const header = (
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, px: 2, pt: 2, pb: 1.5, borderBottom: `1px solid ${tokens.grisMoyen1}`, flexShrink: 0 }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+          px: 2,
+          height: 48,
+          borderRadius: "999px",
+          bgcolor: tokens.grisClair1,
+          border: `1px solid ${tokens.grisMoyen1}`,
+          transition: "border-color 150ms ease, background-color 150ms ease",
+          "&:focus-within": { borderColor: tokens.bleuFonce, bgcolor: tokens.blanc },
+        }}
+      >
+        <FigmaIcon name="search" />
         <InputBase
           value={query}
           onChange={(event) => setQuery(event.target.value)}
@@ -101,93 +130,56 @@ export function CollaboratorPicker({
             flex: 1,
             fontSize: 16,
             color: tokens.bleuFonce,
-            "& input": { p: 0, height: "auto", lineHeight: "normal" },
             "& input::placeholder": { color: tokens.gris, opacity: 1 },
           }}
         />
       </Box>
-      <IconButton aria-label={t("sort")} onClick={() => setSortOpen(true)} sx={{ p: 0, borderRadius: "8px" }}>
-        <FigmaIcon name="sort-ascending" />
-      </IconButton>
-    </Box>
-  );
-
-  const list = (
-    <Box component="ul" role="listbox" aria-label={t("title")} sx={{ listStyle: "none", m: 0, p: 0 }}>
-      {!query && (
-        <li>
-          <ButtonBase role="option" aria-selected={!selectedId} onClick={() => choose(undefined)} sx={rowSx(!selectedId)}>
-            <TeamAvatar />
-            <Typography sx={{ flex: 1, fontSize: 16, fontWeight: 500, lineHeight: "16px", color: tokens.bleuFonce }}>{t("all")}</Typography>
-            {!selectedId && (
-              <Box sx={{ width: 24, height: 24, p: 0.5 }}>
-                <FigmaIcon name="check" />
-              </Box>
-            )}
-          </ButtonBase>
-        </li>
-      )}
-      {people.map(({ person, summary }) => {
-        const selected = person.id === selectedId;
-        return (
-          <li key={person.id}>
-            <ButtonBase role="option" aria-selected={selected} onClick={() => choose(person.id)} sx={rowSx(selected)}>
-              <StaffAvatar person={person} />
-              <Box sx={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 0.5 }}>
-                <Typography sx={{ fontSize: 16, fontWeight: 500, lineHeight: "16px", color: tokens.bleuFonce }}>{person.name}</Typography>
-                <Typography sx={{ fontSize: 14, fontWeight: 500, lineHeight: "14px", color: tokens.gris, overflow: "hidden", textOverflow: "ellipsis" }}>
-                  {person.email}
-                </Typography>
-              </Box>
-              {summary.average !== null && <RatingChip value={summary.average} />}
-            </ButtonBase>
-          </li>
-        );
-      })}
-      {query && !people.length && (
-        <Typography component="li" sx={{ p: 2, color: tokens.gris, fontSize: 14 }}>
-          {t("noResult", { query })}
-        </Typography>
-      )}
+      <Box role="radiogroup" aria-label={t("sort")} sx={{ display: "flex", gap: 1, overflowX: "auto", scrollbarWidth: "none", mx: -2, px: 2 }}>
+        {(["alpha", "best", "worst"] as const).map((key) => (
+          <SortChip key={key} selected={sort === key} onClick={() => setSort(key)}>
+            {tp(`sort.${key}`)}
+          </SortChip>
+        ))}
+      </Box>
     </Box>
   );
 
   return (
-    <>
-      {dropdown ? (
-        <Popover
-          open={open}
-          anchorEl={anchorEl}
-          onClose={onClose}
-          anchorOrigin={{ vertical: placement.upward ? "top" : "bottom", horizontal: "left" }}
-          transformOrigin={{ vertical: placement.upward ? "bottom" : "top", horizontal: "left" }}
-          slotProps={{
-            paper: {
-              "aria-label": t("title"),
-              sx: { mt: placement.upward ? -1 : 1, width: anchorEl?.offsetWidth, maxHeight: placement.maxHeight, display: "flex", flexDirection: "column", borderRadius: "12px", overflow: "hidden" },
-            },
-          }}
-        >
-          {search}
-          <Box sx={{ overflowY: "auto", overscrollBehavior: "contain" }}>{list}</Box>
-        </Popover>
-      ) : (
-        <ResponsiveSheet open={open} onClose={onClose} title={t("title")} closeLabel={t("close")} header={search}>
-          {list}
-        </ResponsiveSheet>
-      )}
-
-      <SortSheet<StaffSort>
-        open={sortOpen}
-        onClose={() => setSortOpen(false)}
-        value={sort}
-        onChange={setSort}
-        options={[
-          { value: "alpha", label: ts("alpha"), hint: ts("alphaHint") },
-          { value: "best", label: ts("best"), hint: ts("bestHint") },
-          { value: "worst", label: ts("worst"), hint: ts("worstHint") },
-        ]}
-      />
-    </>
+    <ResponsiveSheet open={open} onClose={onClose} title={t("title")} closeLabel={t("close")} header={header} dialogWidth={480}>
+      <Box component="ul" role="listbox" aria-label={t("title")} sx={{ listStyle: "none", m: 0, py: 1, px: 0 }}>
+        {!query && (
+          <li>
+            <ButtonBase role="option" aria-selected={!selectedId} onClick={() => choose(undefined)} sx={rowSx(!selectedId)}>
+              <TeamAvatar size={40} color={tokens.bleuFonce} />
+              <Typography sx={{ flex: 1, fontSize: 16, fontWeight: 600, color: tokens.bleuFonce }}>{t("all")}</Typography>
+              {!selectedId && <Check sx={{ color: tokens.bleuFonce }} />}
+            </ButtonBase>
+          </li>
+        )}
+        {people.map(({ person, summary }) => {
+          const selected = person.id === selectedId;
+          return (
+            <li key={person.id}>
+              <ButtonBase role="option" aria-selected={selected} onClick={() => choose(person.id)} sx={rowSx(selected)}>
+                <StaffAvatar person={person} size={40} />
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Typography sx={{ fontSize: 16, fontWeight: 600, lineHeight: 1.3, color: tokens.bleuFonce }}>{person.name}</Typography>
+                  <Typography sx={{ fontSize: 13, lineHeight: 1.3, color: tokens.gris }}>
+                    {tp("detail", { role: person.role, count: formatCount(summary.count) })}
+                  </Typography>
+                </Box>
+                {summary.average !== null && <RatingChip value={summary.average} />}
+                {selected && <Check sx={{ color: tokens.bleuFonce }} />}
+              </ButtonBase>
+            </li>
+          );
+        })}
+        {query && !people.length && (
+          <Typography component="li" sx={{ px: 2, py: 3, color: tokens.gris, fontSize: 14 }}>
+            {t("noResult", { query })}
+          </Typography>
+        )}
+      </Box>
+    </ResponsiveSheet>
   );
 }
