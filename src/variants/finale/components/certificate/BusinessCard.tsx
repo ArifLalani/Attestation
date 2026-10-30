@@ -9,6 +9,7 @@ import Snackbar from "@mui/material/Snackbar";
 import Typography from "@mui/material/Typography";
 import DirectionsOutlined from "@mui/icons-material/DirectionsOutlined";
 import LanguageOutlined from "@mui/icons-material/LanguageOutlined";
+import PlaceOutlined from "@mui/icons-material/PlaceOutlined";
 import Verified from "@mui/icons-material/Verified";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
@@ -19,6 +20,7 @@ import { formatCount, formatScore } from "@/lib/format";
 import { isPublic, reviewsForScore, summarize } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
 import { useCertificate } from "@/components/certificate/CertificateContext";
+import { openHoursEvent } from "./AgenciesSection";
 import { OpenStatus } from "./OpenStatus";
 
 export const cardSx = {
@@ -50,6 +52,16 @@ function directionsUrl(address: string) {
   const destination = encodeURIComponent(address);
   const apple = typeof navigator !== "undefined" && /iPhone|iPad|Macintosh/.test(navigator.userAgent) && "ontouchend" in document;
   return apple ? `https://maps.apple.com/?daddr=${destination}` : `https://www.google.com/maps/dir/?api=1&destination=${destination}`;
+}
+
+/** Read by screen readers only. */
+const visuallyHidden = { position: "absolute", width: 1, height: 1, p: 0, m: "-1px", overflow: "hidden", clip: "rect(0 0 0 0)", whiteSpace: "nowrap", border: 0 } as const;
+
+function scrollToAgencies() {
+  const target = document.getElementById("nos-agences");
+  if (!target) return;
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  target.scrollIntoView({ behavior: reduced ? "instant" : "smooth" });
 }
 
 /**
@@ -177,38 +189,49 @@ export function BusinessCard() {
           <CtaButton variant="secondary" icon={null} onClick={() => goToSection("avis")}>{th("read")}</CtaButton>
         </Box>
 
-        <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", columnGap: 2.5, rowGap: 1 }}>
-          <OpenStatus hours={agency.hours} />
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 1 }}>
+          {/* The status opens this agency's week of hours in Nos Agences. */}
+          <Link
+            href="#nos-agences"
+            onClick={(event) => {
+              event.preventDefault();
+              window.dispatchEvent(new Event(openHoursEvent));
+              scrollToAgencies();
+            }}
+            sx={{ ...metaLinkSx, "&:hover p": { textDecoration: "underline", textUnderlineOffset: "3px" } }}
+          >
+            <OpenStatus hours={agency.hours} />
+            <Box component="span" sx={visuallyHidden}>{th("hoursLink")}</Box>
+          </Link>
           {/* Jumps to the map and hours in Nos Agences. */}
           <Link
             href="#nos-agences"
             aria-label={t("addressLink", { address: agency.address })}
             onClick={(event) => {
-              const target = document.getElementById("nos-agences");
-              if (!target) return;
               event.preventDefault();
-              const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-              target.scrollIntoView({ behavior: reduced ? "instant" : "smooth" });
+              scrollToAgencies();
             }}
             sx={metaLinkSx}
           >
-            <FigmaIcon name="map-pin" />
+            <PlaceOutlined />
             {agency.address}
           </Link>
-          <Link href={agency.website} target="_blank" rel="noopener noreferrer" sx={metaLinkSx}>
-            <LanguageOutlined />
-            {t("website")}
-          </Link>
-          <Link
-            href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(agency.address)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(event) => event.currentTarget.setAttribute("href", directionsUrl(agency.address))}
-            sx={metaLinkSx}
-          >
-            <DirectionsOutlined />
-            {t("directions")}
-          </Link>
+          <Box sx={{ display: "flex", flexWrap: "wrap", columnGap: 2.5, rowGap: 1 }}>
+            <Link href={agency.website} target="_blank" rel="noopener noreferrer" sx={metaLinkSx}>
+              <LanguageOutlined />
+              {t("website")}
+            </Link>
+            <Link
+              href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(agency.address)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(event) => event.currentTarget.setAttribute("href", directionsUrl(agency.address))}
+              sx={metaLinkSx}
+            >
+              <DirectionsOutlined />
+              {t("directions")}
+            </Link>
+          </Box>
         </Box>
       </Box>
 

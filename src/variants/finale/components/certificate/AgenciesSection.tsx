@@ -32,12 +32,18 @@ function AgencyLetter({ index }: { index: number }) {
   return <Box aria-hidden sx={{ width: 24, height: 24, display: "grid", placeItems: "center", borderRadius: "50%", bgcolor: colors[index % colors.length], color: tokens.blanc, fontSize: 12, fontWeight: 700, flexShrink: 0 }}>{String.fromCharCode(65 + index)}</Box>;
 }
 
-function OpeningHours({ agency }: { agency: Agency }) {
+/** Sent by the hero's open/closed status: scroll here with this agency's week of hours open. */
+export const openHoursEvent = "finale:open-hours";
+
+function OpeningHours({ agency, openRequest }: { agency: Agency; openRequest: number }) {
   const t = useTranslations("Agencies");
   const th = useTranslations("Hours");
   // Collapsed to one line, as in the Figma; the arrow shows the week.
   const [expanded, setExpanded] = useState(false);
   const hoursId = useId();
+  useEffect(() => {
+    if (openRequest) setExpanded(true);
+  }, [openRequest]);
   const now = useNow();
   const today = now ? localClock(now).weekday : -1;
   return (
@@ -67,6 +73,7 @@ export function AgenciesSection() {
   const [selectedId, setSelectedId] = useState(agency.id);
   const [expanded, setExpanded] = useState(false);
   const [mapVisible, setMapVisible] = useState(false);
+  const [hoursRequest, setHoursRequest] = useState(0);
   const mapContainer = useRef<HTMLDivElement>(null);
   const listId = useId();
   const locations = useMemo(() => [agency, ...agency.sisterAgencyIds.map(getAgency).filter((item): item is Agency => Boolean(item))], [agency]);
@@ -75,6 +82,20 @@ export function AgenciesSection() {
   const selectedIndex = locations.indexOf(selected);
   const summary = summaries.get(selected.id)!;
   const certificateUrl = `/fr-fr/certificate/${selected.id}`;
+
+  const selectAgency = (id: string) => {
+    setSelectedId(id);
+    setHoursRequest(0);
+  };
+
+  useEffect(() => {
+    const openHours = () => {
+      setSelectedId(agency.id);
+      setHoursRequest((value) => value + 1);
+    };
+    window.addEventListener(openHoursEvent, openHours);
+    return () => window.removeEventListener(openHoursEvent, openHours);
+  }, [agency.id]);
 
   // The WebGL map is below the reviews; load it only as the visitor approaches it.
   useEffect(() => {
@@ -91,7 +112,7 @@ export function AgenciesSection() {
       <Typography sx={{ fontSize: 14, color: tokens.gris }}>{t("description", { name: agency.name })}</Typography>
       <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1fr) minmax(0, 1fr)" }, columnGap: 4, rowGap: 2, alignItems: "stretch" }}>
       <Box ref={mapContainer} role="region" aria-label={t("mapLabel")} sx={{ height: { xs: 215, md: 400 }, width: "100%", alignSelf: "start", borderRadius: "12px", overflow: "hidden", bgcolor: tokens.grisClair2, position: { md: "sticky" }, top: { md: tokens.headerHeight + 16 } }}>
-        {mapVisible ? <AgencyMap agencies={locations} selectedId={selected.id} onSelect={setSelectedId} /> : <Box sx={{ height: "100%", display: "grid", placeItems: "center", fontSize: 14, color: tokens.gris }}>{t("mapLoading")}</Box>}
+        {mapVisible ? <AgencyMap agencies={locations} selectedId={selected.id} onSelect={selectAgency} /> : <Box sx={{ height: "100%", display: "grid", placeItems: "center", fontSize: 14, color: tokens.gris }}>{t("mapLoading")}</Box>}
       </Box>
       {/* Figma "Company Information" (1463:21156): name, photos, details, then the other agencies. */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
@@ -127,7 +148,7 @@ export function AgenciesSection() {
             </Link>
           </Typography>
         </Box>
-        <OpeningHours key={`hours-${selected.id}`} agency={selected} />
+        <OpeningHours key={`hours-${selected.id}`} agency={selected} openRequest={hoursRequest} />
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <Box sx={{ p: 0.5, display: "flex" }}><FigmaIcon name="agency-star" /></Box>
           <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 1 }}>
@@ -163,7 +184,7 @@ export function AgenciesSection() {
           {locations.map((location, index) => {
             const stats = summaries.get(location.id)!;
             return <Box component="li" key={location.id}>
-              <ButtonBase onClick={() => setSelectedId(location.id)} aria-pressed={location.id === selected.id} aria-label={t("selectAgency", { city: location.city })}
+              <ButtonBase onClick={() => selectAgency(location.id)} aria-pressed={location.id === selected.id} aria-label={t("selectAgency", { city: location.city })}
                 sx={{ display: "flex", gap: 1.5, width: "100%", height: "100%", p: 1.5, borderRadius: "12px", border: `1px solid ${location.id === selected.id ? tokens.bleu400 : tokens.grisMoyen1}`, bgcolor: location.id === selected.id ? tokens.bleu5 : tokens.blanc, textAlign: "left" }}>
                 <AgencyLetter index={index} />
                 <Box sx={{ flex: 1, minWidth: 0 }}>
