@@ -14,6 +14,7 @@ import { useCertificate } from "@/components/certificate/CertificateContext";
 import type { Criterion, Review } from "@/data/types";
 import { formatCount } from "@/lib/format";
 import { applyFilters, countActiveFilters, emptyFilters, sortReviews } from "@/lib/reviewFilters";
+import { ReviewSearchField } from "@/components/reviews/ReviewSearchField";
 import { ActiveFilters, FiltersSheetC, SortControl, criteria } from "./Filters";
 import { ReportSheetC } from "./Forms";
 import { ReviewItem } from "./ReviewItem";
@@ -82,6 +83,8 @@ export function Reviews() {
       }
       sx={{ pb: { xs: 2, sm: 3 } }}
     >
+      <ReviewSearchField sx={{ minHeight: 48, pl: 2, borderRadius: 999, borderColor: pc.outlineStrong, bgcolor: "#fff", color: pc.muted, "&:focus-within": { borderColor: pc.indigo, boxShadow: `0 0 0 1px ${pc.indigo}` } }} inputSx={{ color: pc.ink }} />
+
       <Box>
         <Typography component="h3" sx={{ fontSize: 14, fontWeight: 700, color: pc.muted, mb: 1.25 }}>{tv("topics")}</Typography>
         <Box role="group" aria-label={tv("topics")} sx={{ display: "flex", gap: 1, overflowX: { xs: "auto", md: "visible" }, flexWrap: { xs: "nowrap", md: "wrap" }, mx: { xs: -2, sm: 0 }, px: { xs: 2, sm: 0 }, py: 0.25, scrollbarWidth: "none", "&::-webkit-scrollbar": { display: "none" } }}>

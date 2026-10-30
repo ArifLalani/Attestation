@@ -71,7 +71,7 @@ export function FiltersSheetC() {
         closeLabel={t("close")}
         width={560}
         actions={
-          <Pill tone="text" onClick={() => setDraft({ ...emptyFilters, collaboratorId: filters.collaboratorId })} startIcon={<RestartAlt />} disabled={!countActiveFilters(draft)} sx={{ "&.Mui-disabled": { bgcolor: "transparent" } }}>
+          <Pill tone="text" onClick={() => setDraft({ ...emptyFilters, collaboratorId: filters.collaboratorId, query: filters.query })} startIcon={<RestartAlt />} disabled={!countActiveFilters(draft)} sx={{ "&.Mui-disabled": { bgcolor: "transparent" } }}>
             {t("reset")}
           </Pill>
         }

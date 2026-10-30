@@ -17,6 +17,7 @@ import { FiltersSheet } from "./FiltersSheet";
 import { ReportSheet } from "./ReportSheet";
 import { ReviewCard } from "./ReviewCard";
 import { ReviewToolbar } from "./ReviewToolbar";
+import { ReviewSearchField } from "./ReviewSearchField";
 
 const desktopCtaSx = { width: { xs: "100%", md: "auto" }, minWidth: { md: 220 }, px: { md: 3 } } as const;
 const PAGE_SIZE = 3;
@@ -74,6 +75,10 @@ export function ReviewsSection() {
     >
       <Box sx={{ px: 2 }}>
         <CardTitle id="reviews-heading" eyebrow={t("eyebrow")} heading={t("heading")} />
+      </Box>
+
+      <Box sx={{ px: 1.5 }}>
+        <ReviewSearchField sx={{ minHeight: 40, borderRadius: "8px", borderColor: tokens.grisMoyen1, bgcolor: tokens.grisClair1, color: tokens.gris, "&:focus-within": { borderColor: tokens.bleu400, bgcolor: tokens.blanc } }} />
       </Box>
 
       <Box ref={toolbarRef} sx={{ px: 1.5, display: "flex", flexDirection: "column", gap: 1 }}>

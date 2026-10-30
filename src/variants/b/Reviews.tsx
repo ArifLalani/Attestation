@@ -10,6 +10,7 @@ import TuneRounded from "@mui/icons-material/TuneRounded";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { emptyFilters, useCertificate } from "@/components/certificate/CertificateContext";
+import { ReviewSearchField } from "@/components/reviews/ReviewSearchField";
 import type { Review } from "@/data/types";
 import { formatCount } from "@/lib/format";
 import { applyFilters, countActiveFilters, sortReviews, type ReviewFilters } from "@/lib/reviewFilters";
@@ -101,6 +102,11 @@ export function Reviews() {
   return (
     <Box component="section" aria-labelledby="b-reviews-title" sx={{ ...pageWidthSx, display: "flex", flexDirection: "column", gap: 2.5 }}>
       <SectionTitle id="b-reviews-title" subtitle={tb("subtitle")}>{t("heading")}</SectionTitle>
+
+      <ReviewSearchField
+        sx={{ maxWidth: { md: 560 }, minHeight: 48, pl: 2, borderRadius: 999, border: "none", bgcolor: b.white, color: b.muted, fontFamily: b.sans, boxShadow: `inset 0 0 0 1px ${b.lineStrong}`, "&:focus-within": { boxShadow: `inset 0 0 0 2px ${b.ink}` } }}
+        inputSx={{ fontFamily: b.sans, color: b.ink }}
+      />
 
       <Box sx={{ position: "sticky", top: HEADER_VAR, zIndex: 5, mx: { xs: -2, sm: -3, md: -4 }, px: { xs: 2, sm: 3, md: 4 }, py: 1.25, bgcolor: "rgba(251, 248, 244, 0.94)", backdropFilter: "saturate(180%) blur(10px)", display: "flex", flexDirection: "column", gap: 1.25 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>

@@ -36,6 +36,7 @@ import type { Criterion, Product, Review, ReviewSource } from "@/data/types";
 import { formatCount, formatScore } from "@/lib/format";
 import { applyFilters, countActiveFilters, sameFilters, sortReviews, type Period, type ReviewFilters, type ReviewSort } from "@/lib/reviewFilters";
 import type { StarBucket } from "@/lib/scoring";
+import { ReviewSearchField } from "@/components/reviews/ReviewSearchField";
 import { a } from "./theme";
 import { ChoiceChipA, PersonAvatar, Sheet, SheetFooter, Star, StarTiles, cardSx, focusRing, outlineSx, primarySx, useRelativeDate } from "./ui";
 
@@ -365,7 +366,7 @@ function FiltersPanel() {
         closeLabel={t("close")}
         footer={
           <SheetFooter>
-            <Button onClick={() => setDraft({ ...emptyFilters, collaboratorId: filters.collaboratorId })} startIcon={<RestartAlt />} sx={{ ...outlineSx, flex: "0 0 auto" }}>
+            <Button onClick={() => setDraft({ ...emptyFilters, collaboratorId: filters.collaboratorId, query: filters.query })} startIcon={<RestartAlt />} sx={{ ...outlineSx, flex: "0 0 auto" }}>
               {t("reset")}
             </Button>
             <Button disabled={sameFilters(draft, filters)} onClick={() => { setFilters(draft); close(); }} sx={{ ...primarySx, flex: 1 }}>
@@ -709,6 +710,8 @@ export function ReviewsSection() {
           {t("leaveReview")}
         </Button>
       </Box>
+
+      <ReviewSearchField sx={{ minHeight: 48, borderRadius: "10px", borderColor: a.lineStrong, bgcolor: a.white, color: a.muted, "&:focus-within": { borderColor: a.navy, boxShadow: `0 0 0 1px ${a.navy}` } }} inputSx={{ color: a.navy }} />
 
       <Box
         sx={{

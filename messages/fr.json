@@ -329,7 +329,10 @@
       "readMore": "Lire la suite",
       "readLess": "Réduire"
     },
-    "sortShort": "Trier"
+    "sortShort": "Trier",
+    "search": "Rechercher dans les avis",
+    "searchPlaceholder": "Rechercher un mot, un nom…",
+    "searchClear": "Effacer la recherche"
   },
   "Filters": {
     "title": "Filtres",

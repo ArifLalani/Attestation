@@ -75,7 +75,7 @@ export function FiltersSheet() {
         title={t("title")}
         closeLabel={t("close")}
         actions={
-          <ButtonBase onClick={() => setDraft(emptyFilters)} sx={{ px: 3, gap: 0, borderRadius: "8px", fontSize: 16, fontWeight: 600, color: tokens.bleuFonce }}>
+          <ButtonBase onClick={() => setDraft({ ...emptyFilters, query: filters.query })} sx={{ px: 3, gap: 0, borderRadius: "8px", fontSize: 16, fontWeight: 600, color: tokens.bleuFonce }}>
             <Box sx={{ p: 0.5, display: "flex" }}>
               <FigmaIcon name="reset" />
             </Box>

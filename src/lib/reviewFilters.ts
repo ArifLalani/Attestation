@@ -13,11 +13,28 @@ export interface ReviewFilters {
   products: Product[];
   criteria: Criterion[];
   collaboratorId?: string;
+  /** Search box: words looked for in the comment, the author, the reply, the product and the criteria. */
+  query?: string;
 }
 
 export const emptyFilters: ReviewFilters = { products: [], criteria: [] };
 
 const periodDays: Record<Period, number> = { today: 1, week: 7, month: 30, year: 365 };
+
+/** Lower case, no accents, single spaces: "Réactivité" and "reactivite" match. */
+export const normalizeSearch = (text: string) =>
+  text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[_s]+/g, " ").trim();
+
+/** Words of 6 letters or more lose their last letter, so "réactif" also finds "réactive" and "réactivité". */
+const stem = (word: string) => (word.length >= 6 ? word.slice(0, -1) : word);
+
+/** Every word of the query must appear somewhere in the review. */
+export function matchesQuery(review: Review, query: string | undefined): boolean {
+  const words = normalizeSearch(query ?? "").split(" ").filter(Boolean).map(stem);
+  if (!words.length) return true;
+  const haystack = normalizeSearch([review.comment, review.authorName, review.reply?.text, review.product, ...review.criteria].filter(Boolean).join(" "));
+  return words.every((word) => haystack.includes(word));
+}
 
 export function matchesFilters(review: Review, filters: ReviewFilters): boolean {
   if (filters.type && review.status !== filters.type) return false;
@@ -33,12 +50,12 @@ export function matchesFilters(review: Review, filters: ReviewFilters): boolean 
   if (filters.products.length && !filters.products.includes(review.product)) return false;
   if (filters.criteria.length && !review.criteria.some((criterion) => filters.criteria.includes(criterion))) return false;
   if (filters.collaboratorId && review.collaboratorId !== filters.collaboratorId) return false;
-  return true;
+  return matchesQuery(review, filters.query);
 }
 
 export const applyFilters = (reviews: Review[], filters: ReviewFilters) => reviews.filter((review) => matchesFilters(review, filters));
 
-/** One per chip: each single-choice group counts 1, each product or criterion counts 1. */
+/** One per chip: each single-choice group counts 1, each product or criterion counts 1. The search box is not a chip. */
 export function countActiveFilters(filters: ReviewFilters): number {
   return (
     [filters.type, filters.source, filters.note, filters.period, filters.collaboratorId].filter(Boolean).length +

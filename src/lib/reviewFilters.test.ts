@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { getAgency, mainAgencyId } from "@/data/agencies";
 import { getAgencyDataset } from "@/data/reviews";
-import { applyFilters, countActiveFilters, emptyFilters, sameFilters, sortReviews } from "./reviewFilters";
+import { applyFilters, countActiveFilters, emptyFilters, matchesQuery, sameFilters, sortReviews } from "./reviewFilters";
 import { bucketOf } from "./scoring";
 
 const { reviews } = getAgencyDataset(getAgency(mainAgencyId)!);
@@ -52,6 +52,30 @@ it("countActiveFilters counts one per chip", () => {
 
 it("sameFilters ignores selection order", () => {
   expect(sameFilters({ ...emptyFilters, products: ["vente", "achat"] }, { ...emptyFilters, products: ["achat", "vente"] })).toBe(true);
+});
+
+describe("search", () => {
+  it("ignores case and accents, and needs every word", () => {
+    const review = reviews.find((r) => r.comment && r.comment.split(" ").length > 3)!;
+    const [first, second] = review.comment!.split(" ").filter((word) => word.length > 3);
+    expect(matchesQuery(review, first.toUpperCase())).toBe(true);
+    expect(matchesQuery(review, `${first} ${second}`)).toBe(true);
+    expect(matchesQuery(review, `${first} zzzqqq`)).toBe(false);
+    expect(matchesQuery({ ...review, criteria: ["reactivite"] }, "Réactivité")).toBe(true);
+    expect(matchesQuery({ ...review, product: "gestion_locative" }, "gestion locative")).toBe(true);
+    expect(matchesQuery({ ...review, comment: "Une équipe très réactive." }, "réactif")).toBe(true);
+    expect(matchesQuery({ ...review, comment: "Une équipe très réactive." }, "lent")).toBe(false);
+  });
+
+  it("an empty query keeps everything and is not counted as a filter", () => {
+    expect(applyFilters(reviews, { ...emptyFilters, query: "   " })).toHaveLength(reviews.length);
+    expect(countActiveFilters({ ...emptyFilters, query: "agence" })).toBe(0);
+  });
+
+  it("finds reviews by author name", () => {
+    const name = reviews[0].authorName;
+    expect(applyFilters(reviews, { ...emptyFilters, query: name }).every((r) => r.authorName === name || r.comment?.includes(name) || r.reply?.text.includes(name))).toBe(true);
+  });
 });
 
 describe("sortReviews", () => {

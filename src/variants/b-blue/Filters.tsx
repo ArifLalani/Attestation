@@ -67,7 +67,7 @@ export function FiltersB() {
         tall
         footer={
           <SheetFooter>
-            <TextLink onClick={() => setDraft({ ...emptyFilters, collaboratorId: filters.collaboratorId })}>{tb("clear")}</TextLink>
+            <TextLink onClick={() => setDraft({ ...emptyFilters, collaboratorId: filters.collaboratorId, query: filters.query })}>{tb("clear")}</TextLink>
             <Pill
               variant="dark"
               onClick={() => {
