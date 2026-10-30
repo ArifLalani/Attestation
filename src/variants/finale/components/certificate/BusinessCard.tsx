@@ -120,11 +120,11 @@ export function BusinessCard() {
           // Frosted plastic: mostly white, a strong blur of the photo behind, and a faint diagonal sheen.
           // A little whiter on phones and tablets, where the lower part of the sign sits on navy instead of the photo.
           background: {
-            xs: `${sheen}, rgba(255,255,255,0.88)`,
-            md: `${sheen}, rgba(255,255,255,0.8)`,
+            xs: `${sheen}, rgba(255,255,255,0.72)`,
+            md: `${sheen}, rgba(255,255,255,0.58)`,
           },
-          backdropFilter: "blur(22px) saturate(160%)",
-          WebkitBackdropFilter: "blur(22px) saturate(160%)",
+          backdropFilter: "blur(16px) saturate(160%)",
+          WebkitBackdropFilter: "blur(16px) saturate(160%)",
           boxShadow: "0 32px 64px -16px rgba(4,27,68,0.45), 0 12px 24px -8px rgba(4,27,68,0.25)",
         }}
       >
