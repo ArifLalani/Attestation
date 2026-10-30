@@ -2,8 +2,6 @@
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Check from "@mui/icons-material/Check";
-import Person from "@mui/icons-material/Person";
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 import { ResponsiveSheet } from "@/variants/finale/components/ui/ResponsiveSheet";
@@ -15,56 +13,6 @@ import { useCertificate } from "@/components/certificate/CertificateContext";
 
 const globalSources: ReviewSource[] = ["os_certified", "import_iso", "os_simple", "import_other"];
 const controleSources: ReviewSource[] = ["os_certified", "import_iso"];
-
-/** One speech-bubble review in the illustration: avatar, stars, check and placeholder lines. */
-function MiniReview({ stars, large = false }: { stars: number; large?: boolean }) {
-  const avatar = large ? 40 : 28;
-  return (
-    <Box
-      sx={{
-        position: "relative",
-        width: large ? 186 : 132,
-        mt: large ? 0 : 3,
-        p: large ? "12px 12px 14px" : "8px 10px 10px",
-        display: "flex",
-        gap: 1,
-        bgcolor: tokens.blanc,
-        borderRadius: "8px",
-        boxShadow: "0px 2px 8px 0px rgba(4, 27, 68, 0.10)",
-        // Bubble tail, bottom left.
-        "&::after": { content: '""', position: "absolute", left: 12, bottom: -8, width: 10, height: 8, bgcolor: tokens.blanc, clipPath: "polygon(0 0, 100% 0, 0 100%)" },
-      }}
-    >
-      <Box sx={{ width: avatar, height: avatar, flexShrink: 0, borderRadius: "50%", bgcolor: tokens.bleuFonce, display: "grid", placeItems: "center", overflow: "hidden" }}>
-        <Person sx={{ fontSize: avatar * 0.8, color: tokens.bleu400, mt: `${avatar * 0.2}px` }} />
-      </Box>
-      <Box sx={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: large ? 1 : 0.75 }}>
-        <Box sx={{ fontSize: large ? 20 : 12, lineHeight: 1, letterSpacing: large ? "1px" : 0 }}>
-          {[1, 2, 3, 4, 5].map((star) => (
-            <Box key={star} component="span" sx={{ color: star <= stars ? tokens.rating : tokens.grisMoyen1 }}>★</Box>
-          ))}
-        </Box>
-        {(large ? ["100%", "80%", "50%"] : ["100%", "60%"]).map((width) => (
-          <Box key={width} sx={{ width, height: 6, borderRadius: "3px", bgcolor: tokens.grisMoyen1 }} />
-        ))}
-      </Box>
-      <Box sx={{ position: "absolute", top: large ? 8 : 6, right: large ? 8 : 6, width: large ? 16 : 12, height: large ? 16 : 12, borderRadius: "50%", bgcolor: tokens.vertOs, display: "grid", placeItems: "center" }}>
-        <Check sx={{ fontSize: large ? 12 : 9, color: tokens.blanc }} />
-      </Box>
-    </Box>
-  );
-}
-
-/** Figma "image 7" (1502:30349), drawn in code: three reviews, each checked. */
-function ReviewsIllustration() {
-  return (
-    <Box aria-hidden sx={{ display: "flex", justifyContent: "center", alignItems: "flex-start", gap: 1.25, py: 2.5, zoom: { xs: 0.8, sm: 1 } }}>
-      <MiniReview stars={4} />
-      <MiniReview stars={5} large />
-      <MiniReview stars={3} />
-    </Box>
-  );
-}
 
 /**
  * "En savoir plus" content: explains the score of the active tab.
@@ -110,7 +58,6 @@ export function LearnMoreContent({ view, inline = false }: { view: ScoreView; in
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
         {inline && <Typography component="h3" sx={{ fontSize: 16, fontWeight: 600, lineHeight: 1.5 }}>{t(controle ? "titleControle" : "titleGlobal")}</Typography>}
         <Typography sx={{ fontSize: 14, lineHeight: 1.5 }}>{t(controle ? "introControle" : "introGlobal")}</Typography>
-        <ReviewsIllustration />
       </Box>
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
