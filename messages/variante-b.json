@@ -22,7 +22,7 @@
       "verifiedText": "{count} avis vérifiés : identité et achat contrôlés.",
       "hoursShow": "Voir les horaires de la semaine",
       "hoursHide": "Masquer les horaires",
-      "mapLink": "Voir sur la carte · {count} agences dans le Var"
+      "mapLink": "Voir sur la carte · {count} agences"
     },
     "picker": {
       "allHint": "{count} collaborateurs",
