@@ -147,6 +147,9 @@ function ModelTag({ model }: { model: AiModel }) {
 const bubbleSx = { px: 1.5, py: 1.25, borderRadius: "14px", fontSize: 14, lineHeight: 1.5, maxWidth: "88%" } as const;
 
 /** "Demander à l'IA": simulated chat, answered from the agency's own reviews. Bottom sheet on phones, side panel from 900 px. */
+/** Sent by the Assistant IA card with the visitor's question; the panel opens and answers it. */
+export const askAssistantEvent = "finale:ask-assistant";
+
 export function AssistantPanel() {
   const t = useTranslations("Assistant");
   const tc = useTranslations("Criteria");
@@ -219,6 +222,17 @@ export function AssistantPanel() {
       }, THINKING_MS),
     );
   };
+
+  // Questions typed in the Assistant IA card. A ref keeps the listener on the latest ask().
+  const askRef = useRef(ask);
+  useEffect(() => {
+    askRef.current = ask;
+  });
+  useEffect(() => {
+    const onAsk = (event: Event) => askRef.current((event as CustomEvent<string>).detail);
+    window.addEventListener(askAssistantEvent, onAsk);
+    return () => window.removeEventListener(askAssistantEvent, onAsk);
+  }, []);
 
   const askQuick = (key: QuickQuestionKey) => ask(tq(key), quickQuestions.find((question) => question.key === key)!.intent);
 
