@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 import { useCertificate } from "@/components/certificate/CertificateContext";
+import { ReviewSearchField } from "@/components/reviews/ReviewSearchField";
 import { FigmaIcon } from "@/variants/f/components/ui/FigmaIcon";
 import { formatCount } from "@/lib/format";
 import { applyFilters, countActiveFilters } from "@/lib/reviewFilters";
@@ -24,8 +25,8 @@ export function ReviewToolbar({ onCountClick }: { onCountClick?: () => void } = 
   const active = countActiveFilters(filters);
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-      <Box sx={{ flex: 1, minWidth: 0 }}>
+    <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 1, md: 2 } }}>
+      <Box sx={{ flexShrink: 0 }}>
         <ButtonBase
           onClick={onCountClick ?? (() => goToSection("avis"))}
           aria-label={t("backToStart", { count: formatCount(count) })}
@@ -45,6 +46,8 @@ export function ReviewToolbar({ onCountClick }: { onCountClick?: () => void } = 
           </Typography>
         </ButtonBase>
       </Box>
+      {/* Search between the count and the filter/sort icons, here and in the pinned header. */}
+      <ReviewSearchField sx={[{ minHeight: 44, borderRadius: tokens.radiusButton, borderColor: tokens.ombre, bgcolor: tokens.blanc, color: tokens.texte, "&:focus-within": { borderColor: tokens.bleuOs, boxShadow: `0 0 0 1px ${tokens.bleuOs}` } }, { flex: 1, minWidth: 0 }]} />
       <IconButton
         onClick={(event) => openPanel("filters", event.currentTarget)}
         aria-label={active ? t("filtersActive", { count: active }) : t("filters")}

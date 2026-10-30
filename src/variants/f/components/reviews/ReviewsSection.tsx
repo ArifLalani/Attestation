@@ -17,7 +17,6 @@ import { FiltersSheet } from "./FiltersSheet";
 import { ReportSheet } from "./ReportSheet";
 import { ReviewCard } from "./ReviewCard";
 import { ReviewToolbar } from "./ReviewToolbar";
-import { ReviewSearchField } from "@/components/reviews/ReviewSearchField";
 
 const desktopCtaSx = { width: { xs: "100%", md: "auto" }, minWidth: { md: 220 }, px: { md: 3 } } as const;
 const PAGE_SIZE = 3;
@@ -75,10 +74,6 @@ export function ReviewsSection() {
     >
       <Box sx={{ px: 2 }}>
         <CardTitle bleedX={2} bleedTop={1.5} id="reviews-heading" eyebrow={t("eyebrow")} heading={t("heading")} />
-      </Box>
-
-      <Box sx={{ px: 1.5 }}>
-        <ReviewSearchField sx={{ minHeight: 44, borderRadius: tokens.radiusButton, borderColor: tokens.ombre, bgcolor: tokens.blanc, color: tokens.texte, "&:focus-within": { borderColor: tokens.bleuOs, boxShadow: `0 0 0 1px ${tokens.bleuOs}` } }} />
       </Box>
 
       <Box ref={toolbarRef} sx={{ px: 1.5, display: "flex", flexDirection: "column", gap: 1 }}>
