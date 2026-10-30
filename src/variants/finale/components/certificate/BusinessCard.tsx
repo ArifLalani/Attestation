@@ -87,6 +87,8 @@ export function BusinessCard() {
         position: "relative",
         overflow: "hidden",
         isolation: "isolate",
+        // Large bottom-right curve, as in option D.
+        borderRadius: { xs: "20px 20px 72px 20px", md: "20px 20px 140px 20px" },
         display: "grid",
         // Phone: the photo shows above the sign, which overlaps its lower part. Desktop: the sign floats on the left.
         gridTemplateAreas: { xs: '"caption" "sign"', md: '"sign caption"' },
@@ -113,6 +115,8 @@ export function BusinessCard() {
           p: { xs: 2, sm: 3, lg: 4.5 },
           minWidth: 0,
           borderRadius: "16px",
+          // On phones and tablets the sign reaches the curved corner, so its own corner follows it (72 px minus the padding).
+          borderBottomRightRadius: { xs: "60px", sm: "56px", md: "16px" },
           // Frosted plastic: mostly white, a strong blur of the photo behind, and a faint diagonal sheen.
           // A little whiter on phones and tablets, where the lower part of the sign sits on navy instead of the photo.
           background: {
