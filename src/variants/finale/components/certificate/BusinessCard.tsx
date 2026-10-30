@@ -1,15 +1,22 @@
 "use client";
 
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
+import ButtonBase from "@mui/material/ButtonBase";
 import IconButton from "@mui/material/IconButton";
 import Link from "@mui/material/Link";
+import Rating from "@mui/material/Rating";
 import Snackbar from "@mui/material/Snackbar";
 import Typography from "@mui/material/Typography";
+import DirectionsOutlined from "@mui/icons-material/DirectionsOutlined";
+import LanguageOutlined from "@mui/icons-material/LanguageOutlined";
+import Verified from "@mui/icons-material/Verified";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { CtaButton } from "@/variants/finale/components/ui/CtaButton";
 import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
+import { formatCount, formatScore } from "@/lib/format";
+import { isPublic, reviewsForScore, summarize } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
 import { useCertificate } from "@/components/certificate/CertificateContext";
 import { OpenStatus } from "./OpenStatus";
@@ -20,19 +27,17 @@ export const cardSx = {
   boxShadow: tokens.shadowCard,
 } as const;
 
-const chipButtonSx = {
-  flex: "1 1 0",
-  minWidth: 0,
-  height: 35,
-  p: "7px",
-  borderRadius: "8px",
-  bgcolor: tokens.grisClair1,
-  border: `1px solid ${tokens.grisMoyen1}`,
-  color: tokens.bleuFonce,
+const metaLinkSx = {
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 0.5,
   fontSize: 14,
-  fontWeight: 400,
   lineHeight: "normal",
-  "&:hover": { bgcolor: tokens.grisClair2, borderColor: tokens.grisMoyen1 },
+  color: tokens.gris,
+  textDecoration: "none",
+  textUnderlineOffset: "3px",
+  "&:hover": { textDecoration: "underline" },
+  "& .MuiSvgIcon-root": { fontSize: 19 },
 } as const;
 
 function directionsUrl(address: string) {
@@ -41,11 +46,18 @@ function directionsUrl(address: string) {
   return apple ? `https://maps.apple.com/?daddr=${destination}` : `https://www.google.com/maps/dir/?api=1&destination=${destination}`;
 }
 
-/** Figma "Business card" (1353:11257). */
+/**
+ * Hero taken from option D (text on the left, team photo with a caption on the right), drawn in the prototype's look:
+ * white card, navy text, yellow CTA, Poppins. The score follows the Avis global / Avis Contrôlés switch and the advisor.
+ */
 export function BusinessCard() {
   const t = useTranslations("Business");
-  const { agency, setPanel } = useCertificate();
+  const th = useTranslations("VarianteFinale.hero");
+  const { agency, reviews, scoreView, scoreCollaboratorId, setPanel, goToSection } = useCertificate();
   const [copied, setCopied] = useState(false);
+  const summary = useMemo(() => summarize(reviewsForScore(reviews, scoreView, scoreCollaboratorId)), [reviews, scoreView, scoreCollaboratorId]);
+  const visible = summary.average !== null && isPublic(summary.count, agency.publicThreshold);
+  const countLabel = th(scoreView === "controle" ? "reviewsControle" : "reviews", { count: formatCount(summary.count) });
 
   const share = async () => {
     const data = { title: agency.name, text: t("shareText", { name: agency.name }), url: window.location.href };
@@ -61,37 +73,14 @@ export function BusinessCard() {
     setCopied(true);
   };
 
-  const actionButtons = (
-    <>
-      <Button sx={chipButtonSx} onClick={() => setPanel("contact")}>
-        {t("contact")}
-      </Button>
-      <Button sx={chipButtonSx} href={agency.website} target="_blank" rel="noopener noreferrer">
-        {t("website")}
-      </Button>
-      <Button
-        sx={chipButtonSx}
-        href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(agency.address)}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        onClick={(event) => {
-          event.currentTarget.setAttribute("href", directionsUrl(agency.address));
-        }}
-      >
-        {t("directions")}
-      </Button>
-      </>
-  );
-
   return (
-    <Box component="article" sx={{ ...cardSx, overflow: "hidden", display: "flex", flexDirection: "column", gap: 2 }}>
-      <Box sx={{ position: "relative", height: { xs: 150, md: 220, lg: 280 }, background: "linear-gradient(147.875deg, rgb(143,178,219) 0%, rgb(201,219,240) 71.429%)" }}>
-        <Image src={agency.coverPhoto} alt={t("coverAlt", { name: agency.name })} fill priority sizes="(min-width: 1200px) 864px, (min-width: 900px) calc(100vw - 328px), (min-width: 640px) 616px, 100vw" style={{ objectFit: "cover" }} />
-      </Box>
-
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 1, px: 1.5, pb: { md: 2 } }}>
-        <Box sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <Box sx={{ width: 40, height: 40, borderRadius: "100px", overflow: "hidden", flexShrink: 0, py: "2px" }}>
+    <Box
+      component="article"
+      sx={{ ...cardSx, overflow: "hidden", display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1.1fr) minmax(0, 1fr)" } }}
+    >
+      <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: { xs: 2, md: 2.5 }, p: { xs: 2, sm: 3, lg: 5 }, minWidth: 0 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+          <Box sx={{ width: 48, height: 48, borderRadius: "12px", overflow: "hidden", flexShrink: 0, bgcolor: tokens.blanc, border: `1px solid ${tokens.grisMoyen1}`, display: "grid", placeItems: "center" }}>
             {/* Crop of the logo image as set in Figma ("image 4"). */}
             <Box sx={{ position: "relative", width: 40, height: 36, overflow: "hidden" }}>
               <Box sx={{ position: "absolute", width: "133.24%", height: "145.41%", left: "-14.28%", top: "-22.96%" }}>
@@ -99,51 +88,91 @@ export function BusinessCard() {
               </Box>
             </Box>
           </Box>
-          <Typography component="h1" sx={{ flex: 1, fontSize: 20, fontWeight: 700, lineHeight: "20px", color: tokens.bleuFonce }}>
-            {agency.name}
-          </Typography>
+          <Typography sx={{ flex: 1, fontSize: 14, color: tokens.gris, lineHeight: "normal" }}>{th("sector", { sector: agency.sector, city: agency.city })}</Typography>
           <IconButton onClick={share} aria-label={t("share")} sx={{ p: 1, borderRadius: "8px" }}>
             <FigmaIcon name="share" />
           </IconButton>
         </Box>
 
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 1, pl: 0.5 }}>
-          {/* Status sits right of the sector as in Figma; longer "Fermé · Ouvre lundi à 9 h" wraps under it on narrow phones. */}
-          <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap", columnGap: 1, rowGap: 1, minHeight: 21 }}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, flex: "1 0 auto" }}>
-              <FigmaIcon name="buildings" />
-              <Typography sx={{ fontSize: 14, color: tokens.gris, lineHeight: "normal", whiteSpace: "nowrap" }}>{agency.sector}</Typography>
-            </Box>
-            <OpenStatus hours={agency.hours} />
-          </Box>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, minHeight: 21 }}>
-            <FigmaIcon name="map-pin" />
-            <Typography component="address" sx={{ flex: 1, fontSize: 14, fontStyle: "normal", color: tokens.gris, lineHeight: "normal" }}>
-              {/* Jumps to the map and hours in Nos Agences. */}
-              <Link
-                href="#nos-agences"
-                aria-label={t("addressLink", { address: agency.address })}
-                onClick={(event) => {
-                  const target = document.getElementById("nos-agences");
-                  if (!target) return;
-                  event.preventDefault();
-                  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-                  target.scrollIntoView({ behavior: reduced ? "instant" : "smooth" });
-                }}
-                sx={{ color: "inherit", textDecoration: "none", textUnderlineOffset: "3px", "&:hover": { textDecoration: "underline" } }}
-              >
-                {agency.address}
-              </Link>
+        <Box>
+          <Typography component="h1" sx={{ fontSize: { xs: 34, sm: 44, lg: 54 }, fontWeight: 700, lineHeight: 1.05, letterSpacing: "-0.03em", color: tokens.bleuFonce, textWrap: "balance" }}>
+            {agency.name}
+          </Typography>
+          <Typography sx={{ mt: 1, fontSize: { xs: 20, sm: 24, lg: 28 }, fontWeight: 500, lineHeight: 1.2, letterSpacing: "-0.02em", color: tokens.bleuFonce, textWrap: "balance" }}>
+            {th("tagline")}
+          </Typography>
+        </Box>
+
+        {visible && (
+          <ButtonBase
+            onClick={() => goToSection("avis")}
+            aria-label={th("scoreAria", { score: formatScore(summary.average!), count: countLabel })}
+            sx={{ alignSelf: "flex-start", gap: 1.5, py: 1.25, pl: 1.75, pr: 2, borderRadius: "12px", bgcolor: tokens.grisClair2, border: `1px solid ${tokens.grisMoyen1}`, textAlign: "left", "&:hover": { borderColor: tokens.gris } }}
+          >
+            <Typography component="span" sx={{ fontSize: 40, fontWeight: 700, lineHeight: 1, letterSpacing: "-0.03em", color: tokens.bleuFonce, whiteSpace: "nowrap" }}>
+              {formatScore(summary.average!)}
+              <Box component="span" sx={{ fontSize: 16, fontWeight: 500, letterSpacing: 0, color: tokens.gris }}>/5</Box>
             </Typography>
-            {/* Desktop: the buttons sit on the address line, on the right, under the open/closed status. */}
-            <Box sx={{ display: { xs: "none", md: "flex" }, gap: 1.5, "& > .MuiButton-root": { flex: "0 0 128px" } }}>{actionButtons}</Box>
-          </Box>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+              <Rating readOnly value={summary.average} precision={0.1} sx={{ fontSize: 20 }} />
+              <Typography component="span" sx={{ display: "flex", alignItems: "center", gap: 0.5, fontSize: 13, color: tokens.gris, lineHeight: "normal" }}>
+                {scoreView === "controle" && <Verified sx={{ fontSize: 15, color: tokens.vertOs }} />}
+                {countLabel}
+              </Typography>
+            </Box>
+          </ButtonBase>
+        )}
+
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5, "& > .MuiButton-root": { width: "auto", flex: { xs: "1 1 auto", sm: "0 0 auto" }, px: 3 } }}>
+          <CtaButton onClick={() => setPanel("contact")}>{th("talk")}</CtaButton>
+          <CtaButton variant="secondary" icon={null} onClick={() => goToSection("avis")}>{th("read")}</CtaButton>
+        </Box>
+
+        <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", columnGap: 2.5, rowGap: 1 }}>
+          <OpenStatus hours={agency.hours} />
+          {/* Jumps to the map and hours in Nos Agences. */}
+          <Link
+            href="#nos-agences"
+            aria-label={t("addressLink", { address: agency.address })}
+            onClick={(event) => {
+              const target = document.getElementById("nos-agences");
+              if (!target) return;
+              event.preventDefault();
+              const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+              target.scrollIntoView({ behavior: reduced ? "instant" : "smooth" });
+            }}
+            sx={metaLinkSx}
+          >
+            <FigmaIcon name="map-pin" />
+            {agency.address}
+          </Link>
+          <Link href={agency.website} target="_blank" rel="noopener noreferrer" sx={metaLinkSx}>
+            <LanguageOutlined />
+            {t("website")}
+          </Link>
+          <Link
+            href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(agency.address)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(event) => event.currentTarget.setAttribute("href", directionsUrl(agency.address))}
+            sx={metaLinkSx}
+          >
+            <DirectionsOutlined />
+            {t("directions")}
+          </Link>
         </Box>
       </Box>
 
-      {/* Phones and tablets: the three buttons on their own row, as in the Figma. */}
-      <Box sx={{ display: { xs: "flex", md: "none" }, gap: 2, px: 1.5, pb: 1.5 }}>
-        {actionButtons}
+      <Box sx={{ position: "relative", minHeight: { xs: 240, sm: 320, md: 480 }, background: "linear-gradient(147.875deg, rgb(143,178,219) 0%, rgb(201,219,240) 71.429%)" }}>
+        <Image src={agency.coverPhoto} alt={t("coverAlt", { name: agency.name })} fill priority sizes="(min-width: 1200px) 560px, (min-width: 900px) 46vw, (min-width: 640px) 616px, 100vw" style={{ objectFit: "cover" }} />
+        <Box aria-hidden sx={{ position: "absolute", inset: "45% 0 0", background: "linear-gradient(rgba(4,27,68,0), rgba(4,27,68,0.72))" }} />
+        <Box sx={{ position: "absolute", left: { xs: 16, md: 32 }, right: { xs: 16, md: 32 }, bottom: { xs: 16, md: 32 }, color: tokens.blanc }}>
+          <Typography sx={{ display: "flex", alignItems: "center", gap: 0.75, mb: 0.75, fontSize: 13, lineHeight: "normal" }}>
+            <Verified sx={{ fontSize: 18, color: tokens.vertOs }} />
+            {th("photoKicker")}
+          </Typography>
+          <Typography sx={{ maxWidth: 420, fontSize: { xs: 20, md: 26 }, fontWeight: 600, lineHeight: 1.2, letterSpacing: "-0.02em", textWrap: "balance" }}>{th("photoTitle")}</Typography>
+        </Box>
       </Box>
 
       <Snackbar open={copied} autoHideDuration={2500} onClose={() => setCopied(false)} message={t("linkCopied")} anchorOrigin={{ vertical: "bottom", horizontal: "center" }} />
