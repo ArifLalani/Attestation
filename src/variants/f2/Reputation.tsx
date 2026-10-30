@@ -179,7 +179,8 @@ export function Reputation() {
         {tb("title")}
       </Typography>
 
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", lg: "minmax(0, 1fr) minmax(0, 1.25fr)" }, gap: 1.5 }}>
+      {/* The collaborator picker sits above the Avis global / Avis Contrôlés switch at every width. */}
+      <Box sx={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr)", gap: 1.5 }}>
         <ButtonBase
           onClick={() => setPickerOpen(true)}
           aria-haspopup="listbox"
