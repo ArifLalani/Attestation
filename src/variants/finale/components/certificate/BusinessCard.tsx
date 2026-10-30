@@ -93,14 +93,14 @@ export function BusinessCard() {
         // Phone: the photo shows above the sign, which overlaps its lower part. Desktop: the sign floats on the left.
         gridTemplateAreas: { xs: '"caption" "sign"', md: '"sign caption"' },
         gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1.05fr) minmax(0, 1fr)" },
-        minHeight: { md: 540 },
-        p: { xs: 1.5, sm: 2, md: 4 },
+        minHeight: { md: 460 },
+        p: { xs: 1.5, sm: 2, md: 3 },
         columnGap: 4,
         background: { xs: tokens.bleuFonce, md: "linear-gradient(147.875deg, rgb(143,178,219) 0%, rgb(201,219,240) 71.429%)" },
       }}
     >
       {/* The team photo runs behind the whole hero on desktop; on phones and tablets it fills the top and fades into navy under the sign. */}
-      <Box sx={{ position: "absolute", zIndex: -1, inset: { xs: "0 0 auto 0", md: 0 }, height: { xs: 380, sm: 540, md: "auto" } }}>
+      <Box sx={{ position: "absolute", zIndex: -1, inset: { xs: "0 0 auto 0", md: 0 }, height: { xs: 330, sm: 470, md: "auto" } }}>
         <Image src={agency.coverPhoto} alt={t("coverAlt", { name: agency.name })} fill priority sizes="(min-width: 1200px) 1100px, 100vw" style={{ objectFit: "cover", objectPosition: "70% center" }} />
         <Box aria-hidden sx={{ position: "absolute", inset: 0, background: { xs: "linear-gradient(rgba(4,27,68,0) 25%, rgba(4,27,68,0.55) 60%, #041b44 100%)", md: "linear-gradient(rgba(4,27,68,0) 40%, rgba(4,27,68,0.6) 100%)" } }} />
       </Box>
@@ -111,8 +111,8 @@ export function BusinessCard() {
           alignSelf: "center",
           display: "flex",
           flexDirection: "column",
-          gap: { xs: 2, md: 2.5 },
-          p: { xs: 2, sm: 3, lg: 4.5 },
+          gap: 2,
+          p: { xs: 2, sm: 3, lg: 3.5 },
           minWidth: 0,
           borderRadius: "16px",
           // On phones and tablets the sign reaches the curved corner, so its own corner follows it (72 px minus the padding).
@@ -144,10 +144,10 @@ export function BusinessCard() {
         </Box>
 
         <Box>
-          <Typography component="h1" sx={{ fontSize: { xs: 34, sm: 44, lg: 54 }, fontWeight: 700, lineHeight: 1.05, letterSpacing: "-0.03em", color: tokens.bleuFonce, textWrap: "balance" }}>
+          <Typography component="h1" sx={{ fontSize: { xs: 34, sm: 44, lg: 50 }, fontWeight: 700, lineHeight: 1.05, letterSpacing: "-0.03em", color: tokens.bleuFonce, textWrap: "balance" }}>
             {agency.name}
           </Typography>
-          <Typography sx={{ mt: 1, fontSize: { xs: 20, sm: 24, lg: 28 }, fontWeight: 500, lineHeight: 1.2, letterSpacing: "-0.02em", color: tokens.bleuFonce, textWrap: "balance" }}>
+          <Typography sx={{ mt: 1, fontSize: { xs: 20, sm: 24, lg: 26 }, fontWeight: 500, lineHeight: 1.2, letterSpacing: "-0.02em", color: tokens.bleuFonce, textWrap: "balance" }}>
             {th("tagline")}
           </Typography>
         </Box>
@@ -212,7 +212,7 @@ export function BusinessCard() {
         </Box>
       </Box>
 
-      <Box sx={{ gridArea: "caption", alignSelf: "end", minHeight: { xs: 220, sm: 280, md: 0 }, display: "flex", flexDirection: "column", justifyContent: "flex-end", px: { xs: 1, md: 0 }, pb: { xs: 2, md: 0 }, color: tokens.blanc, textShadow: "0 1px 12px rgba(4,27,68,0.45)" }}>
+      <Box sx={{ gridArea: "caption", alignSelf: "end", minHeight: { xs: 170, sm: 220, md: 0 }, display: "flex", flexDirection: "column", justifyContent: "flex-end", px: { xs: 1, md: 0 }, pb: { xs: 2, md: 0 }, color: tokens.blanc, textShadow: "0 1px 12px rgba(4,27,68,0.45)" }}>
         <Typography sx={{ display: "flex", alignItems: "center", gap: 0.75, mb: 0.75, fontSize: 13, lineHeight: "normal" }}>
           <Verified sx={{ fontSize: 18, color: tokens.vertOs }} />
           {th("photoKicker")}
