@@ -147,10 +147,10 @@ export function Reviews() {
         </Box>
       )}
 
-      <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, justifyContent: "center", gap: 1.5, pt: 1 }}>
+      <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, justifyContent: "flex-end", gap: 1.5, pt: 1 }}>
         {visible < list.length && (
           <Pill variant="outline" onClick={() => setVisible((count) => count + PAGE_SIZE)}>
-            {tb("showMore", { count: formatCount(Math.min(PAGE_SIZE, list.length - visible)), total: formatCount(list.length - visible) })}
+            {t("showMore")}
           </Pill>
         )}
         <Pill variant="primary" onClick={() => setPanel("reviewRequest")} aria-haspopup="dialog">{t("leaveReview")}</Pill>
