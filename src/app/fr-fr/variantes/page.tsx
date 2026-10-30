@@ -12,13 +12,14 @@ const blurbs: Record<string, string> = {
   e: "Essentiel : une interface lumineuse, épurée et pensée pour tous.",
   c: "Pratique : actions rapides, carte et horaires en premier, comme une fiche Google.",
   f: "Classique : la mise en page du prototype avec les couleurs et les polices du certificat actuel d'Opinion System.",
+  f2: "Classique, mise en page B : la page façon Airbnb de l'option B avec les couleurs et les polices du certificat actuel.",
 };
 
 export default function Page() {
   return (
     <main style={{ maxWidth: 720, margin: "0 auto", padding: "48px 20px", fontFamily: "system-ui, sans-serif", color: "#111" }}>
       <h1 style={{ fontSize: 28, margin: "0 0 8px" }}>Certificat électronique — options de design</h1>
-      <p style={{ margin: "0 0 32px", color: "#555" }}>Même parcours, mêmes données, six interfaces différentes. Le sélecteur en bas à gauche passe d&apos;une option à l&apos;autre.</p>
+      <p style={{ margin: "0 0 32px", color: "#555" }}>Même parcours, mêmes données, sept interfaces différentes. Le sélecteur en bas à gauche passe d&apos;une option à l&apos;autre.</p>
       <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gap: 12 }}>
         {variants.map((variant) => (
           <li key={variant.id}>
