@@ -302,9 +302,9 @@ export function ReputationCard() {
           alignItems: "flex-start",
           p: 2,
           borderRadius: "12px",
-          bgcolor: controle ? tokens.successLight2 : tokens.bleu5,
-          border: `1px solid ${controle ? "rgba(67, 182, 163, 0.35)" : tokens.bleu20}`,
-          transition: "background-color 250ms ease, border-color 250ms ease",
+          // Information blue in both views; only the badge turns green for Avis Contrôlés.
+          bgcolor: tokens.bleu5,
+          border: `1px solid ${tokens.bleu20}`,
         }}
       >
         <VerifiedRounded sx={{ fontSize: 22, mt: "1px", color: controle ? tokens.vertOs : tokens.bleu600, flexShrink: 0 }} />
