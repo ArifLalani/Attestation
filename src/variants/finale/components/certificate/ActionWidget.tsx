@@ -6,7 +6,6 @@ import ButtonBase from "@mui/material/ButtonBase";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import Collapse from "@mui/material/Collapse";
 import Grow from "@mui/material/Grow";
-import IconButton from "@mui/material/IconButton";
 import Rating from "@mui/material/Rating";
 import Slide from "@mui/material/Slide";
 import Snackbar from "@mui/material/Snackbar";
@@ -223,7 +222,10 @@ function ScoreLink({ onDone }: { onDone: () => void }) {
   );
 }
 
-/** Desktop: the navy pill at the bottom right grows into the full widget; it folds back on scroll, click outside or Échap. */
+/**
+ * Desktop: one navy element. Folded, it is the score pill; opened, the white widget unfolds upwards out of it while the
+ * pill stays at the bottom as its base. It folds back on scroll, click outside or Échap.
+ */
 function DesktopWidget() {
   const t = useTranslations("VarianteFinale.widget");
   const ta = useTranslations("Actions");
@@ -231,10 +233,29 @@ function DesktopWidget() {
   const { summary, visible, controle } = useActiveScore();
   const [expanded, setExpanded] = useState(false);
   const openedAt = useRef(0);
+  const scoreRef = useRef<HTMLSpanElement>(null);
+  const chipRef = useRef<HTMLSpanElement>(null);
+  const [pillWidth, setPillWidth] = useState<number>();
+  const bodyId = useId();
   const titleId = useId();
 
   // Scrolling back up to the hero also folds it (any scroll past 48 px does).
   const open = shown && expanded;
+
+  // Width of the folded pill, so the width can animate between the pill and the open widget.
+  useEffect(() => {
+    if (open) return;
+    const measure = () => {
+      const score = scoreRef.current?.offsetWidth ?? 0;
+      const chip = chipRef.current?.offsetWidth ?? 0;
+      setPillWidth(Math.ceil(score + chip + (score ? 8 + 16 : 0) + 8));
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    if (scoreRef.current) observer.observe(scoreRef.current);
+    if (chipRef.current) observer.observe(chipRef.current);
+    return () => observer.disconnect();
+  }, [open, shown, visible]);
 
   useEffect(() => {
     if (!open) return;
@@ -253,54 +274,79 @@ function DesktopWidget() {
     };
   }, [open]);
 
+  const ease = "300ms cubic-bezier(0.2, 0, 0, 1)";
+
   return (
     <ClickAwayListener onClickAway={() => setExpanded(false)} mouseEvent={open ? "onClick" : false} touchEvent={open ? "onTouchEnd" : false}>
       <Box sx={{ display: { xs: "none", md: "block" }, position: "fixed", right: 24, bottom: 24, zIndex: (theme) => theme.zIndex.speedDial }}>
-        <Grow in={open} style={{ transformOrigin: "bottom right" }} unmountOnExit>
+        <Grow in={shown} style={{ transformOrigin: "bottom right" }}>
           <Box
-            role="dialog"
-            aria-labelledby={titleId}
-            sx={{ width: 360, maxHeight: "calc(100vh - 120px)", overflowY: "auto", bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.elevation6, p: 2.5, display: "flex", flexDirection: "column", gap: 2 }}
+            sx={{
+              width: open ? 368 : pillWidth ?? "auto",
+              p: "4px",
+              bgcolor: tokens.bleuFonce,
+              borderRadius: "28px",
+              boxShadow: tokens.elevation6,
+              overflow: "hidden",
+              transition: `width ${ease}`,
+            }}
           >
-            <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
-              <Box sx={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 0.75 }}>
+            <Collapse in={open} timeout={300} easing={{ enter: "cubic-bezier(0.2, 0, 0, 1)", exit: "cubic-bezier(0.2, 0, 0, 1)" }}>
+              <Box
+                id={bodyId}
+                role="region"
+                aria-labelledby={titleId}
+                sx={{
+                  width: 360,
+                  maxHeight: "calc(100vh - 140px)",
+                  overflowY: "auto",
+                  mb: "4px",
+                  p: 2.5,
+                  bgcolor: tokens.blanc,
+                  borderRadius: "24px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 2,
+                  opacity: open ? 1 : 0,
+                  transition: `opacity ${ease}`,
+                }}
+              >
                 <Typography id={titleId} component="h2" sx={{ fontSize: 22, fontWeight: 600, lineHeight: 1.15, letterSpacing: "-0.02em", color: tokens.bleuFonce }}>
                   {t("title")}
                 </Typography>
-                <ScoreLink onDone={() => setExpanded(false)} />
+                <WidgetBody onDone={() => setExpanded(false)} />
               </Box>
-              <IconButton onClick={() => setExpanded(false)} aria-label={t("collapse")} sx={{ m: -0.5, color: tokens.bleuFonce, bgcolor: tokens.grisClair2, "&:hover": { bgcolor: tokens.grisMoyen1 } }}>
-                <ExpandMoreRounded />
-              </IconButton>
-            </Box>
-            <WidgetBody onDone={() => setExpanded(false)} />
-          </Box>
-        </Grow>
+            </Collapse>
 
-        {/* Collapsed: score and a yellow Contacter; the whole pill opens the widget. */}
-        <Grow in={shown && !open} style={{ transformOrigin: "bottom right" }} unmountOnExit>
-          <ButtonBase
-            onClick={() => setExpanded(true)}
-            aria-expanded={false}
-            aria-label={t("expand")}
-            sx={{ display: "flex", alignItems: "center", gap: 1, p: 0.5, pl: visible ? 2 : 0.5, borderRadius: "999px", bgcolor: tokens.bleuFonce, boxShadow: tokens.elevation6, fontFamily: "inherit", ...focusSx }}
-          >
-            {visible && (
-              <>
-                <Typography component="span" sx={{ fontSize: 18, fontWeight: 700, lineHeight: 1, color: controle ? tokens.vertOs : tokens.blanc }}>
-                  {formatScore(summary.average!)}
-                </Typography>
-                <Rating readOnly value={summary.average} precision={0.1} sx={{ fontSize: 16, "& .MuiRating-iconEmpty": { color: "rgba(255,255,255,0.35)" } }} />
-                <Typography component="span" sx={{ fontSize: 12, color: "rgba(255,255,255,0.7)", whiteSpace: "nowrap" }}>
-                  {t("count", { count: formatCount(summary.count) })}
-                </Typography>
-              </>
-            )}
-            <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, px: 2, py: 1.25, borderRadius: "999px", bgcolor: tokens.jaune400, color: tokens.bleuFonce, fontSize: 14, fontWeight: 600 }}>
-              {ta("contact")}
-              <ExpandLessRounded sx={{ fontSize: 20 }} />
-            </Box>
-          </ButtonBase>
+            {/* The pill: the score on the left, the yellow chip on the right. Opens and folds the widget. */}
+            <ButtonBase
+              onClick={() => setExpanded((value) => !value)}
+              aria-expanded={open}
+              aria-controls={bodyId}
+              aria-label={open ? t("collapse") : t("expand")}
+              sx={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1, pl: visible ? 2 : 0, borderRadius: "24px", fontFamily: "inherit", whiteSpace: "nowrap", ...focusSx }}
+            >
+              {visible && (
+                <Box ref={scoreRef} component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 1 }}>
+                  <Typography component="span" sx={{ fontSize: 18, fontWeight: 700, lineHeight: 1, color: controle ? tokens.vertOs : tokens.blanc }}>
+                    {formatScore(summary.average!)}
+                  </Typography>
+                  <Rating readOnly value={summary.average} precision={0.1} sx={{ fontSize: 16, "& .MuiRating-iconEmpty": { color: "rgba(255,255,255,0.35)" } }} />
+                  <Typography component="span" sx={{ fontSize: 12, color: "rgba(255,255,255,0.7)" }}>
+                    {t("count", { count: formatCount(summary.count) })}
+                  </Typography>
+                </Box>
+              )}
+              <Box
+                ref={chipRef}
+                component="span"
+                sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, px: 2, py: 1.25, borderRadius: "999px", bgcolor: tokens.jaune400, color: tokens.bleuFonce, fontSize: 14, fontWeight: 600 }}
+              >
+                {open ? t("collapse") : ta("contact")}
+                <ExpandLessRounded sx={{ fontSize: 20, transform: open ? "rotate(180deg)" : "none", transition: `transform ${ease}` }} />
+              </Box>
+            </ButtonBase>
+          </Box>
         </Grow>
       </Box>
     </ClickAwayListener>
