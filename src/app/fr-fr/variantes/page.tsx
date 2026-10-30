@@ -13,6 +13,7 @@ const blurbs: Record<string, string> = {
   c: "Pratique : actions rapides, carte et horaires en premier, comme une fiche Google.",
   f: "Classique : la mise en page du prototype avec les couleurs et les polices du certificat actuel d'Opinion System.",
   f2: "Classique, mise en page B : la page façon Airbnb de l'option B avec les couleurs et les polices du certificat actuel.",
+  finale: "Version finale : le prototype actuel, repris section par section avec les meilleures idées des autres options.",
 };
 
 export default function Page() {

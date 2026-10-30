@@ -8,6 +8,7 @@ export const variants = [
   { id: "e", label: "E", name: "E · Essentiel", href: (agencyId: string) => `/fr-fr/variantes/e/${agencyId}` },
   { id: "f", label: "F", name: "F · Classique", href: (agencyId: string) => `/fr-fr/variantes/f/${agencyId}` },
   { id: "f2", label: "F2", name: "F2 · Classique, mise en page B", href: (agencyId: string) => `/fr-fr/variantes/f2/${agencyId}` },
+  { id: "finale", label: "Finale", name: "Version finale", href: (agencyId: string) => `/fr-fr/variantes/finale/${agencyId}` },
 ] as const;
 
 export type VariantId = (typeof variants)[number]["id"];
