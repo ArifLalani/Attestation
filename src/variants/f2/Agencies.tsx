@@ -84,8 +84,9 @@ export function Agencies() {
     <Box component="section" id="nos-agences" aria-labelledby="b-agencies-title" sx={{ ...pageWidthSx, scrollMarginTop: `calc(${HEADER_VAR} + 16px)`, display: "flex", flexDirection: "column", gap: 3 }}>
       <SectionTitle id="b-agencies-title" subtitle={t("description", { name: agency.name })}>{t("heading")}</SectionTitle>
 
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1.35fr) minmax(0, 1fr)" }, gap: { xs: 2, md: 3 }, alignItems: "start" }}>
-        <Box ref={mapBox} role="region" aria-label={t("mapLabel")} sx={{ height: { xs: 280, md: 480 }, borderRadius: "24px", overflow: "hidden", bgcolor: b.sand, boxShadow: b.shadow, position: { md: "sticky" }, top: { md: `calc(${HEADER_VAR} + 24px)` } }}>
+      {/* Desktop: the map stretches to the height of the agency card beside it. */}
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1.35fr) minmax(0, 1fr)" }, gap: { xs: 2, md: 3 }, alignItems: { xs: "start", md: "stretch" } }}>
+        <Box ref={mapBox} role="region" aria-label={t("mapLabel")} sx={{ height: { xs: 280, md: "auto" }, minHeight: { md: 320 }, borderRadius: "24px", overflow: "hidden", bgcolor: b.sand, boxShadow: b.shadow }}>
           {mapVisible ? (
             <MapB agencies={locations} scores={scores} selectedId={selected.id} onSelect={setSelectedId} />
           ) : (
