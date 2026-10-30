@@ -11,6 +11,10 @@
       "hoursLink": " — voir les horaires de la semaine",
       "photoKicker": "Une équipe. De vraies expériences.",
       "photoTitle": "Votre projet mérite d’être entre de bonnes mains."
+    },
+    "reputation": {
+      "distribution": "Répartition des notes",
+      "basedOn": "{count} avis"
     }
   }
 }

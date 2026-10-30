@@ -2,14 +2,14 @@
 
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
-import Collapse from "@mui/material/Collapse";
 import Link from "@mui/material/Link";
 import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import VerifiedRounded from "@mui/icons-material/VerifiedRounded";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
+import { Laurel } from "@/variants/finale/components/ui/Laurel";
 import { StaffAvatar, TeamAvatar } from "@/variants/finale/components/ui/StaffAvatar";
 import { formatCount, formatScore } from "@/lib/format";
 import { useCountUp } from "@/lib/hooks";
@@ -17,7 +17,7 @@ import { displayScore, headingFor, isPublic, reviewsForScore, summarize, type Sc
 import { tokens } from "@/theme/theme";
 import { emptyFilters, useCertificate } from "@/components/certificate/CertificateContext";
 import { CollaboratorPicker } from "./CollaboratorPicker";
-import { LearnMoreContent, LearnMoreSheet } from "./LearnMoreSheet";
+import { LearnMoreSheet } from "./LearnMoreSheet";
 
 const cardSx = {
   bgcolor: tokens.blanc,
@@ -117,7 +117,7 @@ function ScoreNumber({ value, color }: { value: number; color: string }) {
   const animated = useCountUp(value);
   const [whole, decimal] = displayScore(animated).toFixed(1).split(".");
   return (
-    <Box component="p" sx={{ m: 0, fontWeight: 700, color, whiteSpace: "nowrap", lineHeight: 0.74, display: "flex", alignItems: "flex-end" }}>
+    <Box component="p" sx={{ m: 0, fontWeight: 700, color, whiteSpace: "nowrap", lineHeight: 0.74, display: "flex", alignItems: "flex-end", transition: "color 250ms ease" }}>
       <Box component="span" sx={{ fontSize: 68 }}>{whole}</Box>
       <Box component="span" sx={{ fontSize: 32, lineHeight: 0.6 }}>,</Box>
       <Box component="span" sx={{ fontSize: 68 }}>{decimal}</Box>
@@ -126,12 +126,18 @@ function ScoreNumber({ value, color }: { value: number; color: string }) {
   );
 }
 
-/** Figma "Score Card" (1353:11747 page instance; variants 1355:71820). */
+/**
+ * Réputation, rebuilt from option F2 in the prototype's style: the advisor selector (label inside) above the switch,
+ * the score in its tinted box between two laurels with the verdict under it, the star rows on the right (desktop),
+ * and the explanation in an info box whose "En savoir plus" opens a window (desktop) or a sheet (phones).
+ */
 export function ReputationCard() {
   const t = useTranslations("Reputation");
+  const tf = useTranslations("VarianteFinale.reputation");
   const { agency, team, reviews, scoreView, setScoreView, scoreCollaboratorId, setScoreCollaboratorId, setFilters, goToSection } = useCertificate();
   const [pickerOpen, setPickerOpen] = useState(false);
   const [scoreForEl, setScoreForEl] = useState<HTMLButtonElement | null>(null);
+  const [learnMoreOpen, setLearnMoreOpen] = useState(false);
 
   // Desktop dropdown: make room under the selector first, so the list always opens downwards.
   const openPicker = () => {
@@ -145,9 +151,6 @@ export function ReputationCard() {
       setPickerOpen(true);
     }
   };
-  const [learnMoreOpen, setLearnMoreOpen] = useState(false);
-  // Desktop: "En savoir plus" expands under the text instead of opening a window.
-  const desktop = useMediaQuery("(min-width:900px)", { noSsr: true });
 
   const summary = useMemo(
     () => summarize(reviewsForScore(reviews, scoreView, scoreCollaboratorId)),
@@ -164,6 +167,7 @@ export function ReputationCard() {
   const visible = summary.average !== null && isPublic(summary.count, agency.publicThreshold);
   const controle = scoreView === "controle";
   const accent = controle ? tokens.vertOs : tokens.bleu400;
+  const ink = controle ? tokens.vertOs : tokens.bleuFonce;
   const maxBucket = Math.max(1, ...Object.values(summary.buckets));
 
   const openBucket = (stars: StarBucket) => {
@@ -178,160 +182,159 @@ export function ReputationCard() {
   const scoreBoxBackground = controle
     ? "linear-gradient(120deg, rgba(67, 182, 163, 0.01) 0%, rgba(38, 128, 112, 0.10) 100%)"
     : "linear-gradient(120deg, rgba(44, 149, 255, 0.01) 0%, rgba(26, 89, 153, 0.10) 100%)";
-  // Phones: these parts flow into one grid (selector, switch, then score | bars). Desktop: two columns.
-  const columnSx = { display: { xs: "contents", md: "flex" }, flexDirection: "column", gap: 2, flex: "1 1 0", minWidth: 0 } as const;
 
   return (
-    <Box component="section" aria-labelledby="reputation-heading" sx={{ ...cardSx, px: { xs: 1.5, md: 2 }, gap: { xs: 2, md: 4 } }}>
-      <CardTitle id="reputation-heading" eyebrow={t("eyebrow")} heading={t(`heading.${visible ? headingFor(summary.average!) : "start"}`)} />
+    <Box component="section" aria-labelledby="reputation-heading" sx={{ ...cardSx, px: { xs: 1.5, md: 2 }, gap: { xs: 2, md: 3 } }}>
+      <Typography id="reputation-heading" component="h2" sx={{ fontSize: 14, fontWeight: 700, color: tokens.vertOs, letterSpacing: "0.8px", textTransform: "uppercase", lineHeight: "normal" }}>
+        {t("eyebrow")}
+      </Typography>
 
-      {/* Figma "Display" (1461:20671): switch and score on the left, "Score affiché pour" and the star rows on the right. */}
-      <Box
-        sx={{
-          display: { xs: "grid", md: "flex" },
-          gridTemplateColumns: "auto 1px minmax(0, 1fr)",
-          gridTemplateAreas: `"select select select" "toggle toggle toggle" "score divider bars"`,
-          gap: 2,
-        }}
-      >
-        <Box sx={columnSx}>
-          <Box sx={{ gridArea: "toggle" }}>
-            <ViewToggle view={scoreView} counts={counts} onChange={setScoreView} />
-          </Box>
+      {/* Phones: one column. Desktop: selector, switch and score on the left, the star rows on the right. */}
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1fr) 1px minmax(0, 1fr)" }, gap: { xs: 2, md: 3 } }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, minWidth: 0 }}>
+          <ButtonBase
+            ref={setScoreForEl}
+            onClick={openPicker}
+            aria-haspopup="listbox"
+            aria-expanded={pickerOpen}
+            aria-label={`${t("scoreFor")} : ${person ? person.name : t("wholeTeam")}`}
+            sx={{
+              width: "100%",
+              justifyContent: "flex-start",
+              gap: 1.5,
+              pl: 1,
+              pr: 2,
+              minHeight: 56,
+              bgcolor: tokens.grisClair1,
+              border: `1px solid ${tokens.grisMoyen1}`,
+              borderRadius: "12px",
+              textAlign: "left",
+              transition: "border-color 150ms ease, background-color 150ms ease",
+              "&:hover": { borderColor: tokens.bleu30, bgcolor: tokens.blanc },
+            }}
+          >
+            {person ? <StaffAvatar person={person} size={40} /> : <TeamAvatar size={40} color={tokens.bleuFonce} />}
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+              <Typography component="span" sx={{ display: "block", fontSize: 12, fontWeight: 500, color: tokens.gris, lineHeight: 1.3 }}>
+                {t("scoreFor")}
+              </Typography>
+              <Typography component="span" sx={{ display: "block", fontSize: 16, fontWeight: 600, color: tokens.bleuFonce, lineHeight: 1.3 }}>
+                {person ? person.name : t("wholeTeam")}
+              </Typography>
+            </Box>
+            <FigmaIcon name={person ? "arrows-clockwise" : "expand-more"} alt={person ? t("changeCollaborator") : ""} />
+          </ButtonBase>
+          <ViewToggle view={scoreView} counts={counts} onChange={setScoreView} />
+
           {visible ? (
             <Box
               sx={{
-                gridArea: "score",
                 flex: { md: 1 },
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                gap: 2,
+                gap: 1,
                 px: 1.5,
-                py: 2,
+                py: 2.5,
                 borderRadius: "12px",
                 border: `1px solid ${tokens.grisMoyen1}`,
                 background: scoreBoxBackground,
+                textAlign: "center",
               }}
             >
-              <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: { xs: 1, md: 2 } }}>
-                <ScoreNumber value={summary.average!} color={controle ? tokens.vertOs : tokens.bleuFonce} />
-                <Rating
-                  value={summary.average}
-                  precision={0.1}
-                  readOnly
-                  aria-label={t("scoreAria", { score: formatScore(summary.average!) })}
-                  sx={{ fontSize: "26.667px" }}
-                />
+              <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 1, sm: 2 } }}>
+                <Laurel side="left" color={ink} height={96} />
+                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 1.5 }}>
+                  <ScoreNumber value={summary.average!} color={ink} />
+                  <Rating value={summary.average} precision={0.1} readOnly aria-label={t("scoreAria", { score: formatScore(summary.average!) })} sx={{ fontSize: 24 }} />
+                </Box>
+                <Laurel side="right" color={ink} height={96} />
               </Box>
-              <Typography sx={{ maxWidth: 260, fontSize: 14, color: tokens.gris, lineHeight: "normal", textAlign: "center" }}>
-                {t(`scoreSource.${scoreView}`)}
+              <Typography component="p" sx={{ mt: 0.5, fontSize: { xs: 20, md: 22 }, fontWeight: 600, lineHeight: 1.2, letterSpacing: "-0.02em", color: tokens.bleuFonce }}>
+                {t(`heading.${headingFor(summary.average!)}`)}
+              </Typography>
+              <Typography sx={{ fontSize: 14, color: tokens.gris, lineHeight: 1.4 }}>
+                {t(`scoreSource.${scoreView}`)} · {tf("basedOn", { count: formatCount(summary.count) })}
               </Typography>
             </Box>
           ) : (
-            <Typography sx={{ gridArea: "score", gridColumn: "1 / -1", fontSize: 14, color: tokens.gris }}>{t("notPublic")}</Typography>
+            <Typography sx={{ fontSize: 14, color: tokens.gris }}>{t("notPublic")}</Typography>
           )}
         </Box>
 
-        {visible && <Box sx={{ gridArea: "divider", width: "1px", bgcolor: tokens.grisMoyen1, alignSelf: "stretch", flexShrink: 0 }} />}
-
-        <Box sx={columnSx}>
-          <Box sx={{ gridArea: "select" }}>
-            <Typography component="label" htmlFor="score-for" sx={{ display: "block", fontSize: 12, fontWeight: 600, color: tokens.gris, lineHeight: "normal" }}>
-              {t("scoreFor")}
-            </Typography>
-            <ButtonBase
-              id="score-for"
-              ref={setScoreForEl}
-              onClick={openPicker}
-              aria-haspopup="listbox"
-              aria-expanded={pickerOpen}
-              sx={{
-                width: "100%",
-                justifyContent: "flex-start",
-                gap: 1.5,
-                pl: 1,
-                pr: 2,
-                py: 0.75,
-                minHeight: 48,
-                bgcolor: tokens.grisClair1,
-                border: `1px solid ${tokens.grisMoyen1}`,
-                borderRadius: "8px",
-                textAlign: "left",
-                transition: "border-color 150ms ease, background-color 150ms ease",
-                "&:hover": { borderColor: tokens.bleu30, bgcolor: tokens.blanc },
-              }}
-            >
-              {person ? <StaffAvatar person={person} /> : <TeamAvatar />}
-              <Typography component="span" sx={{ flex: 1, fontSize: 16, fontWeight: 600, color: tokens.bleuFonce, lineHeight: "normal" }}>
-                {person ? person.name : t("wholeTeam")}
+        {visible && (
+          <>
+            <Box aria-hidden sx={{ bgcolor: tokens.grisMoyen1, width: { xs: "100%", md: "1px" }, height: { xs: "1px", md: "auto" } }} />
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, minWidth: 0 }}>
+              <Typography component="h3" sx={{ fontSize: 16, fontWeight: 600, color: tokens.bleuFonce, lineHeight: "normal" }}>
+                {tf("distribution")}
               </Typography>
-              <FigmaIcon name={person ? "arrows-clockwise" : "expand-more"} alt={person ? t("changeCollaborator") : ""} />
-            </ButtonBase>
-          </Box>
-
-          {visible && (
-            <Box component="ul" sx={{ gridArea: "bars", listStyle: "none", m: 0, p: 0, flex: { md: 1 }, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "space-between", gap: 1 }}>
-              {([5, 4, 3, 2, 1] as StarBucket[]).map((stars) => {
-                const count = summary.buckets[stars];
-                return (
-                  <li key={stars}>
-                    <ButtonBase
-                      onClick={() => openBucket(stars)}
-                      aria-label={t("bucketLabel", { stars, count: formatCount(count) })}
-                      sx={{ width: "100%", gap: 0.5, borderRadius: "4px", "&:hover .bucket-count": { textDecoration: "underline" } }}
-                    >
-                      <Box sx={{ display: "flex", alignItems: "center", fontWeight: 600, lineHeight: "normal", whiteSpace: "nowrap" }}>
-                        <Box component="span" sx={{ fontSize: 14, color: tokens.bleuFonce }}>{stars}</Box>
-                        <Box component="span" sx={{ fontSize: 16, color: tokens.jaune600 }}>★</Box>
-                      </Box>
-                      <Box sx={{ flex: 1, minWidth: 0, height: 6, borderRadius: "3px", bgcolor: tokens.grisMoyen1, overflow: "hidden" }}>
-                        <Box
-                          sx={{
-                            height: "100%",
-                            borderRadius: "3px",
-                            bgcolor: accent,
-                            width: `${Math.max(count ? 3 : 0, (count / maxBucket) * 100)}%`,
-                            transition: "width 500ms cubic-bezier(0.2, 0, 0, 1), background-color 200ms ease",
-                          }}
-                        />
-                      </Box>
-                      <Typography className="bucket-count" component="span" sx={{ width: 40, textAlign: "right", fontSize: 14, fontWeight: 600, lineHeight: "normal", color: tokens.bleuFonce }}>
-                        {formatCount(count)}
-                      </Typography>
-                      <FigmaIcon name="chevron-right" />
-                    </ButtonBase>
-                  </li>
-                );
-              })}
+              <Box component="ul" sx={{ listStyle: "none", m: 0, p: 0, flex: { md: 1 }, display: "flex", flexDirection: "column", justifyContent: "space-around", gap: 1 }}>
+                {([5, 4, 3, 2, 1] as StarBucket[]).map((stars) => {
+                  const count = summary.buckets[stars];
+                  return (
+                    <li key={stars}>
+                      <ButtonBase
+                        onClick={() => openBucket(stars)}
+                        aria-label={t("bucketLabel", { stars, count: formatCount(count) })}
+                        sx={{ width: "100%", minHeight: 36, gap: 1, px: 0.5, mx: -0.5, borderRadius: "8px", "&:hover": { bgcolor: tokens.grisClair1 }, "&:hover .bucket-count": { textDecoration: "underline" } }}
+                      >
+                        <Box sx={{ display: "flex", alignItems: "center", fontWeight: 600, lineHeight: "normal", whiteSpace: "nowrap" }}>
+                          <Box component="span" sx={{ fontSize: 14, color: tokens.bleuFonce }}>{stars}</Box>
+                          <Box component="span" sx={{ fontSize: 16, color: tokens.jaune600 }}>★</Box>
+                        </Box>
+                        <Box sx={{ flex: 1, minWidth: 0, height: 8, borderRadius: "4px", bgcolor: tokens.grisMoyen1, overflow: "hidden" }}>
+                          <Box
+                            sx={{
+                              height: "100%",
+                              borderRadius: "4px",
+                              bgcolor: accent,
+                              width: `${Math.max(count ? 3 : 0, (count / maxBucket) * 100)}%`,
+                              transition: "width 500ms cubic-bezier(0.2, 0, 0, 1), background-color 200ms ease",
+                            }}
+                          />
+                        </Box>
+                        <Typography className="bucket-count" component="span" sx={{ width: 44, textAlign: "right", fontSize: 14, fontWeight: 600, lineHeight: "normal", color: tokens.bleuFonce }}>
+                          {formatCount(count)}
+                        </Typography>
+                        <FigmaIcon name="chevron-right" />
+                      </ButtonBase>
+                    </li>
+                  );
+                })}
+              </Box>
             </Box>
-          )}
-        </Box>
+          </>
+        )}
       </Box>
 
-      {/* The explanation, with "En savoir plus." at the end of the sentence. */}
-      <Typography sx={{ fontSize: 14, lineHeight: 1.5, color: tokens.bleuFonce }}>
-        {controle ? t("explainControle", { since: agency.memberSince }) : t("explainGlobal")}{" "}
-        <Link
-          component="button"
-          onClick={() => setLearnMoreOpen((value) => !value)}
-          aria-expanded={desktop ? learnMoreOpen : undefined}
-          aria-controls={desktop ? "learn-more-inline" : undefined}
-          sx={{ fontSize: 14, fontWeight: 700, lineHeight: 1.5, color: tokens.bleu600, textDecorationColor: "currentColor", verticalAlign: "baseline" }}
-        >
-          {desktop && learnMoreOpen ? t("learnLess") : t("learnMore")}
-        </Link>
-      </Typography>
-
-      {/* Desktop: the grey band across the bottom of the card (Figma 1491:38099). */}
-      {desktop && (
-        <Collapse in={learnMoreOpen} unmountOnExit timeout={250} sx={{ mx: -2, mt: -2, mb: -2 }}>
-          <Box id="learn-more-inline">
-            <LearnMoreContent view={scoreView} inline />
-          </Box>
-        </Collapse>
-      )}
+      {/* The explanation stands out in an info box; "En savoir plus" opens a window on desktop, a sheet on phones. */}
+      <Box
+        sx={{
+          display: "flex",
+          gap: 1.5,
+          alignItems: "flex-start",
+          p: 2,
+          borderRadius: "12px",
+          bgcolor: controle ? tokens.successLight2 : tokens.bleu5,
+          border: `1px solid ${controle ? "rgba(67, 182, 163, 0.35)" : tokens.bleu20}`,
+          transition: "background-color 250ms ease, border-color 250ms ease",
+        }}
+      >
+        <VerifiedRounded sx={{ fontSize: 22, mt: "1px", color: controle ? tokens.vertOs : tokens.bleu600, flexShrink: 0 }} />
+        <Typography sx={{ fontSize: 14, lineHeight: 1.6, color: tokens.bleuFonce }}>
+          {controle ? t("explainControle", { since: agency.memberSince }) : t("explainGlobal")}{" "}
+          <Link
+            component="button"
+            onClick={() => setLearnMoreOpen(true)}
+            aria-haspopup="dialog"
+            sx={{ fontSize: 14, fontWeight: 700, lineHeight: 1.6, color: tokens.bleu600, textDecorationColor: "currentColor", verticalAlign: "baseline" }}
+          >
+            {t("learnMore")}
+          </Link>
+        </Typography>
+      </Box>
 
       <CollaboratorPicker
         open={pickerOpen}
@@ -341,7 +344,7 @@ export function ReputationCard() {
         view={scoreView}
         anchorEl={pickerOpen ? scoreForEl : null}
       />
-      <LearnMoreSheet open={!desktop && learnMoreOpen} onClose={() => setLearnMoreOpen(false)} view={scoreView} />
+      <LearnMoreSheet open={learnMoreOpen} onClose={() => setLearnMoreOpen(false)} view={scoreView} />
     </Box>
   );
 }

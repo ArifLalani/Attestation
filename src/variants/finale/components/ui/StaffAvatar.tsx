@@ -12,10 +12,10 @@ const initials = (name: string) =>
     .slice(0, 2)
     .toUpperCase();
 
-/** "Toute l'équipe": the same round avatar as a person, grey with a group icon. */
-export function TeamAvatar({ size = 32 }: { size?: number }) {
+/** "Toute l'équipe": the same round avatar as a person, grey (or the colour given) with a group icon. */
+export function TeamAvatar({ size = 32, color = tokens.gris }: { size?: number; color?: string }) {
   return (
-    <Avatar aria-hidden sx={{ width: size, height: size, bgcolor: tokens.gris, color: tokens.blanc, flexShrink: 0 }}>
+    <Avatar aria-hidden sx={{ width: size, height: size, bgcolor: color, color: tokens.blanc, flexShrink: 0 }}>
       <Group sx={{ fontSize: size * 0.56 }} />
     </Avatar>
   );
