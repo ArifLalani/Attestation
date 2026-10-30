@@ -3,22 +3,14 @@
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import Typography from "@mui/material/Typography";
-import BoltOutlined from "@mui/icons-material/BoltOutlined";
 import ChevronRightRounded from "@mui/icons-material/ChevronRightRounded";
-import EuroRounded from "@mui/icons-material/EuroRounded";
-import FavoriteBorderRounded from "@mui/icons-material/FavoriteBorderRounded";
 import KeyboardArrowDownRounded from "@mui/icons-material/KeyboardArrowDownRounded";
 import LanguageRounded from "@mui/icons-material/LanguageRounded";
-import RouteOutlined from "@mui/icons-material/RouteOutlined";
-import TipsAndUpdatesOutlined from "@mui/icons-material/TipsAndUpdatesOutlined";
 import VerifiedRounded from "@mui/icons-material/VerifiedRounded";
-import VisibilityOutlined from "@mui/icons-material/VisibilityOutlined";
-import WavingHandOutlined from "@mui/icons-material/WavingHandOutlined";
-import WorkspacePremiumOutlined from "@mui/icons-material/WorkspacePremiumOutlined";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { emptyFilters, useCertificate } from "@/components/certificate/CertificateContext";
-import type { Criterion, ReviewSource } from "@/data/types";
+import type { ReviewSource } from "@/data/types";
 import { formatCount, formatScore } from "@/lib/format";
 import { useCountUp } from "@/lib/hooks";
 import { displayScore, headingFor, type ScoreView, type StarBucket } from "@/lib/scoring";
@@ -27,17 +19,6 @@ import { PickerB } from "./Picker";
 import { b } from "./theme";
 import { focusSx, Hairline, HEADER_VAR, PersonAvatar, Sheet, Stars, TeamAvatarB, TextLink } from "./ui";
 import { useScore } from "./useScore";
-
-const criterionIcons: Record<Criterion, React.ReactNode> = {
-  accueil: <WavingHandOutlined />,
-  conseil: <TipsAndUpdatesOutlined />,
-  competence: <WorkspacePremiumOutlined />,
-  reactivite: <BoltOutlined />,
-  suivi: <RouteOutlined />,
-  transparence: <VisibilityOutlined />,
-  honoraires: <EuroRounded />,
-};
-const criteria = Object.keys(criterionIcons) as Criterion[];
 
 /** Segmented switch with a sliding white thumb. */
 function ViewSwitch({ view, counts, onChange }: { view: ScoreView; counts: Record<ScoreView, number>; onChange: (view: ScoreView) => void }) {
@@ -174,31 +155,18 @@ function LearnMoreB({ open, onClose, view }: { open: boolean; onClose: () => voi
   );
 }
 
-/** Réputation: who the score is for, the switch, the big laurel score, the star rows and the criteria. */
+/** Réputation: who the score is for, the switch, the big laurel score, and the star rows. */
 export function Reputation() {
   const t = useTranslations("Reputation");
   const tb = useTranslations("VarianteB.reputation");
-  const tc = useTranslations("Criteria");
   const { agency, team, scoreView, setScoreView, scoreCollaboratorId, setScoreCollaboratorId, setFilters, goToSection } = useCertificate();
-  const { scored, summary, counts, visible, controle } = useScore();
+  const { summary, counts, visible, controle } = useScore();
   const [pickerOpen, setPickerOpen] = useState(false);
   const [learnMore, setLearnMore] = useState(false);
   const person = team.find((member) => member.id === scoreCollaboratorId);
   const color = controle ? b.sage : b.ink;
   const maxBucket = Math.max(1, ...Object.values(summary.buckets));
 
-  const byCriterion = useMemo(
-    () =>
-      criteria.map((criterion) => {
-        const matching = scored.filter((review) => review.criteria.includes(criterion));
-        return { criterion, count: matching.length, average: matching.length ? matching.reduce((sum, review) => sum + review.rating, 0) / matching.length : null };
-      }),
-    [scored],
-  );
-  const recommendation = useMemo(() => {
-    const surveys = scored.filter((review) => review.survey);
-    return surveys.length ? Math.round(surveys.reduce((sum, review) => sum + review.survey!.recommendation, 0) / surveys.length) : null;
-  }, [scored]);
 
   const showReviews = (patch: Partial<typeof emptyFilters>) => {
     setFilters({ ...emptyFilters, type: controle ? "controle" : undefined, collaboratorId: scoreCollaboratorId, ...patch });
@@ -250,65 +218,34 @@ export function Reputation() {
 
           <Hairline />
 
-          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1fr) minmax(0, 1fr)" }, columnGap: 5, rowGap: 3 }}>
-            <Box>
-              <Typography component="h3" sx={{ fontSize: 16, fontWeight: 700, mb: 1 }}>{tb("distribution")}</Typography>
-              <Box component="ul" sx={{ listStyle: "none", m: 0, p: 0, display: "flex", flexDirection: "column" }}>
-                {([5, 4, 3, 2, 1] as StarBucket[]).map((stars) => {
-                  const count = summary.buckets[stars];
-                  return (
-                    <li key={stars}>
-                      <ButtonBase
-                        onClick={() => showReviews({ note: { stars, exact: true } })}
-                        aria-label={t("bucketLabel", { stars, count: formatCount(count) })}
-                        sx={{ width: "100%", minHeight: 44, gap: 1.5, px: 1, mx: -1, borderRadius: "12px", "&:hover": { bgcolor: b.ivory }, "&:hover .b-count": { textDecoration: "underline" }, ...focusSx }}
-                      >
-                        <Typography component="span" sx={{ width: 12, fontSize: 14, fontWeight: 600 }}>{stars}</Typography>
-                        <Box sx={{ flex: 1, height: 6, borderRadius: 3, bgcolor: b.sand, overflow: "hidden" }}>
-                          <Box sx={{ height: "100%", borderRadius: 3, bgcolor: color, width: `${Math.max(count ? 2 : 0, (count / maxBucket) * 100)}%`, transition: "width 600ms cubic-bezier(0.2, 0, 0, 1), background-color 250ms ease" }} />
-                        </Box>
-                        <Typography className="b-count" component="span" sx={{ width: 44, textAlign: "right", fontSize: 14, fontWeight: 600, textUnderlineOffset: "3px" }}>
-                          {formatCount(count)}
-                        </Typography>
-                        <ChevronRightRounded sx={{ fontSize: 18, color: b.muted }} />
-                      </ButtonBase>
-                    </li>
-                  );
-                })}
-              </Box>
-            </Box>
-
-            <Box>
-              <Typography component="h3" sx={{ fontSize: 16, fontWeight: 700, mb: 1.5 }}>{tb("criteria")}</Typography>
-              <Box component="ul" sx={{ listStyle: "none", m: 0, p: 0, display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 1 }}>
-                {byCriterion.map(({ criterion, average, count }) => (
-                  <li key={criterion}>
+          {/* Option F2: no "Notes par critère" — the star rows take the full width. */}
+          <Box>
+            <Typography component="h3" sx={{ fontSize: 16, fontWeight: 700, mb: 1 }}>{tb("distribution")}</Typography>
+            <Box component="ul" sx={{ listStyle: "none", m: 0, p: 0, display: "flex", flexDirection: "column" }}>
+              {([5, 4, 3, 2, 1] as StarBucket[]).map((stars) => {
+                const count = summary.buckets[stars];
+                return (
+                  <li key={stars}>
                     <ButtonBase
-                      disabled={!count}
-                      onClick={() => showReviews({ criteria: [criterion] })}
-                      aria-label={average !== null ? tb("criterionLink", { criterion: tc(criterion), score: formatScore(average), count: formatCount(count) }) : tc(criterion)}
-                      sx={{ width: "100%", height: "100%", minHeight: 64, justifyContent: "flex-start", alignItems: "center", gap: 1.25, px: 1.5, py: 1, borderRadius: "16px", boxShadow: `inset 0 0 0 1px ${b.line}`, textAlign: "left", transition: "box-shadow 150ms ease, transform 150ms ease", "&:hover": { boxShadow: `inset 0 0 0 1px ${b.ink}` }, "& svg": { fontSize: 22, color: b.ink }, ...focusSx }}
+                      onClick={() => showReviews({ note: { stars, exact: true } })}
+                      aria-label={t("bucketLabel", { stars, count: formatCount(count) })}
+                      sx={{ width: "100%", minHeight: 44, gap: 1.5, px: 1, mx: -1, borderRadius: "12px", "&:hover": { bgcolor: b.ivory }, "&:hover .b-count": { textDecoration: "underline" }, ...focusSx }}
                     >
-                      {criterionIcons[criterion]}
-                      <Box sx={{ flex: 1, minWidth: 0 }}>
-                        <Typography component="span" sx={{ display: "block", fontSize: 13, color: b.muted, lineHeight: 1.3 }}>{tc(criterion)}</Typography>
-                        <Typography component="span" sx={{ display: "block", fontSize: 17, fontWeight: 700, lineHeight: 1.3 }}>{average !== null ? formatScore(average) : "—"}</Typography>
+                      <Typography component="span" sx={{ width: 12, fontSize: 14, fontWeight: 600 }}>{stars}</Typography>
+                      <Box sx={{ flex: 1, height: 6, borderRadius: 3, bgcolor: b.sand, overflow: "hidden" }}>
+                        <Box sx={{ height: "100%", borderRadius: 3, bgcolor: color, width: `${Math.max(count ? 2 : 0, (count / maxBucket) * 100)}%`, transition: "width 600ms cubic-bezier(0.2, 0, 0, 1), background-color 250ms ease" }} />
                       </Box>
+                      <Typography className="b-count" component="span" sx={{ width: 44, textAlign: "right", fontSize: 14, fontWeight: 600, textUnderlineOffset: "3px" }}>
+                        {formatCount(count)}
+                      </Typography>
+                      <ChevronRightRounded sx={{ fontSize: 18, color: b.muted }} />
                     </ButtonBase>
                   </li>
-                ))}
-                {recommendation !== null && (
-                  <Box component="li" sx={{ display: "flex", alignItems: "center", gap: 1.25, px: 1.5, py: 1, minHeight: 64, borderRadius: "16px", bgcolor: b.accentTint, "& svg": { fontSize: 22, color: b.accentDark } }}>
-                    <FavoriteBorderRounded />
-                    <Box sx={{ minWidth: 0 }}>
-                      <Typography sx={{ fontSize: 13, color: b.accentDark, lineHeight: 1.3 }}>{tb("recommendation")}</Typography>
-                      <Typography sx={{ fontSize: 17, fontWeight: 700, lineHeight: 1.3, color: b.accentDark }}>{recommendation}&nbsp;%</Typography>
-                    </Box>
-                  </Box>
-                )}
-              </Box>
+                );
+              })}
             </Box>
           </Box>
+
         </>
       ) : (
         <Typography sx={{ fontSize: 15, color: b.muted, textAlign: "center", py: 2 }}>{t("notPublic")}</Typography>
