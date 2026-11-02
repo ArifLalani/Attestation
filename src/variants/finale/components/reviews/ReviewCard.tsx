@@ -3,16 +3,9 @@
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import Collapse from "@mui/material/Collapse";
-import IconButton from "@mui/material/IconButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import FlagOutlined from "@mui/icons-material/FlagOutlined";
-import InfoOutlined from "@mui/icons-material/InfoOutlined";
-import MoreVert from "@mui/icons-material/MoreVert";
 import ThumbUp from "@mui/icons-material/ThumbUp";
 import ThumbUpOutlined from "@mui/icons-material/ThumbUpOutlined";
 import Image from "next/image";
@@ -22,6 +15,7 @@ import { flushSync } from "react-dom";
 import { useCertificate } from "@/components/certificate/CertificateContext";
 import { FigmaIcon, type FigmaIconName } from "@/variants/finale/components/ui/FigmaIcon";
 import { StaffAvatar } from "@/variants/finale/components/ui/StaffAvatar";
+import { StarTiles } from "@/variants/finale/components/ui/StarTiles";
 import { womenFirstNames } from "@/data/content";
 import type { Review, ReviewSource } from "@/data/types";
 import { formatCount, formatScore } from "@/lib/format";
@@ -89,7 +83,7 @@ function TypeChip({ status }: { status: Review["status"] }) {
   const t = useTranslations("Reviews");
   const controle = status === "controle";
   return (
-    <Box sx={{ display: "inline-flex", alignItems: "center", p: "2px 4px", borderRadius: "8px", bgcolor: controle ? tokens.successLight2 : tokens.bleu10 }}>
+    <Box sx={{ display: "inline-flex", alignItems: "center", flexShrink: 0, height: 28, px: 1, borderRadius: "999px", bgcolor: controle ? tokens.successLight2 : tokens.bleu10 }}>
       {controle && <FigmaIcon name="certified-badge" />}
       <Typography component="span" sx={{ px: "4px", fontSize: 12, fontWeight: 500, lineHeight: "18px", color: controle ? tokens.vertOs : tokens.bleu600, whiteSpace: "nowrap" }}>
         {t(controle ? "controle" : "nonControle")}
@@ -299,22 +293,25 @@ function ReviewReplyBlock({ review }: { review: Review }) {
   );
 }
 
-const actionSx = {
+const quietActionSx = {
   minHeight: 40,
   gap: 0.75,
-  px: 1.5,
-  borderRadius: "999px",
+  px: 1.25,
+  borderRadius: "8px",
   fontFamily: "inherit",
   fontSize: 14,
   fontWeight: 600,
+  color: tokens.gris,
   whiteSpace: "nowrap",
+  "&:hover": { bgcolor: tokens.grisClair1 },
   ...focusSx,
   "& svg": { fontSize: 18 },
 } as const;
 
 /**
- * One review as a list row (layout from option C): who, the badge, stars and date, the source, the text, tags, the reply,
- * then Utile / Détails / ⋮. Each block of the details has an ⓘ, and each line opens its own explanation.
+ * One review (collapsed layout from option E, in the page's look): who, the project and the date, the badge on the right;
+ * square stars, the score and the source; the text; #tags; then Utile, Signaler and Détails under a rule.
+ * Each block of the details has an ⓘ, and each line opens its own explanation.
  */
 export function ReviewCard({ review, onReport }: { review: Review; onReport: (review: Review) => void }) {
   const t = useTranslations("Reviews");
@@ -327,7 +324,6 @@ export function ReviewCard({ review, onReport }: { review: Review; onReport: (re
   const { voted, toggle } = useUsefulVote(review.id);
   const [expanded, setExpanded] = useState(false);
   const [readAll, setReadAll] = useState(false);
-  const [menuEl, setMenuEl] = useState<HTMLElement | null>(null);
   const [help, setHelp] = useState<HelpRequest | null>(null);
   const [helpOpen, setHelpOpen] = useState(false);
   // True when the card closed itself off-screen: skip the collapse animation so the scroll can be corrected at once.
@@ -337,6 +333,7 @@ export function ReviewCard({ review, onReport }: { review: Review; onReport: (re
   const usefulCount = review.usefulCount + (voted ? 1 : 0);
   const long = (review.comment?.length ?? 0) > 220;
   const sourceName = review.platform ? tPlatform(review.platform) : ts(review.source);
+  const sourceAlt = review.platform ? t("sourceIcon.platform", { platform: tPlatform(review.platform) }) : t(`sourceIcon.${review.source}`);
 
   // Once an open review has scrolled entirely above the pinned header, close it, and keep what the reader sees in place.
   useEffect(() => {
@@ -377,144 +374,82 @@ export function ReviewCard({ review, onReport }: { review: Review; onReport: (re
   };
 
   return (
-    <Box component="article" ref={cardRef} sx={{ py: 2.5, borderTop: `1px solid ${tokens.grisMoyen1}` }}>
-      <Box sx={{ display: "flex", gap: 1.5, alignItems: "flex-start" }}>
+    <Box component="article" ref={cardRef} sx={{ py: 2.5, borderTop: `1px solid ${tokens.grisMoyen1}`, display: "flex", flexDirection: "column", gap: 1.75 }}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
         <ReviewerAvatar review={review} />
         <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap", columnGap: 1, rowGap: 0.5 }}>
-            <Typography component="h3" sx={{ fontSize: 16, fontWeight: 600, lineHeight: 1.3, color: tokens.bleuFonce }}>{review.authorName}</Typography>
-            <TypeChip status={review.status} />
-          </Box>
-          <Box sx={{ mt: 0.5, display: "flex", alignItems: "center", flexWrap: "wrap", columnGap: 1, rowGap: 0.25, color: tokens.gris, fontSize: 13 }}>
-            <Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.75 }}>
-              <Rating
-                value={review.rating}
-                precision={0.1}
-                readOnly
-                aria-label={t("ratingAria", { score: formatScore(review.rating) })}
-                sx={{ fontSize: 16, "& .MuiRating-iconFilled": { color: tokens.jaune600 }, "& .MuiRating-iconEmpty": { color: tokens.grisMoyen1 } }}
-              />
-              <Box component="span" sx={{ fontWeight: 600, color: tokens.bleuFonce, fontSize: 14 }}>{formatScore(review.rating)}</Box>
-            </Box>
-            <span aria-hidden>·</span>
-            <span>{relative(review.daysAgo)}</span>
-            <Box component="span" sx={{ flexBasis: "100%", height: 0 }} />
-            <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}>
-              <SourceIcon review={review} size={16} />
-              {tv("via", { source: sourceName })}
-            </Box>
-          </Box>
+          <Typography component="h3" sx={{ fontSize: 16, fontWeight: 600, lineHeight: 1.3, color: tokens.bleuFonce }}>{review.authorName}</Typography>
+          <Typography sx={{ fontSize: 13, lineHeight: 1.4, color: tokens.gris }}>
+            {tp(review.product)} · {relative(review.daysAgo)}
+          </Typography>
         </Box>
-        <IconButton
-          aria-label={tv("moreActions", { name: review.authorName })}
-          aria-haspopup="menu"
-          aria-expanded={Boolean(menuEl)}
-          onClick={(event) => setMenuEl(event.currentTarget)}
-          sx={{ width: 44, height: 44, mr: -1, mt: -0.5, color: tokens.gris }}
-        >
-          <MoreVert />
-        </IconButton>
+        <TypeChip status={review.status} />
       </Box>
 
-      <Box sx={{ pl: { xs: 0, sm: "56px" }, mt: 1.25 }}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, flexWrap: "wrap" }}>
+        <StarTiles value={review.rating} label={t("ratingAria", { score: formatScore(review.rating) })} />
+        <Typography component="span" sx={{ fontSize: 15, fontWeight: 700, color: tokens.bleuFonce, fontVariantNumeric: "tabular-nums" }}>{formatScore(review.rating)}</Typography>
+        <Box component="span" aria-hidden sx={{ width: "1px", height: 18, bgcolor: tokens.grisMoyen1 }} />
+        <Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, fontSize: 13, fontWeight: 500, color: tokens.gris }}>
+          <SourceIcon review={review} size={18} alt={sourceAlt} />
+          {sourceName}
+        </Box>
+      </Box>
+
+      <Box>
         <Typography
           sx={{
             fontSize: 15,
             lineHeight: 1.6,
             color: review.comment ? tokens.bleuFonce : tokens.gris,
             fontStyle: review.comment ? "normal" : "italic",
-            ...(long && !readAll ? { display: "-webkit-box", WebkitLineClamp: 4, WebkitBoxOrient: "vertical", overflow: "hidden" } : {}),
+            ...(long && !readAll && !expanded ? { display: "-webkit-box", WebkitLineClamp: 4, WebkitBoxOrient: "vertical", overflow: "hidden" } : {}),
           }}
         >
           {review.comment ?? t("noComment")}
         </Typography>
-        {long && (
+        {long && !expanded && (
           <ButtonBase onClick={() => setReadAll(!readAll)} sx={{ minHeight: 32, fontFamily: "inherit", fontSize: 14, fontWeight: 600, color: tokens.bleu600, borderRadius: "6px", ...focusSx }}>
             {readAll ? tv("readLess") : t("readMore")}
           </ButtonBase>
         )}
-
-        <Box component="ul" aria-label={tv("tagsLabel")} sx={{ listStyle: "none", m: 0, mt: 1.25, p: 0, display: "flex", flexWrap: "wrap", gap: 0.75 }}>
-          {[{ key: review.product, label: tp(review.product), product: true }, ...review.criteria.map((criterion) => ({ key: criterion, label: tc(criterion), product: false }))].map((tag) => (
-            <Box
-              component="li"
-              key={tag.key}
-              sx={{
-                height: 28,
-                px: 1.25,
-                display: "inline-flex",
-                alignItems: "center",
-                borderRadius: "8px",
-                fontSize: 13,
-                fontWeight: 500,
-                bgcolor: tag.product ? tokens.bleu10 : tokens.grisClair2,
-                color: tag.product ? tokens.bleu600 : tokens.gris,
-                border: `1px solid ${tag.product ? "transparent" : tokens.grisMoyen1}`,
-              }}
-            >
-              {tag.label}
-            </Box>
-          ))}
-        </Box>
-
-        {review.reply && <ReviewReplyBlock review={review} />}
-
-        <Box sx={{ mt: 1.5, display: "flex", alignItems: "center", gap: 1, ml: -0.5 }}>
-          <ButtonBase
-            onClick={toggle}
-            aria-pressed={voted}
-            aria-label={t("usefulAria", { count: formatCount(usefulCount) })}
-            sx={{
-              ...actionSx,
-              border: `1px solid ${voted ? "transparent" : tokens.grisMoyen1}`,
-              bgcolor: voted ? tokens.bleu10 : tokens.blanc,
-              color: voted ? tokens.bleu600 : tokens.bleuFonce,
-              transition: "background-color 150ms ease, transform 120ms ease",
-              "&:active": { transform: "scale(0.95)" },
-              "&:hover": { bgcolor: voted ? tokens.bleu10 : tokens.grisClair1 },
-            }}
-          >
-            {voted ? <ThumbUp /> : <ThumbUpOutlined />}
-            {expanded && t("useful")}
-            <Box component="span" sx={{ fontVariantNumeric: "tabular-nums" }}>{expanded ? `(${formatCount(usefulCount)})` : formatCount(usefulCount)}</Box>
-          </ButtonBase>
-          <ButtonBase onClick={toggleDetails} aria-expanded={expanded} aria-controls={detailsId} sx={{ ...actionSx, color: tokens.bleu600, "&:hover": { bgcolor: tokens.bleu5 } }}>
-            {t(expanded ? "less" : "details")}
-            <ExpandMore sx={{ transition: "transform 200ms ease", transform: expanded ? "rotate(180deg)" : "none" }} />
-          </ButtonBase>
-        </Box>
-
-        {!closedOffscreen && (
-          <Collapse in={expanded} unmountOnExit timeout={250}>
-            <Box id={detailsId}>
-              <ReviewDetails review={review} onHelp={openHelp} />
-            </Box>
-          </Collapse>
-        )}
       </Box>
 
-      <Menu anchorEl={menuEl} open={Boolean(menuEl)} onClose={() => setMenuEl(null)} anchorOrigin={{ vertical: "bottom", horizontal: "right" }} transformOrigin={{ vertical: "top", horizontal: "right" }}>
-        <MenuItem
-          onClick={() => {
-            setMenuEl(null);
-            toggleDetails();
-          }}
-          sx={{ minHeight: 48, fontSize: 15 }}
-        >
-          <ListItemIcon><InfoOutlined fontSize="small" /></ListItemIcon>
-          {t(expanded ? "less" : "details")}
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            setMenuEl(null);
-            onReport(review);
-          }}
-          sx={{ minHeight: 48, fontSize: 15, color: tokens.error3 }}
-        >
-          <ListItemIcon sx={{ color: "inherit" }}><FlagOutlined fontSize="small" /></ListItemIcon>
-          {t("report")}
-        </MenuItem>
-      </Menu>
+      <Box component="ul" aria-label={tv("tagsLabel")} sx={{ listStyle: "none", m: 0, p: 0, display: "flex", flexWrap: "wrap", columnGap: 1.5, rowGap: 0.5 }}>
+        {[{ key: review.product, label: tp(review.product) }, ...review.criteria.map((criterion) => ({ key: criterion, label: tc(criterion) }))].map((tag) => (
+          <Box component="li" key={tag.key} sx={{ fontSize: 13, fontWeight: 500, color: tokens.gris }}>
+            #{tag.label}
+          </Box>
+        ))}
+      </Box>
+
+      {review.reply && <ReviewReplyBlock review={review} />}
+
+      {!closedOffscreen && (
+        <Collapse in={expanded} unmountOnExit timeout={250}>
+          <Box id={detailsId}>
+            <ReviewDetails review={review} onHelp={openHelp} />
+          </Box>
+        </Collapse>
+      )}
+
+      <Box sx={{ borderTop: `1px solid ${tokens.grisMoyen1}`, pt: 1.25 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mx: -1.25 }}>
+          <ButtonBase onClick={toggle} aria-pressed={voted} aria-label={t("usefulAria", { count: formatCount(usefulCount) })} sx={{ ...quietActionSx, color: voted ? tokens.bleu600 : tokens.bleuFonce }}>
+            {voted ? <ThumbUp /> : <ThumbUpOutlined />}
+            {expanded && t("useful")}
+            <Box component="span" sx={{ fontVariantNumeric: "tabular-nums" }}>{formatCount(usefulCount)}</Box>
+          </ButtonBase>
+          <ButtonBase onClick={() => onReport(review)} aria-label={t("report")} sx={{ ...quietActionSx, color: tokens.bleuFonce }}>
+            <FlagOutlined />
+            {expanded && t("report")}
+          </ButtonBase>
+          <ButtonBase onClick={toggleDetails} aria-expanded={expanded} aria-controls={detailsId} sx={{ ...quietActionSx, ml: "auto", color: tokens.bleu600, "&:hover": { bgcolor: tokens.bleu5 } }}>
+            {t(expanded ? "less" : "details")}
+            <ExpandMore sx={{ fontSize: "20px !important", transition: "transform 200ms ease", transform: expanded ? "rotate(180deg)" : "none" }} />
+          </ButtonBase>
+        </Box>
+      </Box>
 
       <ReviewHelpSheet review={review} request={help} open={helpOpen} onClose={() => setHelpOpen(false)} />
     </Box>
