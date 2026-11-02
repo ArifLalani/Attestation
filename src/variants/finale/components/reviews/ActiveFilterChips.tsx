@@ -5,10 +5,17 @@ import { useTranslations } from "next-intl";
 import { useCertificate } from "@/components/certificate/CertificateContext";
 import { ActiveChip, StarLabel } from "@/variants/finale/components/ui/FilterChip";
 import { StaffAvatar } from "@/variants/finale/components/ui/StaffAvatar";
+import type { Product } from "@/data/types";
 import type { ReviewFilters } from "@/lib/reviewFilters";
 
-/** One removable chip per active filter, under the toolbar (Figma "Chips"). */
-export function ActiveFilterChips() {
+/** Shown as quick chips under the search (layout from option E). */
+export const quickProducts: Product[] = ["vente", "achat", "location", "gestion_locative"];
+
+/**
+ * One removable chip per active filter, under the toolbar (Figma "Chips").
+ * `hideQuick`: leave out the filters the quick chips already show (Contrôlés, Cette année, the four projects).
+ */
+export function ActiveFilterChips({ hideQuick = false }: { hideQuick?: boolean } = {}) {
   const t = useTranslations("Filters");
   const tr = useTranslations("Reviews");
   const tp = useTranslations("Products");
@@ -18,7 +25,7 @@ export function ActiveFilterChips() {
   const update = (patch: Partial<ReviewFilters>) => setFilters({ ...filters, ...patch });
   const chips: { key: string; label: React.ReactNode; text: string; remove: () => void; avatar?: React.ReactNode }[] = [];
 
-  if (filters.type) {
+  if (filters.type && !(hideQuick && filters.type === "controle")) {
     const text = t(filters.type === "controle" ? "chip.controle" : "chip.nonControle");
     chips.push({ key: "type", label: text, text, remove: () => update({ type: undefined }) });
   }
@@ -31,11 +38,11 @@ export function ActiveFilterChips() {
     const prefix = exact || stars === 5 ? `${stars} ` : `>${stars}`;
     chips.push({ key: "note", label: <StarLabel prefix={prefix} />, text: `${prefix}★`, remove: () => update({ note: undefined }) });
   }
-  if (filters.period) {
+  if (filters.period && !(hideQuick && filters.period === "year")) {
     const text = t(`periods.${filters.period}`);
     chips.push({ key: "period", label: text, text, remove: () => update({ period: undefined }) });
   }
-  for (const product of filters.products) {
+  for (const product of filters.products.filter((item) => !hideQuick || !quickProducts.includes(item))) {
     const text = tp(product);
     chips.push({ key: `p-${product}`, label: text, text, remove: () => update({ products: filters.products.filter((p) => p !== product) }) });
   }

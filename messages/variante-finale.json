@@ -39,8 +39,6 @@
     },
     "reviews": {
       "title": "Avis clients",
-      "topics": "Sujets fréquents",
-      "topicAria": "{topic} : {count} avis",
       "sortShort": {
         "recent": "Plus récents",
         "oldest": "Plus anciens",
@@ -58,7 +56,8 @@
       "details": "Détails de l’avis",
       "explain": "Comprendre : {title}",
       "explainItem": "{label} : {value}. Comprendre",
-      "close": "Fermer"
+      "close": "Fermer",
+      "quickFilters": "Filtres rapides"
     },
     "help": {
       "levelsTitle": "Recommandation et satisfaction",

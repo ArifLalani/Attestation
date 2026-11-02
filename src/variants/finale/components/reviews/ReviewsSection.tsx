@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import Check from "@mui/icons-material/Check";
 import RateReviewOutlined from "@mui/icons-material/RateReviewOutlined";
 import SearchOff from "@mui/icons-material/SearchOff";
+import VerifiedRounded from "@mui/icons-material/VerifiedRounded";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useCertificate } from "@/components/certificate/CertificateContext";
@@ -15,11 +16,11 @@ import { CardTitle } from "@/variants/finale/components/certificate/ReputationCa
 import { SortSheet } from "@/variants/finale/components/certificate/SortSheet";
 import { CtaButton } from "@/variants/finale/components/ui/CtaButton";
 import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
-import type { Criterion, Review } from "@/data/types";
+import type { Product, Review } from "@/data/types";
 import { formatCount } from "@/lib/format";
-import { applyFilters, countActiveFilters, emptyFilters, sortReviews, type ReviewSort } from "@/lib/reviewFilters";
+import { applyFilters, countActiveFilters, emptyFilters, sortReviews, type ReviewFilters, type ReviewSort } from "@/lib/reviewFilters";
 import { tokens } from "@/theme/theme";
-import { ActiveFilterChips } from "./ActiveFilterChips";
+import { ActiveFilterChips, quickProducts } from "./ActiveFilterChips";
 import { FiltersSheet } from "./FiltersSheet";
 import { ReportSheet } from "./ReportSheet";
 import { ReviewCard } from "./ReviewCard";
@@ -28,7 +29,6 @@ import { ReviewSearchField } from "./ReviewSearchField";
 const desktopCtaSx = { width: { xs: "100%", md: "auto" }, minWidth: { md: 220 }, px: { md: 3 } } as const;
 const PAGE_SIZE = 3;
 const sorts: ReviewSort[] = ["recent", "oldest", "best", "worst", "useful", "verified"];
-const criteria: Criterion[] = ["accueil", "conseil", "competence", "reactivite", "suivi", "transparence", "honoraires"];
 
 const focusSx = { "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 } } as const;
 
@@ -50,13 +50,12 @@ const toolButtonSx = {
   ...focusSx,
 } as const;
 
-/** A frequent topic: navy with a check when chosen, like the sort chips of the collaborator picker. */
-function TopicChip({ selected, onClick, ariaLabel, children }: { selected: boolean; onClick: () => void; ariaLabel: string; children: React.ReactNode }) {
+/** A quick filter: navy with a check when chosen, like the sort chips of the collaborator picker. */
+function TopicChip({ selected, onClick, icon, children }: { selected: boolean; onClick: () => void; icon?: React.ReactNode; children: React.ReactNode }) {
   return (
     <ButtonBase
       onClick={onClick}
       aria-pressed={selected}
-      aria-label={ariaLabel}
       sx={{
         flexShrink: 0,
         gap: 0.75,
@@ -75,20 +74,21 @@ function TopicChip({ selected, onClick, ariaLabel, children }: { selected: boole
         ...focusSx,
       }}
     >
-      {selected && <Check sx={{ fontSize: 18, mr: -0.25 }} />}
+      {icon ?? (selected && <Check sx={{ fontSize: 18, mr: -0.25 }} />)}
       {children}
     </ButtonBase>
   );
 }
 
 /**
- * Avis (layout from option C, drawn in the page's look): title with Déposer un avis, search, frequent topics,
+ * Avis (layout from option C, drawn in the page's look): title with Déposer un avis, search, quick filters,
  * the count with Filtres and the sort, then the reviews as a list.
  */
 export function ReviewsSection() {
   const t = useTranslations("Reviews");
   const tv = useTranslations("VarianteFinale.reviews");
-  const tc = useTranslations("Criteria");
+  const tp = useTranslations("Products");
+  const tf = useTranslations("Filters");
   const ts = useTranslations("ReviewSort");
   const { reviews, filters, setFilters, reviewSort, setReviewSort, panel, setPanel, openPanel, panelAnchor, setToolbarPinned } = useCertificate();
   const [visible, setVisible] = useState(PAGE_SIZE);
@@ -104,17 +104,11 @@ export function ReviewsSection() {
   }
 
   const list = useMemo(() => sortReviews(applyFilters(reviews, filters), reviewSort), [reviews, filters, reviewSort]);
-  // Topic counts follow the other filters, so each chip says how many reviews it would show.
-  const topics = useMemo(() => {
-    const scope = applyFilters(reviews, { ...filters, criteria: [] });
-    const counts = new Map<Criterion, number>(criteria.map((criterion) => [criterion, 0]));
-    for (const review of scope) for (const criterion of review.criteria) counts.set(criterion, (counts.get(criterion) ?? 0) + 1);
-    return [...counts.entries()].filter(([, count]) => count > 0).sort((a, b) => b[1] - a[1]);
-  }, [reviews, filters]);
   const active = countActiveFilters(filters);
 
-  const toggleTopic = (criterion: Criterion) =>
-    setFilters({ ...filters, criteria: filters.criteria.includes(criterion) ? filters.criteria.filter((item) => item !== criterion) : [...filters.criteria, criterion] });
+  const update = (patch: Partial<ReviewFilters>) => setFilters({ ...filters, ...patch });
+  const toggleProduct = (product: Product) =>
+    update({ products: filters.products.includes(product) ? filters.products.filter((item) => item !== product) : [...filters.products, product] });
 
   // Pin the toolbar under the header once it scrolls past, while still inside the reviews card.
   useEffect(() => {
@@ -163,23 +157,28 @@ export function ReviewsSection() {
         inputSx={{ color: tokens.bleuFonce, fontSize: 16 }}
       />
 
-      {topics.length > 0 && (
-        <Box>
-          <Typography component="h3" sx={{ fontSize: 14, fontWeight: 600, color: tokens.gris, mb: 1.25 }}>{tv("topics")}</Typography>
-          <Box
-            role="group"
-            aria-label={tv("topics")}
-            sx={{ display: "flex", gap: 1, overflowX: { xs: "auto", md: "visible" }, flexWrap: { xs: "nowrap", md: "wrap" }, mx: -2, px: 2, py: 0.25, scrollbarWidth: "none", "&::-webkit-scrollbar": { display: "none" } }}
-          >
-            {topics.map(([criterion, count]) => (
-              <TopicChip key={criterion} selected={filters.criteria.includes(criterion)} onClick={() => toggleTopic(criterion)} ariaLabel={tv("topicAria", { topic: tc(criterion), count: formatCount(count) })}>
-                {tc(criterion)}
-                <Box component="span" sx={{ fontWeight: 500, opacity: 0.7 }}>{formatCount(count)}</Box>
-              </TopicChip>
-            ))}
-          </Box>
-        </Box>
-      )}
+      {/* Quick filters under the search (options from option E): each chip switches its filter on or off at once. */}
+      <Box
+        role="group"
+        aria-label={tv("quickFilters")}
+        sx={{ display: "flex", gap: 1, mt: -1, overflowX: { xs: "auto", md: "visible" }, flexWrap: { xs: "nowrap", md: "wrap" }, mx: { xs: -2, md: 0 }, px: { xs: 2, md: 0 }, py: 0.25, scrollbarWidth: "none", "&::-webkit-scrollbar": { display: "none" } }}
+      >
+        <TopicChip
+          selected={filters.type === "controle"}
+          onClick={() => update({ type: filters.type === "controle" ? undefined : "controle" })}
+          icon={<VerifiedRounded sx={{ fontSize: 18, color: filters.type === "controle" ? tokens.blanc : tokens.vertOs }} />}
+        >
+          {tf("chip.controle")}
+        </TopicChip>
+        <TopicChip selected={filters.period === "year"} onClick={() => update({ period: filters.period === "year" ? undefined : "year" })}>
+          {tf("periods.year")}
+        </TopicChip>
+        {quickProducts.map((product) => (
+          <TopicChip key={product} selected={filters.products.includes(product)} onClick={() => toggleProduct(product)}>
+            {tp(product)}
+          </TopicChip>
+        ))}
+      </Box>
 
       {/* Count, Filtres and sort. Once it scrolls under the header, the header shows its own copy. */}
       <Box ref={toolbarRef} sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
@@ -208,7 +207,7 @@ export function ReviewsSection() {
             <Box component="span" sx={{ display: { xs: "inline", sm: "none" } }}>{t("sortShort")}</Box>
           </ButtonBase>
         </Box>
-        <ActiveFilterChips />
+        <ActiveFilterChips hideQuick />
       </Box>
 
       <Box sx={{ mt: -1 }}>
