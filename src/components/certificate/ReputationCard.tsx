@@ -147,7 +147,8 @@ export function ReputationCard() {
   };
   const [learnMoreOpen, setLearnMoreOpen] = useState(false);
   // Desktop: "En savoir plus" expands under the text instead of opening a window.
-  const desktop = useMediaQuery("(min-width:900px)", { noSsr: true });
+  // Not noSsr: the link is in the first render, so the server and the first client render must agree (phone), then it updates.
+  const desktop = useMediaQuery("(min-width:900px)");
 
   const summary = useMemo(
     () => summarize(reviewsForScore(reviews, scoreView, scoreCollaboratorId)),
