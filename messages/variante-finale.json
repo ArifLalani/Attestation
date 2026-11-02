@@ -48,6 +48,12 @@
         "verified": "Contrôlés d’abord"
       },
       "via": "via {source}",
+      "sourceLine": {
+        "os_certified": "via Opinion System · Certifié",
+        "os_simple": "via Opinion System · Interne",
+        "import_iso": "Importé · Certifié ISO 20488",
+        "import_other": "via {platform}"
+      },
       "moreActions": "Plus d’actions sur l’avis de {name}",
       "tagsLabel": "Projet et critères",
       "readLess": "Réduire",

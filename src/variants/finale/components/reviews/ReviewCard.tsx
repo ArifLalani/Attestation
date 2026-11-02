@@ -349,7 +349,8 @@ export function ReviewCard({ review, onReport, framed = true }: { review: Review
   const detailsId = `review-details-${review.id}`;
   const usefulCount = review.usefulCount + (voted ? 1 : 0);
   const long = (review.comment?.length ?? 0) > 220;
-  const sourceName = review.platform ? tPlatform(review.platform) : ts(review.source);
+  // Under the stars: where the review comes from, and for Opinion System whether the questionnaire was internal or certified.
+  const sourceLine = tv(`sourceLine.${review.source}`, { platform: review.platform ? tPlatform(review.platform) : ts(review.source) });
   const sourceAlt = review.platform ? t("sourceIcon.platform", { platform: tPlatform(review.platform) }) : t(`sourceIcon.${review.source}`);
 
   // Once an open review has scrolled entirely above the pinned header, close it, and keep what the reader sees in place.
@@ -417,7 +418,7 @@ export function ReviewCard({ review, onReport, framed = true }: { review: Review
         <Box component="span" aria-hidden sx={{ width: "1px", height: 18, bgcolor: tokens.grisMoyen1 }} />
         <Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, fontSize: 13, fontWeight: 500, color: tokens.gris }}>
           <SourceIcon review={review} size={18} alt={sourceAlt} />
-          {sourceName}
+          {sourceLine}
         </Box>
       </Box>
 
