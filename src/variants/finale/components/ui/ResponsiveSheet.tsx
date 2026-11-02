@@ -40,7 +40,7 @@ export function ResponsiveSheet({ open, onClose, title, closeLabel, actions, hea
   const titleId = useId();
   const dropdown = desktop && Boolean(anchorEl);
   // A dropdown may use the space between its button and the bottom of the window.
-  const dropdownMaxHeight = dropdown && open && anchorEl ? `calc(100vh - ${Math.round(anchorEl.getBoundingClientRect().bottom) + 24}px)` : undefined;
+  const dropdownMaxHeight = dropdown && open && anchorEl ? `max(440px, calc(100vh - ${Math.round(anchorEl.getBoundingClientRect().bottom) + 24}px))` : undefined;
 
   const body = (
     <Box sx={{ display: "flex", flexDirection: "column", maxHeight: dropdownMaxHeight ?? (desktop ? "min(80vh, 760px)" : "92dvh"), bgcolor: tokens.blanc }}>
@@ -60,7 +60,7 @@ export function ResponsiveSheet({ open, onClose, title, closeLabel, actions, hea
           flexShrink: 0,
         }}
       >
-        <Typography id={titleId} component="h2" sx={{ flex: 1, fontSize: 20, fontWeight: 600, lineHeight: "normal", color: tokens.bleuFonce }}>
+        <Typography id={titleId} component="h2" sx={{ flex: 1, fontSize: dropdown ? 17 : 20, fontWeight: 600, lineHeight: "normal", color: tokens.bleuFonce }}>
           {title}
         </Typography>
         {actions}

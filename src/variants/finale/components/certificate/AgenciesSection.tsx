@@ -41,9 +41,12 @@ function OpeningHours({ agency, openRequest }: { agency: Agency; openRequest: nu
   // Collapsed to one line, as in the Figma; the arrow shows the week.
   const [expanded, setExpanded] = useState(false);
   const hoursId = useId();
-  useEffect(() => {
+  // A new request from the hero opens the week (adjusted while rendering rather than in an effect).
+  const [seenRequest, setSeenRequest] = useState(openRequest);
+  if (openRequest !== seenRequest) {
+    setSeenRequest(openRequest);
     if (openRequest) setExpanded(true);
-  }, [openRequest]);
+  }
   const now = useNow();
   const today = now ? localClock(now).weekday : -1;
   return (
