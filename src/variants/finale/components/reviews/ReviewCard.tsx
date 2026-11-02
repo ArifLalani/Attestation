@@ -308,12 +308,28 @@ const quietActionSx = {
   "& svg": { fontSize: 18 },
 } as const;
 
+/** In the list, each review floats on the page background as its own card, and lifts on hover where a mouse is used. */
+const framedSx = {
+  bgcolor: tokens.blanc,
+  borderRadius: "20px",
+  boxShadow: tokens.shadowCardSoft,
+  px: { xs: 2, md: 3 },
+  pt: { xs: 2, md: 2.5 },
+  pb: 1,
+  transition: "box-shadow 200ms ease, transform 200ms ease",
+  "@media (hover: hover)": {
+    "&:hover": { boxShadow: "0px 10px 28px 0px rgba(4, 27, 68, 0.16)", transform: "translateY(-2px)" },
+  },
+} as const;
+/** Inside a panel (the staff profile), reviews stay a plain list split by rules. */
+const plainSx = { py: 2.5, borderTop: `1px solid ${tokens.grisMoyen1}` } as const;
+
 /**
  * One review (collapsed layout from option E, in the page's look): who, the project and the date, the badge on the right;
  * square stars, the score and the source; the text; #tags; then Utile, Signaler and Détails under a rule.
  * Each block of the details has an ⓘ, and each line opens its own explanation.
  */
-export function ReviewCard({ review, onReport }: { review: Review; onReport: (review: Review) => void }) {
+export function ReviewCard({ review, onReport, framed = true }: { review: Review; onReport: (review: Review) => void; framed?: boolean }) {
   const t = useTranslations("Reviews");
   const tv = useTranslations("VarianteFinale.reviews");
   const tp = useTranslations("Products");
@@ -374,7 +390,7 @@ export function ReviewCard({ review, onReport }: { review: Review; onReport: (re
   };
 
   return (
-    <Box component="article" ref={cardRef} sx={{ py: 2.5, borderTop: `1px solid ${tokens.grisMoyen1}`, display: "flex", flexDirection: "column", gap: 1.75 }}>
+    <Box component="article" ref={cardRef} sx={{ ...(framed ? framedSx : plainSx), display: "flex", flexDirection: "column", gap: 1.75 }}>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
         <ReviewerAvatar review={review} />
         <Box sx={{ flex: 1, minWidth: 0 }}>

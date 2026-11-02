@@ -102,7 +102,7 @@ export function TeamSection() {
             <SocialLinks person={selected.person} />
           </Box>
           <Typography component="h3" sx={{ fontSize: 16, fontWeight: 600 }}>{t("recentReviews")}</Typography>
-          {recent.map((review) => <ReviewCard key={review.id} review={review} onReport={setReporting} />)}
+          {recent.map((review) => <ReviewCard key={review.id} review={review} onReport={setReporting} framed={false} />)}
         </Box>}
       </ResponsiveSheet>
       <ReportSheet review={reporting} onClose={() => setReporting(null)} />
