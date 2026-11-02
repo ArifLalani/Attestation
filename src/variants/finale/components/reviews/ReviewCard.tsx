@@ -327,7 +327,7 @@ const plainSx = { py: 2.5, borderTop: `1px solid ${tokens.grisMoyen1}` } as cons
 
 /**
  * One review (collapsed layout from option E, in the page's look): who, the project and the date, the badge on the right;
- * stars, the score and the source; the text; #tags; then Utile, Signaler and Détails under a rule.
+ * stars, the score and the source; the text; #tags; then Utile, Signaler and Détails.
  * Each block of the details has an ⓘ, and each line opens its own explanation.
  */
 export function ReviewCard({ review, onReport, framed = true }: { review: Review; onReport: (review: Review) => void; framed?: boolean }) {
@@ -459,7 +459,7 @@ export function ReviewCard({ review, onReport, framed = true }: { review: Review
         </Collapse>
       )}
 
-      <Box sx={{ borderTop: `1px solid ${tokens.grisMoyen1}`, pt: 1.25 }}>
+      <Box sx={{ mt: -0.75 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mx: -1.25 }}>
           <ButtonBase onClick={toggle} aria-pressed={voted} aria-label={t("usefulAria", { count: formatCount(usefulCount) })} sx={{ ...quietActionSx, color: voted ? tokens.bleu600 : tokens.bleuFonce }}>
             {voted ? <ThumbUp /> : <ThumbUpOutlined />}
