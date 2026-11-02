@@ -6,13 +6,11 @@ import ButtonBase from "@mui/material/ButtonBase";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import Check from "@mui/icons-material/Check";
-import RateReviewOutlined from "@mui/icons-material/RateReviewOutlined";
 import SearchOff from "@mui/icons-material/SearchOff";
 import VerifiedRounded from "@mui/icons-material/VerifiedRounded";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useCertificate } from "@/components/certificate/CertificateContext";
-import { CardTitle } from "@/variants/finale/components/certificate/ReputationCard";
 import { SortSheet } from "@/variants/finale/components/certificate/SortSheet";
 import { CtaButton } from "@/variants/finale/components/ui/CtaButton";
 import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
@@ -96,8 +94,8 @@ function TopicChip({ selected, onClick, icon, children }: { selected: boolean; o
 }
 
 /**
- * Avis (layout from option C, drawn in the page's look). A header card holds the title, the search with Filtres and the sort
- * on one line, the quick filters and the count; then each review floats on the background as its own card.
+ * Avis (layout from option C, drawn in the page's look). A header card holds the title with the review count and Déposer un avis, the search with Filtres and the sort
+ * on one line, and the quick filters; then each review floats on the background as its own card.
  */
 export function ReviewsSection() {
   const t = useTranslations("Reviews");
@@ -153,15 +151,23 @@ export function ReviewsSection() {
     <Box component="section" ref={sectionRef} aria-labelledby="reviews-heading" sx={{ display: "flex", flexDirection: "column", gap: { xs: 1.5, md: 2 } }}>
       {/* Header card: title, the search with Filtres and the sort on one line, the quick filters, then the count. */}
       <Box sx={{ ...cardSx, px: { xs: 2, md: 3 }, py: { xs: 2, md: 3 }, display: "flex", flexDirection: "column", gap: { xs: 1.75, md: 2 } }}>
-        <Box sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 2 }}>
-          <CardTitle id="reviews-heading" eyebrow={t("eyebrow")} heading={t("heading")} />
-          <ButtonBase
-            onClick={() => setPanel("reviewRequest")}
-            sx={{ ...toolButtonSx, display: { xs: "none", sm: "inline-flex" }, border: 0, bgcolor: tokens.bleu10, px: 2, "&:hover": { bgcolor: tokens.bleu20 }, "& svg": { fontSize: 20, color: tokens.bleu600 } }}
-          >
-            <RateReviewOutlined />
+        {/* Title with the number of reviews beside it, and the yellow Déposer un avis. */}
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2, minHeight: { sm: 45 } }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, flexWrap: "wrap" }}>
+            <Typography id="reviews-heading" component="h2" sx={{ fontSize: 16, fontWeight: 700, color: tokens.vertOs, letterSpacing: "0.8px", textTransform: "uppercase", lineHeight: "normal" }}>
+              {t("eyebrow")}
+            </Typography>
+            <Box
+              component="span"
+              aria-live="polite"
+              sx={{ display: "inline-flex", alignItems: "center", height: 28, px: 1.25, borderRadius: "999px", bgcolor: tokens.bleu10, fontSize: 14, fontWeight: 600, color: tokens.bleuFonce, fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}
+            >
+              {t("count", { count: formatCount(list.length) })}
+            </Box>
+          </Box>
+          <CtaButton onClick={() => setPanel("reviewRequest")} sx={{ display: { xs: "none", sm: "inline-flex" }, width: "auto", flexShrink: 0, px: 2.5 }}>
             {t("leaveReview")}
-          </ButtonBase>
+          </CtaButton>
         </Box>
 
         {/* Once this line scrolls under the header, the header shows its own copy of the toolbar. */}
@@ -214,10 +220,8 @@ export function ReviewsSection() {
           ))}
         </Box>
 
-        <Box sx={{ borderTop: `1px solid ${tokens.grisMoyen1}`, pt: { xs: 1.5, md: 2 }, display: "flex", flexDirection: "column", gap: 1 }}>
-          <Typography aria-live="polite" sx={{ fontSize: 15, fontWeight: 600, color: tokens.bleuFonce }}>
-            {t("count", { count: formatCount(list.length) })}
-          </Typography>
+        {/* Removable chips for the filters that have no quick chip (hidden when there are none). */}
+        <Box sx={{ borderTop: `1px solid ${tokens.grisMoyen1}`, pt: { xs: 1.5, md: 2 }, "&:empty": { display: "none" } }}>
           <ActiveFilterChips hideQuick />
         </Box>
       </Box>
