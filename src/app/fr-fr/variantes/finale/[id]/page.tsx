@@ -14,7 +14,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/fr-fr/variantes/finale/[id]">): Promise<Metadata> {
   const { id } = await params;
   const agency = getAgency(id);
-  return agency ? { title: `${agency.name} ${agency.city} — Avis contrôlés | Opinion System (version finale)` } : {};
+  return agency ? { title: `${agency.name} ${agency.city} — Avis contrôlés | Opinion System (option H · version finale)` } : {};
 }
 
 export default async function Page({ params }: PageProps<"/fr-fr/variantes/finale/[id]">) {

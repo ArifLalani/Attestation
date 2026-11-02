@@ -14,7 +14,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/fr-fr/variantes/f2/[id]">): Promise<Metadata> {
   const { id } = await params;
   const agency = getAgency(id);
-  return agency ? { title: `${agency.name} ${agency.city} — Avis contrôlés | Opinion System (option F2)` } : {};
+  return agency ? { title: `${agency.name} ${agency.city} — Avis contrôlés | Opinion System (option G)` } : {};
 }
 
 export default async function Page({ params }: PageProps<"/fr-fr/variantes/f2/[id]">) {
