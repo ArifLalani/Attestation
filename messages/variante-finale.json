@@ -37,6 +37,10 @@
       "count": "{count} avis",
       "scoreLink": "{score} sur 5, {count}. Voir les avis"
     },
+    "filters": {
+      "clear": "Tout effacer",
+      "show": "Afficher {count} avis"
+    },
     "reviews": {
       "title": "Avis clients",
       "sortShort": {
