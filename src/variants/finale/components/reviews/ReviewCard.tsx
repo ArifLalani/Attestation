@@ -3,9 +3,11 @@
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import Collapse from "@mui/material/Collapse";
+import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import FlagOutlined from "@mui/icons-material/FlagOutlined";
+import Star from "@mui/icons-material/Star";
 import ThumbUp from "@mui/icons-material/ThumbUp";
 import ThumbUpOutlined from "@mui/icons-material/ThumbUpOutlined";
 import Image from "next/image";
@@ -15,7 +17,6 @@ import { flushSync } from "react-dom";
 import { useCertificate } from "@/components/certificate/CertificateContext";
 import { FigmaIcon, type FigmaIconName } from "@/variants/finale/components/ui/FigmaIcon";
 import { StaffAvatar } from "@/variants/finale/components/ui/StaffAvatar";
-import { StarTiles } from "@/variants/finale/components/ui/StarTiles";
 import { womenFirstNames } from "@/data/content";
 import type { Review, ReviewSource } from "@/data/types";
 import { formatCount, formatScore } from "@/lib/format";
@@ -326,7 +327,7 @@ const plainSx = { py: 2.5, borderTop: `1px solid ${tokens.grisMoyen1}` } as cons
 
 /**
  * One review (collapsed layout from option E, in the page's look): who, the project and the date, the badge on the right;
- * square stars, the score and the source; the text; #tags; then Utile, Signaler and Détails under a rule.
+ * stars, the score and the source; the text; #tags; then Utile, Signaler and Détails under a rule.
  * Each block of the details has an ⓘ, and each line opens its own explanation.
  */
 export function ReviewCard({ review, onReport, framed = true }: { review: Review; onReport: (review: Review) => void; framed?: boolean }) {
@@ -403,7 +404,15 @@ export function ReviewCard({ review, onReport, framed = true }: { review: Review
       </Box>
 
       <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, flexWrap: "wrap" }}>
-        <StarTiles value={review.rating} label={t("ratingAria", { score: formatScore(review.rating) })} />
+        <Rating
+          value={review.rating}
+          precision={0.1}
+          readOnly
+          aria-label={t("ratingAria", { score: formatScore(review.rating) })}
+          icon={<Star fontSize="inherit" />}
+          emptyIcon={<Star fontSize="inherit" />}
+          sx={{ fontSize: 20, "& .MuiRating-iconFilled": { color: tokens.rating }, "& .MuiRating-iconEmpty": { color: "#c3d5ea" } }}
+        />
         <Typography component="span" sx={{ fontSize: 15, fontWeight: 700, color: tokens.bleuFonce, fontVariantNumeric: "tabular-nums" }}>{formatScore(review.rating)}</Typography>
         <Box component="span" aria-hidden sx={{ width: "1px", height: 18, bgcolor: tokens.grisMoyen1 }} />
         <Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, fontSize: 13, fontWeight: 500, color: tokens.gris }}>
