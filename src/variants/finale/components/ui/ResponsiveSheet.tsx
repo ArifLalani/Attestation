@@ -29,13 +29,15 @@ interface ResponsiveSheetProps {
   dialogWidth?: number;
   /** Width of the desktop dropdown. */
   dropdownWidth?: number;
+  /** Which edge of `anchorEl` the dropdown lines up with (right by default). */
+  dropdownAlign?: "left" | "right";
 }
 
 /**
  * Figma "Bottom Sheet": a swipeable bottom sheet on phones and tablets in portrait.
  * From 900 px: a dropdown under `anchorEl` when given, otherwise a centred modal.
  */
-export function ResponsiveSheet({ open, onClose, title, closeLabel, actions, header, footer, children, anchorEl, dropdownWidth = 420, dialogWidth }: ResponsiveSheetProps) {
+export function ResponsiveSheet({ open, onClose, title, closeLabel, actions, header, footer, children, anchorEl, dropdownWidth = 420, dropdownAlign = "right", dialogWidth }: ResponsiveSheetProps) {
   const desktop = useMediaQuery("(min-width:900px)", { noSsr: true });
   const titleId = useId();
   const dropdown = desktop && Boolean(anchorEl);
@@ -80,8 +82,8 @@ export function ResponsiveSheet({ open, onClose, title, closeLabel, actions, hea
         open={open}
         anchorEl={anchorEl}
         onClose={onClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        transformOrigin={{ vertical: "top", horizontal: "right" }}
+        anchorOrigin={{ vertical: "bottom", horizontal: dropdownAlign }}
+        transformOrigin={{ vertical: "top", horizontal: dropdownAlign }}
         slotProps={{ paper: { role: "dialog", "aria-labelledby": titleId, sx: { mt: 1, width: dropdownWidth, maxWidth: "calc(100vw - 32px)", borderRadius: "12px", overflow: "hidden" } } }}
       >
         {body}

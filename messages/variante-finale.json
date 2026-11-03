@@ -39,7 +39,126 @@
     },
     "filters": {
       "clear": "Tout effacer",
-      "show": "Afficher {count} avis"
+      "show": "Afficher {count} avis",
+      "sortTitle": "Trier par",
+      "help": {
+        "sort": {
+          "title": "Trier par",
+          "items": [
+            {
+              "label": "Plus récents, plus anciens",
+              "text": "Selon la date de publication de l’avis."
+            },
+            {
+              "label": "Meilleures notes, notes les plus basses",
+              "text": "Selon la note sur 5 donnée par le client."
+            },
+            {
+              "label": "Plus utiles",
+              "text": "Les avis que les visiteurs ont le plus souvent marqués « Utile »."
+            },
+            {
+              "label": "Contrôlés d’abord",
+              "text": "Les avis contrôlés par Opinion System en premier, puis les non contrôlés, chaque groupe du plus récent au plus ancien."
+            }
+          ]
+        },
+        "type": {
+          "title": "Type d’avis",
+          "items": [
+            {
+              "label": "Contrôlés par Opinion System",
+              "text": "Recueillis par un questionnaire certifié, conçu par Opinion System, ou importés d’une source certifiée ISO 20488. Ce sont eux qui forment le score Avis Contrôlés : ce choix fait aussi passer la Réputation sur Avis Contrôlés."
+            },
+            {
+              "label": "Non contrôlés",
+              "text": "Recueillis par un questionnaire interne de l’agence, ou importés d’une source non certifiée. Ils comptent dans le score global uniquement."
+            }
+          ]
+        },
+        "source": {
+          "title": "Source de l’avis",
+          "items": [
+            {
+              "label": "Opinion System",
+              "text": "Avis recueillis par un questionnaire Opinion System que l’agence envoie à son client, certifié ou interne."
+            },
+            {
+              "label": "Avis importés",
+              "text": "Avis venus d’autres plateformes, comme Google. Ils n’ont pas de questionnaire : seuls ceux d’une source certifiée ISO 20488 comptent comme contrôlés."
+            }
+          ]
+        },
+        "note": {
+          "title": "Note",
+          "items": [
+            {
+              "label": "5",
+              "text": "Les avis notés 5 étoiles."
+            },
+            {
+              "label": "4+, 3+, 2+, 1+",
+              "text": "Cette note et au-dessus : 4+ montre les avis à 4 et 5 étoiles."
+            },
+            {
+              "label": "Notes arrondies",
+              "text": "Chaque note est arrondie à l’étoile la plus proche : 4,6 compte comme 5, et tout ce qui est sous 1,5 compte comme 1."
+            }
+          ]
+        },
+        "period": {
+          "title": "Période",
+          "items": [
+            {
+              "label": "Date de publication",
+              "text": "Garde les avis publiés aujourd’hui, ces 7 derniers jours, ces 30 derniers jours ou ces 12 derniers mois."
+            },
+            {
+              "label": "Les scores ne changent pas",
+              "text": "Les scores de la Réputation couvrent toujours tous les avis : la période ne réduit que la liste."
+            }
+          ]
+        },
+        "product": {
+          "title": "Produit",
+          "items": [
+            {
+              "label": "Le service du client",
+              "text": "Le service dont le client a bénéficié : vente, achat, location, gestion locative, syndic ou estimation."
+            },
+            {
+              "label": "Plusieurs choix",
+              "text": "Vous pouvez en choisir plusieurs : la liste montre les avis de l’un ou de l’autre."
+            }
+          ]
+        },
+        "criterion": {
+          "title": "Critère",
+          "items": [
+            {
+              "label": "Les points mis en avant",
+              "text": "Les sujets que le client met en avant dans son avis : accueil, conseil, compétence, réactivité, suivi, transparence ou honoraires."
+            },
+            {
+              "label": "Plusieurs choix",
+              "text": "La liste montre les avis qui parlent d’au moins un des critères choisis."
+            }
+          ]
+        },
+        "collaborator": {
+          "title": "Collaborateur",
+          "items": [
+            {
+              "label": "La personne de l’agence",
+              "text": "Celle qui a envoyé le questionnaire au client. Seuls les avis Opinion System ont un collaborateur, pas les avis importés."
+            },
+            {
+              "label": "Lien avec le score",
+              "text": "Choisir une personne affiche aussi son score dans la Réputation."
+            }
+          ]
+        }
+      }
     },
     "reviews": {
       "title": "Avis clients",

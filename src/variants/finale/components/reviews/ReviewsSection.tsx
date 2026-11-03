@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import Check from "@mui/icons-material/Check";
 import SearchOff from "@mui/icons-material/SearchOff";
 import VerifiedRounded from "@mui/icons-material/VerifiedRounded";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useCertificate } from "@/components/certificate/CertificateContext";
@@ -104,6 +105,7 @@ export function ReviewsSection() {
   const tf = useTranslations("Filters");
   const ts = useTranslations("ReviewSort");
   const { reviews, filters, setFilters, reviewSort, setReviewSort, panel, setPanel, openPanel, panelAnchor, setToolbarPinned } = useCertificate();
+  const desktop = useMediaQuery("(min-width:900px)", { noSsr: true });
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [reporting, setReporting] = useState<Review | null>(null);
   const [listKey, setListKey] = useState({ filters, reviewSort });
@@ -183,7 +185,7 @@ export function ReviewsSection() {
             sx={{ flexShrink: 0, "& .MuiBadge-badge": { bgcolor: tokens.errorMain, color: tokens.blanc, fontWeight: 700, top: { xs: 6, sm: 8 }, right: { xs: 6, sm: 8 } } }}
           >
             <ButtonBase
-              onClick={(event) => openPanel("filters", event.currentTarget)}
+              onClick={() => openPanel("filters")}
               aria-label={active ? t("filtersActive", { count: active }) : t("filters")}
               sx={{ ...barButtonSx, ...(active ? { bgcolor: tokens.bleu10, borderColor: tokens.bleu20 } : {}) }}
             >
@@ -191,7 +193,7 @@ export function ReviewsSection() {
               <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>{t("filters")}</Box>
             </ButtonBase>
           </Badge>
-          <ButtonBase onClick={(event) => openPanel("sort", event.currentTarget)} aria-haspopup="listbox" aria-label={`${t("sort")} : ${tv(`sortShort.${reviewSort}`)}`} sx={barButtonSx}>
+          <ButtonBase onClick={() => openPanel("sort")} aria-haspopup="listbox" aria-label={`${t("sort")} : ${tv(`sortShort.${reviewSort}`)}`} sx={barButtonSx}>
             <FigmaIcon name="sort-ascending" />
             <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>{tv(`sortShort.${reviewSort}`)}</Box>
           </ButtonBase>
@@ -269,8 +271,9 @@ export function ReviewsSection() {
       </Box>
 
       <FiltersSheet />
+      {/* Phones only: on desktop the sort is at the top of the filters side sheet. */}
       <SortSheet<ReviewSort>
-        open={panel === "sort"}
+        open={panel === "sort" && !desktop}
         onClose={() => setPanel(null)}
         anchorEl={panelAnchor}
         value={reviewSort}
