@@ -3,8 +3,7 @@
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import IconButton from "@mui/material/IconButton";
-import Paper from "@mui/material/Paper";
-import Slide from "@mui/material/Slide";
+import Drawer from "@mui/material/Drawer";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -12,7 +11,7 @@ import ChevronRightRounded from "@mui/icons-material/ChevronRightRounded";
 import CloseRounded from "@mui/icons-material/CloseRounded";
 import StarRounded from "@mui/icons-material/StarRounded";
 import { useTranslations } from "next-intl";
-import { useEffect, useId, useRef, useState } from "react";
+import { useId, useState } from "react";
 import { useCertificate } from "@/components/certificate/CertificateContext";
 import { CollaboratorPicker } from "@/variants/finale/components/certificate/CollaboratorPicker";
 import { StaffAvatar } from "@/variants/finale/components/ui/StaffAvatar";
@@ -24,8 +23,8 @@ import { applyFilters, emptyFilters, type Period, type ReviewFilters, type Revie
 import type { StarBucket } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
 
-/** Width of the desktop side sheet; the page moves left by as much while it is open. */
-export const SIDE_SHEET_WIDTH = 420;
+/** Width of the desktop side sheet. */
+const SIDE_SHEET_WIDTH = 400;
 
 const products: Product[] = ["vente", "achat", "location", "gestion_locative", "syndic", "estimation"];
 const criteria: Criterion[] = ["accueil", "conseil", "competence", "reactivite", "suivi", "transparence", "honoraires"];
@@ -39,13 +38,6 @@ const line = "#dce7f5";
 const lineStrong = "#c0d5ed";
 const focusSx = { "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 } } as const;
 
-/** True from 900 px: the filters and the sort open together in a side sheet. */
-export function useSideSheet() {
-  const { panel } = useCertificate();
-  const desktop = useMediaQuery("(min-width:900px)", { noSsr: true });
-  return desktop && (panel === "filters" || panel === "sort");
-}
-
 /** A choice (layout from option G): an outlined pill, navy when selected. */
 function ChoicePill({ selected, onClick, radio, children }: { selected: boolean; onClick: () => void; radio?: boolean; children: React.ReactNode }) {
   return (
@@ -54,12 +46,12 @@ function ChoicePill({ selected, onClick, radio, children }: { selected: boolean;
       aria-checked={selected}
       onClick={onClick}
       sx={{
-        minHeight: 44,
-        px: 2,
+        minHeight: { xs: 40, md: 36 },
+        px: 1.5,
         gap: 0.5,
         borderRadius: 999,
         fontFamily: "inherit",
-        fontSize: 15,
+        fontSize: 14,
         fontWeight: selected ? 600 : 500,
         color: selected ? tokens.blanc : tokens.bleuFonce,
         bgcolor: selected ? tokens.bleuFonce : tokens.blanc,
@@ -79,8 +71,8 @@ function Group({ title, onHelp, radio, labelFor, children }: { title: string; on
   const titleId = useId();
   return (
     <Box role={labelFor ? undefined : radio ? "radiogroup" : "group"} aria-labelledby={labelFor ? undefined : titleId}>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
-        <Typography id={titleId} component={labelFor ? "label" : "h3"} htmlFor={labelFor} sx={{ fontSize: 20, fontWeight: 600, lineHeight: 1.3, color: tokens.bleuFonce }}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.25 }}>
+        <Typography id={titleId} component={labelFor ? "label" : "h3"} htmlFor={labelFor} sx={{ fontSize: 15, fontWeight: 600, lineHeight: 1.3, color: tokens.bleuFonce }}>
           {title}
         </Typography>
         <HelpButton title={title} onOpen={onHelp} />
@@ -112,7 +104,7 @@ function FilterHelp({ help, onClose }: { help: { key: HelpKey; anchor: HTMLEleme
 }
 
 /**
- * Filters (layout from option G). Desktop: a side sheet from the right with Trier par first, the page moving left beside it.
+ * Filters (layout from option G). Desktop: a side sheet from the right, over the page, with Trier par first.
  * Phones: a bottom sheet. Every choice shows at once in the list as a preview; "Afficher N avis" keeps it, the X undoes it.
  */
 export function FiltersSheet() {
@@ -129,7 +121,6 @@ export function FiltersSheet() {
   const [wasOpen, setWasOpen] = useState(open);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [help, setHelp] = useState<{ key: HelpKey; anchor: HTMLElement } | null>(null);
-  const closeRef = useRef<HTMLButtonElement>(null);
 
   // Remember the choices from before the sheet opened, so the X can bring them back.
   if (open !== wasOpen) {
@@ -143,26 +134,6 @@ export function FiltersSheet() {
     setReviewSort(saved.reviewSort);
     setPanel(null);
   };
-  const cancelRef = useRef(cancel);
-  useEffect(() => {
-    cancelRef.current = cancel;
-  });
-
-  // Desktop sheet: focus goes to the close button, Échap closes (undoing), and focus returns to the button that opened it.
-  useEffect(() => {
-    if (!open || !desktop) return;
-    const opener = document.activeElement as HTMLElement | null;
-    closeRef.current?.focus();
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !document.querySelector(".MuiPopover-root, .MuiDialog-root")) cancelRef.current();
-    };
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      opener?.focus?.();
-    };
-  }, [open, desktop]);
-
   const results = applyFilters(reviews, filters).length;
   const update = (patch: Partial<ReviewFilters>) => setFilters({ ...filters, ...patch });
   const toggle = <K extends keyof ReviewFilters>(key: K, value: ReviewFilters[K]) =>
@@ -182,17 +153,17 @@ export function FiltersSheet() {
           <Box sx={{ width: 40, height: 4, borderRadius: 2, bgcolor: lineStrong }} />
         </Box>
       )}
-      <Box sx={{ display: "grid", gridTemplateColumns: "48px minmax(0, 1fr) 48px", alignItems: "center", gap: 1, px: 1.5, py: 1, minHeight: 60, borderBottom: `1px solid ${line}`, flexShrink: 0 }}>
-        <IconButton ref={closeRef} onClick={cancel} aria-label={t("close")} sx={{ width: 44, height: 44, color: tokens.bleuFonce, "&:hover": { bgcolor: tokens.grisClair1 }, ...focusSx }}>
+      <Box sx={{ display: "grid", gridTemplateColumns: "48px minmax(0, 1fr) 48px", alignItems: "center", gap: 1, px: 1.5, py: 1, minHeight: 56, borderBottom: `1px solid ${line}`, flexShrink: 0 }}>
+        <IconButton onClick={cancel} aria-label={t("close")} sx={{ width: 44, height: 44, color: tokens.bleuFonce, "&:hover": { bgcolor: tokens.grisClair1 }, ...focusSx }}>
           <CloseRounded />
         </IconButton>
-        <Typography id={titleId} component="h2" sx={{ textAlign: "center", fontSize: 17, fontWeight: 700, lineHeight: 1.25 }}>
+        <Typography id={titleId} component="h2" sx={{ textAlign: "center", fontSize: 16, fontWeight: 600, lineHeight: 1.25 }}>
           {t("title")}
         </Typography>
       </Box>
 
       <Box sx={{ overflowY: "auto", overscrollBehavior: "contain", flex: 1, minHeight: 0 }}>
-        <Box sx={{ p: { xs: 2.5, md: 3 }, display: "flex", flexDirection: "column", gap: 3 }}>
+        <Box sx={{ px: { xs: 2.5, md: 3 }, py: 2.5, display: "flex", flexDirection: "column", gap: 2.5 }}>
           {/* Desktop: the sort lives in the same sheet, first. Phones keep their own Trier par sheet. */}
           {desktop && (
             <>
@@ -218,7 +189,7 @@ export function FiltersSheet() {
             {notes.map((stars) => (
               <ChoicePill key={stars} selected={noteSelected(stars)} onClick={() => update({ note: noteSelected(stars) ? undefined : { stars, exact: false } })}>
                 {stars === 5 ? "5" : `${stars}+`}
-                <StarRounded sx={{ fontSize: 18 }} />
+                <StarRounded sx={{ fontSize: 16 }} />
               </ChoicePill>
             ))}
           </Group>
@@ -254,7 +225,7 @@ export function FiltersSheet() {
                 gap: 1.25,
                 pl: person ? 0.75 : 2,
                 pr: 1.5,
-                minHeight: 52,
+                minHeight: 44,
                 borderRadius: 999,
                 boxShadow: `inset 0 0 0 1px ${lineStrong}`,
                 textAlign: "left",
@@ -263,7 +234,7 @@ export function FiltersSheet() {
               }}
             >
               {person && <StaffAvatar person={person} />}
-              <Typography component="span" sx={{ flex: 1, fontSize: 15, fontWeight: 600, color: tokens.bleuFonce }}>
+              <Typography component="span" sx={{ flex: 1, fontSize: 14, fontWeight: 500, color: tokens.bleuFonce }}>
                 {person ? person.name : t("wholeTeam")}
               </Typography>
               <ChevronRightRounded sx={{ color: tokens.bleuFonce }} />
@@ -272,16 +243,16 @@ export function FiltersSheet() {
         </Box>
       </Box>
 
-      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2, px: 2.5, py: 1.75, pb: "calc(14px + env(safe-area-inset-bottom))", borderTop: `1px solid ${line}`, flexShrink: 0 }}>
+      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2, px: { xs: 2.5, md: 3 }, py: 1.5, pb: "calc(12px + env(safe-area-inset-bottom))", borderTop: `1px solid ${line}`, flexShrink: 0 }}>
         <ButtonBase
           onClick={() => setFilters({ ...emptyFilters, query: filters.query })}
-          sx={{ minHeight: 44, px: 0.5, borderRadius: "4px", fontFamily: "inherit", fontSize: 15, fontWeight: 600, color: tokens.bleuFonce, textDecoration: "underline", textUnderlineOffset: "3px", "&:hover": { textDecorationThickness: "2px" }, ...focusSx }}
+          sx={{ minHeight: 40, px: 0.5, borderRadius: "4px", fontFamily: "inherit", fontSize: 14, fontWeight: 600, color: tokens.bleuFonce, textDecoration: "underline", textUnderlineOffset: "3px", "&:hover": { textDecorationThickness: "2px" }, ...focusSx }}
         >
           {tv("clear")}
         </ButtonBase>
         <ButtonBase
           onClick={keep}
-          sx={{ minHeight: 48, px: 3, borderRadius: 999, fontFamily: "inherit", fontSize: 16, fontWeight: 600, whiteSpace: "nowrap", bgcolor: tokens.bleuFonce, color: tokens.blanc, "&:hover": { bgcolor: "#000" }, ...focusSx }}
+          sx={{ minHeight: 44, px: 2.5, borderRadius: 999, fontFamily: "inherit", fontSize: 14, fontWeight: 600, whiteSpace: "nowrap", bgcolor: tokens.bleuFonce, color: tokens.blanc, "&:hover": { bgcolor: "#000" }, ...focusSx }}
         >
           {tv("show", { count: formatCount(results) })}
         </ButtonBase>
@@ -292,29 +263,18 @@ export function FiltersSheet() {
   return (
     <>
       {desktop ? (
-        // No dark overlay: the page stays visible (moved left) and updates with every choice. Mounted only while open.
-        <Slide in={open} direction="left" mountOnEnter unmountOnExit>
-          <Paper
-            role="dialog"
-            aria-labelledby={titleId}
-            square
-            elevation={0}
-            sx={{
-              position: "fixed",
-              top: 0,
-              right: 0,
-              bottom: 0,
-              width: SIDE_SHEET_WIDTH,
-              maxWidth: "100vw",
-              zIndex: (theme) => theme.zIndex.drawer,
-              borderLeft: `1px solid ${line}`,
-              boxShadow: "-12px 0 40px rgba(4, 27, 68, 0.12)",
-              overflow: "hidden",
-            }}
-          >
-            {body}
-          </Paper>
-        </Slide>
+        // Over the page with a light backdrop, so the list behind stays readable as it updates.
+        <Drawer
+          anchor="right"
+          open={open}
+          onClose={cancel}
+          slotProps={{
+            backdrop: { sx: { bgcolor: "rgba(4, 27, 68, 0.18)" } },
+            paper: { role: "dialog", "aria-labelledby": titleId, sx: { width: SIDE_SHEET_WIDTH, maxWidth: "100vw", boxShadow: "-12px 0 40px rgba(4, 27, 68, 0.16)", overflow: "hidden" } },
+          }}
+        >
+          {body}
+        </Drawer>
       ) : (
         <SwipeableDrawer
           anchor="bottom"
