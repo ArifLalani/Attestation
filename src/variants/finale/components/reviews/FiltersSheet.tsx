@@ -141,6 +141,35 @@ export function FiltersSheet() {
 
       <Box sx={{ overflowY: "auto", overscrollBehavior: "contain", flex: 1, minHeight: 0 }}>
         <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2 }}>
+          {/* Collaborateur first: opens the team picker over the filters. */}
+          <Group title={t("collaborator")} onHelp={openHelp("collaborator")} labelFor="filter-collaborator">
+            <ButtonBase
+              id="filter-collaborator"
+              onClick={() => setPickerOpen(true)}
+              aria-haspopup="listbox"
+              aria-expanded={pickerOpen}
+              sx={{
+                width: "100%",
+                justifyContent: "flex-start",
+                gap: 1,
+                px: 2,
+                py: person ? 0.5 : 1.5,
+                minHeight: 45,
+                bgcolor: tokens.blanc,
+                border: `1px solid ${tokens.grisMoyen1}`,
+                borderRadius: "8px",
+                textAlign: "left",
+                "&:hover": { borderColor: tokens.bleu30 },
+                ...focusSx,
+              }}
+            >
+              {person && <StaffAvatar person={person} />}
+              <Typography component="span" sx={{ flex: 1, fontSize: 14, fontWeight: 600, lineHeight: "normal", color: tokens.bleuFonce }}>
+                {person ? person.name : t("wholeTeam")}
+              </Typography>
+              <FigmaIcon name={person ? "arrows-clockwise" : "expand-more"} />
+            </ButtonBase>
+          </Group>
           <Group title={t("type")} onHelp={openHelp("type")}>
             <ChoiceChip selected={filters.type === "controle"} onClick={() => toggle("type", "controle")}>{t("typeControle")}</ChoiceChip>
             <ChoiceChip selected={filters.type === "non_controle"} onClick={() => toggle("type", "non_controle")}>{t("typeNonControle")}</ChoiceChip>
@@ -170,35 +199,6 @@ export function FiltersSheet() {
             {criteria.map((criterion) => (
               <ChoiceChip key={criterion} selected={filters.criteria.includes(criterion)} onClick={() => toggleIn("criteria", criterion)}>{tc(criterion)}</ChoiceChip>
             ))}
-          </Group>
-          {/* Collaborateur: opens the team picker over the filters. */}
-          <Group title={t("collaborator")} onHelp={openHelp("collaborator")} labelFor="filter-collaborator">
-            <ButtonBase
-              id="filter-collaborator"
-              onClick={() => setPickerOpen(true)}
-              aria-haspopup="listbox"
-              aria-expanded={pickerOpen}
-              sx={{
-                width: "100%",
-                justifyContent: "flex-start",
-                gap: 1,
-                px: 2,
-                py: person ? 0.5 : 1.5,
-                minHeight: 45,
-                bgcolor: tokens.blanc,
-                border: `1px solid ${tokens.grisMoyen1}`,
-                borderRadius: "8px",
-                textAlign: "left",
-                "&:hover": { borderColor: tokens.bleu30 },
-                ...focusSx,
-              }}
-            >
-              {person && <StaffAvatar person={person} />}
-              <Typography component="span" sx={{ flex: 1, fontSize: 14, fontWeight: 600, lineHeight: "normal", color: tokens.bleuFonce }}>
-                {person ? person.name : t("wholeTeam")}
-              </Typography>
-              <FigmaIcon name={person ? "arrows-clockwise" : "expand-more"} />
-            </ButtonBase>
           </Group>
         </Box>
       </Box>
