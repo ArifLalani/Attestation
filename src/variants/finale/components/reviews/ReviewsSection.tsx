@@ -155,22 +155,15 @@ export function ReviewsSection() {
   };
 
   return (
-    <Box component="section" ref={sectionRef} aria-labelledby="reviews-heading" sx={{ display: "flex", flexDirection: "column", gap: { xs: 1.5, md: 2 } }}>
-      {/* Header card: title, the search with Filtres and the sort on one line, the quick filters, then the count. */}
-      <Box sx={{ ...cardSx, px: { xs: 2, md: 3 }, py: { xs: 2, md: 3 }, display: "flex", flexDirection: "column", gap: { xs: 1.75, md: 2 } }}>
-        {/* Title with the number of reviews beside it, and the yellow Déposer un avis. */}
+    <Box component="section" ref={sectionRef} aria-labelledby="reviews-heading" sx={{ ...cardSx, display: "flex", flexDirection: "column" }}>
+      {/* One white Avis card. Top: the title, the search with Filtres and the sort on one line, the quick filters. */}
+      <Box sx={{ px: { xs: 2, md: 3 }, pt: { xs: 2, md: 3 }, pb: { xs: 1, md: 1 }, display: "flex", flexDirection: "column", gap: { xs: 1.75, md: 2 } }}>
+        {/* Title and the yellow Déposer un avis. */}
         <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2, minHeight: { sm: 45 } }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, flexWrap: "wrap" }}>
             <Typography id="reviews-heading" component="h2" sx={{ fontSize: 16, fontWeight: 700, color: tokens.vertOs, letterSpacing: "0.8px", textTransform: "uppercase", lineHeight: "normal" }}>
               {t("eyebrow")}
             </Typography>
-            <Box
-              component="span"
-              aria-live="polite"
-              sx={{ display: "inline-flex", alignItems: "center", height: 28, px: 1.25, borderRadius: "999px", bgcolor: tokens.bleu10, fontSize: 14, fontWeight: 600, color: tokens.bleuFonce, fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}
-            >
-              {t("count", { count: formatCount(list.length) })}
-            </Box>
           </Box>
           <CtaButton onClick={() => setPanel("reviewRequest")} sx={{ display: { xs: "none", sm: "inline-flex" }, width: "auto", flexShrink: 0, px: 2.5 }}>
             {t("leaveReview")}
@@ -233,37 +226,47 @@ export function ReviewsSection() {
         </Box>
       </Box>
 
-      {/* Each review floats on the background as its own card. */}
-      {list.slice(0, visible).map((review) => (
-        <ReviewCard key={review.id} review={review} onReport={setReporting} />
-      ))}
-      {!list.length && (
-        <Box sx={{ ...cardSx, py: 5, px: 2, display: "flex", flexDirection: "column", alignItems: "center", gap: 1.5, textAlign: "center" }}>
-          <Box sx={{ width: 56, height: 56, borderRadius: "50%", bgcolor: tokens.bleu10, color: tokens.bleu600, display: "grid", placeItems: "center" }}>
-            <SearchOff />
+      {/* Then the count and the reviews, each an outlined card close to the edges (8 px on phones, 16 px on desktop), and Afficher plus / moins. */}
+      <Box sx={{ p: { xs: 1, md: 2 }, display: "flex", flexDirection: "column", gap: { xs: 1, md: 1.5 } }}>
+        {/* The number of reviews shown, above the first one (lined up with the title). */}
+        <Box
+          component="span"
+          aria-live="polite"
+          sx={{ alignSelf: "flex-start", ml: 1, display: "inline-flex", alignItems: "center", height: 28, px: 1.25, borderRadius: "999px", bgcolor: tokens.bleu10, fontSize: 14, fontWeight: 600, color: tokens.bleuFonce, fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}
+        >
+          {t("count", { count: formatCount(list.length) })}
+        </Box>
+        {list.slice(0, visible).map((review) => (
+          <ReviewCard key={review.id} review={review} onReport={setReporting} outlined />
+        ))}
+        {!list.length && (
+          <Box sx={{ py: 5, px: 2, display: "flex", flexDirection: "column", alignItems: "center", gap: 1.5, textAlign: "center" }}>
+            <Box sx={{ width: 56, height: 56, borderRadius: "50%", bgcolor: tokens.bleu10, color: tokens.bleu600, display: "grid", placeItems: "center" }}>
+              <SearchOff />
+            </Box>
+            <Typography sx={{ fontSize: 15, color: tokens.gris }}>{t("empty")}</Typography>
+            <Link component="button" onClick={() => setFilters(emptyFilters)} sx={{ fontSize: 14, fontWeight: 600, color: tokens.bleu600 }}>
+              {t("clearFilters")}
+            </Link>
           </Box>
-          <Typography sx={{ fontSize: 15, color: tokens.gris }}>{t("empty")}</Typography>
-          <Link component="button" onClick={() => setFilters(emptyFilters)} sx={{ fontSize: 14, fontWeight: 600, color: tokens.bleu600 }}>
-            {t("clearFilters")}
-          </Link>
-        </Box>
-      )}
+        )}
 
-      {/* Afficher moins / Afficher plus: on the right, stacked on phones with Afficher plus on top. */}
-      {list.length > PAGE_SIZE && (
-        <Box sx={{ display: "flex", flexDirection: { xs: "column-reverse", sm: "row" }, justifyContent: "flex-end", gap: 1.5, mt: { xs: 0.5, md: 1 } }}>
-          {visible > PAGE_SIZE && (
-            <CtaButton variant="secondary" onClick={showLess} sx={{ ...endButtonSx, "& > span:last-of-type": { transform: "rotate(180deg)" } }}>
-              {tv("showLess")}
-            </CtaButton>
-          )}
-          {visible < list.length && (
-            <CtaButton variant="secondary" onClick={() => setVisible((count) => count + PAGE_SIZE)} sx={endButtonSx}>
-              {tv("showMore")}
-            </CtaButton>
-          )}
-        </Box>
-      )}
+        {/* Afficher moins / Afficher plus: on the right, stacked on phones with Afficher plus on top. */}
+        {list.length > PAGE_SIZE && (
+          <Box sx={{ display: "flex", flexDirection: { xs: "column-reverse", sm: "row" }, justifyContent: "flex-end", gap: { xs: 1, sm: 1.5 }, mt: 0.5 }}>
+            {visible > PAGE_SIZE && (
+              <CtaButton variant="secondary" iconUp onClick={showLess} sx={endButtonSx}>
+                {tv("showLess")}
+              </CtaButton>
+            )}
+            {visible < list.length && (
+              <CtaButton variant="secondary" onClick={() => setVisible((count) => count + PAGE_SIZE)} sx={endButtonSx}>
+                {tv("showMore")}
+              </CtaButton>
+            )}
+          </Box>
+        )}
+      </Box>
 
       <FiltersSheet />
       <SortSheet<ReviewSort>

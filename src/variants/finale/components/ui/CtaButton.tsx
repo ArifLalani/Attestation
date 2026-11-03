@@ -9,11 +9,12 @@ type Variant = "primary" | "secondary";
 export function CtaButton({
   variant = "primary",
   icon = variant === "primary" ? "icon-right-arrow" : "icon-right-more",
+  iconUp = false,
   children,
   disabled,
   sx,
   ...props
-}: Omit<ButtonProps, "variant"> & Pick<AnchorHTMLAttributes<HTMLAnchorElement>, "target" | "rel"> & { variant?: Variant; icon?: FigmaIconName | null }) {
+}: Omit<ButtonProps, "variant"> & Pick<AnchorHTMLAttributes<HTMLAnchorElement>, "target" | "rel"> & { variant?: Variant; icon?: FigmaIconName | null; /** Turns the chevron upside down (a collapse button). */ iconUp?: boolean }) {
   const iconName: FigmaIconName | null = disabled ? "icon-right-disabled" : icon;
   return (
     <Button
@@ -40,7 +41,7 @@ export function CtaButton({
       {children}
       {iconName && (
         // Figma "Masked Icon": a 16 × 20 slot holding a 20 × 20 icon.
-        <span style={{ width: 16, height: 20, display: "inline-flex", justifyContent: "center", overflow: "visible" }}>
+        <span style={{ width: 16, height: 20, display: "inline-flex", justifyContent: "center", overflow: "visible", transform: iconUp ? "rotate(180deg)" : undefined }}>
           <FigmaIcon name={iconName} />
         </span>
       )}

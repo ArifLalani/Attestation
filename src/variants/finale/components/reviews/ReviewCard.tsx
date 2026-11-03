@@ -322,6 +322,18 @@ const framedSx = {
     "&:hover": { boxShadow: "0px 10px 28px 0px rgba(4, 27, 68, 0.16)", transform: "translateY(-2px)" },
   },
 } as const;
+/** Inside the white Avis card: a thin light-blue outline, the shadow and lift only on hover. */
+const outlinedSx = {
+  ...framedSx,
+  borderRadius: "16px",
+  boxShadow: "none",
+  border: "1px solid #d6e4f3",
+  px: { xs: 1.75, md: 2.5 },
+  transition: "box-shadow 200ms ease, transform 200ms ease, border-color 200ms ease",
+  "@media (hover: hover)": {
+    "&:hover": { boxShadow: "0px 10px 28px 0px rgba(4, 27, 68, 0.16)", transform: "translateY(-2px)", borderColor: "transparent" },
+  },
+} as const;
 /** Inside a panel (the staff profile), reviews stay a plain list split by rules. */
 const plainSx = { py: 2.5, borderTop: `1px solid ${tokens.grisMoyen1}` } as const;
 
@@ -330,7 +342,7 @@ const plainSx = { py: 2.5, borderTop: `1px solid ${tokens.grisMoyen1}` } as cons
  * stars, the score and the source; the text; #tags; then Utile, Signaler and Détails.
  * Each block of the details has an ⓘ, and each line opens its own explanation.
  */
-export function ReviewCard({ review, onReport, framed = true }: { review: Review; onReport: (review: Review) => void; framed?: boolean }) {
+export function ReviewCard({ review, onReport, framed = true, outlined = false }: { review: Review; onReport: (review: Review) => void; framed?: boolean; outlined?: boolean }) {
   const t = useTranslations("Reviews");
   const tv = useTranslations("VarianteFinale.reviews");
   const tp = useTranslations("Products");
@@ -392,7 +404,7 @@ export function ReviewCard({ review, onReport, framed = true }: { review: Review
   };
 
   return (
-    <Box component="article" ref={cardRef} sx={{ ...(framed ? framedSx : plainSx), display: "flex", flexDirection: "column", gap: 1.75 }}>
+    <Box component="article" ref={cardRef} sx={{ ...(!framed ? plainSx : outlined ? outlinedSx : framedSx), display: "flex", flexDirection: "column", gap: 1.75 }}>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
         <ReviewerAvatar review={review} />
         <Box sx={{ flex: 1, minWidth: 0 }}>
