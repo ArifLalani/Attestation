@@ -43,6 +43,8 @@
     },
     "reviews": {
       "title": "Avis clients",
+      "showMore": "Afficher plus",
+      "showLess": "Afficher moins",
       "sortShort": {
         "recent": "Plus récents",
         "oldest": "Plus anciens",

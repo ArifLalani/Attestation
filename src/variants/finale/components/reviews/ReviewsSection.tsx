@@ -24,7 +24,7 @@ import { ReportSheet } from "./ReportSheet";
 import { ReviewCard } from "./ReviewCard";
 import { ReviewSearchField } from "./ReviewSearchField";
 
-const desktopCtaSx = { width: { xs: "100%", md: "auto" }, minWidth: { md: 220 }, px: { md: 3 } } as const;
+const endButtonSx = { width: "auto", minWidth: { sm: 180 }, px: 2.5, bgcolor: tokens.blanc } as const;
 const PAGE_SIZE = 3;
 const sorts: ReviewSort[] = ["recent", "oldest", "best", "worst", "useful", "verified"];
 
@@ -147,6 +147,13 @@ export function ReviewsSection() {
     };
   }, [setToolbarPinned]);
 
+  // Back to the first reviews, and up to the section if its top has scrolled away.
+  const showLess = () => {
+    setVisible(PAGE_SIZE);
+    const section = document.getElementById("avis");
+    if (section && section.getBoundingClientRect().top < 0) section.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
     <Box component="section" ref={sectionRef} aria-labelledby="reviews-heading" sx={{ display: "flex", flexDirection: "column", gap: { xs: 1.5, md: 2 } }}>
       {/* Header card: title, the search with Filtres and the sort on one line, the quick filters, then the count. */}
@@ -242,14 +249,21 @@ export function ReviewsSection() {
         </Box>
       )}
 
-      <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, justifyContent: { md: "center" }, gap: { xs: 1.5, md: 2 }, mt: { xs: 0.5, md: 1 } }}>
-        {visible < list.length && (
-          <CtaButton variant="secondary" onClick={() => setVisible((count) => count + PAGE_SIZE)} sx={{ ...desktopCtaSx, bgcolor: tokens.blanc }}>
-            {t("showMore")} ({formatCount(list.length - visible)})
-          </CtaButton>
-        )}
-        <CtaButton onClick={() => setPanel("reviewRequest")} sx={desktopCtaSx}>{t("leaveReview")}</CtaButton>
-      </Box>
+      {/* Afficher moins / Afficher plus, on the right. */}
+      {list.length > PAGE_SIZE && (
+        <Box sx={{ display: "flex", justifyContent: "flex-end", flexWrap: "wrap", gap: 1.5, mt: { xs: 0.5, md: 1 } }}>
+          {visible > PAGE_SIZE && (
+            <CtaButton variant="secondary" onClick={showLess} sx={{ ...endButtonSx, "& > span:last-of-type": { transform: "rotate(180deg)" } }}>
+              {tv("showLess")}
+            </CtaButton>
+          )}
+          {visible < list.length && (
+            <CtaButton variant="secondary" onClick={() => setVisible((count) => count + PAGE_SIZE)} sx={endButtonSx}>
+              {tv("showMore")}
+            </CtaButton>
+          )}
+        </Box>
+      )}
 
       <FiltersSheet />
       <SortSheet<ReviewSort>
