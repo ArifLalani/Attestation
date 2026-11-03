@@ -24,7 +24,7 @@ import { ReportSheet } from "./ReportSheet";
 import { ReviewCard } from "./ReviewCard";
 import { ReviewSearchField } from "./ReviewSearchField";
 
-const endButtonSx = { width: "auto", minWidth: { sm: 180 }, px: 2.5, bgcolor: tokens.blanc } as const;
+const endButtonSx = { width: { xs: "100%", sm: "auto" }, minWidth: { sm: 180 }, px: 2.5, bgcolor: tokens.blanc } as const;
 const PAGE_SIZE = 3;
 const sorts: ReviewSort[] = ["recent", "oldest", "best", "worst", "useful", "verified"];
 
@@ -249,9 +249,9 @@ export function ReviewsSection() {
         </Box>
       )}
 
-      {/* Afficher moins / Afficher plus, on the right. */}
+      {/* Afficher moins / Afficher plus: on the right, stacked on phones with Afficher plus on top. */}
       {list.length > PAGE_SIZE && (
-        <Box sx={{ display: "flex", justifyContent: "flex-end", flexWrap: "wrap", gap: 1.5, mt: { xs: 0.5, md: 1 } }}>
+        <Box sx={{ display: "flex", flexDirection: { xs: "column-reverse", sm: "row" }, justifyContent: "flex-end", gap: 1.5, mt: { xs: 0.5, md: 1 } }}>
           {visible > PAGE_SIZE && (
             <CtaButton variant="secondary" onClick={showLess} sx={{ ...endButtonSx, "& > span:last-of-type": { transform: "rotate(180deg)" } }}>
               {tv("showLess")}
