@@ -8,7 +8,6 @@ import Typography from "@mui/material/Typography";
 import Check from "@mui/icons-material/Check";
 import SearchOff from "@mui/icons-material/SearchOff";
 import VerifiedRounded from "@mui/icons-material/VerifiedRounded";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useCertificate } from "@/components/certificate/CertificateContext";
@@ -105,7 +104,6 @@ export function ReviewsSection() {
   const tf = useTranslations("Filters");
   const ts = useTranslations("ReviewSort");
   const { reviews, filters, setFilters, reviewSort, setReviewSort, panel, setPanel, openPanel, panelAnchor, setToolbarPinned } = useCertificate();
-  const desktop = useMediaQuery("(min-width:900px)", { noSsr: true });
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [reporting, setReporting] = useState<Review | null>(null);
   const [listKey, setListKey] = useState({ filters, reviewSort });
@@ -271,9 +269,10 @@ export function ReviewsSection() {
       </Box>
 
       <FiltersSheet />
-      {/* Phones only: on desktop the sort is at the top of the filters side sheet. */}
+      {/* Trier par: its own side sheet on desktop, a bottom sheet on phones. One tap applies and closes. */}
       <SortSheet<ReviewSort>
-        open={panel === "sort" && !desktop}
+        side
+        open={panel === "sort"}
         onClose={() => setPanel(null)}
         anchorEl={panelAnchor}
         value={reviewSort}

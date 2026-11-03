@@ -40,29 +40,7 @@
     "filters": {
       "clear": "Tout effacer",
       "show": "Afficher {count} avis",
-      "sortTitle": "Trier par",
       "help": {
-        "sort": {
-          "title": "Trier par",
-          "items": [
-            {
-              "label": "Plus récents, plus anciens",
-              "text": "Selon la date de publication de l’avis."
-            },
-            {
-              "label": "Meilleures notes, notes les plus basses",
-              "text": "Selon la note sur 5 donnée par le client."
-            },
-            {
-              "label": "Plus utiles",
-              "text": "Les avis que les visiteurs ont le plus souvent marqués « Utile »."
-            },
-            {
-              "label": "Contrôlés d’abord",
-              "text": "Les avis contrôlés par Opinion System en premier, puis les non contrôlés, chaque groupe du plus récent au plus ancien."
-            }
-          ]
-        },
         "type": {
           "title": "Type d’avis",
           "items": [

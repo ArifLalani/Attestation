@@ -19,7 +19,7 @@ import { ResponsiveSheet } from "@/variants/finale/components/ui/ResponsiveSheet
 import { HelpButton } from "./ReviewHelp";
 import type { Criterion, Product } from "@/data/types";
 import { formatCount } from "@/lib/format";
-import { applyFilters, emptyFilters, type Period, type ReviewFilters, type ReviewSort } from "@/lib/reviewFilters";
+import { applyFilters, emptyFilters, type Period, type ReviewFilters } from "@/lib/reviewFilters";
 import type { StarBucket } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
 
@@ -30,9 +30,8 @@ const products: Product[] = ["vente", "achat", "location", "gestion_locative", "
 const criteria: Criterion[] = ["accueil", "conseil", "competence", "reactivite", "suivi", "transparence", "honoraires"];
 const periods: Period[] = ["today", "week", "month", "year"];
 const notes: StarBucket[] = [5, 4, 3, 2, 1];
-const sorts: ReviewSort[] = ["recent", "oldest", "best", "worst", "useful", "verified"];
 
-type HelpKey = "sort" | "type" | "source" | "note" | "period" | "product" | "criterion" | "collaborator";
+type HelpKey = "type" | "source" | "note" | "period" | "product" | "criterion" | "collaborator";
 
 const focusSx = { "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 } } as const;
 
@@ -72,21 +71,20 @@ function FilterHelp({ help, onClose }: { help: { key: HelpKey; anchor: HTMLEleme
 }
 
 /**
- * Filters in the Actuel look (grey chips, Réinitialiser, a yellow button). Desktop: a side sheet from the right, over the page,
- * with Trier par first. Phones: a bottom sheet. Every choice shows at once in the list as a preview;
+ * Filters in the Actuel look (grey chips, Réinitialiser, a yellow button). Desktop: a side sheet from the right, over the page
+ * (Trier par has its own). Phones: a bottom sheet. Every choice shows at once in the list as a preview;
  * "Afficher N avis" keeps it, the X undoes it.
  */
 export function FiltersSheet() {
   const t = useTranslations("Filters");
   const tv = useTranslations("VarianteFinale.filters");
-  const tsort = useTranslations("VarianteFinale.reviews.sortShort");
   const tp = useTranslations("Products");
   const tc = useTranslations("Criteria");
-  const { reviews, filters, setFilters, reviewSort, setReviewSort, panel, setPanel, team, scoreView } = useCertificate();
+  const { reviews, filters, setFilters, panel, setPanel, team, scoreView } = useCertificate();
   const desktop = useMediaQuery("(min-width:900px)", { noSsr: true });
   const titleId = useId();
-  const open = panel === "filters" || (desktop && panel === "sort");
-  const [saved, setSaved] = useState({ filters, reviewSort });
+  const open = panel === "filters";
+  const [saved, setSaved] = useState(filters);
   const [wasOpen, setWasOpen] = useState(open);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [help, setHelp] = useState<{ key: HelpKey; anchor: HTMLElement } | null>(null);
@@ -94,13 +92,12 @@ export function FiltersSheet() {
   // Remember the choices from before the sheet opened, so the X can bring them back.
   if (open !== wasOpen) {
     setWasOpen(open);
-    if (open) setSaved({ filters, reviewSort });
+    if (open) setSaved(filters);
   }
 
   const keep = () => setPanel(null);
   const cancel = () => {
-    setFilters(saved.filters);
-    setReviewSort(saved.reviewSort);
+    setFilters(saved);
     setPanel(null);
   };
 
@@ -144,16 +141,6 @@ export function FiltersSheet() {
 
       <Box sx={{ overflowY: "auto", overscrollBehavior: "contain", flex: 1, minHeight: 0 }}>
         <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2 }}>
-          {/* Desktop: the sort lives in the same sheet, first. Phones keep their own Trier par sheet. */}
-          {desktop && (
-            <Group title={tv("sortTitle")} onHelp={openHelp("sort")} radio>
-              {sorts.map((sort) => (
-                <ChoiceChip key={sort} radio selected={reviewSort === sort} onClick={() => setReviewSort(sort)}>
-                  {tsort(sort)}
-                </ChoiceChip>
-              ))}
-            </Group>
-          )}
           <Group title={t("type")} onHelp={openHelp("type")}>
             <ChoiceChip selected={filters.type === "controle"} onClick={() => toggle("type", "controle")}>{t("typeControle")}</ChoiceChip>
             <ChoiceChip selected={filters.type === "non_controle"} onClick={() => toggle("type", "non_controle")}>{t("typeNonControle")}</ChoiceChip>

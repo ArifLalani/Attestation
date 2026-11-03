@@ -2,6 +2,7 @@
 
 import Box from "@mui/material/Box";
 import Dialog from "@mui/material/Dialog";
+import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Popover from "@mui/material/Popover";
@@ -31,21 +32,24 @@ interface ResponsiveSheetProps {
   dropdownWidth?: number;
   /** Which edge of `anchorEl` the dropdown lines up with (right by default). */
   dropdownAlign?: "left" | "right";
+  /** Desktop: a full-height sheet sliding in from the right, over the page with a light backdrop. */
+  side?: boolean;
 }
 
 /**
  * Figma "Bottom Sheet": a swipeable bottom sheet on phones and tablets in portrait.
  * From 900 px: a dropdown under `anchorEl` when given, otherwise a centred modal.
  */
-export function ResponsiveSheet({ open, onClose, title, closeLabel, actions, header, footer, children, anchorEl, dropdownWidth = 420, dropdownAlign = "right", dialogWidth }: ResponsiveSheetProps) {
+export function ResponsiveSheet({ open, onClose, title, closeLabel, actions, header, footer, children, anchorEl, dropdownWidth = 420, dropdownAlign = "right", dialogWidth, side = false }: ResponsiveSheetProps) {
   const desktop = useMediaQuery("(min-width:900px)", { noSsr: true });
   const titleId = useId();
-  const dropdown = desktop && Boolean(anchorEl);
+  const sideSheet = desktop && side;
+  const dropdown = desktop && !side && Boolean(anchorEl);
   // A dropdown may use the space between its button and the bottom of the window.
   const dropdownMaxHeight = dropdown && open && anchorEl ? `max(440px, calc(100vh - ${Math.round(anchorEl.getBoundingClientRect().bottom) + 24}px))` : undefined;
 
   const body = (
-    <Box sx={{ display: "flex", flexDirection: "column", maxHeight: dropdownMaxHeight ?? (desktop ? "min(80vh, 760px)" : "92dvh"), bgcolor: tokens.blanc }}>
+    <Box sx={{ display: "flex", flexDirection: "column", height: sideSheet ? "100%" : undefined, maxHeight: sideSheet ? "none" : (dropdownMaxHeight ?? (desktop ? "min(80vh, 760px)" : "92dvh")), bgcolor: tokens.blanc }}>
       {!desktop && (
         <Box sx={{ bgcolor: tokens.grisClair1, py: 1, display: "flex", justifyContent: "center", flexShrink: 0 }}>
           <Box sx={{ width: 60, height: 5, borderRadius: 2.5, bgcolor: tokens.grisMoyen1 }} />
@@ -75,6 +79,22 @@ export function ResponsiveSheet({ open, onClose, title, closeLabel, actions, hea
       {footer}
     </Box>
   );
+
+  if (sideSheet) {
+    return (
+      <Drawer
+        anchor="right"
+        open={open}
+        onClose={onClose}
+        slotProps={{
+          backdrop: { sx: { bgcolor: "rgba(4, 27, 68, 0.18)" } },
+          paper: { role: "dialog", "aria-labelledby": titleId, sx: { width: dialogWidth ?? 440, maxWidth: "100vw", boxShadow: "-12px 0 40px rgba(4, 27, 68, 0.16)", overflow: "hidden" } },
+        }}
+      >
+        {body}
+      </Drawer>
+    );
+  }
 
   if (dropdown) {
     return (
