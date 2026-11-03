@@ -7,13 +7,13 @@ import Drawer from "@mui/material/Drawer";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import ChevronRightRounded from "@mui/icons-material/ChevronRightRounded";
-import CloseRounded from "@mui/icons-material/CloseRounded";
-import StarRounded from "@mui/icons-material/StarRounded";
 import { useTranslations } from "next-intl";
 import { useId, useState } from "react";
 import { useCertificate } from "@/components/certificate/CertificateContext";
 import { CollaboratorPicker } from "@/variants/finale/components/certificate/CollaboratorPicker";
+import { CtaButton } from "@/variants/finale/components/ui/CtaButton";
+import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
+import { ChoiceChip, StarLabel } from "@/variants/finale/components/ui/FilterChip";
 import { StaffAvatar } from "@/variants/finale/components/ui/StaffAvatar";
 import { ResponsiveSheet } from "@/variants/finale/components/ui/ResponsiveSheet";
 import { HelpButton } from "./ReviewHelp";
@@ -24,7 +24,7 @@ import type { StarBucket } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
 
 /** Width of the desktop side sheet. */
-const SIDE_SHEET_WIDTH = 400;
+const SIDE_SHEET_WIDTH = 440;
 
 const products: Product[] = ["vente", "achat", "location", "gestion_locative", "syndic", "estimation"];
 const criteria: Criterion[] = ["accueil", "conseil", "competence", "reactivite", "suivi", "transparence", "honoraires"];
@@ -34,55 +34,23 @@ const sorts: ReviewSort[] = ["recent", "oldest", "best", "worst", "useful", "ver
 
 type HelpKey = "sort" | "type" | "source" | "note" | "period" | "product" | "criterion" | "collaborator";
 
-const line = "#dce7f5";
-const lineStrong = "#c0d5ed";
 const focusSx = { "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 } } as const;
 
-/** A choice (layout from option G): an outlined pill, navy when selected. */
-function ChoicePill({ selected, onClick, radio, children }: { selected: boolean; onClick: () => void; radio?: boolean; children: React.ReactNode }) {
-  return (
-    <ButtonBase
-      role={radio ? "radio" : "checkbox"}
-      aria-checked={selected}
-      onClick={onClick}
-      sx={{
-        minHeight: { xs: 40, md: 36 },
-        px: 1.5,
-        gap: 0.5,
-        borderRadius: 999,
-        fontFamily: "inherit",
-        fontSize: 14,
-        fontWeight: selected ? 600 : 500,
-        color: selected ? tokens.blanc : tokens.bleuFonce,
-        bgcolor: selected ? tokens.bleuFonce : tokens.blanc,
-        boxShadow: `inset 0 0 0 1px ${selected ? tokens.bleuFonce : lineStrong}`,
-        transition: "background-color 150ms ease, box-shadow 150ms ease",
-        "&:hover": { boxShadow: `inset 0 0 0 ${selected ? 1 : 2}px ${tokens.bleuFonce}` },
-        ...focusSx,
-      }}
-    >
-      {children}
-    </ButtonBase>
-  );
-}
-
-/** A section: its title with an ⓘ beside it, then its choices. */
+/** A section (Actuel look): a 16 px title with an ⓘ beside it, then the small chips. */
 function Group({ title, onHelp, radio, labelFor, children }: { title: string; onHelp: (anchor: HTMLElement) => void; radio?: boolean; labelFor?: string; children: React.ReactNode }) {
   const titleId = useId();
   return (
     <Box role={labelFor ? undefined : radio ? "radiogroup" : "group"} aria-labelledby={labelFor ? undefined : titleId}>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.25 }}>
-        <Typography id={titleId} component={labelFor ? "label" : "h3"} htmlFor={labelFor} sx={{ fontSize: 15, fontWeight: 600, lineHeight: 1.3, color: tokens.bleuFonce }}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, mb: 1 }}>
+        <Typography id={titleId} component={labelFor ? "label" : "h3"} htmlFor={labelFor} sx={{ fontSize: 16, fontWeight: 600, lineHeight: "normal", color: tokens.bleuFonce }}>
           {title}
         </Typography>
         <HelpButton title={title} onOpen={onHelp} />
       </Box>
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>{children}</Box>
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>{children}</Box>
     </Box>
   );
 }
-
-const Hairline = () => <Box component="hr" sx={{ m: 0, border: 0, borderTop: `1px solid ${line}` }} />;
 
 /** What a section means: a window under its ⓘ on desktop, a bottom sheet on phones (like the review details). */
 function FilterHelp({ help, onClose }: { help: { key: HelpKey; anchor: HTMLElement } | null; onClose: () => void }) {
@@ -104,8 +72,9 @@ function FilterHelp({ help, onClose }: { help: { key: HelpKey; anchor: HTMLEleme
 }
 
 /**
- * Filters (layout from option G). Desktop: a side sheet from the right, over the page, with Trier par first.
- * Phones: a bottom sheet. Every choice shows at once in the list as a preview; "Afficher N avis" keeps it, the X undoes it.
+ * Filters in the Actuel look (grey chips, Réinitialiser, a yellow button). Desktop: a side sheet from the right, over the page,
+ * with Trier par first. Phones: a bottom sheet. Every choice shows at once in the list as a preview;
+ * "Afficher N avis" keeps it, the X undoes it.
  */
 export function FiltersSheet() {
   const t = useTranslations("Filters");
@@ -134,6 +103,7 @@ export function FiltersSheet() {
     setReviewSort(saved.reviewSort);
     setPanel(null);
   };
+
   const results = applyFilters(reviews, filters).length;
   const update = (patch: Partial<ReviewFilters>) => setFilters({ ...filters, ...patch });
   const toggle = <K extends keyof ReviewFilters>(key: K, value: ReviewFilters[K]) =>
@@ -149,69 +119,71 @@ export function FiltersSheet() {
   const body = (
     <Box sx={{ display: "flex", flexDirection: "column", height: desktop ? "100%" : "auto", maxHeight: desktop ? "none" : "92dvh", bgcolor: tokens.blanc, color: tokens.bleuFonce }}>
       {!desktop && (
-        <Box sx={{ pt: 1, display: "flex", justifyContent: "center", flexShrink: 0 }}>
-          <Box sx={{ width: 40, height: 4, borderRadius: 2, bgcolor: lineStrong }} />
+        <Box sx={{ bgcolor: tokens.grisClair1, py: 1, display: "flex", justifyContent: "center", flexShrink: 0 }}>
+          <Box sx={{ width: 60, height: 5, borderRadius: 2.5, bgcolor: tokens.grisMoyen1 }} />
         </Box>
       )}
-      <Box sx={{ display: "grid", gridTemplateColumns: "48px minmax(0, 1fr) 48px", alignItems: "center", gap: 1, px: 1.5, py: 1, minHeight: 56, borderBottom: `1px solid ${line}`, flexShrink: 0 }}>
-        <IconButton onClick={cancel} aria-label={t("close")} sx={{ width: 44, height: 44, color: tokens.bleuFonce, "&:hover": { bgcolor: tokens.grisClair1 }, ...focusSx }}>
-          <CloseRounded />
-        </IconButton>
-        <Typography id={titleId} component="h2" sx={{ textAlign: "center", fontSize: 16, fontWeight: 600, lineHeight: 1.25 }}>
+      {/* Title bar (Actuel): Filtres, Réinitialiser, then the X. */}
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1, px: 2, py: 1.5, borderBottom: `1px solid ${tokens.grisMoyen1}`, flexShrink: 0 }}>
+        <Typography id={titleId} component="h2" sx={{ flex: 1, fontSize: 20, fontWeight: 600, lineHeight: "normal", color: tokens.bleuFonce }}>
           {t("title")}
         </Typography>
+        <ButtonBase
+          onClick={() => setFilters({ ...emptyFilters, query: filters.query })}
+          sx={{ px: 1.5, minHeight: 36, borderRadius: "8px", fontSize: 16, fontWeight: 600, color: tokens.bleuFonce, "&:hover": { bgcolor: tokens.grisClair1 }, ...focusSx }}
+        >
+          <Box sx={{ p: 0.5, display: "flex" }}>
+            <FigmaIcon name="reset" />
+          </Box>
+          {t("reset")}
+        </ButtonBase>
+        <IconButton onClick={cancel} aria-label={t("close")} sx={{ p: 1.5, m: -1, ...focusSx }}>
+          <FigmaIcon name="close" />
+        </IconButton>
       </Box>
 
       <Box sx={{ overflowY: "auto", overscrollBehavior: "contain", flex: 1, minHeight: 0 }}>
-        <Box sx={{ px: { xs: 2.5, md: 3 }, py: 2.5, display: "flex", flexDirection: "column", gap: 2.5 }}>
+        <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2 }}>
           {/* Desktop: the sort lives in the same sheet, first. Phones keep their own Trier par sheet. */}
           {desktop && (
-            <>
-              <Group title={tv("sortTitle")} onHelp={openHelp("sort")} radio>
-                {sorts.map((sort) => (
-                  <ChoicePill key={sort} radio selected={reviewSort === sort} onClick={() => setReviewSort(sort)}>{tsort(sort)}</ChoicePill>
-                ))}
-              </Group>
-              <Hairline />
-            </>
+            <Group title={tv("sortTitle")} onHelp={openHelp("sort")} radio>
+              {sorts.map((sort) => (
+                <ChoiceChip key={sort} radio selected={reviewSort === sort} onClick={() => setReviewSort(sort)}>
+                  {tsort(sort)}
+                </ChoiceChip>
+              ))}
+            </Group>
           )}
           <Group title={t("type")} onHelp={openHelp("type")}>
-            <ChoicePill selected={filters.type === "controle"} onClick={() => toggle("type", "controle")}>{t("typeControle")}</ChoicePill>
-            <ChoicePill selected={filters.type === "non_controle"} onClick={() => toggle("type", "non_controle")}>{t("typeNonControle")}</ChoicePill>
+            <ChoiceChip selected={filters.type === "controle"} onClick={() => toggle("type", "controle")}>{t("typeControle")}</ChoiceChip>
+            <ChoiceChip selected={filters.type === "non_controle"} onClick={() => toggle("type", "non_controle")}>{t("typeNonControle")}</ChoiceChip>
           </Group>
-          <Hairline />
           <Group title={t("source")} onHelp={openHelp("source")}>
-            <ChoicePill selected={filters.source === "opinion_system"} onClick={() => toggle("source", "opinion_system")}>{t("sourceOs")}</ChoicePill>
-            <ChoicePill selected={filters.source === "imported"} onClick={() => toggle("source", "imported")}>{t("sourceImported")}</ChoicePill>
+            <ChoiceChip selected={filters.source === "opinion_system"} onClick={() => toggle("source", "opinion_system")}>{t("sourceOs")}</ChoiceChip>
+            <ChoiceChip selected={filters.source === "imported"} onClick={() => toggle("source", "imported")}>{t("sourceImported")}</ChoiceChip>
           </Group>
-          <Hairline />
           <Group title={t("note")} onHelp={openHelp("note")}>
             {notes.map((stars) => (
-              <ChoicePill key={stars} selected={noteSelected(stars)} onClick={() => update({ note: noteSelected(stars) ? undefined : { stars, exact: false } })}>
-                {stars === 5 ? "5" : `${stars}+`}
-                <StarRounded sx={{ fontSize: 16 }} />
-              </ChoicePill>
+              <ChoiceChip key={stars} selected={noteSelected(stars)} onClick={() => update({ note: noteSelected(stars) ? undefined : { stars, exact: false } })}>
+                <StarLabel prefix={stars === 5 ? "5" : `${stars}+`} />
+              </ChoiceChip>
             ))}
           </Group>
-          <Hairline />
           <Group title={t("period")} onHelp={openHelp("period")}>
             {periods.map((period) => (
-              <ChoicePill key={period} selected={filters.period === period} onClick={() => toggle("period", period)}>{t(`periods.${period}`)}</ChoicePill>
+              <ChoiceChip key={period} selected={filters.period === period} onClick={() => toggle("period", period)}>{t(`periods.${period}`)}</ChoiceChip>
             ))}
           </Group>
-          <Hairline />
           <Group title={t("product")} onHelp={openHelp("product")}>
             {products.map((product) => (
-              <ChoicePill key={product} selected={filters.products.includes(product)} onClick={() => toggleIn("products", product)}>{tp(product)}</ChoicePill>
+              <ChoiceChip key={product} selected={filters.products.includes(product)} onClick={() => toggleIn("products", product)}>{tp(product)}</ChoiceChip>
             ))}
           </Group>
-          <Hairline />
           <Group title={t("criterion")} onHelp={openHelp("criterion")}>
             {criteria.map((criterion) => (
-              <ChoicePill key={criterion} selected={filters.criteria.includes(criterion)} onClick={() => toggleIn("criteria", criterion)}>{tc(criterion)}</ChoicePill>
+              <ChoiceChip key={criterion} selected={filters.criteria.includes(criterion)} onClick={() => toggleIn("criteria", criterion)}>{tc(criterion)}</ChoiceChip>
             ))}
           </Group>
-          <Hairline />
           {/* Collaborateur: opens the team picker over the filters. */}
           <Group title={t("collaborator")} onHelp={openHelp("collaborator")} labelFor="filter-collaborator">
             <ButtonBase
@@ -222,40 +194,31 @@ export function FiltersSheet() {
               sx={{
                 width: "100%",
                 justifyContent: "flex-start",
-                gap: 1.25,
-                pl: person ? 0.75 : 2,
-                pr: 1.5,
-                minHeight: 44,
-                borderRadius: 999,
-                boxShadow: `inset 0 0 0 1px ${lineStrong}`,
+                gap: 1,
+                px: 2,
+                py: person ? 0.5 : 1.5,
+                minHeight: 45,
+                bgcolor: tokens.blanc,
+                border: `1px solid ${tokens.grisMoyen1}`,
+                borderRadius: "8px",
                 textAlign: "left",
-                "&:hover": { boxShadow: `inset 0 0 0 2px ${tokens.bleuFonce}` },
+                "&:hover": { borderColor: tokens.bleu30 },
                 ...focusSx,
               }}
             >
               {person && <StaffAvatar person={person} />}
-              <Typography component="span" sx={{ flex: 1, fontSize: 14, fontWeight: 500, color: tokens.bleuFonce }}>
+              <Typography component="span" sx={{ flex: 1, fontSize: 14, fontWeight: 600, lineHeight: "normal", color: tokens.bleuFonce }}>
                 {person ? person.name : t("wholeTeam")}
               </Typography>
-              <ChevronRightRounded sx={{ color: tokens.bleuFonce }} />
+              <FigmaIcon name={person ? "arrows-clockwise" : "expand-more"} />
             </ButtonBase>
           </Group>
         </Box>
       </Box>
 
-      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2, px: { xs: 2.5, md: 3 }, py: 1.5, pb: "calc(12px + env(safe-area-inset-bottom))", borderTop: `1px solid ${line}`, flexShrink: 0 }}>
-        <ButtonBase
-          onClick={() => setFilters({ ...emptyFilters, query: filters.query })}
-          sx={{ minHeight: 40, px: 0.5, borderRadius: "4px", fontFamily: "inherit", fontSize: 14, fontWeight: 600, color: tokens.bleuFonce, textDecoration: "underline", textUnderlineOffset: "3px", "&:hover": { textDecorationThickness: "2px" }, ...focusSx }}
-        >
-          {tv("clear")}
-        </ButtonBase>
-        <ButtonBase
-          onClick={keep}
-          sx={{ minHeight: 44, px: 2.5, borderRadius: 999, fontFamily: "inherit", fontSize: 14, fontWeight: 600, whiteSpace: "nowrap", bgcolor: tokens.bleuFonce, color: tokens.blanc, "&:hover": { bgcolor: "#000" }, ...focusSx }}
-        >
-          {tv("show", { count: formatCount(results) })}
-        </ButtonBase>
+      {/* Footer (Actuel): the yellow button, with the live count; it keeps the choices. */}
+      <Box sx={{ bgcolor: tokens.blanc, boxShadow: "0px -2px 6px rgba(0,0,0,0.08)", pt: 2.5, px: 2, pb: "calc(16px + env(safe-area-inset-bottom))", flexShrink: 0 }}>
+        <CtaButton onClick={keep}>{tv("show", { count: formatCount(results) })}</CtaButton>
       </Box>
     </Box>
   );
@@ -283,8 +246,7 @@ export function FiltersSheet() {
           onOpen={() => {}}
           disableSwipeToOpen
           slotProps={{
-            backdrop: { sx: { bgcolor: "rgba(4, 27, 68, 0.45)" } },
-            paper: { role: "dialog", "aria-modal": true, "aria-labelledby": titleId, sx: { borderTopLeftRadius: 24, borderTopRightRadius: 24, overflow: "hidden", maxWidth: 720, mx: "auto" } },
+            paper: { role: "dialog", "aria-modal": true, "aria-labelledby": titleId, sx: { borderTopLeftRadius: 20, borderTopRightRadius: 20, overflow: "hidden", maxWidth: 640, mx: "auto" } },
           }}
         >
           {body}

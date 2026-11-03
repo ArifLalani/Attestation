@@ -4,14 +4,15 @@ import { tokens } from "@/theme/theme";
 import { FigmaIcon } from "./FigmaIcon";
 
 /** Figma "Filter Chip" Default / Selected (803:82310): a choice in the filter panel. */
-export function ChoiceChip({ selected, onClick, children }: { selected: boolean; onClick: () => void; children: React.ReactNode }) {
+export function ChoiceChip({ selected, onClick, radio, children }: { selected: boolean; onClick: () => void; /** One choice only (e.g. the sort). */ radio?: boolean; children: React.ReactNode }) {
   return (
     <ButtonBase
-      role="checkbox"
+      role={radio ? "radio" : "checkbox"}
       aria-checked={selected}
       onClick={onClick}
       sx={{
         p: "4px",
+        fontFamily: "inherit",
         borderRadius: "8px",
         bgcolor: selected ? tokens.bleuFonce : tokens.grisClair2,
         color: selected ? tokens.blanc : tokens.bleuFonce,
