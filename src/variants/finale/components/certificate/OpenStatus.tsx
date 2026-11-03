@@ -10,7 +10,8 @@ import { frenchTime, openingStatus } from "@/lib/hours";
 import { tokens } from "@/theme/theme";
 
 /** Live "Ouvert · Ferme à 19 h" status, computed in the browser from the current Paris time. */
-export function OpenStatus({ hours }: { hours: WeekHours }) {
+/** `split`: "Fermé" in colour then "· Ouvre…" in navy, without the dot (the agency card, from option C). */
+export function OpenStatus({ hours, split = false }: { hours: WeekHours; split?: boolean }) {
   const t = useTranslations("Hours");
   const now = useNow();
   const status = now ? openingStatus(hours, now) : null;
@@ -26,6 +27,16 @@ export function OpenStatus({ hours }: { hours: WeekHours }) {
           : t("closedOpensOn", { day: t(`days.${status.opensDay}`), time: frenchTime(status.opensAt) });
 
   const color = status && !status.open ? tokens.error3 : tokens.vertOs;
+
+  if (split) {
+    const [state, ...rest] = label.split(" · ");
+    return (
+      <Typography role="status" sx={{ fontSize: 14, lineHeight: 1.45, color: tokens.bleuFonce, visibility: status ? "visible" : "hidden" }}>
+        <Box component="span" sx={{ fontWeight: 600, color }}>{state}</Box>
+        {rest.length > 0 && <> · {rest.join(" · ")}</>}
+      </Typography>
+    );
+  }
 
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: "6px", visibility: status ? "visible" : "hidden" }} role="status">

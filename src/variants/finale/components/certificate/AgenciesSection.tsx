@@ -6,6 +6,7 @@ import Collapse from "@mui/material/Collapse";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import OpenInNew from "@mui/icons-material/OpenInNew";
+import VerifiedRounded from "@mui/icons-material/VerifiedRounded";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
@@ -20,7 +21,6 @@ import { useNow } from "@/lib/hooks";
 import { localClock } from "@/lib/hours";
 import { isPublic, reviewsForScore, summarize } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
-import { AgencyPhotos } from "./AgencyPhotos";
 import { useCertificate } from "@/components/certificate/CertificateContext";
 import { OpenStatus } from "./OpenStatus";
 import { CardTitle } from "./ReputationCard";
@@ -30,6 +30,9 @@ const AgencyMap = dynamic(() => import("./AgencyMap"), { ssr: false });
 function AgencyLetter({ index, active, size = 28 }: { index: number; active?: boolean; size?: number }) {
   return <Box aria-hidden sx={{ width: size, height: size, display: "grid", placeItems: "center", borderRadius: "50%", bgcolor: active ? tokens.bleuFonce : tokens.bleu10, color: active ? tokens.blanc : tokens.bleuFonce, fontSize: 13, fontWeight: 700, flexShrink: 0 }}>{String.fromCharCode(65 + index)}</Box>;
 }
+
+/** The card's links: navy text with a light underline. */
+const linkSx = { color: tokens.bleuFonce, textDecorationColor: "rgba(4, 27, 68, 0.35)", textUnderlineOffset: "3px", "&:hover": { textDecorationColor: "currentColor" } } as const;
 
 /** Sent by the hero's open/closed status: scroll here with this agency's week of hours open. */
 export const openHoursEvent = "finale:open-hours";
@@ -51,10 +54,10 @@ function OpeningHours({ agency, openRequest }: { agency: Agency; openRequest: nu
   return (
     <Box>
       <ButtonBase onClick={() => setExpanded((value) => !value)} aria-label={t("toggleHours")} aria-expanded={expanded} aria-controls={hoursId}
-        sx={{ display: "flex", gap: 2, width: "100%", justifyContent: "flex-start", textAlign: "left", py: 0.5, borderRadius: 1 }}>
+        sx={{ display: "flex", gap: 1.5, width: "100%", justifyContent: "flex-start", textAlign: "left", py: 0.25, borderRadius: 1 }}>
         <Box sx={{ p: 0.5, display: "flex" }}><FigmaIcon name="agency-clock" /></Box>
-        <Box sx={{ flex: "0 1 auto", minWidth: 0, "& p": { whiteSpace: "normal" } }}><OpenStatus hours={agency.hours} /></Box>
-        <Box sx={{ transform: expanded ? "none" : "rotate(180deg)", display: "flex", ml: -1 }}><FigmaIcon name="agency-collapse" /></Box>
+        <Box sx={{ flex: 1, minWidth: 0, "& p": { whiteSpace: "normal" } }}><OpenStatus hours={agency.hours} split /></Box>
+        <Box sx={{ transform: expanded ? "none" : "rotate(180deg)", display: "flex" }}><FigmaIcon name="agency-collapse" /></Box>
       </ButtonBase>
       <Collapse in={expanded}>
         <Box id={hoursId} component="dl" sx={{ m: 0, ml: 4, p: 1, bgcolor: tokens.grisClair1, borderRadius: "12px" }}>
@@ -71,6 +74,7 @@ function OpeningHours({ agency, openRequest }: { agency: Agency; openRequest: nu
 /** Nos Agences: the map from option C (score pins, the card over the map on desktop) with H's agency details and other-agencies list. */
 export function AgenciesSection() {
   const t = useTranslations("Agencies");
+  const tv = useTranslations("VarianteFinale.agencies");
   const { agency } = useCertificate();
   const [selectedId, setSelectedId] = useState(agency.id);
   const [expanded, setExpanded] = useState(false);
@@ -123,66 +127,55 @@ export function AgenciesSection() {
       <Box ref={mapContainer} role="region" aria-label={t("mapLabel")} sx={{ height: { xs: 300, sm: 360, md: 480 }, mx: { xs: -1.5, sm: 0 }, borderRadius: { xs: 0, sm: "16px" }, overflow: "hidden", bgcolor: tokens.grisClair2, border: { sm: `1px solid ${tokens.grisMoyen1}` } }}>
         {mapVisible ? <AgencyMap agencies={locations} selectedId={selected.id} onSelect={selectAgency} scores={scores} /> : <Box sx={{ height: "100%", display: "grid", placeItems: "center", fontSize: 14, color: tokens.gris }}>{t("mapLoading")}</Box>}
       </Box>
-      {/* Figma "Company Information" (1463:21156): name, photos, details. */}
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0, position: { md: "absolute" }, left: { md: 16 }, top: { md: 16 }, width: { md: 380 }, maxHeight: { md: "calc(100% - 32px)" }, overflowY: { md: "auto" }, overscrollBehavior: { md: "contain" }, p: { md: 2.5 }, borderRadius: { md: "20px" }, bgcolor: { md: tokens.blanc }, boxShadow: { md: "0 6px 24px rgba(4, 27, 68, 0.16)" } }}>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, px: 0.25 }}>
+      {/* The agency card from option C, in H's look: name with its score and controlled reviews, address, hours, phone, Voir son certificat. */}
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, minWidth: 0, position: { md: "absolute" }, left: { md: 16 }, top: { md: 16 }, width: { md: 380 }, maxHeight: { md: "calc(100% - 32px)" }, overflowY: { md: "auto" }, overscrollBehavior: { md: "contain" }, p: { md: 2.5 }, borderRadius: { md: "20px" }, bgcolor: { md: tokens.blanc }, boxShadow: { md: "0 6px 24px rgba(4, 27, 68, 0.16)" } }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
           <AgencyLetter index={selectedIndex} active size={32} />
-          <Typography component="h3" aria-live="polite" sx={{ fontSize: 16, fontWeight: 600, minWidth: 0 }}>
-            <Link
-              href={certificateUrl}
-              target="_blank"
-              rel="noopener"
-              aria-label={t("certificateLink", { name: selected.name, city: selected.city })}
-              sx={{ display: "inline-flex", alignItems: "center", gap: 2, color: tokens.bleuFonce, textDecorationColor: "currentColor", textUnderlineOffset: "3px" }}
-            >
-              <Box component="span" sx={{ textDecoration: "underline", textDecorationColor: "inherit" }}>{selected.name} · {selected.city}</Box>
-              <OpenInNew sx={{ fontSize: 20 }} />
-            </Link>
-          </Typography>
-        </Box>
-
-        <AgencyPhotos key={selected.id} agency={selected} />
-
-        <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
-          <Box sx={{ p: 0.5, display: "flex" }}><FigmaIcon name="agency-pin" /></Box>
-          <Typography component="address" sx={{ fontSize: 14, fontWeight: 600, fontStyle: "normal", flex: 1, pt: "4px" }}>
-            <Link
-              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selected.address)}`}
-              target="_blank"
-              rel="noopener"
-              aria-label={t("addressMapsLink", { address: selected.address })}
-              sx={{ color: tokens.bleuFonce, textDecorationColor: "currentColor", textUnderlineOffset: "3px" }}
-            >
-              {selected.address}
-            </Link>
-          </Typography>
-        </Box>
-        <OpeningHours key={`hours-${selected.id}`} agency={selected} openRequest={hoursRequest} />
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <Box sx={{ p: 0.5, display: "flex" }}><FigmaIcon name="agency-star" /></Box>
-          <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 1 }}>
-            {isPublic(summary.count, selected.publicThreshold) && summary.average !== null && (
-              <>
-                <RatingChip value={summary.average} />
-                <Box component="span" aria-hidden sx={{ fontSize: 14, fontWeight: 600 }}>•</Box>
-              </>
-            )}
-            <Link
-              href={certificateUrl}
-              target="_blank"
-              rel="noopener"
-              aria-label={t("reviewsLink", { count: formatCount(summary.count), city: selected.city })}
-              sx={{ fontSize: 14, fontWeight: 600, color: tokens.bleuFonce, textDecorationColor: "currentColor", textUnderlineOffset: "3px" }}
-            >
-              {t("verifiedCount", { count: formatCount(summary.count) })}
-            </Link>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography component="h3" aria-live="polite" sx={{ fontSize: 17, fontWeight: 600, lineHeight: 1.25, color: tokens.bleuFonce }}>{selected.name} · {selected.city}</Typography>
+            <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 0.75, mt: 0.5 }}>
+              {isPublic(summary.count, selected.publicThreshold) && summary.average !== null && <RatingChip value={summary.average} />}
+              <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, fontSize: 13, fontWeight: 600, color: tokens.vertOs }}>
+                <VerifiedRounded sx={{ fontSize: 16 }} />
+                {t("verifiedCount", { count: formatCount(summary.count) })}
+              </Box>
+            </Box>
           </Box>
         </Box>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <Box sx={{ p: 0.5, display: "flex" }}><FigmaIcon name="agency-phone" /></Box>
-          <Link href={`tel:${selected.phone.replace(/\s/g, "")}`} sx={{ fontSize: 14, fontWeight: 600, color: tokens.bleuFonce, textDecorationColor: "currentColor", textUnderlineOffset: "3px" }}>{selected.phone}</Link>
+
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+          <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1.5, py: 0.25 }}>
+            <Box sx={{ p: 0.5, display: "flex" }}><FigmaIcon name="agency-pin" /></Box>
+            <Typography component="address" sx={{ fontSize: 14, fontStyle: "normal", flex: 1, pt: "4px", lineHeight: 1.45 }}>
+              <Link
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selected.address)}`}
+                target="_blank"
+                rel="noopener"
+                aria-label={t("addressMapsLink", { address: selected.address })}
+                sx={linkSx}
+              >
+                {selected.address}
+              </Link>
+            </Typography>
+          </Box>
+          <OpeningHours key={`hours-${selected.id}`} agency={selected} openRequest={hoursRequest} />
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, py: 0.25 }}>
+            <Box sx={{ p: 0.5, display: "flex" }}><FigmaIcon name="agency-phone" /></Box>
+            <Link href={`tel:${selected.phone.replace(/\s/g, "")}`} sx={{ ...linkSx, fontSize: 14 }}>{selected.phone}</Link>
+          </Box>
         </Box>
 
+        <ButtonBase
+          component="a"
+          href={certificateUrl}
+          target="_blank"
+          rel="noopener"
+          aria-label={t("certificateLink", { name: selected.name, city: selected.city })}
+          sx={{ alignSelf: "flex-start", height: 45, gap: 1, px: 2.5, borderRadius: "8px", bgcolor: tokens.bleu10, color: tokens.bleuFonce, fontFamily: "inherit", fontSize: 14, fontWeight: 600, "&:hover": { bgcolor: tokens.bleu20 }, "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 } }}
+        >
+          {tv("seeCertificate")}
+          <OpenInNew sx={{ fontSize: 18 }} />
+        </ButtonBase>
       </Box>
       </Box>
       {/* Desktop: on the right, as wide as its text (like Voir toute l’équipe); full width on phones and tablets. */}

@@ -1,5 +1,8 @@
 {
   "VarianteFinale": {
+    "agencies": {
+      "seeCertificate": "Voir son certificat"
+    },
     "team": {
       "agency": "Agence",
       "search": "Rechercher dans l’équipe",
