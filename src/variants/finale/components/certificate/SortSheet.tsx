@@ -1,24 +1,45 @@
 "use client";
 
 import Box from "@mui/material/Box";
-import ButtonBase from "@mui/material/ButtonBase";
 import Typography from "@mui/material/Typography";
 import { useTranslations } from "next-intl";
-import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
+import { useId } from "react";
+import { ChoiceChip } from "@/variants/finale/components/ui/FilterChip";
 import { ResponsiveSheet } from "@/variants/finale/components/ui/ResponsiveSheet";
 import { tokens } from "@/theme/theme";
 
-export interface SortOption<T extends string> {
-  value: T;
-  label: string;
-  hint: string;
+export interface SortGroup<T extends string> {
+  title: string;
+  options: { value: T; label: string }[];
 }
 
-/** "Trier par" sheet (design sent by the user): one row per option, the current one highlighted with a check. */
+/** One theme of the sort (Date, Note, Autres): a 16 px title and its chips, laid out like a filters section. */
+function Group<T extends string>({ group, value, onPick }: { group: SortGroup<T>; value: T; onPick: (value: T) => void }) {
+  const titleId = useId();
+  return (
+    <Box role="group" aria-labelledby={titleId}>
+      <Typography id={titleId} component="h3" sx={{ mb: 1, fontSize: 16, fontWeight: 600, lineHeight: "normal", color: tokens.bleuFonce }}>
+        {group.title}
+      </Typography>
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+        {group.options.map((option) => (
+          <ChoiceChip key={option.value} radio selected={option.value === value} onClick={() => onPick(option.value)}>
+            {option.label}
+          </ChoiceChip>
+        ))}
+      </Box>
+    </Box>
+  );
+}
+
+/**
+ * "Trier par", drawn like the filters: the choices as chips under 16 px theme titles, the current one light blue with a check.
+ * One tap sorts the page and closes the sheet.
+ */
 export function SortSheet<T extends string>({
   open,
   onClose,
-  options,
+  groups,
   value,
   onChange,
   anchorEl,
@@ -26,7 +47,7 @@ export function SortSheet<T extends string>({
 }: {
   open: boolean;
   onClose: () => void;
-  options: SortOption<T>[];
+  groups: SortGroup<T>[];
   value: T;
   onChange: (value: T) => void;
   /** Desktop: show as a dropdown under this button. */
@@ -35,46 +56,16 @@ export function SortSheet<T extends string>({
   side?: boolean;
 }) {
   const t = useTranslations("Sort");
+  const pick = (next: T) => {
+    onChange(next);
+    onClose();
+  };
   return (
     <ResponsiveSheet open={open} onClose={onClose} title={t("title")} closeLabel={t("close")} anchorEl={anchorEl} dropdownWidth={360} side={side}>
-      <Box component="ul" role="listbox" aria-label={t("title")} sx={{ listStyle: "none", m: 0, p: 0, pb: 2 }}>
-        {options.map((option) => {
-          const selected = option.value === value;
-          return (
-            <li key={option.value}>
-              <ButtonBase
-                role="option"
-                aria-selected={selected}
-                onClick={() => {
-                  onChange(option.value);
-                  onClose();
-                }}
-                sx={{
-                  width: "100%",
-                  justifyContent: "flex-start",
-                  gap: 1,
-                  px: 2,
-                  pt: 1.5,
-                  pb: "13px",
-                  textAlign: "left",
-                  borderBottom: `1px solid ${tokens.grisMoyen1}`,
-                  bgcolor: selected ? tokens.bleu10 : tokens.blanc,
-                  "&:hover": { bgcolor: selected ? tokens.bleu10 : tokens.bleu5 },
-                }}
-              >
-                <Box sx={{ flex: 1 }}>
-                  <Typography sx={{ fontSize: 16, fontWeight: 500, lineHeight: "16px", color: tokens.bleuFonce }}>{option.label}</Typography>
-                  <Typography sx={{ fontSize: 14, fontWeight: 500, lineHeight: "14px", color: tokens.gris, mt: 0.5 }}>{option.hint}</Typography>
-                </Box>
-                {selected && (
-                  <Box sx={{ p: 0.5 }}>
-                    <FigmaIcon name="check" />
-                  </Box>
-                )}
-              </ButtonBase>
-            </li>
-          );
-        })}
+      <Box role="radiogroup" aria-label={t("title")} sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2 }}>
+        {groups.map((group) => (
+          <Group key={group.title} group={group} value={value} onPick={pick} />
+        ))}
       </Box>
     </ResponsiveSheet>
   );

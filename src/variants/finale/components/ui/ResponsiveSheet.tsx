@@ -1,7 +1,6 @@
 "use client";
 
 import Box from "@mui/material/Box";
-import Dialog from "@mui/material/Dialog";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
@@ -24,26 +23,28 @@ interface ResponsiveSheetProps {
   /** Pinned at the bottom (e.g. Appliquer les filtres). */
   footer?: React.ReactNode;
   children: React.ReactNode;
-  /** Desktop: open as a dropdown under this element instead of a centred window. */
+  /** Desktop: open as a small window under this element instead of a side sheet (the ⓘ explanations). */
   anchorEl?: HTMLElement | null;
-  /** Width of the centred desktop window, when narrower than the default 600 px. */
+  /** Width of the desktop side sheet (440 px by default). */
   dialogWidth?: number;
   /** Width of the desktop dropdown. */
   dropdownWidth?: number;
   /** Which edge of `anchorEl` the dropdown lines up with (right by default). */
   dropdownAlign?: "left" | "right";
-  /** Desktop: a full-height sheet sliding in from the right, over the page with a light backdrop. */
+  /** Desktop: the side sheet even when `anchorEl` is given (e.g. Trier par). */
   side?: boolean;
 }
 
 /**
  * Figma "Bottom Sheet": a swipeable bottom sheet on phones and tablets in portrait.
- * From 900 px: a dropdown under `anchorEl` when given, otherwise a centred modal.
+ * From 900 px: a full-height side sheet from the right, over the page with a light backdrop, like the filters;
+ * a small window under `anchorEl` when one is given (unless `side`).
  */
 export function ResponsiveSheet({ open, onClose, title, closeLabel, actions, header, footer, children, anchorEl, dropdownWidth = 420, dropdownAlign = "right", dialogWidth, side = false }: ResponsiveSheetProps) {
   const desktop = useMediaQuery("(min-width:900px)", { noSsr: true });
   const titleId = useId();
-  const sideSheet = desktop && side;
+  // Desktop: everything that used to be a centred window opens as a side sheet.
+  const sideSheet = desktop && (side || !anchorEl);
   const dropdown = desktop && !side && Boolean(anchorEl);
   // A dropdown may use the space between its button and the bottom of the window.
   const dropdownMaxHeight = dropdown && open && anchorEl ? `max(440px, calc(100vh - ${Math.round(anchorEl.getBoundingClientRect().bottom) + 24}px))` : undefined;
@@ -108,14 +109,6 @@ export function ResponsiveSheet({ open, onClose, title, closeLabel, actions, hea
       >
         {body}
       </Popover>
-    );
-  }
-
-  if (desktop) {
-    return (
-      <Dialog open={open} onClose={onClose} aria-labelledby={titleId} fullWidth maxWidth="sm" slotProps={{ paper: { sx: { borderRadius: "20px", overflow: "hidden", ...(dialogWidth && { maxWidth: dialogWidth }) } } }}>
-        {body}
-      </Dialog>
     );
   }
 

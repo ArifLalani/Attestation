@@ -321,7 +321,9 @@ export function ReputationCard() {
         </Typography>
       </Box>
 
+      {/* Desktop: a side sheet from the right, like the filters and the sort. Phones: a bottom sheet. */}
       <CollaboratorPicker
+        side
         open={pickerOpen}
         onClose={() => setPickerOpen(false)}
         selectedId={scoreCollaboratorId}

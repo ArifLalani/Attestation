@@ -18,6 +18,7 @@ export const quickProducts: Product[] = ["vente", "achat", "location", "gestion_
 export function ActiveFilterChips({ hideQuick = false }: { hideQuick?: boolean } = {}) {
   const t = useTranslations("Filters");
   const tr = useTranslations("Reviews");
+  const tv = useTranslations("VarianteFinale.filters");
   const tp = useTranslations("Products");
   const tc = useTranslations("Criteria");
   const { filters, setFilters, team } = useCertificate();
@@ -26,7 +27,7 @@ export function ActiveFilterChips({ hideQuick = false }: { hideQuick?: boolean }
   const chips: { key: string; label: React.ReactNode; text: string; remove: () => void; avatar?: React.ReactNode }[] = [];
 
   if (filters.type && !(hideQuick && filters.type === "controle")) {
-    const text = t(filters.type === "controle" ? "chip.controle" : "chip.nonControle");
+    const text = tv(filters.type === "controle" ? "typeControle" : "typeNonControle");
     chips.push({ key: "type", label: text, text, remove: () => update({ type: undefined }) });
   }
   if (filters.source) {
@@ -35,7 +36,7 @@ export function ActiveFilterChips({ hideQuick = false }: { hideQuick?: boolean }
   }
   if (filters.note) {
     const { stars, exact } = filters.note;
-    const prefix = exact || stars === 5 ? `${stars} ` : `>${stars}`;
+    const prefix = exact || stars === 5 ? `${stars}` : `${stars}+`;
     chips.push({ key: "note", label: <StarLabel prefix={prefix} />, text: `${prefix}★`, remove: () => update({ note: undefined }) });
   }
   if (filters.period && !(hideQuick && filters.period === "year")) {

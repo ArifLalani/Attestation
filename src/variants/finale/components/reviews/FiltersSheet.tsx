@@ -7,10 +7,11 @@ import Drawer from "@mui/material/Drawer";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import ArrowBackRounded from "@mui/icons-material/ArrowBackRounded";
 import { useTranslations } from "next-intl";
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useCertificate } from "@/components/certificate/CertificateContext";
-import { CollaboratorPicker } from "@/variants/finale/components/certificate/CollaboratorPicker";
+import { CollaboratorPicker, useCollaboratorChooser } from "@/variants/finale/components/certificate/CollaboratorPicker";
 import { CtaButton } from "@/variants/finale/components/ui/CtaButton";
 import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
 import { ChoiceChip, StarLabel } from "@/variants/finale/components/ui/FilterChip";
@@ -31,12 +32,13 @@ const criteria: Criterion[] = ["accueil", "conseil", "competence", "reactivite",
 const periods: Period[] = ["today", "week", "month", "year"];
 const notes: StarBucket[] = [5, 4, 3, 2, 1];
 
-type HelpKey = "type" | "source" | "note" | "period" | "product" | "criterion" | "collaborator";
+// Only Type, Source, Produit and Critère have an ⓘ: Collaborateur, Note and Période speak for themselves.
+type HelpKey = "type" | "source" | "product" | "criterion";
 
 const focusSx = { "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 } } as const;
 
-/** A section (Actuel look): a 16 px title with an ⓘ beside it, then the small chips. */
-function Group({ title, onHelp, radio, labelFor, children }: { title: string; onHelp: (anchor: HTMLElement) => void; radio?: boolean; labelFor?: string; children: React.ReactNode }) {
+/** A section (Actuel look): a 16 px title, with an ⓘ beside it when the section needs explaining, then the small chips. */
+function Group({ title, onHelp, radio, labelFor, children }: { title: string; onHelp?: (anchor: HTMLElement) => void; radio?: boolean; labelFor?: string; children: React.ReactNode }) {
   const titleId = useId();
   return (
     <Box role={labelFor ? undefined : radio ? "radiogroup" : "group"} aria-labelledby={labelFor ? undefined : titleId}>
@@ -44,7 +46,7 @@ function Group({ title, onHelp, radio, labelFor, children }: { title: string; on
         <Typography id={titleId} component={labelFor ? "label" : "h3"} htmlFor={labelFor} sx={{ fontSize: 16, fontWeight: 600, lineHeight: "normal", color: tokens.bleuFonce }}>
           {title}
         </Typography>
-        <HelpButton title={title} onOpen={onHelp} />
+        {onHelp && <HelpButton title={title} onOpen={onHelp} />}
       </Box>
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>{children}</Box>
     </Box>
@@ -87,12 +89,20 @@ export function FiltersSheet() {
   const [saved, setSaved] = useState(filters);
   const [wasOpen, setWasOpen] = useState(open);
   const [pickerOpen, setPickerOpen] = useState(false);
+  // Desktop: the team list is a second page of the side sheet, sliding in from the right ("← Collaborateur").
+  const [page, setPage] = useState<"filters" | "team">("filters");
+  const backRef = useRef<HTMLButtonElement>(null);
+  const fieldRef = useRef<HTMLButtonElement>(null);
+  const shownPage = useRef(page);
   const [help, setHelp] = useState<{ key: HelpKey; anchor: HTMLElement } | null>(null);
 
   // Remember the choices from before the sheet opened, so the X can bring them back.
   if (open !== wasOpen) {
     setWasOpen(open);
-    if (open) setSaved(filters);
+    if (open) {
+      setSaved(filters);
+      setPage("filters");
+    }
   }
 
   const keep = () => setPanel(null);
@@ -100,6 +110,14 @@ export function FiltersSheet() {
     setFilters(saved);
     setPanel(null);
   };
+
+  // Focus follows the page: the back arrow on the team page, the Collaborateur field when coming back.
+  useEffect(() => {
+    if (shownPage.current === page) return;
+    shownPage.current = page;
+    // preventScroll: otherwise the browser scrolls the sliding track sideways to reach the button.
+    (page === "team" ? backRef.current : fieldRef.current)?.focus({ preventScroll: true });
+  }, [page]);
 
   const results = applyFilters(reviews, filters).length;
   const update = (patch: Partial<ReviewFilters>) => setFilters({ ...filters, ...patch });
@@ -112,6 +130,14 @@ export function FiltersSheet() {
   const noteSelected = (stars: StarBucket) => filters.note?.stars === stars && !filters.note.exact;
   const person = team.find((member) => member.id === filters.collaboratorId);
   const openHelp = (key: HelpKey) => (anchor: HTMLElement) => setHelp({ key, anchor });
+  const chooser = useCollaboratorChooser({
+    selectedId: filters.collaboratorId,
+    view: scoreView,
+    onChoose: (id) => {
+      update({ collaboratorId: id });
+      setPage("filters");
+    },
+  });
 
   const body = (
     <Box sx={{ display: "flex", flexDirection: "column", height: desktop ? "100%" : "auto", maxHeight: desktop ? "none" : "92dvh", bgcolor: tokens.blanc, color: tokens.bleuFonce }}>
@@ -142,12 +168,13 @@ export function FiltersSheet() {
       <Box sx={{ overflowY: "auto", overscrollBehavior: "contain", flex: 1, minHeight: 0 }}>
         <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2 }}>
           {/* Collaborateur first: opens the team picker over the filters. */}
-          <Group title={t("collaborator")} onHelp={openHelp("collaborator")} labelFor="filter-collaborator">
+          <Group title={t("collaborator")} labelFor="filter-collaborator">
             <ButtonBase
               id="filter-collaborator"
-              onClick={() => setPickerOpen(true)}
-              aria-haspopup="listbox"
-              aria-expanded={pickerOpen}
+              ref={fieldRef}
+              onClick={() => (desktop ? setPage("team") : setPickerOpen(true))}
+              aria-haspopup={desktop ? undefined : "listbox"}
+              aria-expanded={desktop ? undefined : pickerOpen}
               sx={{
                 width: "100%",
                 justifyContent: "flex-start",
@@ -171,21 +198,21 @@ export function FiltersSheet() {
             </ButtonBase>
           </Group>
           <Group title={t("type")} onHelp={openHelp("type")}>
-            <ChoiceChip selected={filters.type === "controle"} onClick={() => toggle("type", "controle")}>{t("typeControle")}</ChoiceChip>
-            <ChoiceChip selected={filters.type === "non_controle"} onClick={() => toggle("type", "non_controle")}>{t("typeNonControle")}</ChoiceChip>
+            <ChoiceChip selected={filters.type === "controle"} onClick={() => toggle("type", "controle")}>{tv("typeControle")}</ChoiceChip>
+            <ChoiceChip selected={filters.type === "non_controle"} onClick={() => toggle("type", "non_controle")}>{tv("typeNonControle")}</ChoiceChip>
           </Group>
           <Group title={t("source")} onHelp={openHelp("source")}>
             <ChoiceChip selected={filters.source === "opinion_system"} onClick={() => toggle("source", "opinion_system")}>{t("sourceOs")}</ChoiceChip>
             <ChoiceChip selected={filters.source === "imported"} onClick={() => toggle("source", "imported")}>{t("sourceImported")}</ChoiceChip>
           </Group>
-          <Group title={t("note")} onHelp={openHelp("note")}>
+          <Group title={t("note")}>
             {notes.map((stars) => (
               <ChoiceChip key={stars} selected={noteSelected(stars)} onClick={() => update({ note: noteSelected(stars) ? undefined : { stars, exact: false } })}>
                 <StarLabel prefix={stars === 5 ? "5" : `${stars}+`} />
               </ChoiceChip>
             ))}
           </Group>
-          <Group title={t("period")} onHelp={openHelp("period")}>
+          <Group title={t("period")}>
             {periods.map((period) => (
               <ChoiceChip key={period} selected={filters.period === period} onClick={() => toggle("period", period)}>{t(`periods.${period}`)}</ChoiceChip>
             ))}
@@ -210,6 +237,22 @@ export function FiltersSheet() {
     </Box>
   );
 
+  // Desktop second page: back arrow and title, then the same search, sort chips and list as the team picker elsewhere.
+  const teamPage = (
+    <Box sx={{ display: "flex", flexDirection: "column", height: "100%", bgcolor: tokens.blanc, color: tokens.bleuFonce }}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1, px: 1, py: 1.5, minHeight: 61, borderBottom: `1px solid ${tokens.grisMoyen1}`, flexShrink: 0 }}>
+        <IconButton ref={backRef} onClick={() => setPage("filters")} aria-label={tv("backToFilters")} sx={{ color: tokens.bleuFonce, ...focusSx }}>
+          <ArrowBackRounded />
+        </IconButton>
+        <Typography component="h2" sx={{ fontSize: 20, fontWeight: 600, lineHeight: "normal" }}>
+          {t("collaborator")}
+        </Typography>
+      </Box>
+      {chooser.header}
+      <Box sx={{ overflowY: "auto", overscrollBehavior: "contain", flex: 1, minHeight: 0 }}>{chooser.list}</Box>
+    </Box>
+  );
+
   return (
     <>
       {desktop ? (
@@ -217,13 +260,19 @@ export function FiltersSheet() {
         <Drawer
           anchor="right"
           open={open}
-          onClose={cancel}
+          // Échap on the team page goes back to the filters; otherwise it closes (undoing), like the X and the backdrop.
+          onClose={(_event, reason) => (reason === "escapeKeyDown" && page === "team" ? setPage("filters") : cancel())}
           slotProps={{
             backdrop: { sx: { bgcolor: "rgba(4, 27, 68, 0.18)" } },
             paper: { role: "dialog", "aria-labelledby": titleId, sx: { width: SIDE_SHEET_WIDTH, maxWidth: "100vw", boxShadow: "-12px 0 40px rgba(4, 27, 68, 0.16)", overflow: "hidden" } },
           }}
         >
-          {body}
+          <Box sx={{ height: "100%", overflow: "hidden" }}>
+            <Box sx={{ display: "flex", width: "200%", height: "100%", transform: page === "team" ? "translateX(-50%)" : "none", transition: "transform 260ms cubic-bezier(0.2, 0, 0, 1)" }}>
+              <Box inert={page !== "filters"} sx={{ flex: "0 0 50%", minWidth: 0, height: "100%" }}>{body}</Box>
+              <Box inert={page !== "team"} sx={{ flex: "0 0 50%", minWidth: 0, height: "100%" }}>{teamPage}</Box>
+            </Box>
+          </Box>
         </Drawer>
       ) : (
         <SwipeableDrawer
@@ -241,9 +290,9 @@ export function FiltersSheet() {
       )}
 
       <FilterHelp help={help} onClose={() => setHelp(null)} />
-      {/* Phones: a second sheet over the filters. Desktop: a window over the filters. */}
+      {/* Phones: a second sheet over the filters (desktop uses the second page above). */}
       <CollaboratorPicker
-        open={pickerOpen}
+        open={pickerOpen && !desktop}
         onClose={() => setPickerOpen(false)}
         selectedId={filters.collaboratorId}
         onSelect={(id) => update({ collaboratorId: id })}

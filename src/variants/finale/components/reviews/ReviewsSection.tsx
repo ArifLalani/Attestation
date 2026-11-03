@@ -5,13 +5,13 @@ import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-import Check from "@mui/icons-material/Check";
 import SearchOff from "@mui/icons-material/SearchOff";
 import VerifiedRounded from "@mui/icons-material/VerifiedRounded";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useCertificate } from "@/components/certificate/CertificateContext";
 import { SortSheet } from "@/variants/finale/components/certificate/SortSheet";
+import { ChoiceChip } from "@/variants/finale/components/ui/FilterChip";
 import { CtaButton } from "@/variants/finale/components/ui/CtaButton";
 import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
 import type { Product, Review } from "@/data/types";
@@ -26,7 +26,12 @@ import { ReviewSearchField } from "./ReviewSearchField";
 
 const endButtonSx = { width: { xs: "100%", sm: "auto" }, minWidth: { sm: 180 }, px: 2.5, bgcolor: tokens.blanc } as const;
 const PAGE_SIZE = 3;
-const sorts: ReviewSort[] = ["recent", "oldest", "best", "worst", "useful", "verified"];
+/** The sort choices by theme, as in the Trier par sheet. */
+const sortGroups: { key: "date" | "note" | "other"; sorts: ReviewSort[] }[] = [
+  { key: "date", sorts: ["recent", "oldest"] },
+  { key: "note", sorts: ["best", "worst"] },
+  { key: "other", sorts: ["useful", "verified"] },
+];
 
 const focusSx = { "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 } } as const;
 
@@ -64,35 +69,6 @@ const barButtonSx = {
 } as const;
 
 /** A quick filter: navy with a check when chosen, like the sort chips of the collaborator picker. */
-function TopicChip({ selected, onClick, icon, children }: { selected: boolean; onClick: () => void; icon?: React.ReactNode; children: React.ReactNode }) {
-  return (
-    <ButtonBase
-      onClick={onClick}
-      aria-pressed={selected}
-      sx={{
-        flexShrink: 0,
-        gap: 0.75,
-        height: 40,
-        px: 1.5,
-        borderRadius: "8px",
-        bgcolor: selected ? tokens.bleuFonce : tokens.blanc,
-        border: `1px solid ${selected ? tokens.bleuFonce : tokens.grisMoyen1}`,
-        color: selected ? tokens.blanc : tokens.bleuFonce,
-        fontFamily: "inherit",
-        fontSize: 14,
-        fontWeight: 600,
-        whiteSpace: "nowrap",
-        transition: "background-color 150ms ease, color 150ms ease",
-        "&:hover": { bgcolor: selected ? tokens.bleuFonce : tokens.grisClair1 },
-        ...focusSx,
-      }}
-    >
-      {icon ?? (selected && <Check sx={{ fontSize: 18, mr: -0.25 }} />)}
-      {children}
-    </ButtonBase>
-  );
-}
-
 /**
  * Avis (layout from option C, drawn in the page's look). A header card holds the title with the review count and Déposer un avis, the search with Filtres and the sort
  * on one line, and the quick filters; then each review floats on the background as its own card.
@@ -100,9 +76,9 @@ function TopicChip({ selected, onClick, icon, children }: { selected: boolean; o
 export function ReviewsSection() {
   const t = useTranslations("Reviews");
   const tv = useTranslations("VarianteFinale.reviews");
+  const tvf = useTranslations("VarianteFinale.filters");
   const tp = useTranslations("Products");
   const tf = useTranslations("Filters");
-  const ts = useTranslations("ReviewSort");
   const { reviews, filters, setFilters, reviewSort, setReviewSort, panel, setPanel, openPanel, panelAnchor, setToolbarPinned } = useCertificate();
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [reporting, setReporting] = useState<Review | null>(null);
@@ -203,20 +179,20 @@ export function ReviewsSection() {
           aria-label={tv("quickFilters")}
           sx={{ display: "flex", gap: 1, overflowX: { xs: "auto", md: "visible" }, flexWrap: { xs: "nowrap", md: "wrap" }, mx: { xs: -2, md: 0 }, px: { xs: 2, md: 0 }, py: 0.25, scrollbarWidth: "none", "&::-webkit-scrollbar": { display: "none" } }}
         >
-          <TopicChip
+          <ChoiceChip
             selected={filters.type === "controle"}
             onClick={() => update({ type: filters.type === "controle" ? undefined : "controle" })}
-            icon={<VerifiedRounded sx={{ fontSize: 18, color: filters.type === "controle" ? tokens.blanc : tokens.vertOs }} />}
+            icon={<VerifiedRounded sx={{ fontSize: 18, ml: -0.25, color: tokens.vertOs }} />}
           >
-            {tf("chip.controle")}
-          </TopicChip>
-          <TopicChip selected={filters.period === "year"} onClick={() => update({ period: filters.period === "year" ? undefined : "year" })}>
+            {tvf("typeControle")}
+          </ChoiceChip>
+          <ChoiceChip selected={filters.period === "year"} onClick={() => update({ period: filters.period === "year" ? undefined : "year" })}>
             {tf("periods.year")}
-          </TopicChip>
+          </ChoiceChip>
           {quickProducts.map((product) => (
-            <TopicChip key={product} selected={filters.products.includes(product)} onClick={() => toggleProduct(product)}>
+            <ChoiceChip key={product} selected={filters.products.includes(product)} onClick={() => toggleProduct(product)}>
               {tp(product)}
-            </TopicChip>
+            </ChoiceChip>
           ))}
         </Box>
 
@@ -269,7 +245,7 @@ export function ReviewsSection() {
       </Box>
 
       <FiltersSheet />
-      {/* Trier par: its own side sheet on desktop, a bottom sheet on phones. One tap applies and closes. */}
+      {/* Trier par: its own side sheet on desktop, a bottom sheet on phones, with chips like the filters. One tap applies and closes. */}
       <SortSheet<ReviewSort>
         side
         open={panel === "sort"}
@@ -277,7 +253,7 @@ export function ReviewsSection() {
         anchorEl={panelAnchor}
         value={reviewSort}
         onChange={setReviewSort}
-        options={sorts.map((value) => ({ value, label: ts(value), hint: ts(`${value}Hint`) }))}
+        groups={sortGroups.map((group) => ({ title: tv(`sortGroups.${group.key}`), options: group.sorts.map((value) => ({ value, label: tv(`sortShort.${value}`) })) }))}
       />
       <ReportSheet review={reporting} onClose={() => setReporting(null)} />
     </Box>

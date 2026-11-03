@@ -66,22 +66,10 @@ function SortChip({ selected, onClick, children }: { selected: boolean; onClick:
 }
 
 /**
- * Staff above the publication threshold, with a search field and the sort as chips (layout from option C).
- * A window on desktop, a bottom sheet on phones.
+ * The team list shared by every place that picks a collaborator: the search field and the sort chips (`header`, pinned),
+ * then "Toute l'équipe" and the staff above the publication threshold (`list`, scrolls).
  */
-export function CollaboratorPicker({
-  open,
-  onClose,
-  selectedId,
-  onSelect,
-  view,
-}: {
-  open: boolean;
-  onClose: () => void;
-  selectedId?: string;
-  onSelect: (id: string | undefined) => void;
-  view: ScoreView;
-}) {
+export function useCollaboratorChooser({ selectedId, onChoose, view }: { selectedId?: string; onChoose: (id: string | undefined) => void; view: ScoreView }) {
   const t = useTranslations("Collaborators");
   const tp = useTranslations("VarianteFinale.picker");
   const { team, reviews, agency } = useCertificate();
@@ -99,10 +87,7 @@ export function CollaboratorPicker({
     return needle ? scored.filter(({ person }) => normalize(person.name).includes(needle)) : scored;
   }, [team, reviews, view, agency.publicThreshold, sort, query]);
 
-  const choose = (id: string | undefined) => {
-    onSelect(id);
-    onClose();
-  };
+  const choose = onChoose;
 
   const header = (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, px: 2, pt: 2, pb: 1.5, borderBottom: `1px solid ${tokens.grisMoyen1}`, flexShrink: 0 }}>
@@ -144,42 +129,74 @@ export function CollaboratorPicker({
     </Box>
   );
 
-  return (
-    <ResponsiveSheet open={open} onClose={onClose} title={t("title")} closeLabel={t("close")} header={header} dialogWidth={480}>
-      <Box component="ul" role="listbox" aria-label={t("title")} sx={{ listStyle: "none", m: 0, py: 1, px: 0 }}>
-        {!query && (
-          <li>
-            <ButtonBase role="option" aria-selected={!selectedId} onClick={() => choose(undefined)} sx={rowSx(!selectedId)}>
-              <TeamAvatar size={40} color={tokens.bleuFonce} />
-              <Typography sx={{ flex: 1, fontSize: 16, fontWeight: 600, color: tokens.bleuFonce }}>{t("all")}</Typography>
-              {!selectedId && <Check sx={{ color: tokens.bleuFonce }} />}
+  const list = (
+    <Box component="ul" role="listbox" aria-label={t("title")} sx={{ listStyle: "none", m: 0, py: 1, px: 0 }}>
+      {!query && (
+        <li>
+          <ButtonBase role="option" aria-selected={!selectedId} onClick={() => choose(undefined)} sx={rowSx(!selectedId)}>
+            <TeamAvatar size={40} color={tokens.bleuFonce} />
+            <Typography sx={{ flex: 1, fontSize: 16, fontWeight: 600, color: tokens.bleuFonce }}>{t("all")}</Typography>
+            {!selectedId && <Check sx={{ color: tokens.bleuFonce }} />}
+          </ButtonBase>
+        </li>
+      )}
+      {people.map(({ person, summary }) => {
+        const selected = person.id === selectedId;
+        return (
+          <li key={person.id}>
+            <ButtonBase role="option" aria-selected={selected} onClick={() => choose(person.id)} sx={rowSx(selected)}>
+              <StaffAvatar person={person} size={40} />
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography sx={{ fontSize: 16, fontWeight: 600, lineHeight: 1.3, color: tokens.bleuFonce }}>{person.name}</Typography>
+                <Typography sx={{ fontSize: 13, lineHeight: 1.3, color: tokens.gris }}>
+                  {tp("detail", { role: person.role, count: formatCount(summary.count) })}
+                </Typography>
+              </Box>
+              {summary.average !== null && <RatingChip value={summary.average} />}
+              {selected && <Check sx={{ color: tokens.bleuFonce }} />}
             </ButtonBase>
           </li>
-        )}
-        {people.map(({ person, summary }) => {
-          const selected = person.id === selectedId;
-          return (
-            <li key={person.id}>
-              <ButtonBase role="option" aria-selected={selected} onClick={() => choose(person.id)} sx={rowSx(selected)}>
-                <StaffAvatar person={person} size={40} />
-                <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <Typography sx={{ fontSize: 16, fontWeight: 600, lineHeight: 1.3, color: tokens.bleuFonce }}>{person.name}</Typography>
-                  <Typography sx={{ fontSize: 13, lineHeight: 1.3, color: tokens.gris }}>
-                    {tp("detail", { role: person.role, count: formatCount(summary.count) })}
-                  </Typography>
-                </Box>
-                {summary.average !== null && <RatingChip value={summary.average} />}
-                {selected && <Check sx={{ color: tokens.bleuFonce }} />}
-              </ButtonBase>
-            </li>
-          );
-        })}
-        {query && !people.length && (
-          <Typography component="li" sx={{ px: 2, py: 3, color: tokens.gris, fontSize: 14 }}>
-            {t("noResult", { query })}
-          </Typography>
-        )}
-      </Box>
+        );
+      })}
+      {query && !people.length && (
+        <Typography component="li" sx={{ px: 2, py: 3, color: tokens.gris, fontSize: 14 }}>
+          {t("noResult", { query })}
+        </Typography>
+      )}
+    </Box>
+  );
+
+  return { header, list };
+}
+
+/** The team list in a window on desktop (or a side sheet from the right with `side`), a bottom sheet on phones (layout from option C). */
+export function CollaboratorPicker({
+  open,
+  onClose,
+  selectedId,
+  onSelect,
+  view,
+  side = false,
+}: {
+  open: boolean;
+  onClose: () => void;
+  selectedId?: string;
+  onSelect: (id: string | undefined) => void;
+  view: ScoreView;
+  side?: boolean;
+}) {
+  const t = useTranslations("Collaborators");
+  const { header, list } = useCollaboratorChooser({
+    selectedId,
+    view,
+    onChoose: (id) => {
+      onSelect(id);
+      onClose();
+    },
+  });
+  return (
+    <ResponsiveSheet open={open} onClose={onClose} title={t("title")} closeLabel={t("close")} header={header} side={side}>
+      {list}
     </ResponsiveSheet>
   );
 }

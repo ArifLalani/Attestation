@@ -26,10 +26,9 @@ import { OpenStatus } from "./OpenStatus";
 import { CardTitle } from "./ReputationCard";
 
 const AgencyMap = dynamic(() => import("./AgencyMap"), { ssr: false });
-const colors = ["#e84236", tokens.bleu600, "#6871b5", "#197c70", "#a55924"];
-
-function AgencyLetter({ index }: { index: number }) {
-  return <Box aria-hidden sx={{ width: 24, height: 24, display: "grid", placeItems: "center", borderRadius: "50%", bgcolor: colors[index % colors.length], color: tokens.blanc, fontSize: 12, fontWeight: 700, flexShrink: 0 }}>{String.fromCharCode(65 + index)}</Box>;
+/** The agency's letter, in the colours of its pin on the map: navy once selected, light blue otherwise. */
+function AgencyLetter({ index, active, size = 28 }: { index: number; active?: boolean; size?: number }) {
+  return <Box aria-hidden sx={{ width: size, height: size, display: "grid", placeItems: "center", borderRadius: "50%", bgcolor: active ? tokens.bleuFonce : tokens.bleu10, color: active ? tokens.blanc : tokens.bleuFonce, fontSize: 13, fontWeight: 700, flexShrink: 0 }}>{String.fromCharCode(65 + index)}</Box>;
 }
 
 /** Sent by the hero's open/closed status: scroll here with this agency's week of hours open. */
@@ -69,7 +68,7 @@ function OpeningHours({ agency, openRequest }: { agency: Agency; openRequest: nu
   );
 }
 
-/** Figma Nos Agences (1395:114887), with live pins and the agreed other-agencies list. */
+/** Nos Agences: the map from option C (score pins, the card over the map on desktop) with H's agency details and other-agencies list. */
 export function AgenciesSection() {
   const t = useTranslations("Agencies");
   const { agency } = useCertificate();
@@ -81,6 +80,11 @@ export function AgenciesSection() {
   const listId = useId();
   const locations = useMemo(() => [agency, ...agency.sisterAgencyIds.map(getAgency).filter((item): item is Agency => Boolean(item))], [agency]);
   const summaries = useMemo(() => new Map(locations.map((location) => [location.id, summarize(reviewsForScore(getAgencyDataset(location).reviews, "controle"))])), [locations]);
+  // The score shown on each pin (hidden under the publication threshold).
+  const scores = useMemo(() => Object.fromEntries(locations.map((location) => {
+    const stats = summaries.get(location.id)!;
+    return [location.id, isPublic(stats.count, location.publicThreshold) ? stats.average : null];
+  })), [locations, summaries]);
   const selected = locations.find((location) => location.id === selectedId) ?? agency;
   const selectedIndex = locations.indexOf(selected);
   const summary = summaries.get(selected.id)!;
@@ -113,14 +117,16 @@ export function AgenciesSection() {
     <Box component="section" id="nos-agences" aria-labelledby="agencies-title" sx={{ scrollMarginTop: `${tokens.headerHeight + 16}px`, bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCard, px: { xs: 1.5, md: 2 }, py: 2, display: "flex", flexDirection: "column", gap: 2 }}>
       <CardTitle id="agencies-title" eyebrow={t("eyebrow")} heading={t("heading")} />
       <Typography sx={{ fontSize: 14, color: tokens.gris }}>{t("description", { name: agency.name })}</Typography>
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1fr) minmax(0, 1fr)" }, columnGap: 4, rowGap: 2, alignItems: "stretch" }}>
-      <Box ref={mapContainer} role="region" aria-label={t("mapLabel")} sx={{ height: { xs: 215, md: 400 }, width: "100%", alignSelf: "start", borderRadius: "12px", overflow: "hidden", bgcolor: tokens.grisClair2, position: { md: "sticky" }, top: { md: tokens.headerHeight + 16 } }}>
-        {mapVisible ? <AgencyMap agencies={locations} selectedId={selected.id} onSelect={selectAgency} /> : <Box sx={{ height: "100%", display: "grid", placeItems: "center", fontSize: 14, color: tokens.gris }}>{t("mapLoading")}</Box>}
+      {/* The map from option C: large, edge to edge on phones. On desktop the agency card floats over its left side, as in Google Maps;
+          on phones it sits under the map. One card, placed by CSS, so the server and the browser render the same thing. */}
+      <Box sx={{ position: "relative", display: "flex", flexDirection: "column", gap: 2 }}>
+      <Box ref={mapContainer} role="region" aria-label={t("mapLabel")} sx={{ height: { xs: 300, sm: 360, md: 480 }, mx: { xs: -1.5, sm: 0 }, borderRadius: { xs: 0, sm: "16px" }, overflow: "hidden", bgcolor: tokens.grisClair2, border: { sm: `1px solid ${tokens.grisMoyen1}` } }}>
+        {mapVisible ? <AgencyMap agencies={locations} selectedId={selected.id} onSelect={selectAgency} scores={scores} /> : <Box sx={{ height: "100%", display: "grid", placeItems: "center", fontSize: 14, color: tokens.gris }}>{t("mapLoading")}</Box>}
       </Box>
-      {/* Figma "Company Information" (1463:21156): name, photos, details, then the other agencies. */}
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2, px: 0.25 }}>
-          <AgencyLetter index={selectedIndex} />
+      {/* Figma "Company Information" (1463:21156): name, photos, details. */}
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0, position: { md: "absolute" }, left: { md: 16 }, top: { md: 16 }, width: { md: 380 }, maxHeight: { md: "calc(100% - 32px)" }, overflowY: { md: "auto" }, overscrollBehavior: { md: "contain" }, p: { md: 2.5 }, borderRadius: { md: "20px" }, bgcolor: { md: tokens.blanc }, boxShadow: { md: "0 6px 24px rgba(4, 27, 68, 0.16)" } }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, px: 0.25 }}>
+          <AgencyLetter index={selectedIndex} active size={32} />
           <Typography component="h3" aria-live="polite" sx={{ fontSize: 16, fontWeight: 600, minWidth: 0 }}>
             <Link
               href={certificateUrl}
@@ -177,10 +183,11 @@ export function AgenciesSection() {
           <Link href={`tel:${selected.phone.replace(/\s/g, "")}`} sx={{ fontSize: 14, fontWeight: 600, color: tokens.bleuFonce, textDecorationColor: "currentColor", textUnderlineOffset: "3px" }}>{selected.phone}</Link>
         </Box>
 
-        <CtaButton variant="secondary" aria-expanded={expanded} aria-controls={listId} onClick={() => setExpanded((value) => !value)} sx={{ mt: { md: "auto" }, "& img": { transform: expanded ? "rotate(180deg)" : "none" } }}>{t(expanded ? "showLess" : "showMore")}</CtaButton>
       </Box>
       </Box>
-      {/* The other agencies take the full width under the map and the details (3 per row on desktop).
+      {/* Desktop: on the right, as wide as its text (like Voir toute l’équipe); full width on phones and tablets. */}
+      <CtaButton variant="secondary" aria-expanded={expanded} aria-controls={listId} onClick={() => setExpanded((value) => !value)} sx={{ "& img": { transform: expanded ? "rotate(180deg)" : "none" }, width: { md: "auto" }, minWidth: { md: 180 }, px: { md: 2.5 }, alignSelf: { md: "flex-end" } }}>{t(expanded ? "showLess" : "showMore")}</CtaButton>
+      {/* The other agencies take the full width under the map (3 per row on desktop).
           mt -2 cancels the section gap, so the space opens with the animation. */}
       <Collapse in={expanded} unmountOnExit sx={{ mt: -2 }}>
         <Box id={listId} component="ul" sx={{ listStyle: "none", m: 0, p: 0, pt: 2, display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", sm: "repeat(2, minmax(0, 1fr))", md: "repeat(3, minmax(0, 1fr))" }, gap: 1 }}>
@@ -189,7 +196,7 @@ export function AgenciesSection() {
             return <Box component="li" key={location.id}>
               <ButtonBase onClick={() => selectAgency(location.id)} aria-pressed={location.id === selected.id} aria-label={t("selectAgency", { city: location.city })}
                 sx={{ display: "flex", gap: 1.5, width: "100%", height: "100%", p: 1.5, borderRadius: "12px", border: `1px solid ${location.id === selected.id ? tokens.bleu400 : tokens.grisMoyen1}`, bgcolor: location.id === selected.id ? tokens.bleu5 : tokens.blanc, textAlign: "left" }}>
-                <AgencyLetter index={index} />
+                <AgencyLetter index={index} active={location.id === selected.id} />
                 <Box sx={{ flex: 1, minWidth: 0 }}>
                   <Typography sx={{ fontSize: 14, fontWeight: 600 }}>{location.city}</Typography>
                   <Typography sx={{ fontSize: 12, color: tokens.gris }}>{t("verifiedCount", { count: formatCount(stats.count) })}</Typography>

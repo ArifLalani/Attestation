@@ -1,5 +1,12 @@
 {
   "VarianteFinale": {
+    "team": {
+      "agency": "Agence",
+      "search": "Rechercher dans l’équipe",
+      "searchPlaceholder": "Rechercher un nom, un métier…",
+      "searchClear": "Effacer la recherche",
+      "noMatch": "Personne dans l’équipe ne correspond à « {query} »."
+    },
     "hero": {
       "sector": "{sector} à {city}",
       "tagline": "Les bonnes personnes pour votre projet.",
@@ -40,16 +47,18 @@
     "filters": {
       "clear": "Tout effacer",
       "show": "Afficher {count} avis",
+      "typeControle": "Avis Contrôlés",
+      "typeNonControle": "Avis Non Contrôlés",
       "help": {
         "type": {
           "title": "Type d’avis",
           "items": [
             {
-              "label": "Contrôlés par Opinion System",
+              "label": "Avis Contrôlés",
               "text": "Recueillis par un questionnaire certifié, conçu par Opinion System, ou importés d’une source certifiée ISO 20488. Ce sont eux qui forment le score Avis Contrôlés : ce choix fait aussi passer la Réputation sur Avis Contrôlés."
             },
             {
-              "label": "Non contrôlés",
+              "label": "Avis Non Contrôlés",
               "text": "Recueillis par un questionnaire interne de l’agence, ou importés d’une source non certifiée. Ils comptent dans le score global uniquement."
             }
           ]
@@ -64,36 +73,6 @@
             {
               "label": "Avis importés",
               "text": "Avis venus d’autres plateformes, comme Google. Ils n’ont pas de questionnaire : seuls ceux d’une source certifiée ISO 20488 comptent comme contrôlés."
-            }
-          ]
-        },
-        "note": {
-          "title": "Note",
-          "items": [
-            {
-              "label": "5",
-              "text": "Les avis notés 5 étoiles."
-            },
-            {
-              "label": "4+, 3+, 2+, 1+",
-              "text": "Cette note et au-dessus : 4+ montre les avis à 4 et 5 étoiles."
-            },
-            {
-              "label": "Notes arrondies",
-              "text": "Chaque note est arrondie à l’étoile la plus proche : 4,6 compte comme 5, et tout ce qui est sous 1,5 compte comme 1."
-            }
-          ]
-        },
-        "period": {
-          "title": "Période",
-          "items": [
-            {
-              "label": "Date de publication",
-              "text": "Garde les avis publiés aujourd’hui, ces 7 derniers jours, ces 30 derniers jours ou ces 12 derniers mois."
-            },
-            {
-              "label": "Les scores ne changent pas",
-              "text": "Les scores de la Réputation couvrent toujours tous les avis : la période ne réduit que la liste."
             }
           ]
         },
@@ -122,25 +101,13 @@
               "text": "La liste montre les avis qui parlent d’au moins un des critères choisis."
             }
           ]
-        },
-        "collaborator": {
-          "title": "Collaborateur",
-          "items": [
-            {
-              "label": "La personne de l’agence",
-              "text": "Celle qui a envoyé le questionnaire au client. Seuls les avis Opinion System ont un collaborateur, pas les avis importés."
-            },
-            {
-              "label": "Lien avec le score",
-              "text": "Choisir une personne affiche aussi son score dans la Réputation."
-            }
-          ]
         }
-      }
+      },
+      "backToFilters": "Retour aux filtres"
     },
     "reviews": {
       "title": "Avis clients",
-      "showMore": "Afficher plus",
+      "showMore": "Afficher plus d’avis",
       "showLess": "Afficher moins",
       "sortShort": {
         "recent": "Plus récents",
@@ -148,7 +115,12 @@
         "best": "Meilleures notes",
         "worst": "Notes les plus basses",
         "useful": "Plus utiles",
-        "verified": "Contrôlés d’abord"
+        "verified": "Avis Contrôlés d’abord"
+      },
+      "sortGroups": {
+        "date": "Date",
+        "note": "Note",
+        "other": "Autres"
       },
       "via": "via {source}",
       "sourceLine": {
