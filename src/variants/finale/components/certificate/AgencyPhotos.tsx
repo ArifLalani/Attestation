@@ -70,28 +70,28 @@ function PhotoGallery({ agency, index, onIndex, onClose }: { agency: Agency; ind
   );
 }
 
-/** Figma "Images" (1463:21163): a sideways strip of the agency's Google photos; a click opens the gallery. */
+/** The agency's photos as a row of 4 (the 4th shows how many more), as in option B; a click opens the gallery. */
 export function AgencyPhotos({ agency }: { agency: Agency }) {
   const t = useTranslations("Agencies.gallery");
   const [open, setOpen] = useState<number | null>(null);
+  const more = agency.photos.length - 4;
 
   return (
     <>
-      <Box
-        component="ul"
-        aria-label={t("label", { name: agency.name, city: agency.city })}
-        sx={{ listStyle: "none", m: 0, p: 0, display: "flex", gap: 1, overflowX: "auto", scrollSnapType: "x mandatory", scrollbarWidth: "none", "&::-webkit-scrollbar": { display: "none" } }}
-      >
-        {agency.photos.map((photo, index) => (
-          <Box component="li" key={photo} sx={{ flexShrink: 0, scrollSnapAlign: "start" }}>
+      <Box component="ul" aria-label={t("label", { name: agency.name, city: agency.city })} sx={{ listStyle: "none", m: 0, p: 0, display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 0.75 }}>
+        {agency.photos.slice(0, 4).map((photo, index) => (
+          <li key={photo}>
             <ButtonBase
               onClick={() => setOpen(index)}
               aria-label={t("open", { index: index + 1, total: agency.photos.length })}
-              sx={{ position: "relative", display: "block", width: 130, height: 108, borderRadius: "8px", overflow: "hidden", "&:hover img": { transform: "scale(1.04)" } }}
+              sx={{ position: "relative", display: "block", width: "100%", aspectRatio: "1", borderRadius: "8px", overflow: "hidden", "&:hover img": { transform: "scale(1.06)" }, "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 } }}
             >
-              <Image src={photo} alt="" fill sizes="130px" style={{ objectFit: "cover", transition: "transform 200ms ease" }} />
+              <Image src={photo} alt="" fill sizes="120px" style={{ objectFit: "cover", transition: "transform 300ms ease" }} />
+              {index === 3 && more > 0 && (
+                <Box aria-hidden sx={{ position: "absolute", inset: 0, bgcolor: "rgba(4, 27, 68, 0.55)", color: tokens.blanc, display: "grid", placeItems: "center", fontSize: 16, fontWeight: 600 }}>+{more}</Box>
+              )}
             </ButtonBase>
-          </Box>
+          </li>
         ))}
       </Box>
       <PhotoGallery agency={agency} index={open} onIndex={setOpen} onClose={() => setOpen(null)} />

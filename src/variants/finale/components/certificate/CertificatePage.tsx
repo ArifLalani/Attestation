@@ -19,7 +19,8 @@ import { CertificateActions } from "./CertificateActions";
 const sectionSx = {
   display: "flex",
   flexDirection: "column",
-  gap: 2,
+  // The same space between every section: 16 px on phones, 24 px on desktop (as between the groups).
+  gap: { xs: 2, md: 3 },
   scrollMarginTop: `${tokens.headerHeight + 16}px`,
 } as const;
 

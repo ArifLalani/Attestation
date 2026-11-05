@@ -1,7 +1,8 @@
 {
   "VarianteFinale": {
     "agencies": {
-      "seeCertificate": "Voir son certificat"
+      "seeCertificate": "Voir son certificat",
+      "selected": "Affichée sur la carte"
     },
     "team": {
       "agency": "Agence",

@@ -33,19 +33,22 @@ export function QualitySection() {
       <CardTitle id="quality-title" eyebrow={t("eyebrow")} heading={t("heading", { name: agency.name })} />
       <Typography sx={{ fontSize: 14, color: tokens.gris, lineHeight: "normal", gridColumn: 1 }}>{t("description")}</Typography>
       <Box component="hr" sx={{ gridColumn: 1, m: 0, border: 0, borderTop: `1px solid ${tokens.grisMoyen1}` }} />
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, alignItems: "center", gridColumn: 1 }}>
-        <Image src="/figma/quality-badge.png" alt={t("badgeAlt")} width={134} height={134} unoptimized />
-        <Box sx={{ flex: "1 1 139px", minWidth: 0, display: "flex", flexDirection: "column", gap: 1 }}>
-          <Image src="/figma/os-logo.png" alt="Opinion System" width={139} height={56} unoptimized />
-          <Typography sx={{ fontSize: 14, fontWeight: 600 }}>{t("verified")}</Typography>
-          {/* "Niveau de Recommandation": a label over a blue bar, with the percentage at the end of the bar. */}
-          {recommendation !== null && <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 0.5 }}>
-            <Typography sx={{ fontSize: 14, fontWeight: 600 }}>{t("recommendation")}</Typography>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Box aria-hidden sx={{ flex: 1, height: 8, borderRadius: "4px", bgcolor: tokens.grisMoyen1, overflow: "hidden" }}>
-                <Box sx={{ width: `${recommendation}%`, height: "100%", borderRadius: "4px", bgcolor: tokens.bleu400 }} />
-              </Box>
-              <Typography component="span" sx={{ fontSize: 16, fontWeight: 700, minWidth: 40, textAlign: "right" }}>{recommendation}%</Typography>
+      {/* The Opinion System box: an outlined card with the badge, the logo, "Avis contrôlés" in green,
+          then "Niveau de Recommandation" with its percentage on the same line and the bar underneath. */}
+      <Box sx={{ gridColumn: 1, display: "grid", gridTemplateColumns: "auto minmax(0, 1fr)", gap: { xs: 1.5, sm: 2 }, alignItems: "center", p: { xs: 1.5, sm: 2 }, borderRadius: "16px", border: "1px solid #d6e4f3", background: "linear-gradient(135deg, #ffffff 45%, rgba(67, 182, 163, 0.1) 100%)" }}>
+        <Box sx={{ width: { xs: 96, sm: 112 }, height: { xs: 96, sm: 112 }, position: "relative", flexShrink: 0 }}>
+          <Image src="/figma/quality-badge.png" alt={t("badgeAlt")} fill sizes="112px" unoptimized style={{ objectFit: "contain" }} />
+        </Box>
+        <Box sx={{ minWidth: 0, display: "flex", flexDirection: "column", gap: 0.75 }}>
+          <Image src="/figma/os-logo.png" alt="Opinion System" width={119} height={48} unoptimized />
+          <Typography sx={{ fontSize: 13, fontWeight: 600, color: tokens.vertOs, lineHeight: 1.35 }}>{t("verified")}</Typography>
+          {recommendation !== null && <Box sx={{ display: "flex", flexDirection: "column", gap: 0.75, mt: 1 }}>
+            <Box sx={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 1 }}>
+              <Typography sx={{ fontSize: 14, fontWeight: 600, color: tokens.bleuFonce }}>{t("recommendation")}</Typography>
+              <Typography component="span" sx={{ fontSize: 22, fontWeight: 700, lineHeight: 1, color: tokens.bleuFonce, whiteSpace: "nowrap" }}>{recommendation}{"\u202f"}%</Typography>
+            </Box>
+            <Box aria-hidden sx={{ height: 10, borderRadius: "5px", bgcolor: tokens.blanc, border: `1px solid ${tokens.grisMoyen1}`, overflow: "hidden" }}>
+              <Box sx={{ width: `${recommendation}%`, height: "100%", borderRadius: "5px", background: `linear-gradient(90deg, ${tokens.bleu400}, ${tokens.vertOs})` }} />
             </Box>
           </Box>}
         </Box>

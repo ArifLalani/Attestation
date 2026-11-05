@@ -4,7 +4,6 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import ButtonBase from "@mui/material/ButtonBase";
 import Typography from "@mui/material/Typography";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import Map, { Marker, NavigationControl, type MapRef } from "react-map-gl/maplibre";
 import { setWorkerUrl } from "maplibre-gl";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -19,9 +18,6 @@ import "maplibre-gl/dist/maplibre-gl.css";
 // MapLibre 6 ships a separate ES-module worker; Next emits this URL as a hashed asset.
 setWorkerUrl(new URL("maplibre-gl/dist/maplibre-gl-worker.mjs", import.meta.url).toString());
 
-/** Desktop: the agency card covers this much of the map's left side (16 px margin + its width). */
-export const AGENCY_CARD_SPACE = 16 + 380;
-
 /**
  * Agencies map from option C, in H's colours: a light map, and a pill per agency with its letter and score;
  * the selected one in navy, a little larger.
@@ -30,9 +26,6 @@ export default function AgencyMap({ agencies, selectedId, onSelect, scores }: { 
   const t = useTranslations("Agencies");
   const map = useRef<MapRef>(null);
   const reduced = usePrefersReducedMotion();
-  // Desktop: the card floats over the left of the map, so the map centres in the part that stays visible.
-  const desktop = useMediaQuery("(min-width:900px)", { noSsr: true });
-  const padLeft = desktop ? AGENCY_CARD_SPACE : 0;
   const [failed, setFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const selected = agencies.find((agency) => agency.id === selectedId)!;
@@ -44,8 +37,8 @@ export default function AgencyMap({ agencies, selectedId, onSelect, scores }: { 
   ], [agencies]);
 
   useEffect(() => {
-    map.current?.flyTo({ center: [selected.geo.lng, selected.geo.lat], duration: reduced ? 0 : 700, padding: { top: 0, right: 0, bottom: 0, left: padLeft } });
-  }, [selected, reduced, padLeft]);
+    map.current?.flyTo({ center: [selected.geo.lng, selected.geo.lat], duration: reduced ? 0 : 700 });
+  }, [selected, reduced]);
 
   if (failed) return (
     <Box role="status" sx={{ height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 1, p: 2, textAlign: "center", bgcolor: tokens.grisClair2 }}>
@@ -57,7 +50,7 @@ export default function AgencyMap({ agencies, selectedId, onSelect, scores }: { 
   return (
     <Map
       key={attempt} ref={map}
-      initialViewState={{ bounds, fitBoundsOptions: { padding: { top: 48, right: 48, bottom: 48, left: padLeft + 48 }, maxZoom: 12 } }}
+      initialViewState={{ bounds, fitBoundsOptions: { padding: 48, maxZoom: 12 } }}
       mapStyle="https://tiles.openfreemap.org/styles/positron"
       attributionControl={{ compact: true }}
       style={{ width: "100%", height: "100%" }}
