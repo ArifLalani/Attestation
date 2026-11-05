@@ -1,14 +1,7 @@
-/** The design options compared on branch design-variations. Same UX and data, different interface. */
+/** The two versions on the Finale link: H as built, and H with the current prototype's hero. Same page under the hero. */
 export const variants = [
-  { id: "original", label: "Actuel", name: "Prototype actuel", href: (agencyId: string) => `/fr-fr/certificate/${agencyId}` },
-  { id: "a", label: "A", name: "A · Confiance", href: (agencyId: string) => `/fr-fr/variantes/a/${agencyId}` },
-  { id: "b", label: "B", name: "B · Chaleureux", href: (agencyId: string) => `/fr-fr/variantes/b/${agencyId}` },
-  { id: "c", label: "C", name: "C · Pratique", href: (agencyId: string) => `/fr-fr/variantes/c/${agencyId}` },
-  { id: "d", label: "D", name: "D · La Boîte Immo", href: (agencyId: string) => `/fr-fr/variantes/d/${agencyId}` },
-  { id: "e", label: "E", name: "E · Essentiel", href: (agencyId: string) => `/fr-fr/variantes/e/${agencyId}` },
-  { id: "f", label: "F", name: "F · Classique", href: (agencyId: string) => `/fr-fr/variantes/f/${agencyId}` },
-  { id: "f2", label: "G", name: "G · Classique, mise en page B", href: (agencyId: string) => `/fr-fr/variantes/f2/${agencyId}` },
-  { id: "finale", label: "H", name: "H · Version finale", href: (agencyId: string) => `/fr-fr/variantes/finale/${agencyId}` },
+  { id: "finale", label: "Version 1", name: "Version finale", href: (agencyId: string) => `/fr-fr/variantes/finale/${agencyId}` },
+  { id: "finale-2", label: "Version 2", name: "Version finale, avec le hero du prototype actuel", href: (agencyId: string) => `/fr-fr/variantes/finale-2/${agencyId}` },
 ] as const;
 
 export type VariantId = (typeof variants)[number]["id"];

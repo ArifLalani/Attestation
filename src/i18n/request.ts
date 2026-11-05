@@ -4,8 +4,8 @@ import { getRequestConfig } from "next-intl/server";
 export const locale = "fr";
 export const timeZone = "Europe/Paris";
 
-// Design options (branch design-variations): each one keeps its own text in messages/variante-*.json.
-const variantFiles = ["variante-a", "variante-b", "variante-c", "variante-f", "variante-finale"] as const;
+// Version finale: its own text in messages/variante-finale.json, over the shared fr.json.
+const variantFiles = ["variante-finale"] as const;
 
 export default getRequestConfig(async () => {
   const base = (await import(`../../messages/${locale}.json`)).default;

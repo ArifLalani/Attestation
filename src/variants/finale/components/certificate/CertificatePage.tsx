@@ -7,6 +7,7 @@ import { useScrollSpy } from "@/lib/hooks";
 import { tokens } from "@/theme/theme";
 import { AppHeader, contentColumnSx } from "./AppHeader";
 import { BusinessCard } from "./BusinessCard";
+import { BusinessCard as CurrentBusinessCard } from "@/components/certificate/BusinessCard";
 import { CertificateProvider, sectionIds, type SectionId } from "@/components/certificate/CertificateContext";
 import { ReputationCard } from "./ReputationCard";
 import { TeamSection } from "./TeamSection";
@@ -24,7 +25,8 @@ const sectionSx = {
   scrollMarginTop: `${tokens.headerHeight + 16}px`,
 } as const;
 
-export function CertificatePage({ agencyId }: { agencyId: string }) {
+/** `hero="actuel"` (Version 2): the current prototype's hero (photo banner, name, address, hours, Contacter / Site web / Itinéraire) instead of H's. */
+export function CertificatePage({ agencyId, hero = "finale" }: { agencyId: string; hero?: "finale" | "actuel" }) {
   const agency = getAgency(agencyId)!;
   const { active, goTo } = useScrollSpy(sectionIds, tokens.headerHeight + 16);
   const goToSection = goTo as (id: SectionId) => void;
@@ -35,7 +37,7 @@ export function CertificatePage({ agencyId }: { agencyId: string }) {
       <Box component="main" sx={{ ...contentColumnSx, px: 1.5, pt: { xs: 2, md: 3 }, pb: 2 }}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: { xs: 2, md: 3 }, minWidth: 0 }}>
           <Box id="synthese" sx={sectionSx}>
-            <BusinessCard />
+            {hero === "actuel" ? <CurrentBusinessCard /> : <BusinessCard />}
             <ReputationCard />
           </Box>
           <Box id="avis" sx={sectionSx}>

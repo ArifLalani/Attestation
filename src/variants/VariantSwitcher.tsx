@@ -6,7 +6,7 @@ import { useState } from "react";
 import { variants, type VariantId } from "./registry";
 
 /**
- * Demo-only switch between the current prototype and the design options, kept on the same agency.
+ * Demo-only switch between the two versions of the Finale, kept on the same agency.
  * Neutral styling on purpose, so it doesn't look like part of any option. Can be folded to a dot.
  */
 export function VariantSwitcher({ current, agencyId }: { current: VariantId; agencyId: string }) {
@@ -14,7 +14,7 @@ export function VariantSwitcher({ current, agencyId }: { current: VariantId; age
   return (
     <Box
       component="nav"
-      aria-label="Options de design"
+      aria-label="Versions"
       sx={{
         position: "fixed",
         left: 12,
@@ -36,7 +36,7 @@ export function VariantSwitcher({ current, agencyId }: { current: VariantId; age
       <ButtonBase
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
-        aria-label={open ? "Replier le sélecteur d'options" : "Afficher le sélecteur d'options"}
+        aria-label={open ? "Replier le sélecteur de version" : "Afficher le sélecteur de version"}
         sx={{ width: 28, height: 28, borderRadius: 999, fontSize: 14, color: "inherit", "&:hover": { bgcolor: "rgba(255,255,255,0.12)" } }}
       >
         {open ? "‹" : "◐"}
