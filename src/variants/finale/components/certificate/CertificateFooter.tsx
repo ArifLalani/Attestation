@@ -10,6 +10,7 @@ import { opinionSystemLinks as links } from "@/data/opinionSystem";
 import { tokens } from "@/theme/theme";
 import { contentColumnSx } from "./AppHeader";
 import { useCertificate } from "@/components/certificate/CertificateContext";
+import { AskYourAi } from "./AskYourAi";
 
 const groups = [
   { key: "opinionSystem", items: [{ key: "history", href: links.about }, { key: "certifications", href: links.certifications }, { key: "team", href: links.about }] },
@@ -24,14 +25,14 @@ const footerColumnSx = { ...contentColumnSx, px: { xs: 3, md: 1.5 } } as const;
 
 /**
  * The Opinion System footer in option G's layout: a full-width band in white under a divider (the page is light grey-blue),
- * the logo and contacts beside the 3 link groups, then a second divider and the legal line.
+ * the logo and contacts beside the 3 link groups, the "Demander à votre IA" row, then a second divider and the legal line.
  */
 export function CertificateFooter() {
   const t = useTranslations("Footer");
   const { setPanel } = useCertificate();
   return (
     <Box component="footer" sx={{ bgcolor: tokens.blanc, borderTop: `1px solid ${tokens.grisMoyen1}`, mt: { xs: 4, md: 6 }, pb: { xs: "calc(96px + env(safe-area-inset-bottom))", md: 8 } }}>
-      <Box sx={{ ...footerColumnSx, py: { xs: 4, md: 6 }, display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1.2fr) minmax(0, 2fr)" }, gap: { xs: 4, md: 6 } }}>
+      <Box sx={{ ...footerColumnSx, pt: { xs: 4, md: 6 }, pb: { xs: 3, md: 4 }, display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1.2fr) minmax(0, 2fr)" }, gap: { xs: 4, md: 6 } }}>
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 1.5 }}>
           <Link href={links.home} target="_blank" rel="noopener noreferrer" aria-label={t("home")} sx={{ display: "inline-flex" }}><Image src="/figma/os-logo.png" alt="Opinion System" width={124} height={50} unoptimized /></Link>
           <Typography sx={{ fontSize: 14, color: tokens.gris, lineHeight: 1.6, maxWidth: 320 }}>{t("description")}</Typography>
@@ -51,6 +52,10 @@ export function CertificateFooter() {
             </Box>
           </Box>)}
         </Box>
+      </Box>
+      {/* Just above the legal line: open your own AI with a question about this page. */}
+      <Box sx={{ ...footerColumnSx, pb: { xs: 3, md: 4 } }}>
+        <AskYourAi />
       </Box>
       <Box sx={{ borderTop: `1px solid ${tokens.grisMoyen1}` }}>
         <Box component="nav" aria-label={t("legalLabel")} sx={{ ...footerColumnSx, py: 2.5, display: "flex", flexWrap: "wrap", gap: { xs: 1.5, sm: 3 }, justifyContent: { xs: "center", md: "flex-start" } }}>

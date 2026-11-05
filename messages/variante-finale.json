@@ -1,5 +1,25 @@
 {
   "VarianteFinale": {
+    "askAi": {
+      "label": "Demander à votre IA à propos de {name} · {city}",
+      "listLabel": "Ouvrir votre IA",
+      "open": "Demander à {model} (nouvel onglet)",
+      "title": "Que demander à {model} ?",
+      "close": "Fermer",
+      "questions": {
+        "reviews": "Résumer les avis clients",
+        "team": "Présenter l’équipe",
+        "agencies": "Horaires et autres agences"
+      },
+      "prompts": {
+        "reviews": "Résume les avis clients de {name} à {city} à partir de cette page : {url}",
+        "team": "Présente-moi l’équipe de {name} à {city} et ce que les clients en disent, d’après cette page : {url}",
+        "agencies": "Quels sont les horaires de {name} à {city} et ses autres agences ? Réponds d’après cette page : {url}"
+      },
+      "note": "{model} s’ouvre dans un nouvel onglet avec la question prête à envoyer.",
+      "noteCopy": "Gemini s’ouvre dans un nouvel onglet. La question est copiée : collez-la et envoyez-la.",
+      "copied": "Question copiée : collez-la dans Gemini."
+    },
     "agencies": {
       "seeCertificate": "Voir son certificat",
       "selected": "Affichée sur la carte"
