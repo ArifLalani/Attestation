@@ -15,7 +15,6 @@ import ChevronRightRounded from "@mui/icons-material/ChevronRightRounded";
 import CloseRounded from "@mui/icons-material/CloseRounded";
 import DirectionsOutlined from "@mui/icons-material/DirectionsOutlined";
 import ExpandLessRounded from "@mui/icons-material/ExpandLessRounded";
-import IosShareRounded from "@mui/icons-material/IosShareRounded";
 import LanguageOutlined from "@mui/icons-material/LanguageOutlined";
 import RateReviewOutlined from "@mui/icons-material/RateReviewOutlined";
 import StarRounded from "@mui/icons-material/StarRounded";
@@ -32,6 +31,7 @@ import { isPublic, reviewsForScore, summarize, type ScoreView } from "@/lib/scor
 import { tokens } from "@/theme/theme";
 import { useCertificate } from "@/components/certificate/CertificateContext";
 import { CtaButton } from "@/variants/finale/components/ui/CtaButton";
+import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
 import { openHoursEvent } from "./AgenciesSection";
 import { OpenStatus } from "./OpenStatus";
 
@@ -238,7 +238,8 @@ function CardContent({ onDone, titleId }: { onDone: () => void; titleId: string 
 
         <Box sx={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 1 }}>
           <ActionBox icon={<RateReviewOutlined />} label={ta("leaveReview")} onClick={() => { onDone(); setPanel("reviewRequest"); }} />
-          <ActionBox icon={<IosShareRounded />} label={t("share")} onClick={share} />
+          {/* The same share icon as the hero (Figma). */}
+          <ActionBox icon={<FigmaIcon name="share" />} label={t("share")} onClick={share} />
           <ActionBox
             icon={<DirectionsOutlined />}
             label={tb("directions")}

@@ -15,7 +15,7 @@ import { CardTitle } from "./ReputationCard";
 
 const certifications = [
   { key: "nf", image: "/figma/nf-service.png", width: 48, height: 56 },
-  { key: "iso20252", image: "/figma/iso-20252.svg", width: 48.4481, height: 54 },
+  { key: "iso20252", image: "/figma/iso-20252.svg", width: 48, height: 54 },
   { key: "iso9001", image: "/figma/iso-9001.png", width: 48, height: 48 },
 ] as const;
 
