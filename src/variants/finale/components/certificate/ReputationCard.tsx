@@ -170,7 +170,7 @@ export function ReputationCard() {
     : "linear-gradient(120deg, rgba(44, 149, 255, 0.01) 0%, rgba(26, 89, 153, 0.10) 100%)";
 
   return (
-    <Box component="section" aria-labelledby="reputation-heading" sx={{ ...cardSx, px: { xs: 1.5, md: 2 }, gap: { xs: 2, md: 3 } }}>
+    <Box component="section" id="note" aria-labelledby="reputation-heading" sx={{ ...cardSx, scrollMarginTop: `${tokens.headerHeight + 16}px`, px: { xs: 1.5, md: 2 }, gap: { xs: 2, md: 3 } }}>
       <Typography id="reputation-heading" component="h2" sx={{ fontSize: 14, fontWeight: 700, color: tokens.vertOs, letterSpacing: "0.8px", textTransform: "uppercase", lineHeight: "normal" }}>
         {t("eyebrow")}
       </Typography>

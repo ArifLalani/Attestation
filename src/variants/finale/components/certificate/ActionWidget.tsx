@@ -114,11 +114,11 @@ function PillContent({ open }: { open: boolean }) {
   );
 }
 
-/** One of the two scores in the card; goes to the reviews with that view. */
+/** One of the two scores in the card; shows that view in the score card (Réputation), not the reviews list. */
 function ScoreTile({ view, onDone }: { view: ScoreView; onDone: () => void }) {
   const t = useTranslations("VarianteFinale.widget");
   const tr = useTranslations("Reputation");
-  const { agency, reviews, scoreCollaboratorId, setScoreView, goToSection } = useCertificate();
+  const { agency, reviews, scoreCollaboratorId, setScoreView } = useCertificate();
   const summary = useMemo(() => summarize(reviewsForScore(reviews, view, scoreCollaboratorId)), [reviews, view, scoreCollaboratorId]);
   const visible = summary.average !== null && isPublic(summary.count, agency.publicThreshold);
   const controle = view === "controle";
@@ -126,7 +126,12 @@ function ScoreTile({ view, onDone }: { view: ScoreView; onDone: () => void }) {
   return (
     <ButtonBase
       disabled={!visible}
-      onClick={() => { onDone(); setScoreView(view); goToSection("avis"); }}
+      onClick={() => {
+        onDone();
+        setScoreView(view);
+        const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        document.getElementById("note")?.scrollIntoView({ behavior: reduced ? "instant" : "smooth" });
+      }}
       aria-label={visible ? t("scoreAria", { view: tr(`views.${view}`), score: formatScore(summary.average!), count }) : undefined}
       sx={{ flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start", gap: 0.25, p: 1.5, borderRadius: "12px", bgcolor: controle ? "rgba(67, 182, 163, 0.12)" : tokens.bleu10, textAlign: "left", fontFamily: "inherit", "&:hover": { filter: "brightness(0.97)" }, ...focusSx }}
     >

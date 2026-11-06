@@ -22,8 +22,12 @@ export function BusinessPitch() {
         <Typography sx={{ fontSize: 14, lineHeight: 1.6, color: "rgba(255, 255, 255, 0.82)" }}>{t("description")}</Typography>
         <CtaButton href={opinionSystemLinks.signup} target="_blank" rel="noopener noreferrer" sx={{ mt: 1.5, width: { xs: "100%", sm: "auto" }, alignSelf: "flex-start", px: 2.5 }}>{t("signup")}</CtaButton>
       </Box>
-      <Box sx={{ position: "relative", minHeight: { xs: 200, sm: 260, md: 300 }, bgcolor: "#eaf3fd" }}>
-        <Image src="/figma/business-illustration.png" alt="" fill sizes="(min-width: 900px) 600px, 100vw" style={{ objectFit: "cover" }} />
+      {/* Phones and tablets: the whole illustration, a little smaller, on white (its own edges are white), nothing cut off.
+          Desktop: it fills the right half. */}
+      <Box sx={{ display: "flex", alignItems: "center", px: { xs: 3, sm: 6, md: 0 }, py: { xs: 2, sm: 3, md: 0 }, bgcolor: { xs: tokens.blanc, md: "#eaf3fd" } }}>
+        <Box sx={{ position: "relative", width: "100%", aspectRatio: { xs: "1376 / 768", md: "auto" }, height: { md: "100%" }, minHeight: { md: 300 }, "& img": { objectFit: { xs: "contain", md: "cover" } } }}>
+          <Image src="/figma/business-illustration.png" alt="" fill sizes="(min-width: 900px) 600px, 100vw" />
+        </Box>
       </Box>
     </Box>
   );
