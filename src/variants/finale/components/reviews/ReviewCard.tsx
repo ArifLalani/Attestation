@@ -151,7 +151,10 @@ function FactRow({ label, value, children, onOpen }: { label: string; value: str
   );
 }
 
-/** Opinion System surveys: levels, scores and facts in two columns on desktop. Imports: source, activity and number only. */
+/**
+ * Opinion System surveys: levels, scores and facts in two columns when the card is wide (the reviews list on desktop),
+ * one column when it is narrow (phones, the collaborator's side sheet). Imports: source, activity and number only.
+ */
 function ReviewDetails({ review, onHelp }: { review: Review; onHelp: (group: HelpGroup, anchor: HTMLElement, focus?: string) => void }) {
   const t = useTranslations("Reviews.detail");
   const tv = useTranslations("VarianteFinale.reviews");
@@ -168,13 +171,16 @@ function ReviewDetails({ review, onHelp }: { review: Review; onHelp: (group: Hel
     <Box
       sx={{
         mt: 1.5,
-        p: { xs: 1.5, sm: 2 },
+        p: 1.5,
         borderRadius: "20px",
         bgcolor: tokens.grisClair1,
         border: `1px solid ${tokens.grisMoyen1}`,
         display: "grid",
-        gridTemplateColumns: { xs: "minmax(0, 1fr)", md: survey ? "minmax(0, 1fr) minmax(0, 1fr)" : "minmax(0, 1fr)" },
-        gap: { xs: 2.5, md: 3 },
+        gridTemplateColumns: "minmax(0, 1fr)",
+        gap: 2.5,
+        // Sized by the card, not the screen.
+        "@container review (min-width: 480px)": { p: 2 },
+        "@container review (min-width: 640px)": { gridTemplateColumns: survey ? "minmax(0, 1fr) minmax(0, 1fr)" : "minmax(0, 1fr)", gap: 3 },
       }}
     >
       {survey && (
@@ -404,7 +410,7 @@ export function ReviewCard({ review, onReport, framed = true, outlined = false }
   };
 
   return (
-    <Box component="article" ref={cardRef} sx={{ ...(!framed ? plainSx : outlined ? outlinedSx : framedSx), display: "flex", flexDirection: "column", gap: 1.75 }}>
+    <Box component="article" ref={cardRef} sx={{ ...(!framed ? plainSx : outlined ? outlinedSx : framedSx), display: "flex", flexDirection: "column", gap: 1.75, containerType: "inline-size", containerName: "review" }}>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
         <ReviewerAvatar review={review} />
         <Box sx={{ flex: 1, minWidth: 0 }}>
