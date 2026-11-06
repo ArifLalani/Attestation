@@ -114,7 +114,7 @@ export function BusinessCard() {
       {/* The team photo runs behind the whole hero on desktop; on phones and tablets it fills the top and fades into navy under the sign. */}
       <Box sx={{ position: "absolute", zIndex: -1, inset: { xs: "0 0 auto 0", md: 0 }, height: { xs: 330, sm: 470, md: "auto" } }}>
         <Image src={agency.coverPhoto} alt={t("coverAlt", { name: agency.name })} fill priority sizes="(min-width: 1200px) 1100px, 100vw" style={{ objectFit: "cover", objectPosition: "70% center" }} />
-        <Box aria-hidden sx={{ position: "absolute", inset: 0, background: { xs: "linear-gradient(rgba(4,27,68,0) 25%, rgba(4,27,68,0.55) 60%, #041b44 100%)", md: "linear-gradient(rgba(4,27,68,0) 40%, rgba(4,27,68,0.6) 100%)" } }} />
+        <Box aria-hidden sx={{ position: "absolute", inset: 0, background: { xs: "linear-gradient(rgba(4,27,68,0.25) 0%, rgba(4,27,68,0.6) 30%, rgba(4,27,68,0.78) 55%, #041b44 100%)", md: "linear-gradient(rgba(4,27,68,0) 30%, rgba(4,27,68,0.45) 65%, rgba(4,27,68,0.8) 100%)" } }} />
       </Box>
 
       <Box

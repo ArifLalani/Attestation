@@ -74,19 +74,19 @@ function FilterHelp({ help, onClose }: { help: { key: HelpKey; anchor: HTMLEleme
 
 /**
  * Filters in the Actuel look (grey chips, Réinitialiser, a yellow button). Desktop: a side sheet from the right, over the page
- * (Trier par has its own). Phones: a bottom sheet. Every choice shows at once in the list as a preview;
- * "Afficher N avis" keeps it, the X undoes it.
+ * (Trier par has its own). Phones: a bottom sheet. The choices are a draft: the page does not change until
+ * "Afficher N avis" (the count on it is live); the X, Échap or a tap outside drop them.
  */
 export function FiltersSheet() {
   const t = useTranslations("Filters");
   const tv = useTranslations("VarianteFinale.filters");
   const tp = useTranslations("Products");
   const tc = useTranslations("Criteria");
-  const { reviews, filters, setFilters, panel, setPanel, team, scoreView } = useCertificate();
+  const { reviews, filters, setFilters, panel, setPanel, team } = useCertificate();
   const desktop = useMediaQuery("(min-width:900px)", { noSsr: true });
   const titleId = useId();
   const open = panel === "filters";
-  const [saved, setSaved] = useState(filters);
+  const [draft, setDraft] = useState(filters);
   const [wasOpen, setWasOpen] = useState(open);
   const [pickerOpen, setPickerOpen] = useState(false);
   // Desktop: the team list is a second page of the side sheet, sliding in from the right ("← Collaborateur").
@@ -96,20 +96,23 @@ export function FiltersSheet() {
   const shownPage = useRef(page);
   const [help, setHelp] = useState<{ key: HelpKey; anchor: HTMLElement } | null>(null);
 
-  // Remember the choices from before the sheet opened, so the X can bring them back.
+  // Each opening starts the draft from the filters in use.
   if (open !== wasOpen) {
     setWasOpen(open);
     if (open) {
-      setSaved(filters);
+      setDraft(filters);
       setPage("filters");
     }
   }
 
-  const keep = () => setPanel(null);
-  const cancel = () => {
-    setFilters(saved);
+  // Afficher applies the draft; closing any other way leaves the page as it was.
+  const keep = () => {
+    setFilters(draft);
     setPanel(null);
   };
+  const cancel = () => setPanel(null);
+  // The team scores in the picker follow the type chosen in the draft.
+  const draftView = draft.type === "controle" ? ("controle" as const) : ("global" as const);
 
   // Focus follows the page: the back arrow on the team page, the Collaborateur field when coming back.
   useEffect(() => {
@@ -119,20 +122,20 @@ export function FiltersSheet() {
     (page === "team" ? backRef.current : fieldRef.current)?.focus({ preventScroll: true });
   }, [page]);
 
-  const results = applyFilters(reviews, filters).length;
-  const update = (patch: Partial<ReviewFilters>) => setFilters({ ...filters, ...patch });
+  const results = applyFilters(reviews, draft).length;
+  const update = (patch: Partial<ReviewFilters>) => setDraft({ ...draft, ...patch });
   const toggle = <K extends keyof ReviewFilters>(key: K, value: ReviewFilters[K]) =>
-    update({ [key]: JSON.stringify(filters[key]) === JSON.stringify(value) ? undefined : value } as Partial<ReviewFilters>);
+    update({ [key]: JSON.stringify(draft[key]) === JSON.stringify(value) ? undefined : value } as Partial<ReviewFilters>);
   const toggleIn = <T extends Product | Criterion>(key: "products" | "criteria", value: T) => {
-    const list = filters[key] as T[];
+    const list = draft[key] as T[];
     update({ [key]: list.includes(value) ? list.filter((item) => item !== value) : [...list, value] } as Partial<ReviewFilters>);
   };
-  const noteSelected = (stars: StarBucket) => filters.note?.stars === stars && !filters.note.exact;
-  const person = team.find((member) => member.id === filters.collaboratorId);
+  const noteSelected = (stars: StarBucket) => draft.note?.stars === stars && !draft.note.exact;
+  const person = team.find((member) => member.id === draft.collaboratorId);
   const openHelp = (key: HelpKey) => (anchor: HTMLElement) => setHelp({ key, anchor });
   const chooser = useCollaboratorChooser({
-    selectedId: filters.collaboratorId,
-    view: scoreView,
+    selectedId: draft.collaboratorId,
+    view: draftView,
     onChoose: (id) => {
       update({ collaboratorId: id });
       setPage("filters");
@@ -152,7 +155,7 @@ export function FiltersSheet() {
           {t("title")}
         </Typography>
         <ButtonBase
-          onClick={() => setFilters({ ...emptyFilters, query: filters.query })}
+          onClick={() => setDraft({ ...emptyFilters, query: draft.query })}
           sx={{ px: 1.5, minHeight: 36, borderRadius: "8px", fontSize: 16, fontWeight: 600, color: tokens.bleuFonce, "&:hover": { bgcolor: tokens.grisClair1 }, ...focusSx }}
         >
           <Box sx={{ p: 0.5, display: "flex" }}>
@@ -198,12 +201,12 @@ export function FiltersSheet() {
             </ButtonBase>
           </Group>
           <Group title={t("type")} onHelp={openHelp("type")}>
-            <ChoiceChip selected={filters.type === "controle"} onClick={() => toggle("type", "controle")}>{tv("typeControle")}</ChoiceChip>
-            <ChoiceChip selected={filters.type === "non_controle"} onClick={() => toggle("type", "non_controle")}>{tv("typeNonControle")}</ChoiceChip>
+            <ChoiceChip selected={draft.type === "controle"} onClick={() => toggle("type", "controle")}>{tv("typeControle")}</ChoiceChip>
+            <ChoiceChip selected={draft.type === "non_controle"} onClick={() => toggle("type", "non_controle")}>{tv("typeNonControle")}</ChoiceChip>
           </Group>
           <Group title={t("source")} onHelp={openHelp("source")}>
-            <ChoiceChip selected={filters.source === "opinion_system"} onClick={() => toggle("source", "opinion_system")}>{t("sourceOs")}</ChoiceChip>
-            <ChoiceChip selected={filters.source === "imported"} onClick={() => toggle("source", "imported")}>{t("sourceImported")}</ChoiceChip>
+            <ChoiceChip selected={draft.source === "opinion_system"} onClick={() => toggle("source", "opinion_system")}>{t("sourceOs")}</ChoiceChip>
+            <ChoiceChip selected={draft.source === "imported"} onClick={() => toggle("source", "imported")}>{t("sourceImported")}</ChoiceChip>
           </Group>
           <Group title={t("note")}>
             {notes.map((stars) => (
@@ -214,17 +217,17 @@ export function FiltersSheet() {
           </Group>
           <Group title={t("period")}>
             {periods.map((period) => (
-              <ChoiceChip key={period} selected={filters.period === period} onClick={() => toggle("period", period)}>{t(`periods.${period}`)}</ChoiceChip>
+              <ChoiceChip key={period} selected={draft.period === period} onClick={() => toggle("period", period)}>{t(`periods.${period}`)}</ChoiceChip>
             ))}
           </Group>
           <Group title={t("product")} onHelp={openHelp("product")}>
             {products.map((product) => (
-              <ChoiceChip key={product} selected={filters.products.includes(product)} onClick={() => toggleIn("products", product)}>{tp(product)}</ChoiceChip>
+              <ChoiceChip key={product} selected={draft.products.includes(product)} onClick={() => toggleIn("products", product)}>{tp(product)}</ChoiceChip>
             ))}
           </Group>
           <Group title={t("criterion")} onHelp={openHelp("criterion")}>
             {criteria.map((criterion) => (
-              <ChoiceChip key={criterion} selected={filters.criteria.includes(criterion)} onClick={() => toggleIn("criteria", criterion)}>{tc(criterion)}</ChoiceChip>
+              <ChoiceChip key={criterion} selected={draft.criteria.includes(criterion)} onClick={() => toggleIn("criteria", criterion)}>{tc(criterion)}</ChoiceChip>
             ))}
           </Group>
         </Box>
@@ -256,7 +259,7 @@ export function FiltersSheet() {
   return (
     <>
       {desktop ? (
-        // Over the page with a light backdrop, so the list behind stays readable as it updates.
+        // Over the page with a light backdrop.
         <Drawer
           anchor="right"
           open={open}
@@ -294,9 +297,9 @@ export function FiltersSheet() {
       <CollaboratorPicker
         open={pickerOpen && !desktop}
         onClose={() => setPickerOpen(false)}
-        selectedId={filters.collaboratorId}
+        selectedId={draft.collaboratorId}
         onSelect={(id) => update({ collaboratorId: id })}
-        view={scoreView}
+        view={draftView}
       />
     </>
   );
