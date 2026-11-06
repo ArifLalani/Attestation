@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   // The version switcher sits bottom left, where the dev indicator would cover it.
   devIndicators: false,
+  // Phones on the same Wi-Fi (the address changes with the network).
+  allowedDevOrigins: ["192.168.*.*", "10.*.*.*", "172.*.*.*"],
   partialPrefetching: true,
   async redirects() {
     return [

@@ -19,7 +19,8 @@ export function VariantSwitcher({ current, agencyId }: { current: VariantId; age
         position: "fixed",
         left: 12,
         bottom: { xs: 96, md: 12 },
-        zIndex: 2000,
+        // Above the floating button (1050), under the sheets and panels (MUI drawers are 1200).
+        zIndex: 1150,
         display: "flex",
         alignItems: "center",
         gap: 0.5,
