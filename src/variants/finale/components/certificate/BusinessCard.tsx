@@ -184,7 +184,8 @@ export function BusinessCard() {
           </ButtonBase>
         )}
 
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5, "& > .MuiButton-root": { width: "auto", flex: { xs: "1 1 auto", sm: "0 0 auto" }, px: 3 } }}>
+        {/* Side by side on every width; on phones the text is 13 px and the padding tighter so both fit on one line. */}
+        <Box sx={{ display: "flex", gap: { xs: 1, sm: 1.5 }, "& > .MuiButton-root": { width: "auto", minWidth: 0, flex: { xs: "1 1 auto", sm: "0 0 auto" }, px: { xs: 1.25, sm: 3 }, fontSize: { xs: 13, sm: 14 }, whiteSpace: { xs: "nowrap", sm: "normal" } } }}>
           <CtaButton onClick={() => setPanel("contact")}>{th("talk")}</CtaButton>
           <CtaButton variant="secondary" icon={null} onClick={() => goToSection("avis")}>{th("read")}</CtaButton>
         </Box>

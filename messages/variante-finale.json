@@ -1,7 +1,7 @@
 {
   "VarianteFinale": {
     "askAi": {
-      "label": "Demander à votre IA à propos de {name} · {city}",
+      "label": "Demander à votre IA à propos de <agency>{name} · {city}</agency>",
       "listLabel": "Ouvrir votre IA",
       "open": "Demander à {model} (nouvel onglet)",
       "title": "Que demander à {model} ?",
@@ -18,7 +18,9 @@
       },
       "note": "{model} s’ouvre dans un nouvel onglet avec la question prête à envoyer.",
       "noteCopy": "Gemini s’ouvre dans un nouvel onglet. La question est copiée : collez-la et envoyez-la.",
-      "copied": "Question copiée : collez-la dans Gemini."
+      "copied": "Question copiée : collez-la dans Gemini.",
+      "orAsk": "Ou demandez à votre IA",
+      "back": "Retour à l’assistant"
     },
     "agencies": {
       "seeCertificate": "Voir son certificat",

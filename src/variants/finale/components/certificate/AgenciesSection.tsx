@@ -128,7 +128,8 @@ export function AgenciesSection() {
       <Typography sx={{ fontSize: 14, color: tokens.gris }}>{t("description", { name: agency.name })}</Typography>
       {/* Option B's layout: the map on the left, the agency card on the right. The two share the row's height,
           so the map grows when the week of hours opens. On phones the card sits under the map. */}
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1.35fr) minmax(0, 1fr)" }, gap: 2, alignItems: "stretch" }}>
+      {/* From 1200 px the two columns match Démarche Qualité below (two equal halves, 32 px apart), so their edges line up. */}
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1.35fr) minmax(0, 1fr)", lg: "minmax(0, 1fr) minmax(0, 1fr)" }, columnGap: { xs: 2, lg: 4 }, rowGap: 2, alignItems: "stretch" }}>
         <Box ref={mapContainer} role="region" aria-label={t("mapLabel")} sx={{ height: { xs: 300, sm: 360, md: "auto" }, minHeight: { md: 420 }, mx: { xs: -1.5, sm: 0 }, borderRadius: { xs: 0, sm: "16px" }, overflow: "hidden", bgcolor: tokens.grisClair2, border: { sm: `1px solid ${tokens.grisMoyen1}` } }}>
           {mapVisible ? <AgencyMap agencies={locations} selectedId={selected.id} onSelect={selectAgency} scores={scores} /> : <Box sx={{ height: "100%", display: "grid", placeItems: "center", fontSize: 14, color: tokens.gris }}>{t("mapLoading")}</Box>}
         </Box>

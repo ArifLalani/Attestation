@@ -14,6 +14,7 @@ import { TeamSection } from "./TeamSection";
 import { AgenciesSection } from "./AgenciesSection";
 import { QualitySection } from "./QualitySection";
 import { BusinessPitch } from "./BusinessPitch";
+import { AskYourAi } from "./AskYourAi";
 import { CertificateFooter } from "./CertificateFooter";
 import { CertificateActions } from "./CertificateActions";
 
@@ -50,6 +51,7 @@ export function CertificatePage({ agencyId, hero = "finale" }: { agencyId: strin
           <Box id="qualite" sx={sectionSx}>
             <QualitySection />
             <BusinessPitch />
+            <AskYourAi />
           </Box>
         </Box>
       </Box>

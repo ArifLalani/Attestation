@@ -10,22 +10,24 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { keyframes } from "@mui/material/styles";
+import ArrowBack from "@mui/icons-material/ArrowBack";
 import ArrowUpward from "@mui/icons-material/ArrowUpward";
 import AutoAwesome from "@mui/icons-material/AutoAwesome";
 import RestartAlt from "@mui/icons-material/RestartAlt";
 import { useTranslations } from "next-intl";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
-import { AiLogo, aiModels, type AiModel } from "@/variants/finale/components/ui/AiLogo";
+import type { AiModel } from "@/variants/finale/components/ui/AiLogo";
 import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
 import type { Criterion, Product } from "@/data/types";
 import { buildAnswer, detectIntent, quickQuestions, type AnswerBlock, type AnswerContext, type AnswerTarget, type Intent, type QuickQuestionKey } from "@/lib/assistant";
 import { formatCount, formatScore } from "@/lib/format";
 import { tokens } from "@/theme/theme";
 import { emptyFilters, useCertificate } from "@/components/certificate/CertificateContext";
+import { AskYourAiQuestions, AskYourAiRow, useAskYourAi } from "./AskYourAi";
 
 type Message =
   | { id: number; role: "user"; text: string }
-  | { id: number; role: "assistant"; model: AiModel; blocks: AnswerBlock[]; suggest: boolean };
+  | { id: number; role: "assistant"; blocks: AnswerBlock[]; suggest: boolean };
 
 /** Delay before the answer starts, then between each paragraph, so it reads like a reply being written. */
 const THINKING_MS = 900;
@@ -67,83 +69,6 @@ function QuestionChips({ questions, onAsk, row }: { questions: QuickQuestionKey[
   );
 }
 
-/**
- * The AIs, each with its logo. "chips": the pill selector inside the chat.
- * "buttons": the "Assistant IA" card, styled like the outlined CTA (45 px, 8 px corners).
- */
-export function AiModelChips({ selected, onSelect, label, row, variant = "chips" }: { selected?: AiModel; onSelect: (model: AiModel) => void; label?: string; row?: boolean; variant?: "chips" | "buttons" }) {
-  const t = useTranslations("Assistant");
-  const buttons = variant === "buttons";
-  return (
-    <Box
-      role={selected ? "radiogroup" : undefined}
-      aria-label={label}
-      sx={row ? { display: "flex", gap: 1, overflowX: "auto", mx: -2, px: 2, scrollbarWidth: "none" } : { display: "flex", flexWrap: "wrap", gap: 1 }}
-    >
-      {aiModels.map((model) => {
-        const active = model === selected;
-        return (
-          <ButtonBase
-            key={model}
-            role={selected ? "radio" : undefined}
-            aria-checked={selected ? active : undefined}
-            aria-label={selected ? undefined : t("openWith", { model: t(`models.${model}`) })}
-            onClick={() => onSelect(model)}
-            sx={buttons ? {
-              // Phones: the buttons share each row's width. Desktop: natural width, in one row.
-              flex: { xs: "1 1 auto", md: "0 0 auto" },
-              minHeight: 45,
-              gap: 1,
-              px: 1.5,
-              py: "11px",
-              borderRadius: "8px",
-              bgcolor: tokens.blanc,
-              border: `1px solid ${tokens.grisMoyen1}`,
-              color: tokens.bleuFonce,
-              fontSize: 14,
-              fontWeight: 600,
-              lineHeight: "normal",
-              whiteSpace: "nowrap",
-              transition: "background-color 150ms ease, border-color 150ms ease",
-              "&:hover": { bgcolor: tokens.grisClair1, borderColor: tokens.bleu30 },
-              "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 },
-            } : {
-              gap: 0.75,
-              px: 1.25,
-              py: 0.75,
-              borderRadius: "999px",
-              bgcolor: active ? tokens.grisClair2 : tokens.blanc,
-              border: `1px solid ${active ? tokens.bleuFonce : tokens.grisMoyen1}`,
-              boxShadow: active ? `inset 0 0 0 0.5px ${tokens.bleuFonce}` : "none",
-              color: tokens.bleuFonce,
-              fontSize: 13,
-              fontWeight: active ? 600 : 500,
-              lineHeight: "normal",
-              whiteSpace: "nowrap",
-              flexShrink: 0,
-              transition: "border-color 150ms ease, background-color 150ms ease",
-              "&:hover": { borderColor: active ? tokens.bleuFonce : tokens.gris },
-            }}
-          >
-            <AiLogo model={model} sx={buttons ? { fontSize: 20 } : undefined} />
-            {t(`models.${model}`)}
-          </ButtonBase>
-        );
-      })}
-    </Box>
-  );
-}
-
-function ModelTag({ model }: { model: AiModel }) {
-  const t = useTranslations("Assistant.models");
-  return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, fontSize: 12, color: tokens.gris, fontWeight: 500 }}>
-      <AiLogo model={model} sx={{ fontSize: 14 }} />
-      {t(model)}
-    </Box>
-  );
-}
-
 const bubbleSx = { px: 1.5, py: 1.25, borderRadius: "14px", fontSize: 14, lineHeight: 1.5, maxWidth: "88%" } as const;
 
 /** "Demander à l'IA": simulated chat, answered from the agency's own reviews. Bottom sheet on phones, side panel from 900 px. */
@@ -154,7 +79,8 @@ export function AssistantPanel() {
   const t = useTranslations("Assistant");
   const tc = useTranslations("Criteria");
   const tq = useTranslations("Assistant.quick");
-  const { agency, team, reviews, panel, setPanel, assistantModel, setAssistantModel, setFilters, goToSection } = useCertificate();
+  const ta = useTranslations("VarianteFinale.askAi");
+  const { agency, team, reviews, panel, setPanel, setFilters, goToSection } = useCertificate();
   const open = panel === "assistant";
   const desktop = useMediaQuery("(min-width:900px)", { noSsr: true });
   const titleId = useId();
@@ -168,6 +94,13 @@ export function AssistantPanel() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const nextId = useRef(1);
+  /** "Demander à votre IA": the AI picked under the input; the panel then shows its 3 questions. */
+  const [ownAi, setOwnAi] = useState<AiModel | null>(null);
+  const { ask: askOwnAi, snackbar } = useAskYourAi();
+  const close = () => {
+    setPanel(null);
+    setOwnAi(null);
+  };
 
   const context: AnswerContext = useMemo(() => {
     const list = new Intl.ListFormat("fr", { style: "long", type: "conjunction" });
@@ -207,7 +140,6 @@ export function AssistantPanel() {
     if (!question || thinking) return;
     const resolved = intent ?? detectIntent(question, team);
     const blocks = buildAnswer(resolved, context);
-    const model = assistantModel;
     setMessages((current) => [...current, { id: nextId.current++, role: "user", text: question }]);
     setDraft("");
     setThinking(true);
@@ -215,7 +147,7 @@ export function AssistantPanel() {
       window.setTimeout(() => {
         setThinking(false);
         setRevealed(1);
-        setMessages((current) => [...current, { id: nextId.current++, role: "assistant", model, blocks, suggest: resolved.kind === "fallback" }]);
+        setMessages((current) => [...current, { id: nextId.current++, role: "assistant", blocks, suggest: resolved.kind === "fallback" }]);
         for (let shown = 2; shown <= blocks.length; shown++) {
           timers.current.push(window.setTimeout(() => setRevealed(shown), (shown - 1) * BLOCK_MS));
         }
@@ -302,18 +234,23 @@ export function AssistantPanel() {
             </IconButton>
           </Tooltip>
         )}
-        <IconButton onClick={() => setPanel(null)} aria-label={t("close")} sx={{ p: 1.5, m: -1.5, ml: 0 }}>
+        <IconButton onClick={close} aria-label={t("close")} sx={{ p: 1.5, m: -1.5, ml: 0 }}>
           <FigmaIcon name="close" />
         </IconButton>
       </Box>
 
-      <Box sx={{ px: 2, py: 1.5, borderBottom: `1px solid ${tokens.grisMoyen1}`, flexShrink: 0 }}>
-        <Typography sx={{ fontSize: 12, fontWeight: 600, color: tokens.gris, mb: 1 }}>{t("answerWith")}</Typography>
-        <AiModelChips selected={assistantModel} onSelect={setAssistantModel} label={t("answerWith")} row={!desktop} />
-      </Box>
-
+      {ownAi ? (
+        <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto", overscrollBehavior: "contain", px: 0.5, py: 1.5, display: "flex", flexDirection: "column", gap: 1 }}>
+          <ButtonBase onClick={() => setOwnAi(null)} sx={{ alignSelf: "flex-start", gap: 0.5, mx: 1, px: 1, py: 0.75, borderRadius: "8px", fontSize: 14, fontWeight: 600, color: tokens.bleu600, "&:hover": { bgcolor: tokens.grisClair1 } }}>
+            <ArrowBack sx={{ fontSize: 18 }} />
+            {ta("back")}
+          </ButtonBase>
+          <Box sx={{ px: 0.5 }}>
+            <AskYourAiQuestions model={ownAi} onAsk={(question) => { askOwnAi(ownAi, question); setOwnAi(null); }} />
+          </Box>
+        </Box>
+      ) : (
       <Box ref={scrollRef} aria-live="polite" sx={{ flex: 1, minHeight: 0, overflowY: "auto", overscrollBehavior: "contain", px: 2, py: 2, display: "flex", flexDirection: "column", gap: 1.5 }}>
-        <ModelTag model={assistantModel} />
         <Box sx={{ ...bubbleSx, bgcolor: tokens.grisClair2, borderTopLeftRadius: "4px", color: tokens.bleuFonce }}>
           {t.rich("welcome", { count: formatCount(reviews.length), name: `${agency.name} · ${agency.city}`, b: (chunks) => <b>{chunks}</b> })}
         </Box>
@@ -326,7 +263,6 @@ export function AssistantPanel() {
             </Box>
           ) : (
             <Box key={message.id} sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-              <ModelTag model={message.model} />
               <Box sx={{ ...bubbleSx, bgcolor: tokens.grisClair2, color: tokens.bleuFonce, borderTopLeftRadius: "4px", display: "flex", flexDirection: "column", gap: 1 }}>
                 {message.blocks.slice(0, message.id === latestId ? revealed : undefined).map(renderBlock)}
               </Box>
@@ -339,8 +275,7 @@ export function AssistantPanel() {
 
         {thinking && (
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-            <ModelTag model={assistantModel} />
-            <Box role="status" aria-label={t("typing", { model: t(`models.${assistantModel}`) })} sx={{ ...bubbleSx, bgcolor: tokens.grisClair2, borderTopLeftRadius: "4px", display: "flex", gap: 0.5, alignSelf: "flex-start", py: 1.75 }}>
+            <Box role="status" aria-label={t("typing", { model: t("title") })} sx={{ ...bubbleSx, bgcolor: tokens.grisClair2, borderTopLeftRadius: "4px", display: "flex", gap: 0.5, alignSelf: "flex-start", py: 1.75 }}>
               {[0, 1, 2].map((dot) => (
                 <Box key={dot} sx={{ width: 6, height: 6, borderRadius: "50%", bgcolor: tokens.bleuFonce, animation: `${bounce} 1s ${dot * 0.15}s infinite ease-in-out` }} />
               ))}
@@ -348,8 +283,11 @@ export function AssistantPanel() {
           </Box>
         )}
       </Box>
+      )}
 
       <Box sx={{ flexShrink: 0, minWidth: 0, px: 2, pt: 1, pb: desktop ? 1.5 : "calc(12px + env(safe-area-inset-bottom))", borderTop: `1px solid ${tokens.grisMoyen1}` }}>
+        {!ownAi && (
+        <>
         {messages.length > 0 && remaining.length > 0 && !thinking && !fallbackShown && (
           <Box sx={{ overflowX: "auto", pb: 1, mx: -2, px: 2, scrollbarWidth: "none" }}>
             <QuestionChips questions={remaining} onAsk={askQuick} row />
@@ -381,7 +319,14 @@ export function AssistantPanel() {
           </IconButton>
         </Box>
         <Typography sx={{ mt: 1, fontSize: 11, color: tokens.gris, textAlign: "center", lineHeight: 1.4 }}>{t("disclaimer")}</Typography>
+        </>
+        )}
+        {/* Or take the question to the visitor's own AI (same flow as the footer, inside the panel). */}
+        <Box sx={{ mt: ownAi ? 0.5 : 1.25, pt: ownAi ? 0.5 : 1.25, borderTop: ownAi ? "none" : `1px solid ${tokens.grisMoyen1}` }}>
+          <AskYourAiRow selected={ownAi} onPick={setOwnAi} />
+        </Box>
       </Box>
+      {snackbar}
     </Box>
   );
 
@@ -390,7 +335,7 @@ export function AssistantPanel() {
       <Drawer
         anchor="right"
         open={open}
-        onClose={() => setPanel(null)}
+        onClose={close}
         keepMounted
         slotProps={{
           backdrop: { sx: { bgcolor: "rgba(4,27,68,0.2)" } },
@@ -406,7 +351,7 @@ export function AssistantPanel() {
     <SwipeableDrawer
       anchor="bottom"
       open={open}
-      onClose={() => setPanel(null)}
+      onClose={close}
       onOpen={() => {}}
       disableSwipeToOpen
       keepMounted
