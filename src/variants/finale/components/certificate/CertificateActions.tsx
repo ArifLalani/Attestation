@@ -3,7 +3,6 @@
 import { ReviewRequestSheet } from "@/variants/finale/components/reviews/ReviewRequestSheet";
 import { useCertificate } from "@/components/certificate/CertificateContext";
 import { ActionWidget } from "./ActionWidget";
-import { AssistantPanel } from "./AssistantPanel";
 import { ContactSheet } from "./ContactSheet";
 
 /** The floating button (score, open status; opens the agency card) and the panels it opens. */
@@ -14,7 +13,6 @@ export function CertificateActions() {
       <ActionWidget />
       <ContactSheet agency={agency} open={panel === "contact"} onClose={() => setPanel(null)} />
       <ReviewRequestSheet />
-      <AssistantPanel />
     </>
   );
 }

@@ -1,29 +1,40 @@
 {
   "VarianteFinale": {
     "askAi": {
-      "label": "Demander à votre IA à propos de <agency>{name} · {city}</agency>",
-      "labelShort": "Demandez à votre IA : <agency>{name} · {city}</agency>",
-      "listLabel": "Ouvrir votre IA",
-      "open": "Demander à {model} (nouvel onglet)",
-      "title": "Que demander à {model} ?",
-      "close": "Fermer",
+      "eyebrow": "Demandez à votre IA",
+      "heading": "Une question sur {name} ? Votre IA vous répond.",
+      "text": "Choisissez votre IA et une question : elle lit cette page (avis, équipe, horaires) et vous répond en quelques secondes.",
+      "cta": "Poser une question",
+      "ctaShort": "Demander",
+      "listLabel": "Choisir votre IA",
+      "askWith": "Demander à {model}",
+      "questionsLabel": "Questions toutes prêtes",
+      "sheetTitle": "Demandez à votre IA",
+      "intro": "Posez vos questions sur <b>{name} · {city}</b> à l’IA que vous utilisez déjà. Elle lit cette page (avis, équipe, horaires) pour vous répondre.",
+      "stepAi": "1. Choisissez votre IA",
+      "stepQuestion": "2. Choisissez votre question",
       "questions": {
         "reviews": "Résumer les avis clients",
         "team": "Présenter l’équipe",
-        "agencies": "Horaires et autres agences"
+        "agencies": "Horaires et autres agences",
+        "custom": "Poser ma propre question"
       },
+      "customLabel": "Votre question",
+      "customPlaceholder": "Ex. : cette agence fait-elle de la gestion locative ?",
       "prompts": {
         "reviews": "Résume les avis clients de {name} à {city} à partir de cette page : {url}",
         "team": "Présente-moi l’équipe de {name} à {city} et ce que les clients en disent, d’après cette page : {url}",
-        "agencies": "Quels sont les horaires de {name} à {city} et ses autres agences ? Réponds d’après cette page : {url}"
+        "agencies": "Quels sont les horaires de {name} à {city} et ses autres agences ? Réponds d’après cette page : {url}",
+        "custom": "{question} Réponds au sujet de {name} à {city}, d’après cette page : {url}"
       },
-      "note": "{model} s’ouvre dans un nouvel onglet avec la question prête à envoyer.",
-      "noteCopy": "Gemini s’ouvre dans un nouvel onglet. La question est copiée : collez-la et envoyez-la.",
+      "openButton": "Ouvrir {model}",
+      "note": "{model} s’ouvre (dans son application si elle est installée) avec votre question prête à envoyer.",
+      "noteCopy": "Gemini ne peut pas recevoir de question : elle sera copiée, il suffira de la coller dans Gemini.",
       "copied": "Question copiée : collez-la dans Gemini.",
-      "orAsk": "Ou demandez à votre IA",
-      "back": "Retour à l’assistant"
+      "close": "Fermer"
     },
     "agencies": {
+      "seeReviews": "Voir les avis",
       "seeCertificate": "Voir son certificat",
       "selected": "Affichée sur la carte"
     },

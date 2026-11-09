@@ -39,6 +39,8 @@ const cardBorder = "#d6e4f3";
 /** The card's links: navy text with a light underline. */
 const linkSx = { color: tokens.bleuFonce, textDecorationColor: "rgba(4, 27, 68, 0.35)", textUnderlineOffset: "3px", "&:hover": { textDecorationColor: "currentColor" } } as const;
 
+const primaryLinkSx = { height: 45, gap: 1, px: 2, borderRadius: "8px", bgcolor: tokens.bleu10, color: tokens.bleuFonce, fontFamily: "inherit", fontSize: 14, fontWeight: 600, "&:hover": { bgcolor: tokens.bleu20 }, "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 } } as const;
+
 /** Sent by the hero's open/closed status: scroll here with this agency's week of hours open. */
 export const openHoursEvent = "finale:open-hours";
 
@@ -80,7 +82,7 @@ function OpeningHours({ agency, openRequest }: { agency: Agency; openRequest: nu
 export function AgenciesSection() {
   const t = useTranslations("Agencies");
   const tv = useTranslations("VarianteFinale.agencies");
-  const { agency } = useCertificate();
+  const { agency, goToSection } = useCertificate();
   const [selectedId, setSelectedId] = useState(agency.id);
   const [expanded, setExpanded] = useState(false);
   const [mapVisible, setMapVisible] = useState(false);
@@ -97,7 +99,9 @@ export function AgenciesSection() {
   const selected = locations.find((location) => location.id === selectedId) ?? agency;
   const selectedIndex = locations.indexOf(selected);
   const summary = summaries.get(selected.id)!;
-  const certificateUrl = `/fr-fr/certificate/${selected.id}`;
+  // Another agency: its own page in this version. This agency: we are already on its page.
+  const isCurrent = selected.id === agency.id;
+  const certificateUrl = `/fr-fr/variantes/finale/${selected.id}`;
 
   const selectAgency = (id: string) => {
     setSelectedId(id);
@@ -172,54 +176,37 @@ export function AgenciesSection() {
             </Box>
           </Box>
 
-          {/* Voir son certificat, then the button that shows the other agencies under the map (hidden at first). */}
+          {/* This agency: Voir les avis (they are on this page). Another one: Voir son certificat (its page, new tab). Then the button that shows the other agencies (hidden at first). */}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: { md: "auto" }, pt: 0.5 }}>
-            <ButtonBase
-              component="a"
-              href={certificateUrl}
-              target="_blank"
-              rel="noopener"
-              aria-label={t("certificateLink", { name: selected.name, city: selected.city })}
-              sx={{ height: 45, gap: 1, px: 2, borderRadius: "8px", bgcolor: tokens.bleu10, color: tokens.bleuFonce, fontFamily: "inherit", fontSize: 14, fontWeight: 600, "&:hover": { bgcolor: tokens.bleu20 }, "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 } }}
-            >
-              {tv("seeCertificate")}
-              <OpenInNew sx={{ fontSize: 18 }} />
-            </ButtonBase>
+            {isCurrent ? (
+              <ButtonBase onClick={() => goToSection("avis")} sx={primaryLinkSx}>
+                {tv("seeReviews")}
+              </ButtonBase>
+            ) : (
+              <ButtonBase component="a" href={certificateUrl} target="_blank" rel="noopener" aria-label={t("certificateLink", { name: selected.name, city: selected.city })} sx={primaryLinkSx}>
+                {tv("seeCertificate")}
+                <OpenInNew sx={{ fontSize: 18 }} />
+              </ButtonBase>
+            )}
             <CtaButton variant="secondary" aria-expanded={expanded} aria-controls={listId} onClick={() => setExpanded((value) => !value)} sx={{ px: 2, "& img": { transform: expanded ? "rotate(180deg)" : "none" } }}>{t(expanded ? "showLess" : "showMore")}</CtaButton>
           </Box>
         </Box>
       </Box>
 
-      {/* The agencies as photo cards (option B): 5 in a row on desktop, a row to swipe on phones and tablets.
-          mt -2 cancels the section gap, so the space opens with the animation. */}
+      {/* The agencies: compact rows with a small office photo on phones and tablets (the size of the photo thumbnails),
+          5 photo cards in a row on desktop. mt -2 cancels the section gap, so the space opens with the animation. */}
       <Collapse in={expanded} unmountOnExit sx={{ mt: -2 }}>
         <Box
           id={listId}
           component="ul"
-          sx={{
-            listStyle: "none",
-            m: 0,
-            p: 0,
-            pt: 2,
-            pb: { xs: 0.5, md: 0 },
-            mx: { xs: -1.5, md: 0 },
-            px: { xs: 1.5, md: 0 },
-            display: { xs: "flex", md: "grid" },
-            gridTemplateColumns: { md: "repeat(5, minmax(0, 1fr))" },
-            gap: 1.5,
-            overflowX: { xs: "auto", md: "visible" },
-            scrollSnapType: { xs: "x mandatory", md: "none" },
-            scrollPaddingInline: "12px",
-            scrollbarWidth: "none",
-            "&::-webkit-scrollbar": { display: "none" },
-          }}
+          sx={{ listStyle: "none", m: 0, p: 0, pt: 2, display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", sm: "repeat(2, minmax(0, 1fr))", md: "repeat(5, minmax(0, 1fr))" }, gap: { xs: 1, md: 1.5 } }}
         >
           {locations.map((location, index) => {
             const stats = summaries.get(location.id)!;
             const active = location.id === selected.id;
             const score = scores[location.id];
             return (
-              <Box component="li" key={location.id} sx={{ flex: { xs: "0 0 62%", sm: "0 0 38%" }, minWidth: 0, scrollSnapAlign: "start" }}>
+              <Box component="li" key={location.id} sx={{ minWidth: 0 }}>
                 <ButtonBase
                   onClick={() => selectAgency(location.id)}
                   aria-pressed={active}
@@ -227,30 +214,36 @@ export function AgenciesSection() {
                   sx={{
                     width: "100%",
                     height: "100%",
-                    flexDirection: "column",
-                    alignItems: "stretch",
+                    flexDirection: { xs: "row", md: "column" },
+                    alignItems: { xs: "center", md: "stretch" },
                     justifyContent: "flex-start",
+                    gap: { xs: 1.5, md: 0 },
+                    p: { xs: 1, md: 0 },
                     textAlign: "left",
-                    borderRadius: "16px",
+                    borderRadius: { xs: "12px", md: "16px" },
                     overflow: "hidden",
                     bgcolor: tokens.blanc,
                     // The selected agency: a 2 px navy border (drawn inside, so the cards don't move).
                     boxShadow: active ? `inset 0 0 0 2px ${tokens.bleuFonce}` : `inset 0 0 0 1px ${cardBorder}`,
-                    transition: "box-shadow 200ms ease, transform 200ms ease",
+                    transition: "box-shadow 200ms ease",
                     "& img": { transition: "transform 400ms ease" },
                     "&:hover img": { transform: "scale(1.05)" },
                     "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 },
                   }}
                 >
-                  <Box sx={{ position: "relative", aspectRatio: "4 / 3", overflow: "hidden", m: active ? "2px 2px 0" : "1px 1px 0", borderRadius: "14px 14px 0 0" }}>
-                    <Image src={location.photos[0]} alt="" fill sizes="(min-width: 900px) 220px, 62vw" style={{ objectFit: "cover" }} />
-                    <Box sx={{ position: "absolute", left: 8, top: 8, borderRadius: "50%", boxShadow: "0 1px 4px rgba(4, 27, 68, 0.25)", bgcolor: tokens.blanc }}>
+                  <Box sx={{ position: "relative", flexShrink: 0, width: { xs: 72, md: "auto" }, aspectRatio: { xs: "1", md: "4 / 3" }, overflow: "hidden", m: { md: active ? "2px 2px 0" : "1px 1px 0" }, borderRadius: { xs: "8px", md: "14px 14px 0 0" } }}>
+                    <Image src={location.officePhoto} alt="" fill sizes="(min-width: 900px) 220px, 72px" style={{ objectFit: "cover" }} />
+                    <Box sx={{ display: { xs: "none", md: "block" }, position: "absolute", left: 8, top: 8, borderRadius: "50%", boxShadow: "0 1px 4px rgba(4, 27, 68, 0.25)", bgcolor: tokens.blanc }}>
                       <AgencyLetter index={index} active={active} />
                     </Box>
                   </Box>
-                  <Box sx={{ px: 1.5, pt: 1, pb: 1.5 }}>
-                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 1 }}>
-                      <Typography sx={{ fontSize: 15, fontWeight: 600, color: tokens.bleuFonce, minWidth: 0 }}>{location.city}</Typography>
+                  <Box sx={{ flex: { xs: 1, md: "none" }, minWidth: 0, px: { md: 1.5 }, pt: { md: 1 }, pb: { md: 1.5 } }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      {/* Phones: the letter of its pin next to the name. */}
+                      <Box sx={{ display: { xs: "flex", md: "none" }, flexShrink: 0 }}>
+                        <AgencyLetter index={index} active={active} size={24} />
+                      </Box>
+                      <Typography sx={{ flex: 1, minWidth: 0, fontSize: 15, fontWeight: 600, color: tokens.bleuFonce, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{location.city}</Typography>
                       {score !== null && score !== undefined && (
                         <Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.25, fontSize: 14, fontWeight: 600, color: tokens.bleuFonce, flexShrink: 0 }}>
                           <FigmaIcon name="star-small" />

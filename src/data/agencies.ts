@@ -58,6 +58,7 @@ export const agencies: Agency[] = [
     email: "hyeres@lbi.fr",
     whatsapp: "+33465712400",
     sisterAgencyIds: sisters("20871"),
+    officePhoto: "/images/offices/p3184338.jpg",
     photos: photosFor("20871"),
   },
   {
@@ -69,6 +70,7 @@ export const agencies: Agency[] = [
     phone: "+33 4 65 71 24 10",
     email: "toulon@lbi.fr",
     sisterAgencyIds: sisters("20872"),
+    officePhoto: "/images/offices/p3182812.jpg",
     photos: photosFor("20872"),
   },
   {
@@ -80,6 +82,7 @@ export const agencies: Agency[] = [
     phone: "+33 4 65 71 24 20",
     email: "lacrau@lbi.fr",
     sisterAgencyIds: sisters("20873"),
+    officePhoto: "/images/offices/p3184405.jpg",
     photos: photosFor("20873"),
   },
   {
@@ -91,6 +94,7 @@ export const agencies: Agency[] = [
     phone: "+33 4 65 71 24 30",
     email: "carqueiranne@lbi.fr",
     sisterAgencyIds: sisters("20874"),
+    officePhoto: "/images/offices/p380769.jpg",
     photos: photosFor("20874"),
   },
   {
@@ -102,6 +106,7 @@ export const agencies: Agency[] = [
     phone: "+33 4 65 71 24 40",
     email: "lavandou@lbi.fr",
     sisterAgencyIds: sisters("20875"),
+    officePhoto: "/images/offices/p3184291.jpg",
     photos: photosFor("20875"),
   },
 ];

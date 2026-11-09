@@ -37,16 +37,16 @@ export function CertificatePage({ agencyId }: { agencyId: string }) {
         <Box sx={{ display: "flex", flexDirection: "column", gap: { xs: 2, md: 3 }, minWidth: 0 }}>
           <Box id="synthese" sx={sectionSx}>
             <BusinessCard />
-            {/* Between the hero and Réputation: ask an AI about this agency. */}
-            <AskYourAi />
             <ReputationCard />
           </Box>
           <Box id="avis" sx={sectionSx}>
             <ReviewsSection />
+            {/* Under the reviews: ask an AI about this agency. */}
+            <AskYourAi />
           </Box>
           <Box id="agences" sx={sectionSx}>
-            <TeamSection />
             <AgenciesSection />
+            <TeamSection />
           </Box>
           <Box id="qualite" sx={sectionSx}>
             <QualitySection />

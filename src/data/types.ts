@@ -96,6 +96,8 @@ export interface Agency {
   socials: { linkedin?: string; facebook?: string; instagram?: string; x?: string };
   hours: WeekHours;
   coverPhoto: string;
+  /** The agency's office or team (free Pexels image): the thumbnail in the list of agencies. */
+  officePhoto: string;
   /** Demo stand-ins for the agency’s Google Maps photos (free Pexels images). */
   photos: string[];
   logo: string;

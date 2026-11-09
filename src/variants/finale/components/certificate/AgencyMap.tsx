@@ -54,7 +54,9 @@ export default function AgencyMap({ agencies, selectedId, onSelect, scores }: { 
       mapStyle="https://tiles.openfreemap.org/styles/positron"
       attributionControl={{ compact: true }}
       style={{ width: "100%", height: "100%" }}
-      scrollZoom={false} dragRotate={false} touchPitch={false} touchZoomRotate={{ around: "center" }}
+      // Fixed: no dragging, pinching or double-tap zoom, so a finger scrolling the page over the map never gets caught by it.
+      dragPan={false} scrollZoom={false} dragRotate={false} touchPitch={false} touchZoomRotate={false} doubleClickZoom={false} boxZoom={false} keyboard={false}
+      cursor="default"
       canvasContextAttributes={{ antialias: true }}
       onError={() => setFailed(true)}
     >

@@ -258,12 +258,13 @@ export function BusinessCard() {
         </Box>
       </Box>
 
-      <Box sx={{ gridArea: "caption", alignSelf: "end", minHeight: { xs: 170, sm: 220, md: 0 }, display: "flex", flexDirection: "column", justifyContent: "flex-end", px: { xs: 1, md: 0 }, pb: { xs: 2, md: 0 }, color: tokens.blanc, textShadow: "0 1px 12px rgba(4,27,68,0.45)" }}>
+      <Box sx={{ gridArea: "caption", containerType: "inline-size", alignSelf: "end", minHeight: { xs: 170, sm: 220, md: 0 }, display: "flex", flexDirection: "column", justifyContent: "flex-end", px: { xs: 1, md: 0 }, pr: { md: "64px" }, pb: { xs: 2, md: 0 }, color: tokens.blanc, textShadow: "0 1px 12px rgba(4,27,68,0.45)" }}>
         <Typography sx={{ display: "flex", alignItems: "center", gap: 0.75, mb: 0.75, fontSize: 13, lineHeight: "normal" }}>
           <Verified sx={{ fontSize: 18, color: tokens.vertOs }} />
           {th("photoKicker")}
         </Typography>
-        <Typography sx={{ maxWidth: 420, fontSize: { xs: 20, md: 26 }, fontWeight: 600, lineHeight: 1.2, letterSpacing: "-0.02em", textWrap: "balance" }}>{th("photoTitle")}</Typography>
+        {/* Always one line: the size follows the width of the photo (up to 20 px on phones, 26 px on desktop). Desktop keeps clear of the curved corner. */}
+        <Typography sx={{ whiteSpace: "nowrap", fontSize: { xs: "min(20px, 4.1cqi)", md: "min(26px, 4.1cqi)" }, fontWeight: 600, lineHeight: 1.2, letterSpacing: "-0.02em" }}>{th("photoTitle")}</Typography>
       </Box>
 
       <Snackbar open={copied} autoHideDuration={2500} onClose={() => setCopied(false)} message={t("linkCopied")} anchorOrigin={{ vertical: "bottom", horizontal: "center" }} />

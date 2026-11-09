@@ -247,6 +247,7 @@ function CardContent({ onDone, titleId }: { onDone: () => void; titleId: string 
             onLinkClick={(event) => event.currentTarget.setAttribute("href", directionsUrl(agency.address))}
           />
           <ActionBox icon={<LanguageOutlined />} label={tb("website")} href={agency.website} />
+          {/* No assistant of our own: the "Demandez à votre IA" sheet (ChatGPT, Claude, Gemini…). */}
           <ActionBox icon={<AutoAwesome sx={{ color: tokens.vertOs }} />} label={ta("askAi")} onClick={() => { onDone(); openAssistant(); }} />
           <ActionBox icon={<StorefrontOutlined />} label={ta("signup")} href={opinionSystemLinks.signup} />
         </Box>
