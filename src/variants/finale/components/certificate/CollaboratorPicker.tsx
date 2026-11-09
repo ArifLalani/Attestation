@@ -68,8 +68,9 @@ function SortChip({ selected, onClick, children }: { selected: boolean; onClick:
 /**
  * The team list shared by every place that picks a collaborator: the search field and the sort chips (`header`, pinned),
  * then "Toute l'équipe" and the staff above the publication threshold (`list`, scrolls).
+ * `allowAll={false}` leaves out "Toute l'équipe" (Déposer un avis): tapping the chosen person again clears the choice.
  */
-export function useCollaboratorChooser({ selectedId, onChoose, view }: { selectedId?: string; onChoose: (id: string | undefined) => void; view: ScoreView }) {
+export function useCollaboratorChooser({ selectedId, onChoose, view, allowAll = true }: { selectedId?: string; onChoose: (id: string | undefined) => void; view: ScoreView; allowAll?: boolean }) {
   const t = useTranslations("Collaborators");
   const tp = useTranslations("VarianteFinale.picker");
   const { team, reviews, agency } = useCertificate();
@@ -131,7 +132,7 @@ export function useCollaboratorChooser({ selectedId, onChoose, view }: { selecte
 
   const list = (
     <Box component="ul" role="listbox" aria-label={t("title")} sx={{ listStyle: "none", m: 0, py: 1, px: 0 }}>
-      {!query && (
+      {allowAll && !query && (
         <li>
           <ButtonBase role="option" aria-selected={!selectedId} onClick={() => choose(undefined)} sx={rowSx(!selectedId)}>
             <TeamAvatar size={40} color={tokens.bleuFonce} />
@@ -144,7 +145,7 @@ export function useCollaboratorChooser({ selectedId, onChoose, view }: { selecte
         const selected = person.id === selectedId;
         return (
           <li key={person.id}>
-            <ButtonBase role="option" aria-selected={selected} onClick={() => choose(person.id)} sx={rowSx(selected)}>
+            <ButtonBase role="option" aria-selected={selected} onClick={() => choose(selected && !allowAll ? undefined : person.id)} sx={rowSx(selected)}>
               <StaffAvatar person={person} size={40} />
               <Box sx={{ flex: 1, minWidth: 0 }}>
                 <Typography sx={{ fontSize: 16, fontWeight: 600, lineHeight: 1.3, color: tokens.bleuFonce }}>{person.name}</Typography>
@@ -177,6 +178,8 @@ export function CollaboratorPicker({
   onSelect,
   view,
   side = false,
+  allowAll = true,
+  title,
 }: {
   open: boolean;
   onClose: () => void;
@@ -184,18 +187,22 @@ export function CollaboratorPicker({
   onSelect: (id: string | undefined) => void;
   view: ScoreView;
   side?: boolean;
+  allowAll?: boolean;
+  /** Sheet title ("Sélectionner un collaborateur" by default). */
+  title?: string;
 }) {
   const t = useTranslations("Collaborators");
   const { header, list } = useCollaboratorChooser({
     selectedId,
     view,
+    allowAll,
     onChoose: (id) => {
       onSelect(id);
       onClose();
     },
   });
   return (
-    <ResponsiveSheet open={open} onClose={onClose} title={t("title")} closeLabel={t("close")} header={header} side={side}>
+    <ResponsiveSheet open={open} onClose={onClose} title={title ?? t("title")} closeLabel={t("close")} header={header} side={side}>
       {list}
     </ResponsiveSheet>
   );

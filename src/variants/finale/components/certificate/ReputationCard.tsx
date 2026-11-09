@@ -10,7 +10,7 @@ import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
 import { Laurel } from "@/variants/finale/components/ui/Laurel";
-import { StaffAvatar, TeamAvatar } from "@/variants/finale/components/ui/StaffAvatar";
+import { PickerField } from "@/variants/finale/components/ui/PickerField";
 import { formatCount, formatScore } from "@/lib/format";
 import { useCountUp } from "@/lib/hooks";
 import { displayScore, headingFor, isPublic, reviewsForScore, summarize, type ScoreView, type StarBucket } from "@/lib/scoring";
@@ -24,7 +24,7 @@ const cardSx = {
   borderRadius: "20px",
   boxShadow: tokens.shadowCardSoft,
   px: 1.5,
-  py: 2,
+  py: { xs: 1.5, md: 2 },
   display: "flex",
   flexDirection: "column",
   gap: 2,
@@ -178,37 +178,14 @@ export function ReputationCard() {
       {/* Phones: one column. Desktop: selector, switch and score on the left, the star rows on the right. */}
       <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1fr) 1px minmax(0, 1fr)" }, gap: { xs: 2, md: 3 } }}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, minWidth: 0 }}>
-          <ButtonBase
+          <PickerField
+            label={t("scoreFor")}
+            person={person}
+            emptyText={t("wholeTeam")}
+            changeLabel={t("changeCollaborator")}
             onClick={() => setPickerOpen(true)}
-            aria-haspopup="listbox"
-            aria-expanded={pickerOpen}
-            aria-label={`${t("scoreFor")} : ${person ? person.name : t("wholeTeam")}`}
-            sx={{
-              width: "100%",
-              justifyContent: "flex-start",
-              gap: 1.5,
-              pl: 1,
-              pr: 2,
-              minHeight: 56,
-              bgcolor: tokens.grisClair1,
-              border: `1px solid ${tokens.grisMoyen1}`,
-              borderRadius: "12px",
-              textAlign: "left",
-              transition: "border-color 150ms ease, background-color 150ms ease",
-              "&:hover": { borderColor: tokens.bleu30, bgcolor: tokens.blanc },
-            }}
-          >
-            {person ? <StaffAvatar person={person} size={40} /> : <TeamAvatar size={40} color={tokens.bleuFonce} />}
-            <Box sx={{ flex: 1, minWidth: 0 }}>
-              <Typography component="span" sx={{ display: "block", fontSize: 12, fontWeight: 500, color: tokens.gris, lineHeight: 1.3 }}>
-                {t("scoreFor")}
-              </Typography>
-              <Typography component="span" sx={{ display: "block", fontSize: 16, fontWeight: 600, color: tokens.bleuFonce, lineHeight: 1.3 }}>
-                {person ? person.name : t("wholeTeam")}
-              </Typography>
-            </Box>
-            <FigmaIcon name={person ? "arrows-clockwise" : "expand-more"} alt={person ? t("changeCollaborator") : ""} />
-          </ButtonBase>
+            expanded={pickerOpen}
+          />
           <ViewToggle view={scoreView} counts={counts} onChange={setScoreView} />
 
           {visible ? (

@@ -133,7 +133,7 @@ export function ReviewsSection() {
   return (
     <Box component="section" ref={sectionRef} aria-labelledby="reviews-heading" sx={{ ...cardSx, display: "flex", flexDirection: "column" }}>
       {/* One white Avis card. Top: the title, the search with Filtres and the sort on one line, the quick filters. */}
-      <Box sx={{ px: { xs: 2, md: 3 }, pt: { xs: 2, md: 3 }, pb: { xs: 1, md: 1 }, display: "flex", flexDirection: "column", gap: { xs: 1.75, md: 2 } }}>
+      <Box sx={{ px: { xs: 1.5, md: 3 }, pt: { xs: 1.5, md: 3 }, pb: { xs: 0, md: 1 }, display: "flex", flexDirection: "column", gap: { xs: 1.75, md: 2 } }}>
         {/* Title and the yellow Déposer un avis. */}
         <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2, minHeight: { sm: 45 } }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, flexWrap: "wrap" }}>
@@ -141,6 +141,7 @@ export function ReviewsSection() {
               {t("eyebrow")}
             </Typography>
           </Box>
+          {/* Tablet and desktop only: on phones it sits under Afficher plus d’avis. */}
           <CtaButton onClick={() => setPanel("reviewRequest")} sx={{ display: { xs: "none", sm: "inline-flex" }, width: "auto", flexShrink: 0, px: 2.5 }}>
             {t("leaveReview")}
           </CtaButton>
@@ -177,7 +178,7 @@ export function ReviewsSection() {
         <Box
           role="group"
           aria-label={tv("quickFilters")}
-          sx={{ display: "flex", gap: 1, overflowX: { xs: "auto", md: "visible" }, flexWrap: { xs: "nowrap", md: "wrap" }, mx: { xs: -2, md: 0 }, px: { xs: 2, md: 0 }, py: 0.25, scrollbarWidth: "none", "&::-webkit-scrollbar": { display: "none" } }}
+          sx={{ display: "flex", gap: 1, overflowX: { xs: "auto", md: "visible" }, flexWrap: { xs: "nowrap", md: "wrap" }, mx: { xs: -1.5, md: 0 }, px: { xs: 1.5, md: 0 }, py: 0.25, scrollbarWidth: "none", "&::-webkit-scrollbar": { display: "none" } }}
         >
           <ChoiceChip
             selected={filters.type === "controle"}
@@ -203,12 +204,12 @@ export function ReviewsSection() {
       </Box>
 
       {/* Then the count and the reviews, each an outlined card close to the edges (8 px on phones, 16 px on desktop), and Afficher plus / moins. */}
-      <Box sx={{ p: { xs: 1, md: 2 }, display: "flex", flexDirection: "column", gap: { xs: 1, md: 1.5 } }}>
+      <Box sx={{ p: { xs: 1.5, md: 2 }, display: "flex", flexDirection: "column", gap: { xs: 1, md: 1.5 } }}>
         {/* The number of reviews shown, above the first one (lined up with the title). */}
         <Box
           component="span"
           aria-live="polite"
-          sx={{ alignSelf: "flex-start", ml: 1, display: "inline-flex", alignItems: "center", height: 28, px: 1.25, borderRadius: "999px", bgcolor: tokens.bleu10, fontSize: 14, fontWeight: 600, color: tokens.bleuFonce, fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}
+          sx={{ alignSelf: "flex-start", ml: { xs: 0, md: 1 }, display: "inline-flex", alignItems: "center", height: 28, px: 1.25, borderRadius: "999px", bgcolor: tokens.bleu10, fontSize: 14, fontWeight: 600, color: tokens.bleuFonce, fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}
         >
           {t("count", { count: formatCount(list.length) })}
         </Box>
@@ -242,6 +243,11 @@ export function ReviewsSection() {
             )}
           </Box>
         )}
+
+        {/* Phones: Déposer un avis, full width, under Afficher plus / moins. */}
+        <CtaButton onClick={() => setPanel("reviewRequest")} sx={{ display: { xs: "inline-flex", sm: "none" } }}>
+          {t("leaveReview")}
+        </CtaButton>
       </Box>
 
       <FiltersSheet />

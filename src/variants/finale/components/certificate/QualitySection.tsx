@@ -29,7 +29,7 @@ export function QualitySection() {
   }, [reviews]);
 
   return (
-    <Box component="section" aria-labelledby="quality-title" sx={{ bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCardSoft, px: { xs: 1.5, md: 2 }, py: 2, display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", lg: "minmax(0, 1fr) minmax(0, 1fr)" }, columnGap: 4, rowGap: 2, alignItems: "start" }}>
+    <Box component="section" aria-labelledby="quality-title" sx={{ bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCardSoft, px: { xs: 1.5, md: 2 }, py: { xs: 1.5, md: 2 }, display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", lg: "minmax(0, 1fr) minmax(0, 1fr)" }, columnGap: 4, rowGap: 2, alignItems: "start" }}>
       <CardTitle id="quality-title" eyebrow={t("eyebrow")} heading={t("heading", { name: agency.name })} />
       <Typography sx={{ fontSize: 14, color: tokens.gris, lineHeight: "normal", gridColumn: 1 }}>{t("description")}</Typography>
       <Box component="hr" sx={{ gridColumn: 1, m: 0, border: 0, borderTop: `1px solid ${tokens.grisMoyen1}` }} />

@@ -121,7 +121,7 @@ export function AskYourAi() {
 
   return (
     // A white card like the others. Phones: the label, then the 5 logos (36 px) in one line under it. From 600 px: the label on the left, the logos (44 px on desktop) on the right.
-    <Box sx={{ bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCardSoft, px: { xs: 2, md: 3 }, py: { xs: 2, md: 2.5 }, display: "flex", flexDirection: { xs: "column", sm: "row" }, alignItems: { xs: "flex-start", sm: "center" }, justifyContent: "space-between", gap: { xs: 1.25, sm: 2 } }}>
+    <Box sx={{ bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCardSoft, px: { xs: 1.5, md: 3 }, py: { xs: 1.5, md: 2.5 }, display: "flex", flexDirection: { xs: "column", sm: "row" }, alignItems: { xs: "flex-start", sm: "center" }, justifyContent: "space-between", gap: { xs: 1.25, sm: 2 } }}>
       <Typography sx={{ minWidth: 0, fontSize: 14, fontWeight: 500, lineHeight: 1.45, color: tokens.bleuFonce }}>
         {/* The agency and its city stay on one line. */}
         {t.rich("label", { name: agency.name, city: agency.city, agency: (chunks) => <Box component="span" sx={{ whiteSpace: "nowrap" }}>{chunks}</Box> })}

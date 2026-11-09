@@ -3,13 +3,15 @@
 import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import CheckCircleRounded from "@mui/icons-material/CheckCircleRounded";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCertificate } from "@/components/certificate/CertificateContext";
+import { CollaboratorPicker, useCollaboratorChooser } from "@/variants/finale/components/certificate/CollaboratorPicker";
+import { PickerField } from "@/variants/finale/components/ui/PickerField";
 import { CtaButton } from "@/variants/finale/components/ui/CtaButton";
 import { ChoiceChip } from "@/variants/finale/components/ui/FilterChip";
 import { ResponsiveSheet } from "@/variants/finale/components/ui/ResponsiveSheet";
@@ -32,9 +34,34 @@ export function ReviewRequestSheet() {
   const [touched, setTouched] = useState(false);
   const [sent, setSent] = useState(false);
   const [wasOpen, setWasOpen] = useState(open);
+  const desktop = useMediaQuery("(min-width:900px)", { noSsr: true });
+  // Votre conseiller: desktop slides the side sheet to the team list (like Filtres); phones open a second sheet.
+  const [page, setPage] = useState<"form" | "team">("form");
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const fieldRef = useRef<HTMLButtonElement>(null);
+  const shownPage = useRef(page);
+  const person = team.find((member) => member.id === form.collaboratorId);
+  const chooseAdvisor = (id: string | undefined) => setForm((current) => ({ ...current, collaboratorId: id ?? "" }));
+  const chooser = useCollaboratorChooser({
+    selectedId: form.collaboratorId || undefined,
+    view: "global",
+    allowAll: false,
+    onChoose: (id) => {
+      chooseAdvisor(id);
+      setPage("form");
+    },
+  });
+
+  // Back on the form, the focus returns to the field.
+  useEffect(() => {
+    if (shownPage.current === page) return;
+    shownPage.current = page;
+    if (page === "form") fieldRef.current?.focus({ preventScroll: true });
+  }, [page]);
 
   if (open !== wasOpen) {
     setWasOpen(open);
+    if (open) setPage("form");
     if (open && sent) {
       setSent(false);
       setTouched(false);
@@ -64,6 +91,7 @@ export function ReviewRequestSheet() {
       onClose={close}
       title={sent ? t("doneTitle") : t("title")}
       closeLabel={t("close")}
+      subPage={{ open: page === "team", title: t("collaboratorTitle"), backLabel: t("backToForm"), onBack: () => setPage("form"), header: chooser.header, children: chooser.list }}
       footer={
         <Box sx={{ p: 2, pt: 1, flexShrink: 0 }}>
           {sent ? (
@@ -110,14 +138,16 @@ export function ReviewRequestSheet() {
               ))}
             </Box>
           </Box>
-          <TextField select label={t("collaborator")} value={form.collaboratorId} onChange={(event) => setForm({ ...form, collaboratorId: event.target.value })} fullWidth size="small">
-            <MenuItem value="">—</MenuItem>
-            {team.map((person) => (
-              <MenuItem key={person.id} value={person.id}>
-                {person.name}
-              </MenuItem>
-            ))}
-          </TextField>
+          <PickerField
+            ref={fieldRef}
+            label={t("collaborator")}
+            person={person}
+            emptyText={t("collaboratorPlaceholder")}
+            emptyMuted
+            changeLabel={t("collaboratorChange")}
+            onClick={() => (desktop ? setPage("team") : setPickerOpen(true))}
+            expanded={desktop ? undefined : pickerOpen}
+          />
           <FormControlLabel
             control={<Checkbox checked={form.consent} onChange={(event) => setForm({ ...form, consent: event.target.checked })} sx={{ "&.Mui-checked": { color: tokens.bleuFonce } }} />}
             label={t("consent")}
@@ -125,6 +155,16 @@ export function ReviewRequestSheet() {
           />
         </Box>
       )}
+      {/* Phones: the team list in a second sheet over the form (desktop uses the second page above). */}
+      <CollaboratorPicker
+        open={open && pickerOpen && !desktop}
+        onClose={() => setPickerOpen(false)}
+        selectedId={form.collaboratorId || undefined}
+        onSelect={chooseAdvisor}
+        view="global"
+        allowAll={false}
+        title={t("collaboratorTitle")}
+      />
     </ResponsiveSheet>
   );
 }

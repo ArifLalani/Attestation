@@ -161,7 +161,7 @@ export function TeamSection() {
   };
 
   return (
-    <Box component="section" aria-labelledby="team-title" sx={{ bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCard, px: 1.5, py: 2, display: "flex", flexDirection: "column", gap: 2 }}>
+    <Box component="section" aria-labelledby="team-title" sx={{ bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCard, px: 1.5, py: { xs: 1.5, md: 2 }, display: "flex", flexDirection: "column", gap: 2 }}>
       <CardTitle id="team-title" eyebrow={t("eyebrow")} heading={t("heading")} />
       {people.length > 4 && <TeamSearch value={query} onChange={setQuery} />}
       <Box id="team-grid" component="ul" sx={{ listStyle: "none", m: 0, p: 0, display: "grid", gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", md: "repeat(4, minmax(0, 1fr))" }, gap: { xs: 1, md: 2 } }}>

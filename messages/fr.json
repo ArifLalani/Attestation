@@ -6,7 +6,7 @@
     "tabs": {
       "synthese": "Synthèse",
       "avis": "Avis",
-      "agences": "Agences",
+      "agences": "Agence",
       "qualite": "Qualité"
     }
   },
@@ -404,6 +404,10 @@
     "email": "E-mail",
     "product": "Votre projet avec {agency}",
     "collaborator": "Votre conseiller (facultatif)",
+    "collaboratorPlaceholder": "Choisir un conseiller",
+    "collaboratorTitle": "Votre conseiller",
+    "collaboratorChange": "Changer de conseiller",
+    "backToForm": "Retour au formulaire",
     "consent": "J’accepte de recevoir le questionnaire Opinion System par e-mail.",
     "submit": "Recevoir le questionnaire",
     "close": "Fermer",

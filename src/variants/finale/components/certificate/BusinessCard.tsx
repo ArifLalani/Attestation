@@ -29,8 +29,8 @@ export const cardSx = {
   boxShadow: tokens.shadowCard,
 } as const;
 
-/** Grey text on the frosted sign: darker than tokens.gris so it stays readable over the blurred photo. */
-const glassMuted = "rgba(4, 27, 68, 0.64)";
+/** Secondary text on the frosted sign: full navy, as in the Figma (1742:88885), so it reads over the blurred photo. */
+const glassMuted = tokens.bleuFonce;
 
 /** Faint diagonal light reflection across the frosted sign. */
 const sheen = "linear-gradient(115deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 34%, rgba(255,255,255,0) 62%, rgba(255,255,255,0.28) 72%, rgba(255,255,255,0) 84%)";
@@ -112,9 +112,9 @@ export function BusinessCard() {
       }}
     >
       {/* The team photo runs behind the whole hero on desktop; on phones and tablets it fills the top and fades into navy under the sign. */}
-      <Box sx={{ position: "absolute", zIndex: -1, inset: { xs: "0 0 auto 0", md: 0 }, height: { xs: 330, sm: 470, md: "auto" } }}>
-        <Image src={agency.coverPhoto} alt={t("coverAlt", { name: agency.name })} fill priority sizes="(min-width: 1200px) 1100px, 100vw" style={{ objectFit: "cover", objectPosition: "70% center" }} />
-        <Box aria-hidden sx={{ position: "absolute", inset: 0, background: { xs: "linear-gradient(rgba(4,27,68,0.25) 0%, rgba(4,27,68,0.6) 30%, rgba(4,27,68,0.78) 55%, #041b44 100%)", md: "linear-gradient(rgba(4,27,68,0) 30%, rgba(4,27,68,0.45) 65%, rgba(4,27,68,0.8) 100%)" } }} />
+      <Box sx={{ position: "absolute", zIndex: -1, inset: { xs: "-70px 0 auto 0", sm: "0 0 auto 0", md: 0 }, height: { xs: 330, sm: 470, md: "auto" }, "& img": { objectPosition: { xs: "50% center", sm: "70% center" } } }}>
+        <Image src={agency.coverPhoto} alt={t("coverAlt", { name: agency.name })} fill priority sizes="(min-width: 1200px) 1100px, 100vw" style={{ objectFit: "cover" }} />
+        <Box aria-hidden sx={{ position: "absolute", inset: { xs: "72px 0 0 0", sm: 0 }, background: { xs: "linear-gradient(rgba(4,27,68,0.25) 0%, rgba(4,27,68,0.6) 30%, rgba(4,27,68,0.78) 55%, #041b44 100%)", md: "linear-gradient(rgba(4,27,68,0) 30%, rgba(4,27,68,0.45) 65%, rgba(4,27,68,0.8) 100%)" } }} />
       </Box>
 
       <Box
@@ -159,19 +159,30 @@ export function BusinessCard() {
           <Typography component="h1" sx={{ fontSize: { xs: 34, sm: 44, lg: 50 }, fontWeight: 700, lineHeight: 1.05, letterSpacing: "-0.03em", color: tokens.bleuFonce, textWrap: "balance" }}>
             {agency.name}
           </Typography>
-          <Typography sx={{ mt: 1, fontSize: { xs: 20, sm: 24, lg: 26 }, fontWeight: 500, lineHeight: 1.2, letterSpacing: "-0.02em", color: tokens.bleuFonce, textWrap: "balance" }}>
+          {/* Phones: sized to the sign width so the line fits on one row (between 14 and 18 px; it wraps below about 340 px). */}
+          <Typography sx={{ mt: 1, fontSize: { xs: "clamp(14px, calc((100vw - 80px) / 19.6), 18px)", sm: 24, lg: 26 }, fontWeight: 500, lineHeight: 1.2, letterSpacing: "-0.02em", color: tokens.bleuFonce, textWrap: { xs: "wrap", sm: "balance" } }}>
             {th("tagline")}
           </Typography>
         </Box>
 
         {visible && (
           <ButtonBase
-            onClick={() => goToSection("avis")}
+            // Opens the Réputation score card (#note), not the reviews list.
+            onClick={() => {
+              const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+              document.getElementById("note")?.scrollIntoView({ behavior: reduced ? "instant" : "smooth" });
+            }}
             aria-label={th("scoreAria", { score: formatScore(summary.average!), count: countLabel })}
-            sx={{ alignSelf: "flex-start", gap: 1.5, py: 1.25, pl: 1.75, pr: 2, borderRadius: "12px", bgcolor: "rgba(255,255,255,0.72)", border: `1px solid ${tokens.grisMoyen1}`, textAlign: "left", "&:hover": { bgcolor: tokens.blanc } }}
+            sx={{ alignSelf: { xs: "stretch", sm: "flex-start" }, justifyContent: "center", gap: { xs: 2, sm: 1.5 }, p: { xs: 1.5, sm: "10px 16px 10px 14px" }, borderRadius: "12px", bgcolor: "rgba(255,255,255,0.6)", border: "1px solid #b8c2cc", textAlign: "left", "&:hover": { bgcolor: tokens.blanc } }}
           >
             <Typography component="span" sx={{ fontSize: 40, fontWeight: 700, lineHeight: 1, letterSpacing: "-0.03em", color: tokens.bleuFonce, whiteSpace: "nowrap" }}>
-              {formatScore(summary.average!)}
+              {/* Smaller comma, as in the Figma. */}
+              {formatScore(summary.average!).split(",").map((part, index) => (
+                <Box component="span" key={index}>
+                  {index > 0 && <Box component="span" sx={{ fontSize: 24 }}>,</Box>}
+                  {part}
+                </Box>
+              ))}
               <Box component="span" sx={{ fontSize: 16, fontWeight: 500, letterSpacing: 0, color: glassMuted }}>/5</Box>
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
@@ -185,9 +196,12 @@ export function BusinessCard() {
         )}
 
         {/* Side by side on every width; on phones the text is 13 px and the padding tighter so both fit on one line. */}
-        <Box sx={{ display: "flex", gap: { xs: 1, sm: 1.5 }, "& > .MuiButton-root": { width: "auto", minWidth: 0, flex: { xs: "1 1 auto", sm: "0 0 auto" }, px: { xs: 1.25, sm: 3 }, fontSize: { xs: 13, sm: 14 }, whiteSpace: { xs: "nowrap", sm: "normal" } } }}>
-          <CtaButton onClick={() => setPanel("contact")}>{th("talk")}</CtaButton>
-          <CtaButton variant="secondary" icon={null} onClick={() => goToSection("avis")}>{th("read")}</CtaButton>
+        <Box sx={{ display: "flex", gap: { xs: 1, sm: 1.5 }, "& > .MuiButton-root": { width: "auto", minWidth: 0, flex: { xs: "1 1 0", sm: "0 0 auto" }, px: { xs: 1.25, sm: 3 }, fontSize: { xs: 13, sm: 14 }, whiteSpace: { xs: "nowrap", sm: "normal" } } }}>
+          <CtaButton onClick={() => setPanel("contact")}>
+            <Box component="span" sx={{ display: { xs: "inline", sm: "none" } }}>{th("talkShort")}</Box>
+            <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>{th("talk")}</Box>
+          </CtaButton>
+          <CtaButton variant="secondary" icon="icon-right-arrow" onClick={() => goToSection("avis")}>{th("read")}</CtaButton>
         </Box>
 
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 1 }}>
@@ -201,9 +215,10 @@ export function BusinessCard() {
             }}
             sx={{ ...metaLinkSx, "&:hover p": { textDecoration: "underline", textUnderlineOffset: "3px" } }}
           >
-            <OpenStatus hours={agency.hours} />
+            <OpenStatus hours={agency.hours} boxed />
             <Box component="span" sx={visuallyHidden}>{th("hoursLink")}</Box>
           </Link>
+          <Box aria-hidden sx={{ height: 8 }} />
           {/* Jumps to the map and hours in Nos Agences. */}
           <Link
             href="#nos-agences"
