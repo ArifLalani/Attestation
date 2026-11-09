@@ -2,6 +2,7 @@
   "VarianteFinale": {
     "askAi": {
       "label": "Demander à votre IA à propos de <agency>{name} · {city}</agency>",
+      "labelShort": "Demandez à votre IA : <agency>{name} · {city}</agency>",
       "listLabel": "Ouvrir votre IA",
       "open": "Demander à {model} (nouvel onglet)",
       "title": "Que demander à {model} ?",
@@ -35,7 +36,6 @@
     },
     "hero": {
       "sector": "{sector} à {city}",
-      "tagline": "Les bonnes personnes pour votre projet.",
       "reviews": "{count} avis clients",
       "reviewsControle": "{count} avis contrôlés",
       "scoreAria": "{score} sur 5, {count}. Voir le détail de la note",

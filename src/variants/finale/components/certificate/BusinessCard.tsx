@@ -140,8 +140,22 @@ export function BusinessCard() {
           boxShadow: "0 32px 64px -16px rgba(4,27,68,0.45), 0 12px 24px -8px rgba(4,27,68,0.25)",
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-          <Box sx={{ width: 48, height: 48, borderRadius: "12px", overflow: "hidden", flexShrink: 0, bgcolor: tokens.blanc, border: `1px solid ${tokens.grisMoyen1}`, display: "grid", placeItems: "center" }}>
+        {/*
+          Phones (Figma 1742:88885): the name (24 px) next to the logo with the sector under it, the share icon top right.
+          From 600 px: logo, sector and share on one line, the big name under them.
+        */}
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "48px minmax(0, 1fr) auto",
+            gridTemplateAreas: { xs: '"logo name share" "logo sector share"', sm: '"logo sector share" "name name name"' },
+            gridTemplateRows: { xs: "auto 1fr", sm: "auto auto" },
+            columnGap: 1.5,
+            rowGap: { xs: 0, sm: 2 },
+            alignItems: { xs: "start", sm: "center" },
+          }}
+        >
+          <Box sx={{ gridArea: "logo", width: 48, height: 48, borderRadius: "12px", overflow: "hidden", flexShrink: 0, bgcolor: tokens.blanc, border: `1px solid ${tokens.grisMoyen1}`, display: "grid", placeItems: "center" }}>
             {/* Crop of the logo image as set in Figma ("image 4"). */}
             <Box sx={{ position: "relative", width: 40, height: 36, overflow: "hidden" }}>
               <Box sx={{ position: "absolute", width: "133.24%", height: "145.41%", left: "-14.28%", top: "-22.96%" }}>
@@ -149,20 +163,13 @@ export function BusinessCard() {
               </Box>
             </Box>
           </Box>
-          <Typography sx={{ flex: 1, fontSize: 14, color: glassMuted, lineHeight: "normal" }}>{th("sector", { sector: agency.sector, city: agency.city })}</Typography>
-          <IconButton onClick={share} aria-label={t("share")} sx={{ p: 1, borderRadius: "8px" }}>
-            <FigmaIcon name="share" />
-          </IconButton>
-        </Box>
-
-        <Box>
-          <Typography component="h1" sx={{ fontSize: { xs: 34, sm: 44, lg: 50 }, fontWeight: 700, lineHeight: 1.05, letterSpacing: "-0.03em", color: tokens.bleuFonce, textWrap: "balance" }}>
+          <Typography component="h1" sx={{ gridArea: "name", fontSize: { xs: 24, sm: 44, lg: 50 }, fontWeight: 700, lineHeight: 1.05, letterSpacing: "-0.03em", color: tokens.bleuFonce, textWrap: "balance" }}>
             {agency.name}
           </Typography>
-          {/* Phones: sized to the sign width so the line fits on one row (between 14 and 18 px; it wraps below about 340 px). */}
-          <Typography sx={{ mt: 1, fontSize: { xs: "clamp(14px, calc((100vw - 80px) / 19.6), 18px)", sm: 24, lg: 26 }, fontWeight: 500, lineHeight: 1.2, letterSpacing: "-0.02em", color: tokens.bleuFonce, textWrap: { xs: "wrap", sm: "balance" } }}>
-            {th("tagline")}
-          </Typography>
+          <Typography sx={{ gridArea: "sector", fontSize: 14, color: glassMuted, lineHeight: { xs: 1.5, sm: "normal" } }}>{th("sector", { sector: agency.sector, city: agency.city })}</Typography>
+          <IconButton onClick={share} aria-label={t("share")} sx={{ gridArea: "share", alignSelf: { xs: "start", sm: "center" }, p: 1, m: { xs: -1, sm: 0 }, borderRadius: "8px" }}>
+            <FigmaIcon name="share" />
+          </IconButton>
         </Box>
 
         {visible && (
