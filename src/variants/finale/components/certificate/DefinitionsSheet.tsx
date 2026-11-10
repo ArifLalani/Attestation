@@ -222,23 +222,27 @@ function DefinitionList({ current, onGo, compact }: { current: DefinitionKey | n
  * Desktop: a wide side sheet with the list on the left and the definition on the right.
  * Opened from a review, each definition also shows that review's value.
  */
-export function DefinitionsSheet({ open, onClose, initial, review, view = "global" }: { open: boolean; onClose: () => void; initial: DefinitionKey; review?: Review; view?: "global" | "controle" }) {
+export function DefinitionsSheet({ open, onClose, initial, review, view = "global", startOnList = false }: { open: boolean; onClose: () => void; initial: DefinitionKey; review?: Review; view?: "global" | "controle"; /** Phones: open on the list of all the definitions (desktop shows it anyway). */ startOnList?: boolean }) {
   const t = useTranslations("VarianteFinale.definitions");
   const desktop = useMediaQuery("(min-width:900px)", { noSsr: true });
   const [current, setCurrent] = useState<DefinitionKey>(initial);
-  const [listShown, setListShown] = useState(false);
+  const [listShown, setListShown] = useState(startOnList);
+  // Opened on the list, no line is highlighted until one has been read.
+  const [visited, setVisited] = useState(!startOnList);
   const [wasOpen, setWasOpen] = useState(open);
   // Each opening starts on the definition that was tapped.
   if (open !== wasOpen) {
     setWasOpen(open);
     if (open) {
       setCurrent(initial);
-      setListShown(false);
+      setListShown(startOnList);
+      setVisited(!startOnList);
     }
   }
   const go = (key: DefinitionKey) => {
     setCurrent(key);
     setListShown(false);
+    setVisited(true);
   };
 
   if (desktop) {
@@ -265,7 +269,7 @@ export function DefinitionsSheet({ open, onClose, initial, review, view = "globa
       onBack={listShown ? undefined : () => setListShown(true)}
       backLabel={t("all", { count: allKeys.length })}
     >
-      {listShown ? <DefinitionList key="list" current={current} onGo={go} compact={false} /> : <DefinitionPage key={current} name={current} review={review} view={view} heading={false} onGo={go} />}
+      {listShown ? <DefinitionList key="list" current={visited ? current : null} onGo={go} compact={false} /> : <DefinitionPage key={current} name={current} review={review} view={view} heading={false} onGo={go} />}
     </ResponsiveSheet>
   );
 }

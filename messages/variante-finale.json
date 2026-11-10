@@ -81,7 +81,9 @@
       "hours": "Horaires",
       "hoursAria": "Voir les horaires de la semaine dans Nos agences",
       "count": "{count} avis",
-      "scoreAria": "{view} : {score} sur 5, {count}. Voir les avis"
+      "scoreAria": "{view} : {score} sur 5, {count}. Voir les avis",
+      "learnTitle": "Comprendre les avis",
+      "learnMore": "En savoir plus"
     },
     "filters": {
       "clear": "Tout effacer",
@@ -210,7 +212,7 @@
       "number": "L’identifiant unique de l’avis chez Opinion System, utile pour le retrouver en cas de question ou de signalement."
     },
     "definitions": {
-      "title": "Définitions",
+      "title": "Comprendre les avis",
       "close": "Fermer",
       "all": "Toutes les définitions ({count})",
       "forReview": "Pour cet avis",

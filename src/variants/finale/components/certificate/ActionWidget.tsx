@@ -15,6 +15,7 @@ import ChevronRightRounded from "@mui/icons-material/ChevronRightRounded";
 import CloseRounded from "@mui/icons-material/CloseRounded";
 import DirectionsOutlined from "@mui/icons-material/DirectionsOutlined";
 import ExpandLessRounded from "@mui/icons-material/ExpandLessRounded";
+import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import LanguageOutlined from "@mui/icons-material/LanguageOutlined";
 import RateReviewOutlined from "@mui/icons-material/RateReviewOutlined";
 import StarRounded from "@mui/icons-material/StarRounded";
@@ -33,6 +34,7 @@ import { useCertificate } from "@/components/certificate/CertificateContext";
 import { CtaButton } from "@/variants/finale/components/ui/CtaButton";
 import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
 import { openHoursEvent } from "./AgenciesSection";
+import { DefinitionsSheet } from "./DefinitionsSheet";
 import { OpenStatus } from "./OpenStatus";
 
 const focusSx = { "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 } } as const;
@@ -188,7 +190,7 @@ function ActionBox({ icon, label, onClick, href, onLinkClick }: { icon: React.Re
  * The card (phone bottom sheet / desktop unfolded box): the agency, both scores, the open status (→ the hours),
  * six box buttons, and Contacter l'agence pinned at the foot.
  */
-function CardContent({ onDone, titleId }: { onDone: () => void; titleId: string }) {
+function CardContent({ onDone, titleId, onLearnMore }: { onDone: () => void; titleId: string; onLearnMore: () => void }) {
   const t = useTranslations("VarianteFinale.widget");
   const th = useTranslations("VarianteFinale.hero");
   const tb = useTranslations("Business");
@@ -223,6 +225,23 @@ function CardContent({ onDone, titleId }: { onDone: () => void; titleId: string 
           <ScoreTile view="global" onDone={onDone} />
           <ScoreTile view="controle" onDone={onDone} />
         </Box>
+
+        {/* Comprendre les avis: opens the definitions sheet (on phones, on the list of all of them). */}
+        <ButtonBase
+          onClick={() => {
+            onDone();
+            onLearnMore();
+          }}
+          aria-haspopup="dialog"
+          sx={{ width: "100%", justifyContent: "flex-start", gap: 1.25, px: 1.5, py: 1.25, borderRadius: "12px", bgcolor: tokens.bleu5, border: `1px solid ${tokens.bleu20}`, fontFamily: "inherit", "&:hover": { bgcolor: tokens.bleu10 }, ...focusSx }}
+        >
+          <InfoOutlined sx={{ fontSize: 20, color: tokens.bleu600 }} />
+          <Box component="span" sx={{ flex: 1, textAlign: "left", fontSize: 14, fontWeight: 500, color: tokens.bleuFonce, whiteSpace: "nowrap" }}>{t("learnTitle")}</Box>
+          <Box component="span" sx={{ display: "inline-flex", alignItems: "center", fontSize: 14, fontWeight: 600, color: tokens.bleu600 }}>
+            {t("learnMore")}
+            <ChevronRightRounded sx={{ fontSize: 20 }} />
+          </Box>
+        </ButtonBase>
 
         <ButtonBase
           onClick={showHours}
@@ -277,6 +296,7 @@ function DesktopWidget() {
   const [pillWidth, setPillWidth] = useState<number>();
   const bodyId = useId();
   const titleId = useId();
+  const [learnOpen, setLearnOpen] = useState(false);
 
   // Scrolling back up to the hero also folds it.
   const open = shown && expanded;
@@ -320,7 +340,7 @@ function DesktopWidget() {
                 aria-labelledby={titleId}
                 sx={{ width: 380, maxHeight: "calc(100vh - 140px)", mb: "4px", bgcolor: tokens.blanc, borderRadius: "26px", overflow: "hidden", display: "flex", flexDirection: "column", opacity: open ? 1 : 0, transition: `opacity ${ease}` }}
               >
-                <CardContent onDone={() => setExpanded(false)} titleId={titleId} />
+                <CardContent onDone={() => setExpanded(false)} titleId={titleId} onLearnMore={() => setLearnOpen(true)} />
               </Box>
             </Collapse>
             <ButtonBase
@@ -336,6 +356,8 @@ function DesktopWidget() {
             </ButtonBase>
           </Box>
         </Grow>
+        {/* Outside the card, so it stays open once the card has folded. */}
+        <DefinitionsSheet open={learnOpen} onClose={() => setLearnOpen(false)} initial="global" startOnList />
       </Box>
     </ClickAwayListener>
   );
@@ -348,6 +370,7 @@ function PhoneWidget() {
   const [open, setOpen] = useState(false);
   const startY = useRef<number | null>(null);
   const titleId = useId();
+  const [learnOpen, setLearnOpen] = useState(false);
 
   return (
     <>
@@ -388,8 +411,9 @@ function PhoneWidget() {
         <Box sx={{ pt: 1, display: "flex", justifyContent: "center", flexShrink: 0 }}>
           <Box sx={{ width: 40, height: 5, borderRadius: 2.5, bgcolor: tokens.grisMoyen1 }} />
         </Box>
-        <CardContent onDone={() => setOpen(false)} titleId={titleId} />
+        <CardContent onDone={() => setOpen(false)} titleId={titleId} onLearnMore={() => setLearnOpen(true)} />
       </SwipeableDrawer>
+      <DefinitionsSheet open={learnOpen} onClose={() => setLearnOpen(false)} initial="global" startOnList />
     </>
   );
 }
