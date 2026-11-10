@@ -53,15 +53,14 @@ function useActiveScore() {
   return { summary, visible: summary.average !== null && isPublic(summary.count, agency.publicThreshold), controle: scoreView === "controle" };
 }
 
-/** Shown once the hero card has scrolled out of view. */
-function useAfterHero() {
+/** Shown from the first scroll down; hidden again back at the very top of the page. */
+function useAfterFirstScroll() {
   const [shown, setShown] = useState(false);
   useEffect(() => {
-    const hero = document.querySelector("#synthese article");
-    if (!hero) return;
-    const observer = new IntersectionObserver(([entry]) => setShown(!entry.isIntersecting && entry.boundingClientRect.top < 0));
-    observer.observe(hero);
-    return () => observer.disconnect();
+    const update = () => setShown(window.scrollY > 16);
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
   }, []);
   return shown;
 }
@@ -289,7 +288,7 @@ function CardContent({ onDone, titleId, onLearnMore }: { onDone: () => void; tit
  */
 function DesktopWidget() {
   const t = useTranslations("VarianteFinale.widget");
-  const shown = useAfterHero();
+  const shown = useAfterFirstScroll();
   const [expanded, setExpanded] = useState(false);
   const openedAt = useRef(0);
   const pillRef = useRef<HTMLSpanElement>(null);
@@ -298,7 +297,7 @@ function DesktopWidget() {
   const titleId = useId();
   const [learnOpen, setLearnOpen] = useState(false);
 
-  // Scrolling back up to the hero also folds it.
+  // Scrolling back to the very top also folds it.
   const open = shown && expanded;
 
   // Width of the closed pill, so the width can animate between the pill and the open card.
@@ -366,7 +365,7 @@ function DesktopWidget() {
 /** Phones and tablets: the same pill, bottom right; tapping it (or swiping up on it) pulls up the card as a bottom sheet. */
 function PhoneWidget() {
   const t = useTranslations("VarianteFinale.widget");
-  const shown = useAfterHero();
+  const shown = useAfterFirstScroll();
   const [open, setOpen] = useState(false);
   const startY = useRef<number | null>(null);
   const titleId = useId();
