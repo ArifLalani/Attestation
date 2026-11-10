@@ -49,6 +49,8 @@
       "sector": "{sector} à {city}",
       "reviews": "{count} avis clients",
       "reviewsControle": "{count} avis contrôlés",
+      "scoreCount": "<b>{count}</b> avis clients",
+      "scoreCountControle": "<b>{count}</b> avis contrôlés",
       "scoreAria": "{score} sur 5, {count}. Voir le détail de la note",
       "talk": "Parlons de votre projet",
       "talkShort": "Contacter",

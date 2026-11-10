@@ -4,12 +4,14 @@ import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import IconButton from "@mui/material/IconButton";
 import Link from "@mui/material/Link";
-import Rating from "@mui/material/Rating";
 import Snackbar from "@mui/material/Snackbar";
 import Typography from "@mui/material/Typography";
 import DirectionsOutlined from "@mui/icons-material/DirectionsOutlined";
 import LanguageOutlined from "@mui/icons-material/LanguageOutlined";
 import PlaceOutlined from "@mui/icons-material/PlaceOutlined";
+import ChevronRight from "@mui/icons-material/ChevronRight";
+import StarOutlineRounded from "@mui/icons-material/StarOutlineRounded";
+import StarRounded from "@mui/icons-material/StarRounded";
 import Verified from "@mui/icons-material/Verified";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
@@ -141,18 +143,18 @@ export function BusinessCard() {
         }}
       >
         {/*
-          Phones (Figma 1742:88885): the name (24 px) next to the logo with the sector under it, the share icon top right.
-          From 600 px: logo, sector and share on one line, the big name under them.
+          Every size (Figma 1742:88885): the name next to the logo with the sector under it, the share icon top right.
+          The name is 24 px on phones, 28 px from 900 px.
         */}
         <Box
           sx={{
             display: "grid",
             gridTemplateColumns: "48px minmax(0, 1fr) auto",
-            gridTemplateAreas: { xs: '"logo name share" "logo sector share"', sm: '"logo sector share" "name name name"' },
-            gridTemplateRows: { xs: "auto 1fr", sm: "auto auto" },
+            gridTemplateAreas: '"logo name share" "logo sector share"',
+            gridTemplateRows: "auto 1fr",
             columnGap: 1.5,
-            rowGap: { xs: 0, sm: 2 },
-            alignItems: { xs: "start", sm: "center" },
+            rowGap: 0,
+            alignItems: "start",
           }}
         >
           <Box sx={{ gridArea: "logo", width: 48, height: 48, borderRadius: "12px", overflow: "hidden", flexShrink: 0, bgcolor: tokens.blanc, border: `1px solid ${tokens.grisMoyen1}`, display: "grid", placeItems: "center" }}>
@@ -163,11 +165,11 @@ export function BusinessCard() {
               </Box>
             </Box>
           </Box>
-          <Typography component="h1" sx={{ gridArea: "name", fontSize: { xs: 24, sm: 44, lg: 50 }, fontWeight: 700, lineHeight: 1.05, letterSpacing: "-0.03em", color: tokens.bleuFonce, textWrap: "balance" }}>
+          <Typography component="h1" sx={{ gridArea: "name", fontSize: { xs: 24, md: 28 }, fontWeight: 700, lineHeight: 1.05, letterSpacing: "-0.03em", color: tokens.bleuFonce, textWrap: "balance" }}>
             {agency.name}
           </Typography>
-          <Typography sx={{ gridArea: "sector", fontSize: 14, color: glassMuted, lineHeight: { xs: 1.5, sm: "normal" } }}>{th("sector", { sector: agency.sector, city: agency.city })}</Typography>
-          <IconButton onClick={share} aria-label={t("share")} sx={{ gridArea: "share", alignSelf: { xs: "start", sm: "center" }, p: 1, m: { xs: -1, sm: 0 }, borderRadius: "8px" }}>
+          <Typography sx={{ gridArea: "sector", fontSize: 14, color: glassMuted, lineHeight: 1.5 }}>{th("sector", { sector: agency.sector, city: agency.city })}</Typography>
+          <IconButton onClick={share} aria-label={t("share")} sx={{ gridArea: "share", alignSelf: "start", p: 1, m: -1, borderRadius: "8px" }}>
             <FigmaIcon name="share" />
           </IconButton>
         </Box>
@@ -180,25 +182,26 @@ export function BusinessCard() {
               document.getElementById("note")?.scrollIntoView({ behavior: reduced ? "instant" : "smooth" });
             }}
             aria-label={th("scoreAria", { score: formatScore(summary.average!), count: countLabel })}
-            sx={{ alignSelf: { xs: "stretch", sm: "flex-start" }, justifyContent: "center", gap: { xs: 2, sm: 1.5 }, p: { xs: 1.5, sm: "10px 16px 10px 14px" }, borderRadius: "12px", bgcolor: "rgba(255,255,255,0.6)", border: "1px solid #b8c2cc", textAlign: "left", "&:hover": { bgcolor: tokens.blanc } }}
+            sx={{ width: "100%", maxWidth: { sm: 400 }, alignSelf: { xs: "stretch", sm: "flex-start" }, containerType: "inline-size", alignItems: "center", gap: 1.25, px: 2, py: 3.5, borderRadius: "16px", bgcolor: "rgba(255,255,255,0.75)", border: "1px solid #b8c2cc", textAlign: "left", fontFamily: "inherit", "&:hover": { bgcolor: tokens.blanc }, "&:hover .score-chevron": { transform: "translateX(2px)" }, "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 } }}
           >
-            <Typography component="span" sx={{ fontSize: 40, fontWeight: 700, lineHeight: 1, letterSpacing: "-0.03em", color: tokens.bleuFonce, whiteSpace: "nowrap" }}>
-              {/* Smaller comma, as in the Figma. */}
-              {formatScore(summary.average!).split(",").map((part, index) => (
-                <Box component="span" key={index}>
-                  {index > 0 && <Box component="span" sx={{ fontSize: 24 }}>,</Box>}
-                  {part}
-                </Box>
-              ))}
-              <Box component="span" sx={{ fontSize: 16, fontWeight: 500, letterSpacing: 0, color: glassMuted }}>/5</Box>
-            </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-              <Rating readOnly value={summary.average} precision={0.1} sx={{ fontSize: 20 }} />
-              <Typography component="span" sx={{ display: "flex", alignItems: "center", gap: 0.5, fontSize: 13, color: glassMuted, lineHeight: "normal" }}>
-                {scoreView === "controle" && <Verified sx={{ fontSize: 15, color: tokens.vertOs }} />}
-                {countLabel}
-              </Typography>
+            {/* The score out of 5, a divider, the stars (green for Avis Contrôlés) over the number of reviews, an arrow to the detail. */}
+            <Box component="span" sx={{ display: "flex", alignItems: "baseline", flexShrink: 0, color: tokens.bleuFonce, lineHeight: 1 }}>
+              <Box component="span" sx={{ fontSize: "min(54px, 15.5cqi)", fontWeight: 700, letterSpacing: "-0.03em" }}>{formatScore(summary.average!)}</Box>
+              <Box component="span" sx={{ fontSize: "min(22px, 6.5cqi)", fontWeight: 400, color: "#5d7387", ml: 0.25 }}>/5</Box>
             </Box>
+            <Box aria-hidden sx={{ alignSelf: "stretch", width: "1px", bgcolor: "rgba(4, 27, 68, 0.14)", flexShrink: 0 }} />
+            <Box component="span" sx={{ display: "flex", flexDirection: "column", gap: 0.75, minWidth: 0 }}>
+              <Box component="span" aria-hidden sx={{ display: "flex", gap: 0.25 }}>
+                {[1, 2, 3, 4, 5].map((star) => star <= Math.round(summary.average!)
+                  ? <StarRounded key={star} sx={{ fontSize: "min(30px, 8.6cqi)", color: scoreView === "controle" ? tokens.vertOs : "#ffb400" }} />
+                  : <StarOutlineRounded key={star} sx={{ fontSize: "min(30px, 8.6cqi)", color: "#8ea1b2" }} />)}
+              </Box>
+              <Box component="span" sx={{ display: "flex", alignItems: "center", gap: 0.5, fontSize: "min(18px, 4.8cqi)", lineHeight: 1.3, fontWeight: 400, color: tokens.bleuFonce, whiteSpace: "nowrap" }}>
+                {/* Only the number is bold. */}
+                <span>{th.rich(scoreView === "controle" ? "scoreCountControle" : "scoreCount", { count: formatCount(summary.count), b: (chunks) => <b>{chunks}</b> })}</span>
+              </Box>
+            </Box>
+            <ChevronRight className="score-chevron" sx={{ ml: "auto", flexShrink: 0, fontSize: 26, color: tokens.bleuFonce, transition: "transform 150ms ease" }} />
           </ButtonBase>
         )}
 
