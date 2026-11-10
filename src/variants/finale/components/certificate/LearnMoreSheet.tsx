@@ -1,6 +1,8 @@
 "use client";
 
 import Box from "@mui/material/Box";
+import ButtonBase from "@mui/material/ButtonBase";
+import ChevronRight from "@mui/icons-material/ChevronRight";
 import Typography from "@mui/material/Typography";
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
@@ -18,7 +20,7 @@ const controleSources: ReviewSource[] = ["os_certified", "import_iso"];
  * "En savoir plus" content: explains the score of the active tab.
  * `inline` = Figma "En savoir plus — contenu" (1491:38099), the grey band inside the Réputation card on desktop.
  */
-export function LearnMoreContent({ view, inline = false }: { view: ScoreView; inline?: boolean }) {
+export function LearnMoreContent({ view, inline = false, onSource }: { view: ScoreView; inline?: boolean; /** Makes each source row a button (e.g. to its definition). */ onSource?: (source: ReviewSource) => void }) {
   const t = useTranslations("LearnMore");
   const ts = useTranslations("Sources");
   const tp = useTranslations("Platforms");
@@ -62,12 +64,12 @@ export function LearnMoreContent({ view, inline = false }: { view: ScoreView; in
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
         <Typography component="h3" sx={{ fontSize: 16, fontWeight: 600, lineHeight: 1.5 }}>{t("sourcesTitle")}</Typography>
-        <Box component="ul" sx={{ listStyle: "none", m: 0, p: 0, display: "flex", flexDirection: "column", gap: 2 }}>
+        <Box component="ul" sx={{ listStyle: "none", m: 0, p: 0, display: "flex", flexDirection: "column", gap: onSource ? 0.5 : 2 }}>
           {sources.map((source) => {
             const count = counts[source] ?? 0;
             const verified = source === "os_certified" || source === "import_iso";
-            return (
-              <Box component="li" key={source}>
+            const row = (
+              <>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.75 }}>
                   <Box sx={{ flex: 1, minWidth: 0 }}>
                     <Typography sx={{ fontSize: 14, lineHeight: 1.5 }}>{ts(source)}</Typography>
@@ -76,10 +78,25 @@ export function LearnMoreContent({ view, inline = false }: { view: ScoreView; in
                     )}
                   </Box>
                   <Typography sx={{ fontSize: 14, fontWeight: 600, lineHeight: 1.5, whiteSpace: "nowrap" }}>{t("count", { count: formatCount(count) })}</Typography>
+                  {onSource && <ChevronRight aria-hidden sx={{ fontSize: 18, color: tokens.gris, mr: -0.5 }} />}
                 </Box>
                 <Box sx={{ height: 6, borderRadius: "3px", bgcolor: tokens.grisClair1, overflow: "hidden" }}>
                   <Box sx={{ height: "100%", width: `${(count / largest) * 100}%`, bgcolor: verified ? tokens.vertOs : tokens.bleu400, borderRadius: "3px" }} />
                 </Box>
+              </>
+            );
+            return (
+              <Box component="li" key={source}>
+                {onSource ? (
+                  <ButtonBase
+                    onClick={() => onSource(source)}
+                    sx={{ display: "block", width: "calc(100% + 16px)", mx: -1, px: 1, py: 0.75, borderRadius: "10px", textAlign: "left", fontFamily: "inherit", color: "inherit", "&:hover": { bgcolor: tokens.grisClair1 }, "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: -2 } }}
+                  >
+                    {row}
+                  </ButtonBase>
+                ) : (
+                  row
+                )}
               </Box>
             );
           })}

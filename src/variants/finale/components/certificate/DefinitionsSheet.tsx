@@ -9,7 +9,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useCertificate } from "@/components/certificate/CertificateContext";
 import { ResponsiveSheet } from "@/variants/finale/components/ui/ResponsiveSheet";
-import type { Review } from "@/data/types";
+import type { Review, ReviewSource } from "@/data/types";
 import { tokens } from "@/theme/theme";
 import { LearnMoreContent } from "./LearnMoreSheet";
 
@@ -85,11 +85,11 @@ function Paragraph({ children }: { children: React.ReactNode }) {
 }
 
 /** Label + text pairs (the filter explanations). */
-function Items({ items }: { items: { label: string; text: string }[] }) {
+function Items({ items, highlight }: { items: { label: string; text: string }[]; /** The item reached from a source row, tinted. */ highlight?: number }) {
   return (
     <Box component="dl" sx={{ m: 0, display: "flex", flexDirection: "column", gap: 2 }}>
-      {items.map((item) => (
-        <Box key={item.label}>
+      {items.map((item, index) => (
+        <Box key={item.label} sx={index === highlight ? { m: -1.25, p: 1.25, borderRadius: "12px", bgcolor: tokens.bleu5, boxShadow: `inset 0 0 0 1px ${tokens.bleu20}` } : undefined}>
           <Typography component="dt" sx={{ fontSize: 14, fontWeight: 600, lineHeight: 1.5, color: tokens.bleuFonce }}>{item.label}</Typography>
           <Typography component="dd" sx={{ m: 0, mt: 0.25, fontSize: 14, lineHeight: 1.6, color: tokens.bleuFonce, opacity: 0.85 }}>{item.text}</Typography>
         </Box>
@@ -98,21 +98,29 @@ function Items({ items }: { items: { label: string; text: string }[] }) {
   );
 }
 
+/** Where each « D'où viennent ces avis ? » row leads: its definition, and the item to tint in it. */
+const sourceTarget: Record<ReviewSource, [DefinitionKey, number]> = {
+  os_certified: ["questionnaire", 0],
+  os_simple: ["questionnaire", 1],
+  import_iso: ["source", 1],
+  import_other: ["source", 1],
+};
+
 /** The text of one definition. */
-function DefinitionBody({ name, view }: { name: DefinitionKey; view: "global" | "controle" }) {
+function DefinitionBody({ name, view, focus, onGo }: { name: DefinitionKey; view: "global" | "controle"; focus?: number; onGo: (key: DefinitionKey, focus?: number) => void }) {
   const t = useTranslations("VarianteFinale.definitions");
   const th = useTranslations("VarianteFinale.help");
   const tf = useTranslations("VarianteFinale.filters");
-  if (name === "global" || name === "controle") return <LearnMoreContent view={name} />;
+  if (name === "global" || name === "controle") return <LearnMoreContent view={name} onSource={(source) => onGo(...sourceTarget[source])} />;
   if (name === "type" || name === "source" || name === "product" || name === "criterion") {
     // The filter explanations of Type and Source also define them in a review.
-    return <Items items={(tf.raw(`help.${name}`) as { items: { label: string; text: string }[] }).items} />;
+    return <Items items={(tf.raw(`help.${name}`) as { items: { label: string; text: string }[] }).items} highlight={focus} />;
   }
   switch (name) {
     case "breakdown":
       return <Items items={[{ label: t("breakdown.reviewLabel"), text: `${th("scores")} ${t("breakdown.criteria")}` }, { label: t("breakdown.reputationLabel"), text: t("breakdown.reputation", { view: view === "controle" ? t("label.controle") : t("label.global") }) }]} />;
     case "questionnaire":
-      return <Items items={[{ label: t("questionnaireTypes.controleName"), text: t("questionnaireControle") }, { label: t("questionnaireTypes.simpleName"), text: th("questionnaire.simple") }]} />;
+      return <Items items={[{ label: t("questionnaireTypes.controleName"), text: t("questionnaireControle") }, { label: t("questionnaireTypes.simpleName"), text: th("questionnaire.simple") }]} highlight={focus} />;
     case "activity":
       return <Items items={[{ label: t("activity.osLabel"), text: th("activity") }, { label: t("activity.importLabel"), text: th("activityImport") }]} />;
     case "levels":
@@ -125,7 +133,7 @@ function DefinitionBody({ name, view }: { name: DefinitionKey; view: "global" | 
 }
 
 /** One definition: this review's value first (when opened from a review), the text, then « Voir aussi ». */
-function DefinitionPage({ name, review, view, heading, onGo }: { name: DefinitionKey; review?: Review; view: "global" | "controle"; heading: boolean; onGo: (key: DefinitionKey) => void }) {
+function DefinitionPage({ name, review, view, heading, focus, onGo }: { name: DefinitionKey; review?: Review; view: "global" | "controle"; heading: boolean; focus?: number; onGo: (key: DefinitionKey, focus?: number) => void }) {
   const t = useTranslations("VarianteFinale.definitions");
   const own = useReviewValue(review, name);
   const links = related[name] ?? [];
@@ -147,7 +155,7 @@ function DefinitionPage({ name, review, view, heading, onGo }: { name: Definitio
           {own.note && <Typography sx={{ mt: 0.75, fontSize: 14, lineHeight: 1.5, color: tokens.bleuFonce }}>{own.note}</Typography>}
         </Box>
       )}
-      <DefinitionBody name={name} view={view} />
+      <DefinitionBody name={name} view={view} focus={focus} onGo={onGo} />
       {links.length > 0 && (
         <Box>
           <Typography sx={{ fontSize: 13, fontWeight: 600, color: tokens.gris, mb: 0.5 }}>{t("seeAlso")}</Typography>
@@ -197,9 +205,10 @@ function DefinitionList({ current, onGo, compact }: { current: DefinitionKey | n
                       fontWeight: on ? 600 : 400,
                       textAlign: "left",
                       color: tokens.bleuFonce,
-                      bgcolor: on ? tokens.bleu5 : "transparent",
-                      boxShadow: on ? `inset 0 0 0 1px ${tokens.bleu20}` : "none",
-                      "&:hover": { bgcolor: on ? tokens.bleu5 : tokens.grisClair1 },
+                      // On the grey menu (desktop) the chosen line is white; on phones it is light blue.
+                      bgcolor: on ? (compact ? tokens.blanc : tokens.bleu5) : "transparent",
+                      boxShadow: on ? `inset 0 0 0 1px ${compact ? tokens.grisMoyen1 : tokens.bleu20}` : "none",
+                      "&:hover": { bgcolor: on ? (compact ? tokens.blanc : tokens.bleu5) : compact ? "rgba(4, 27, 68, 0.05)" : tokens.grisClair1 },
                       ...focusSx,
                     }}
                   >
@@ -229,6 +238,8 @@ export function DefinitionsSheet({ open, onClose, initial, review, view = "globa
   const [listShown, setListShown] = useState(startOnList);
   // Opened on the list, no line is highlighted until one has been read.
   const [visited, setVisited] = useState(!startOnList);
+  // The item to tint in the definition, when reached from a « D'où viennent ces avis ? » row.
+  const [focus, setFocus] = useState<number>();
   const [wasOpen, setWasOpen] = useState(open);
   // Each opening starts on the definition that was tapped.
   if (open !== wasOpen) {
@@ -237,10 +248,12 @@ export function DefinitionsSheet({ open, onClose, initial, review, view = "globa
       setCurrent(initial);
       setListShown(startOnList);
       setVisited(!startOnList);
+      setFocus(undefined);
     }
   }
-  const go = (key: DefinitionKey) => {
+  const go = (key: DefinitionKey, item?: number) => {
     setCurrent(key);
+    setFocus(item);
     setListShown(false);
     setVisited(true);
   };
@@ -249,11 +262,12 @@ export function DefinitionsSheet({ open, onClose, initial, review, view = "globa
     return (
       <ResponsiveSheet open={open} onClose={onClose} title={t("title")} closeLabel={t("close")} dialogWidth={760}>
         <Box sx={{ display: "flex", height: "100%", minHeight: 0 }}>
-          <Box sx={{ width: 250, flexShrink: 0, borderRight: `1px solid ${tokens.grisMoyen1}`, overflowY: "auto" }}>
+          {/* The menu on a light grey, the definition on white. */}
+          <Box sx={{ width: 250, flexShrink: 0, borderRight: `1px solid ${tokens.grisMoyen1}`, bgcolor: tokens.grisClair2, overflowY: "auto" }}>
             <DefinitionList current={current} onGo={go} compact />
           </Box>
           <Box key={current} sx={{ flex: 1, minWidth: 0, overflowY: "auto" }}>
-            <DefinitionPage name={current} review={review} view={view} heading onGo={go} />
+            <DefinitionPage name={current} review={review} view={view} heading focus={focus} onGo={go} />
           </Box>
         </Box>
       </ResponsiveSheet>
@@ -269,7 +283,7 @@ export function DefinitionsSheet({ open, onClose, initial, review, view = "globa
       onBack={listShown ? undefined : () => setListShown(true)}
       backLabel={t("all", { count: allKeys.length })}
     >
-      {listShown ? <DefinitionList key="list" current={visited ? current : null} onGo={go} compact={false} /> : <DefinitionPage key={current} name={current} review={review} view={view} heading={false} onGo={go} />}
+      {listShown ? <DefinitionList key="list" current={visited ? current : null} onGo={go} compact={false} /> : <DefinitionPage key={current} name={current} review={review} view={view} heading={false} focus={focus} onGo={go} />}
     </ResponsiveSheet>
   );
 }
