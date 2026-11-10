@@ -259,7 +259,8 @@
         "satisfactionLabel": "Satisfaction",
         "recommendationName": "Niveau de recommandation",
         "satisfactionName": "Niveau de satisfaction"
-      }
+      },
+      "backTo": "Retour à {label}"
     }
   }
 }

@@ -2,6 +2,8 @@
 
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
+import IconButton from "@mui/material/IconButton";
+import ArrowBackRounded from "@mui/icons-material/ArrowBackRounded";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ChevronRight from "@mui/icons-material/ChevronRight";
@@ -133,13 +135,22 @@ function DefinitionBody({ name, view, focus, onGo }: { name: DefinitionKey; view
 }
 
 /** One definition: this review's value first (when opened from a review), the text, then « Voir aussi ». */
-function DefinitionPage({ name, review, view, heading, focus, onGo }: { name: DefinitionKey; review?: Review; view: "global" | "controle"; heading: boolean; focus?: number; onGo: (key: DefinitionKey, focus?: number) => void }) {
+function DefinitionPage({ name, review, view, heading, focus, onGo, back }: { name: DefinitionKey; review?: Review; view: "global" | "controle"; heading: boolean; focus?: number; onGo: (key: DefinitionKey, focus?: number) => void; /** Desktop: a back arrow beside the heading, to the definition read before. */ back?: { label: string; onBack: () => void } }) {
   const t = useTranslations("VarianteFinale.definitions");
   const own = useReviewValue(review, name);
   const links = related[name] ?? [];
   return (
     <Box ref={startAtTop} sx={{ p: { xs: 2, md: 3 }, display: "flex", flexDirection: "column", gap: 2.5 }}>
-      {heading && <Typography component="h3" sx={{ fontSize: 20, fontWeight: 600, lineHeight: 1.3, color: tokens.bleuFonce }}>{t(`label.${name}`)}</Typography>}
+      {heading && (
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          {back && (
+            <IconButton onClick={back.onBack} aria-label={back.label} sx={{ m: -1, color: tokens.bleuFonce }}>
+              <ArrowBackRounded />
+            </IconButton>
+          )}
+          <Typography component="h3" sx={{ fontSize: 20, fontWeight: 600, lineHeight: 1.3, color: tokens.bleuFonce }}>{t(`label.${name}`)}</Typography>
+        </Box>
+      )}
       {own && (
         <Box sx={{ p: 1.5, borderRadius: "12px", bgcolor: tokens.bleu5, border: `1px solid ${tokens.bleu20}` }}>
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 1.5 }}>
@@ -240,6 +251,8 @@ export function DefinitionsSheet({ open, onClose, initial, review, view = "globa
   const [visited, setVisited] = useState(!startOnList);
   // The item to tint in the definition, when reached from a « D'où viennent ces avis ? » row.
   const [focus, setFocus] = useState<number>();
+  // The definitions read before, when one was reached from another (a source row, « Voir aussi »): the back arrow returns to them.
+  const [history, setHistory] = useState<{ key: DefinitionKey; focus?: number }[]>([]);
   const [wasOpen, setWasOpen] = useState(open);
   // Each opening starts on the definition that was tapped.
   if (open !== wasOpen) {
@@ -249,14 +262,32 @@ export function DefinitionsSheet({ open, onClose, initial, review, view = "globa
       setListShown(startOnList);
       setVisited(!startOnList);
       setFocus(undefined);
+      setHistory([]);
     }
   }
-  const go = (key: DefinitionKey, item?: number) => {
+  const show = (key: DefinitionKey, item?: number) => {
     setCurrent(key);
     setFocus(item);
     setListShown(false);
     setVisited(true);
   };
+  // From a definition: remember it, so the back arrow can return to it.
+  const go = (key: DefinitionKey, item?: number) => {
+    setHistory([...history, { key: current, focus }]);
+    show(key, item);
+  };
+  // From the list: a fresh start.
+  const pick = (key: DefinitionKey) => {
+    setHistory([]);
+    show(key);
+  };
+  const previous = history.at(-1);
+  const back = () => {
+    if (!previous) return;
+    setHistory(history.slice(0, -1));
+    show(previous.key, previous.focus);
+  };
+  const backLabel = previous ? t("backTo", { label: t(`label.${previous.key}`) }) : t("all", { count: allKeys.length });
 
   if (desktop) {
     return (
@@ -264,10 +295,10 @@ export function DefinitionsSheet({ open, onClose, initial, review, view = "globa
         <Box sx={{ display: "flex", height: "100%", minHeight: 0 }}>
           {/* The menu on a light grey, the definition on white. */}
           <Box sx={{ width: 250, flexShrink: 0, borderRight: `1px solid ${tokens.grisMoyen1}`, bgcolor: tokens.grisClair2, overflowY: "auto" }}>
-            <DefinitionList current={current} onGo={go} compact />
+            <DefinitionList current={current} onGo={pick} compact />
           </Box>
           <Box key={current} sx={{ flex: 1, minWidth: 0, overflowY: "auto" }}>
-            <DefinitionPage name={current} review={review} view={view} heading focus={focus} onGo={go} />
+            <DefinitionPage name={current} review={review} view={view} heading focus={focus} onGo={go} back={previous ? { label: backLabel, onBack: back } : undefined} />
           </Box>
         </Box>
       </ResponsiveSheet>
@@ -280,10 +311,11 @@ export function DefinitionsSheet({ open, onClose, initial, review, view = "globa
       onClose={onClose}
       title={listShown ? t("title") : t(`label.${current}`)}
       closeLabel={t("close")}
-      onBack={listShown ? undefined : () => setListShown(true)}
-      backLabel={t("all", { count: allKeys.length })}
+      // Back to the definition read before, otherwise to the list of all of them.
+      onBack={listShown ? undefined : previous ? back : () => setListShown(true)}
+      backLabel={backLabel}
     >
-      {listShown ? <DefinitionList key="list" current={visited ? current : null} onGo={go} compact={false} /> : <DefinitionPage key={current} name={current} review={review} view={view} heading={false} focus={focus} onGo={go} />}
+      {listShown ? <DefinitionList key="list" current={visited ? current : null} onGo={pick} compact={false} /> : <DefinitionPage key={current} name={current} review={review} view={view} heading={false} focus={focus} onGo={go} />}
     </ResponsiveSheet>
   );
 }
