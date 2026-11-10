@@ -17,7 +17,7 @@ import { displayScore, headingFor, isPublic, reviewsForScore, summarize, type Sc
 import { tokens } from "@/theme/theme";
 import { emptyFilters, useCertificate } from "@/components/certificate/CertificateContext";
 import { CollaboratorPicker } from "./CollaboratorPicker";
-import { LearnMoreSheet } from "./LearnMoreSheet";
+import { DefinitionsSheet } from "./DefinitionsSheet";
 
 const cardSx = {
   bgcolor: tokens.blanc,
@@ -307,7 +307,7 @@ export function ReputationCard() {
         onSelect={setScoreCollaboratorId}
         view={scoreView}
       />
-      <LearnMoreSheet open={learnMoreOpen} onClose={() => setLearnMoreOpen(false)} view={scoreView} />
+      <DefinitionsSheet open={learnMoreOpen} onClose={() => setLearnMoreOpen(false)} initial={scoreView} view={scoreView} />
     </Box>
   );
 }

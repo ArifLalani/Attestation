@@ -22,7 +22,8 @@ import type { Review, ReviewSource } from "@/data/types";
 import { formatCount, formatScore } from "@/lib/format";
 import { tokens } from "@/theme/theme";
 import { useUsefulVote } from "@/components/reviews/useUsefulVotes";
-import { HelpButton, ReviewHelpSheet, type HelpGroup, type HelpRequest } from "./ReviewHelp";
+import { DefinitionsSheet } from "@/variants/finale/components/certificate/DefinitionsSheet";
+import { HelpButton, definitionFor, type HelpGroup, type HelpRequest } from "./ReviewHelp";
 
 const sourceIcons: Record<ReviewSource, FigmaIconName> = {
   os_certified: "source-os-certified",
@@ -495,7 +496,7 @@ export function ReviewCard({ review, onReport, framed = true, outlined = false }
         </Box>
       </Box>
 
-      <ReviewHelpSheet review={review} request={help} open={helpOpen} onClose={() => setHelpOpen(false)} />
+      <DefinitionsSheet open={helpOpen} onClose={() => setHelpOpen(false)} initial={definitionFor(review, help)} review={review} view={review.status === "controle" ? "controle" : "global"} />
     </Box>
   );
 }

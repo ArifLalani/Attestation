@@ -16,8 +16,8 @@ import { CtaButton } from "@/variants/finale/components/ui/CtaButton";
 import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
 import { ChoiceChip, StarLabel } from "@/variants/finale/components/ui/FilterChip";
 import { StaffAvatar } from "@/variants/finale/components/ui/StaffAvatar";
-import { ResponsiveSheet } from "@/variants/finale/components/ui/ResponsiveSheet";
 import { HelpButton } from "./ReviewHelp";
+import { DefinitionsSheet } from "@/variants/finale/components/certificate/DefinitionsSheet";
 import type { Criterion, Product } from "@/data/types";
 import { formatCount } from "@/lib/format";
 import { applyFilters, emptyFilters, type Period, type ReviewFilters } from "@/lib/reviewFilters";
@@ -53,25 +53,6 @@ function Group({ title, onHelp, radio, labelFor, children }: { title: string; on
   );
 }
 
-/** What a section means: a window under its ⓘ on desktop, a bottom sheet on phones (like the review details). */
-function FilterHelp({ help, onClose }: { help: { key: HelpKey; anchor: HTMLElement } | null; onClose: () => void }) {
-  const t = useTranslations("VarianteFinale.filters");
-  const tr = useTranslations("VarianteFinale.reviews");
-  const content = help ? (t.raw(`help.${help.key}`) as { title: string; items: { label: string; text: string }[] }) : null;
-  return (
-    <ResponsiveSheet open={Boolean(help)} onClose={onClose} title={content?.title ?? ""} closeLabel={tr("close")} anchorEl={help?.anchor} dropdownWidth={360} dropdownAlign="left">
-      <Box component="dl" sx={{ m: 0, px: 1, py: 1 }}>
-        {content?.items.map((item) => (
-          <Box key={item.label} sx={{ px: 1, py: 1.25 }}>
-            <Typography component="dt" sx={{ fontSize: 14, fontWeight: 600, color: tokens.bleuFonce }}>{item.label}</Typography>
-            <Typography component="dd" sx={{ m: 0, mt: 0.25, fontSize: 14, lineHeight: 1.5, color: tokens.bleuFonce, opacity: 0.85 }}>{item.text}</Typography>
-          </Box>
-        ))}
-      </Box>
-    </ResponsiveSheet>
-  );
-}
-
 /**
  * Filters in the Actuel look (grey chips, Réinitialiser, a yellow button). Desktop: a side sheet from the right, over the page
  * (Trier par has its own). Phones: a bottom sheet. The choices are a draft: the page does not change until
@@ -94,7 +75,9 @@ export function FiltersSheet() {
   const backRef = useRef<HTMLButtonElement>(null);
   const fieldRef = useRef<HTMLButtonElement>(null);
   const shownPage = useRef(page);
-  const [help, setHelp] = useState<{ key: HelpKey; anchor: HTMLElement } | null>(null);
+  // The ⓘ open the definitions sheet over the filters; closing it comes back to them.
+  const [help, setHelp] = useState<HelpKey | null>(null);
+  const [lastHelp, setLastHelp] = useState<HelpKey>("type");
 
   // Each opening starts the draft from the filters in use.
   if (open !== wasOpen) {
@@ -132,7 +115,10 @@ export function FiltersSheet() {
   };
   const noteSelected = (stars: StarBucket) => draft.note?.stars === stars && !draft.note.exact;
   const person = team.find((member) => member.id === draft.collaboratorId);
-  const openHelp = (key: HelpKey) => (anchor: HTMLElement) => setHelp({ key, anchor });
+  const openHelp = (key: HelpKey) => () => {
+    setHelp(key);
+    setLastHelp(key);
+  };
   const chooser = useCollaboratorChooser({
     selectedId: draft.collaboratorId,
     view: draftView,
@@ -292,7 +278,7 @@ export function FiltersSheet() {
         </SwipeableDrawer>
       )}
 
-      <FilterHelp help={help} onClose={() => setHelp(null)} />
+      <DefinitionsSheet open={Boolean(help)} onClose={() => setHelp(null)} initial={help ?? lastHelp} view={draftView} />
       {/* Phones: a second sheet over the filters (desktop uses the second page above). */}
       <CollaboratorPicker
         open={pickerOpen && !desktop}

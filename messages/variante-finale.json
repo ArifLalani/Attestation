@@ -208,6 +208,46 @@
       "activity": "Le service dont le client a bénéficié. Il détermine le questionnaire envoyé, et donc les critères notés.",
       "activityImport": "Le service dont le client a bénéficié, d’après la source de l’avis.",
       "number": "L’identifiant unique de l’avis chez Opinion System, utile pour le retrouver en cas de question ou de signalement."
+    },
+    "definitions": {
+      "title": "Définitions",
+      "close": "Fermer",
+      "all": "Toutes les définitions ({count})",
+      "forReview": "Pour cet avis",
+      "seeAlso": "Voir aussi",
+      "group": {
+        "scores": "Les scores",
+        "filters": "Les filtres",
+        "details": "Le détail d’un avis"
+      },
+      "label": {
+        "global": "Avis global",
+        "controle": "Avis Contrôlés",
+        "breakdown": "Répartition des notes",
+        "type": "Type d’avis",
+        "source": "Source de l’avis",
+        "product": "Produit",
+        "criterion": "Critère",
+        "questionnaireControle": "Questionnaire certifié",
+        "questionnaireSimple": "Questionnaire simple",
+        "activity": "Activité professionnelle",
+        "recommendation": "Niveau de recommandation",
+        "satisfaction": "Niveau de satisfaction",
+        "collaborator": "Collaborateur en charge",
+        "number": "Numéro d’avis"
+      },
+      "breakdown": {
+        "reputationLabel": "Dans la Réputation",
+        "reputation": "Le nombre d’avis pour chaque note, de 5 à 1 étoile, dans la vue {view}. Touchez une ligne pour lire les avis de cette note.",
+        "reviewLabel": "Dans un avis",
+        "criteria": "Le questionnaire est conçu pour l’activité du client : chaque activité est notée sur ses propres critères."
+      },
+      "questionnaireControle": "Un questionnaire conçu et certifié par Opinion System. C’est ce qui fait d’un avis un avis contrôlé : il compte dans le score Avis Contrôlés et dans le score global.",
+      "activity": {
+        "osLabel": "Avis Opinion System",
+        "importLabel": "Avis importé"
+      },
+      "collaborator": "La personne de l’agence qui a envoyé le questionnaire au client."
     }
   }
 }

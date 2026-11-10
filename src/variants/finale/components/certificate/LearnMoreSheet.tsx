@@ -45,7 +45,7 @@ export function LearnMoreContent({ view, inline = false }: { view: ScoreView; in
   return (
     <Box
       sx={{
-        p: 2,
+        p: inline ? 2 : 0,
         display: "grid",
         gridTemplateColumns: { xs: "minmax(0, 1fr)", md: inline ? "minmax(0, 1fr) minmax(0, 1fr)" : "minmax(0, 1fr)" },
         columnGap: 4,
