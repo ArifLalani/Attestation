@@ -5,6 +5,7 @@ import Collapse from "@mui/material/Collapse";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import Typography from "@mui/material/Typography";
+import VerifiedRounded from "@mui/icons-material/VerifiedRounded";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
@@ -122,7 +123,9 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
           <Typography sx={{ flex: 1, fontSize: 16, fontWeight: 600, color: tokens.blanc, lineHeight: "normal" }}>
             {t("brand")}
           </Typography>
-          <Typography sx={{ fontSize: { xs: 10, sm: 12 }, fontWeight: 600, color: tokens.vertOs, letterSpacing: { xs: "0.5px", sm: "0.8px" }, lineHeight: "normal", whiteSpace: "nowrap", "@media (min-width:400px)": { fontSize: 12, letterSpacing: "0.8px" } }}>
+          {/* A small verified badge before « Réputation vérifiée ». */}
+          <Typography sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, fontSize: { xs: 10, sm: 12 }, fontWeight: 600, color: tokens.vertOs, letterSpacing: { xs: "0.5px", sm: "0.8px" }, lineHeight: "normal", whiteSpace: "nowrap", "@media (min-width:400px)": { fontSize: 12, letterSpacing: "0.8px" } }}>
+            <VerifiedRounded aria-hidden sx={{ fontSize: "1.45em" }} />
             {t("badge")}
           </Typography>
         </Box>
