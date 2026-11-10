@@ -107,7 +107,8 @@ export function BusinessCard() {
         // Phone: the photo shows above the sign, which overlaps its lower part. Desktop: the sign floats on the left.
         gridTemplateAreas: { xs: '"caption" "sign"', md: '"sign caption"' },
         gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1.05fr) minmax(0, 1fr)" },
-        minHeight: { md: 460 },
+        // Desktop: tall enough that the big Réputation score starts below the first screen (only the switch shows under the hero).
+        minHeight: { md: "clamp(460px, calc(100svh - 345px), 720px)" },
         p: { xs: 1.5, sm: 2, md: 3 },
         columnGap: 4,
         background: { xs: tokens.bleuFonce, md: "linear-gradient(147.875deg, rgb(143,178,219) 0%, rgb(201,219,240) 71.429%)" },
@@ -122,7 +123,8 @@ export function BusinessCard() {
       <Box
         sx={{
           gridArea: "sign",
-          alignSelf: "center",
+          // Desktop: the card sits at the bottom of the hero, level with the caption on the right.
+          alignSelf: { xs: "center", md: "end" },
           display: "flex",
           flexDirection: "column",
           gap: 2,
