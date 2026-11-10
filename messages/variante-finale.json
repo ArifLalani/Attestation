@@ -217,28 +217,26 @@
       "seeAlso": "Voir aussi",
       "group": {
         "scores": "Les scores",
-        "filters": "Les filtres",
-        "details": "Le détail d’un avis"
+        "details": "Le détail d’un avis",
+        "filters": "Les filtres"
       },
       "label": {
         "global": "Avis global",
         "controle": "Avis Contrôlés",
-        "breakdown": "Répartition des notes",
-        "type": "Type d’avis",
         "source": "Source de l’avis",
-        "product": "Produit",
-        "criterion": "Critère",
-        "questionnaireControle": "Questionnaire certifié",
-        "questionnaireSimple": "Questionnaire simple",
+        "type": "Type d’avis",
+        "questionnaire": "Questionnaire",
         "activity": "Activité professionnelle",
-        "recommendation": "Niveau de recommandation",
-        "satisfaction": "Niveau de satisfaction",
+        "levels": "Niveaux de recommandation et de satisfaction",
+        "breakdown": "Répartition des notes",
         "collaborator": "Collaborateur en charge",
-        "number": "Numéro d’avis"
+        "number": "Numéro d’avis",
+        "product": "Produit",
+        "criterion": "Critère"
       },
       "breakdown": {
         "reputationLabel": "Dans la Réputation",
-        "reputation": "Le nombre d’avis pour chaque note, de 5 à 1 étoile, dans la vue {view}. Touchez une ligne pour lire les avis de cette note.",
+        "reputation": "Le nombre d’avis pour chaque note, de 5 à 1 étoile, dans la vue {view}.",
         "reviewLabel": "Dans un avis",
         "criteria": "Le questionnaire est conçu pour l’activité du client : chaque activité est notée sur ses propres critères."
       },
@@ -247,7 +245,19 @@
         "osLabel": "Avis Opinion System",
         "importLabel": "Avis importé"
       },
-      "collaborator": "La personne de l’agence qui a envoyé le questionnaire au client."
+      "collaborator": "La personne de l’agence qui a envoyé le questionnaire au client.",
+      "questionnaireTypes": {
+        "controle": "Certifié",
+        "simple": "Simple",
+        "controleName": "Questionnaire certifié",
+        "simpleName": "Questionnaire simple"
+      },
+      "levels": {
+        "recommendationLabel": "Recommandation",
+        "satisfactionLabel": "Satisfaction",
+        "recommendationName": "Niveau de recommandation",
+        "satisfactionName": "Niveau de satisfaction"
+      }
     }
   }
 }

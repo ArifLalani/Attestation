@@ -239,7 +239,8 @@ export function AskYourAi() {
         </Typography>
         <Typography component="h3" sx={{ fontSize: { xs: 18, sm: 22, md: 28 }, "@media (max-width:374.95px)": { fontSize: 16 }, fontWeight: 700, lineHeight: 1.2, letterSpacing: { xs: "-0.3px", md: "-0.5px" }, textWrap: "balance" }}>{t("heading", { name: agency.name })}</Typography>
         <Typography sx={{ display: { xs: "none", sm: "block" }, fontSize: 14, lineHeight: 1.6, color: "rgba(255, 255, 255, 0.82)" }}>{t("text")}</Typography>
-        <CtaButton onClick={() => openAssistant()} aria-haspopup="dialog" sx={{ mt: { xs: 0.5, md: 1.5 }, width: "auto", alignSelf: "flex-start", px: { xs: 1.75, md: 2.5 } }}>
+        {/* Phones: the button takes the width of the text column, its label centred. */}
+        <CtaButton onClick={() => openAssistant()} aria-haspopup="dialog" sx={{ mt: { xs: 0.5, md: 1.5 }, width: { xs: "100%", sm: "auto" }, alignSelf: { xs: "stretch", sm: "flex-start" }, justifyContent: "center", px: { xs: 1.75, md: 2.5 } }}>
           <Box component="span" sx={{ display: { xs: "inline", sm: "none" } }}>{t("ctaShort")}</Box>
           <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>{t("cta")}</Box>
         </CtaButton>

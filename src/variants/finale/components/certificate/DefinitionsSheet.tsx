@@ -15,9 +15,9 @@ import { LearnMoreContent } from "./LearnMoreSheet";
 
 /** Every definition of the page, in the order of the list. */
 export const definitionGroups = {
-  scores: ["global", "controle", "breakdown"],
-  filters: ["type", "source", "product", "criterion"],
-  details: ["questionnaireControle", "questionnaireSimple", "activity", "recommendation", "satisfaction", "collaborator", "number"],
+  scores: ["global", "controle"],
+  details: ["source", "type", "questionnaire", "activity", "levels", "breakdown", "collaborator", "number"],
+  filters: ["product", "criterion"],
 } as const;
 export type DefinitionKey = (typeof definitionGroups)[keyof typeof definitionGroups][number];
 const allKeys = Object.values(definitionGroups).flat() as DefinitionKey[];
@@ -25,13 +25,11 @@ const allKeys = Object.values(definitionGroups).flat() as DefinitionKey[];
 /** "Voir aussi" under a definition. */
 const related: Partial<Record<DefinitionKey, DefinitionKey[]>> = {
   global: ["controle", "source"],
-  controle: ["type", "questionnaireControle"],
-  type: ["controle", "questionnaireControle"],
+  controle: ["type", "questionnaire"],
+  type: ["controle", "questionnaire"],
   source: ["type"],
-  questionnaireControle: ["questionnaireSimple", "controle"],
-  questionnaireSimple: ["questionnaireControle"],
-  recommendation: ["satisfaction"],
-  satisfaction: ["recommendation"],
+  questionnaire: ["type", "controle"],
+  levels: ["breakdown"],
   breakdown: ["activity"],
 };
 
@@ -45,7 +43,7 @@ function startAtTop(node: HTMLElement | null) {
 const focusSx = { "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: -2 } } as const;
 
 /** This review's value for a definition (« Pour cet avis »), when the sheet was opened from a review. */
-function useReviewValue(review: Review | undefined, key: DefinitionKey): { value: string; note?: string } | null {
+function useReviewValue(review: Review | undefined, key: DefinitionKey): { value: string; note?: string; rows?: { label: string; value: string }[] } | null {
   const t = useTranslations("VarianteFinale.help");
   const tr = useTranslations("Reviews");
   const ts = useTranslations("SourceNames");
@@ -64,16 +62,13 @@ function useReviewValue(review: Review | undefined, key: DefinitionKey): { value
       return { value: tr(review.status === "controle" ? "controle" : "nonControle"), note: t(`status.${review.source}`) };
     case "source":
       return { value: survey ? ts("os_certified") : sourceName, note: imported ? t(`source.${review.source}`, { source: sourceName }) : t("source.os") };
-    case "questionnaireControle":
-    case "questionnaireSimple":
+    case "questionnaire":
       if (!survey) return null;
-      return { value: td(survey.questionnaire === "controle" ? "label.questionnaireControle" : "label.questionnaireSimple") };
+      return { value: td(`questionnaireTypes.${survey.questionnaire}`), note: t(`questionnaire.${survey.questionnaire}`) };
     case "activity":
       return { value: activity, note: survey ? undefined : t("activityImport") };
-    case "recommendation":
-      return survey ? { value: `${survey.recommendation} %` } : null;
-    case "satisfaction":
-      return survey ? { value: `${survey.satisfaction} %` } : null;
+    case "levels":
+      return survey ? { value: "", rows: [{ label: td("levels.recommendationLabel"), value: `${survey.recommendation} %` }, { label: td("levels.satisfactionLabel"), value: `${survey.satisfaction} %` }] } : null;
     case "breakdown":
       return survey ? { value: activity, note: t("criteria", { activity: activity.toLowerCase() }) } : null;
     case "collaborator":
@@ -110,21 +105,18 @@ function DefinitionBody({ name, view }: { name: DefinitionKey; view: "global" | 
   const tf = useTranslations("VarianteFinale.filters");
   if (name === "global" || name === "controle") return <LearnMoreContent view={name} />;
   if (name === "type" || name === "source" || name === "product" || name === "criterion") {
+    // The filter explanations of Type and Source also define them in a review.
     return <Items items={(tf.raw(`help.${name}`) as { items: { label: string; text: string }[] }).items} />;
   }
   switch (name) {
     case "breakdown":
-      return <Items items={[{ label: t("breakdown.reputationLabel"), text: t("breakdown.reputation", { view: view === "controle" ? t("label.controle") : t("label.global") }) }, { label: t("breakdown.reviewLabel"), text: `${th("scores")} ${t("breakdown.criteria")}` }]} />;
-    case "questionnaireControle":
-      return <Paragraph>{t("questionnaireControle")}</Paragraph>;
-    case "questionnaireSimple":
-      return <Paragraph>{th("questionnaire.simple")}</Paragraph>;
+      return <Items items={[{ label: t("breakdown.reviewLabel"), text: `${th("scores")} ${t("breakdown.criteria")}` }, { label: t("breakdown.reputationLabel"), text: t("breakdown.reputation", { view: view === "controle" ? t("label.controle") : t("label.global") }) }]} />;
+    case "questionnaire":
+      return <Items items={[{ label: t("questionnaireTypes.controleName"), text: t("questionnaireControle") }, { label: t("questionnaireTypes.simpleName"), text: th("questionnaire.simple") }]} />;
     case "activity":
       return <Items items={[{ label: t("activity.osLabel"), text: th("activity") }, { label: t("activity.importLabel"), text: th("activityImport") }]} />;
-    case "recommendation":
-      return <Paragraph>{th("recommendation")}</Paragraph>;
-    case "satisfaction":
-      return <Paragraph>{th("satisfaction")}</Paragraph>;
+    case "levels":
+      return <Items items={[{ label: t("levels.recommendationName"), text: th("recommendation") }, { label: t("levels.satisfactionName"), text: th("satisfaction") }]} />;
     case "collaborator":
       return <Paragraph>{t("collaborator")}</Paragraph>;
     case "number":
@@ -144,8 +136,14 @@ function DefinitionPage({ name, review, view, heading, onGo }: { name: Definitio
         <Box sx={{ p: 1.5, borderRadius: "12px", bgcolor: tokens.bleu5, border: `1px solid ${tokens.bleu20}` }}>
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 1.5 }}>
             <Typography sx={{ fontSize: 13, fontWeight: 600, color: tokens.gris }}>{t("forReview")}</Typography>
-            <Typography sx={{ fontSize: 15, fontWeight: 700, color: tokens.bleuFonce, textAlign: "right" }}>{own.value}</Typography>
+            {own.value && <Typography sx={{ fontSize: 15, fontWeight: 700, color: tokens.bleuFonce, textAlign: "right" }}>{own.value}</Typography>}
           </Box>
+          {own.rows?.map((row) => (
+            <Box key={row.label} sx={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 1.5, mt: 0.5 }}>
+              <Typography sx={{ fontSize: 14, color: tokens.bleuFonce }}>{row.label}</Typography>
+              <Typography sx={{ fontSize: 15, fontWeight: 700, color: tokens.bleuFonce }}>{row.value}</Typography>
+            </Box>
+          ))}
           {own.note && <Typography sx={{ mt: 0.75, fontSize: 14, lineHeight: 1.5, color: tokens.bleuFonce }}>{own.note}</Typography>}
         </Box>
       )}

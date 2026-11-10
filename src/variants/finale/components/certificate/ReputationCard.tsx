@@ -154,7 +154,6 @@ export function ReputationCard() {
   const controle = scoreView === "controle";
   const accent = controle ? tokens.vertOs : tokens.bleu400;
   const ink = controle ? tokens.vertOs : tokens.bleuFonce;
-  const maxBucket = Math.max(1, ...Object.values(summary.buckets));
 
   const openBucket = (stars: StarBucket) => {
     setFilters({
@@ -229,37 +228,45 @@ export function ReputationCard() {
           <>
             <Box aria-hidden sx={{ bgcolor: tokens.grisMoyen1, width: { xs: "100%", md: "1px" }, height: { xs: "1px", md: "auto" } }} />
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, minWidth: 0 }}>
-              <Typography component="h3" sx={{ fontSize: 16, fontWeight: 600, color: tokens.bleuFonce, lineHeight: "normal" }}>
-                {tf("distribution")}
-              </Typography>
-              <Box component="ul" sx={{ listStyle: "none", m: 0, p: 0, flex: { md: 1 }, display: "flex", flexDirection: "column", justifyContent: "space-around", gap: 1 }}>
+              {/* No visible title: the star rows speak for themselves; screen readers still hear "Répartition des notes". */}
+              <Box component="ul" aria-label={tf("distribution")} sx={{ listStyle: "none", m: 0, p: 0, flex: { md: 1 }, display: "flex", flexDirection: "column", justifyContent: "space-around", gap: 1 }}>
                 {([5, 4, 3, 2, 1] as StarBucket[]).map((stars) => {
                   const count = summary.buckets[stars];
+                  // Each note's share of all the reviews of the view, under its count.
+                  // A few reviews out of many still show as "< 1 %", not "0 %".
+                  const percent = summary.count ? (count / summary.count) * 100 : 0;
+                  const share = count > 0 && percent < 0.5 ? "< 1" : String(Math.round(percent));
                   return (
                     <li key={stars}>
                       <ButtonBase
                         onClick={() => openBucket(stars)}
                         aria-label={t("bucketLabel", { stars, count: formatCount(count) })}
-                        sx={{ width: "100%", minHeight: 36, gap: 1, px: 0.5, mx: -0.5, borderRadius: "8px", "&:hover": { bgcolor: tokens.grisClair1 }, "&:hover .bucket-count": { textDecoration: "underline" } }}
+                        sx={{ width: "100%", minHeight: 44, gap: 1.25, px: 0.5, mx: -0.5, borderRadius: "8px", "&:hover": { bgcolor: tokens.grisClair1 }, "&:hover .bucket-count": { textDecoration: "underline" } }}
                       >
                         <Box sx={{ display: "flex", alignItems: "center", fontWeight: 600, lineHeight: "normal", whiteSpace: "nowrap" }}>
-                          <Box component="span" sx={{ fontSize: 14, color: tokens.bleuFonce }}>{stars}</Box>
-                          <Box component="span" sx={{ fontSize: 16, color: tokens.jaune600 }}>★</Box>
+                          <Box component="span" sx={{ fontSize: 15, fontWeight: 700, color: tokens.bleuFonce }}>{stars}</Box>
+                          <Box component="span" sx={{ fontSize: 17, color: tokens.jaune600 }}>★</Box>
                         </Box>
-                        <Box sx={{ flex: 1, minWidth: 0, height: 8, borderRadius: "4px", bgcolor: tokens.grisMoyen1, overflow: "hidden" }}>
+                        <Box sx={{ flex: 1, minWidth: 0, height: 14, borderRadius: "7px", bgcolor: tokens.grisMoyen1, overflow: "hidden" }}>
                           <Box
                             sx={{
                               height: "100%",
-                              borderRadius: "4px",
+                              borderRadius: "7px",
                               bgcolor: accent,
-                              width: `${Math.max(count ? 3 : 0, (count / maxBucket) * 100)}%`,
+                              // The bar fills to the note's share of all the reviews (74 % = three quarters full).
+                              width: `${Math.max(count ? 3 : 0, percent)}%`,
                               transition: "width 500ms cubic-bezier(0.2, 0, 0, 1), background-color 200ms ease",
                             }}
                           />
                         </Box>
-                        <Typography className="bucket-count" component="span" sx={{ width: 44, textAlign: "right", fontSize: 14, fontWeight: 600, lineHeight: "normal", color: tokens.bleuFonce }}>
-                          {formatCount(count)}
-                        </Typography>
+                        <Box component="span" sx={{ width: 56, flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "flex-end", lineHeight: 1.15 }}>
+                          <Typography className="bucket-count" component="span" sx={{ fontSize: 15, fontWeight: 700, lineHeight: "inherit", color: tokens.bleuFonce }}>
+                            {formatCount(count)}
+                          </Typography>
+                          <Typography component="span" sx={{ fontSize: 12, fontWeight: 500, lineHeight: "inherit", color: "#5d7387" }}>
+                            {share}&nbsp;%
+                          </Typography>
+                        </Box>
                         <FigmaIcon name="chevron-right" />
                       </ButtonBase>
                     </li>

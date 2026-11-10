@@ -18,13 +18,13 @@ export interface HelpRequest {
 /** The definition a block or a line of a review opens on, in the definitions sheet. */
 export function definitionFor(review: Review, request: HelpRequest | null): DefinitionKey {
   if (!request) return "type";
-  if (request.group === "levels") return request.focus === "satisfaction" ? "satisfaction" : "recommendation";
+  if (request.group === "levels") return "levels";
   if (request.group === "breakdown") return "breakdown";
   switch (request.focus) {
     case "source":
       return "source";
     case "questionnaire":
-      return review.survey?.questionnaire === "simple" ? "questionnaireSimple" : "questionnaireControle";
+      return "questionnaire";
     case "collaborator":
       return "collaborator";
     case "activity":
