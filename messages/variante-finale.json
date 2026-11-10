@@ -250,9 +250,9 @@
       "collaborator": "La personne de l’agence qui a envoyé le questionnaire au client.",
       "questionnaireTypes": {
         "controle": "Certifié",
-        "simple": "Simple",
+        "simple": "Interne",
         "controleName": "Questionnaire certifié",
-        "simpleName": "Questionnaire simple"
+        "simpleName": "Questionnaire interne"
       },
       "levels": {
         "recommendationLabel": "Recommandation",
