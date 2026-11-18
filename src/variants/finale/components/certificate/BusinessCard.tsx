@@ -85,7 +85,6 @@ export function BusinessCard() {
   const controlled = scoreView === "controle";
   const modeLabel = tr(scoreView);
   const countLabel = th("reviews", { count: formatCount(summary.count) });
-  const ratingColor = controlled ? "#167968" : "#316ca4";
 
   useEffect(() => {
     const heading = nameRef.current;
@@ -184,7 +183,9 @@ export function BusinessCard() {
           borderRadius: "16px",
           // On phones and tablets the sign reaches the curved corner, so its own corner follows it (72 px minus the padding).
           borderBottomRightRadius: { xs: "60px", sm: "56px", md: "16px" },
-          bgcolor: "#e7eef6",
+          bgcolor: "rgba(231, 238, 246, 0.84)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
           boxShadow: "0 32px 64px -16px rgba(4,27,68,0.45), 0 12px 24px -8px rgba(4,27,68,0.25)",
         }}
       >
@@ -237,7 +238,7 @@ export function BusinessCard() {
             sx={{
               width: "100%", maxWidth: { sm: 400 }, alignSelf: { xs: "stretch", sm: "flex-start" },
               position: "relative", isolation: "isolate", overflow: "hidden", containerType: "inline-size",
-              display: "grid", gridTemplateColumns: "minmax(max-content, 1fr) minmax(0, 1fr) auto", columnGap: "clamp(6px, 2.5%, 13px)",
+              display: "grid", gridTemplateColumns: "minmax(max-content, 1fr) minmax(0, 1.2fr) auto", columnGap: "clamp(6px, 2.5%, 13px)",
               minHeight: { xs: 108, sm: 124 }, px: { xs: 1.5, sm: 2 }, py: 1.75, borderRadius: "21px",
               border: `1px solid ${controlled ? "#b8dacf" : "#ceddeb"}`,
               background: controlled
@@ -259,16 +260,16 @@ export function BusinessCard() {
               <Box component="span" sx={{ fontSize: "clamp(34px, 19cqi, 59px)", fontWeight: 700, letterSpacing: "-0.08em" }}>{formatScore(average)}</Box>
               <Box component="span" sx={{ fontSize: "clamp(11px, 4.5cqi, 15px)", color: "#456379", ml: "4px" }}>/5</Box>
             </Box>
-            <Box component="span" sx={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: 0.35, minWidth: 0 }}>
-              <Box component="span" sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 0.5, fontSize: "clamp(11px, 4.6cqi, 14px)", lineHeight: 1.2, fontWeight: 600 }}>
-                <FigmaIcon name={controlled ? "rv-controle" : "rv-all"} size={16} />
+            <Box component="span" sx={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: 0.5, minWidth: 0 }}>
+              <Box component="span" sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 0.5, fontSize: "clamp(13px, 5.5cqi, 17px)", lineHeight: 1.2, fontWeight: 600 }}>
+                <FigmaIcon name={controlled ? "rv-controle" : "rv-all"} size={18} />
                 {modeLabel}
               </Box>
               <Rating value={displayScore(average)} precision={0.1} readOnly aria-hidden
                 icon={<StarRounded fontSize="inherit" />} emptyIcon={<StarRounded fontSize="inherit" />}
-                sx={{ fontSize: "clamp(13px, 5.7cqi, 18px)", color: ratingColor, "& .MuiRating-iconFilled": { color: ratingColor }, "& .MuiRating-iconEmpty": { color: "#8ea6ba", opacity: 0.48 } }}
+                sx={{ fontSize: "clamp(16px, 7.6cqi, 23px)", "& .MuiRating-iconFilled": { color: tokens.rating }, "& .MuiRating-iconEmpty": { color: "#8ea6ba", opacity: 0.48 } }}
               />
-              <Box component="span" sx={{ fontSize: "clamp(11px, 4.5cqi, 13px)", lineHeight: 1.25, color: "#456379" }}>{countLabel}</Box>
+              <Box component="span" sx={{ fontSize: "clamp(13px, 5.4cqi, 16px)", lineHeight: 1.25, color: "#456379" }}>{countLabel}</Box>
             </Box>
             <ChevronRight aria-hidden className="score-chevron" sx={{ fontSize: 21, transition: "transform 150ms ease" }} />
           </ButtonBase>
@@ -292,11 +293,10 @@ export function BusinessCard() {
               ...metaLinkSx,
               width: "100%", minHeight: 36, pb: 0.5, borderBottom: "1px solid #c3d3e3",
               "& > [role=status]": { flex: 1 },
-              "& > [role=status] > span": { color: "inherit" },
             }}
           >
             <Box component="span" aria-hidden sx={{ width: 6, height: 6, mx: 0.5, flexShrink: 0, borderRadius: "50%", bgcolor: "#2b6598" }} />
-            <OpenStatus hours={agency.hours} split />
+            <OpenStatus hours={agency.hours} split colors={{ open: tokens.bleuFonce, closed: "#ae391b" }} />
             <Box component="span" sx={visuallyHidden}>{th("hoursLink")}</Box>
             <ChevronRight aria-hidden />
           </Link>

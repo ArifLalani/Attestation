@@ -14,7 +14,12 @@ import { tokens } from "@/theme/theme";
 /** Live "Ouvert · Ferme à 19 h" status, computed in the browser from the current Paris time. */
 /** `split`: "Fermé" in colour then "· Ouvre…" in navy, without the dot (the agency card, from option C). */
 /** `boxed`: a light tinted pill with a chevron (it opens the week's hours), so the status stands out on the hero's frosted glass. */
-export function OpenStatus({ hours, split = false, boxed = false }: { hours: WeekHours; split?: boolean; boxed?: boolean }) {
+export function OpenStatus({ hours, split = false, boxed = false, colors }: {
+  hours: WeekHours;
+  split?: boolean;
+  boxed?: boolean;
+  colors?: { open: string; closed: string };
+}) {
   const t = useTranslations("Hours");
   const now = useNow();
   // Public holidays, shorter days and closures replace the usual hours.
@@ -30,7 +35,7 @@ export function OpenStatus({ hours, split = false, boxed = false }: { hours: Wee
           ? t("closedOpensToday", { time: frenchTime(status.opensAt) })
           : t("closedOpensOn", { day: t(`days.${status.opensDay}`), time: frenchTime(status.opensAt) });
 
-  const color = status && !status.open ? tokens.error3 : tokens.vertOs;
+  const color = status && !status.open ? colors?.closed ?? tokens.error3 : colors?.open ?? tokens.vertOs;
 
   if (split) {
     const [state, ...rest] = label.split(" · ");
