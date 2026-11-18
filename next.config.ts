@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
   // Phones on the same Wi-Fi (the address changes with the network).
   allowedDevOrigins: ["192.168.*.*", "10.*.*.*", "172.*.*.*"],
   partialPrefetching: true,
+  experimental: {
+    agentUpgrade: "security",
+  },
   async redirects() {
     return [
       { source: "/", destination: "/fr-fr/variantes/finale/20871", permanent: false },
