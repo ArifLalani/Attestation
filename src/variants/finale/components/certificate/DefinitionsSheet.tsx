@@ -13,6 +13,8 @@ import { useCertificate } from "@/components/certificate/CertificateContext";
 import { ResponsiveSheet } from "@/variants/finale/components/ui/ResponsiveSheet";
 import type { Review, ReviewSource } from "@/data/types";
 import { tokens } from "@/theme/theme";
+import { OpinionSystemIcon, SourceIcon } from "@/variants/finale/components/reviews/ReviewCard";
+import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
 import { LearnMoreContent } from "./LearnMoreSheet";
 
 /** Every definition of the page, in the order of the list. */
@@ -68,7 +70,7 @@ function useReviewValue(review: Review | undefined, key: DefinitionKey): { value
       if (!survey) return null;
       return { value: td(`questionnaireTypes.${survey.questionnaire}`), note: t(`questionnaire.${survey.questionnaire}`) };
     case "activity":
-      return { value: activity, note: survey ? undefined : t("activityImport") };
+      return review.source === "os_certified" ? { value: activity } : null;
     case "levels":
       return survey ? { value: "", rows: [{ label: td("levels.recommendationLabel"), value: `${survey.recommendation} %` }, { label: td("levels.satisfactionLabel"), value: `${survey.satisfaction} %` }] } : null;
     case "breakdown":
@@ -86,13 +88,22 @@ function Paragraph({ children }: { children: React.ReactNode }) {
   return <Typography sx={{ fontSize: 14, lineHeight: 1.6, color: tokens.bleuFonce }}>{children}</Typography>;
 }
 
+type Item = { label: string; text: string; /** Shown before the label: the source or type icon, as on the review cards. */ icon?: React.ReactNode };
+
+const sourceIcon = (source: ReviewSource) => <SourceIcon review={{ source }} size={20} />;
+/** Type d’avis: the sealed rosette (Contrôlés) and the empty dotted one (Non Contrôlés), as on the review chips. */
+const typeIcons = [<FigmaIcon key="controle" name="rv-controle" size={20} />, <FigmaIcon key="non" name="rv-non-controle" size={20} />];
+
 /** Label + text pairs (the filter explanations). */
-function Items({ items, highlight }: { items: { label: string; text: string }[]; /** The item reached from a source row, tinted. */ highlight?: number }) {
+function Items({ items, highlight }: { items: Item[]; /** The item reached from a source row, tinted. */ highlight?: number }) {
   return (
     <Box component="dl" sx={{ m: 0, display: "flex", flexDirection: "column", gap: 2 }}>
       {items.map((item, index) => (
         <Box key={item.label} sx={index === highlight ? { m: -1.25, p: 1.25, borderRadius: "12px", bgcolor: tokens.bleu5, boxShadow: `inset 0 0 0 1px ${tokens.bleu20}` } : undefined}>
-          <Typography component="dt" sx={{ fontSize: 14, fontWeight: 600, lineHeight: 1.5, color: tokens.bleuFonce }}>{item.label}</Typography>
+          <Typography component="dt" sx={{ display: "flex", alignItems: "center", gap: 1, fontSize: 14, fontWeight: 600, lineHeight: 1.5, color: tokens.bleuFonce }}>
+            {item.icon && <Box component="span" sx={{ width: 20, height: 20, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>{item.icon}</Box>}
+            {item.label}
+          </Typography>
           <Typography component="dd" sx={{ m: 0, mt: 0.25, fontSize: 14, lineHeight: 1.6, color: tokens.bleuFonce, opacity: 0.85 }}>{item.text}</Typography>
         </Box>
       ))}
@@ -116,15 +127,18 @@ function DefinitionBody({ name, view, focus, onGo }: { name: DefinitionKey; view
   if (name === "global" || name === "controle") return <LearnMoreContent view={name} onSource={(source) => onGo(...sourceTarget[source])} />;
   if (name === "type" || name === "source" || name === "product" || name === "criterion") {
     // The filter explanations of Type and Source also define them in a review.
-    return <Items items={(tf.raw(`help.${name}`) as { items: { label: string; text: string }[] }).items} highlight={focus} />;
+    const items = (tf.raw(`help.${name}`) as { items: Item[] }).items;
+    // Source (Opinion System, Avis importés) and Type (Contrôlés, Non Contrôlés) get their icons.
+    const icons = name === "source" ? [<OpinionSystemIcon key="os" size={20} />, sourceIcon("import_iso")] : name === "type" ? typeIcons : undefined;
+    return <Items items={icons ? items.map((item, index) => ({ ...item, icon: icons[index] })) : items} highlight={focus} />;
   }
   switch (name) {
     case "breakdown":
       return <Items items={[{ label: t("breakdown.reviewLabel"), text: `${th("scores")} ${t("breakdown.criteria")}` }, { label: t("breakdown.reputationLabel"), text: t("breakdown.reputation", { view: view === "controle" ? t("label.controle") : t("label.global") }) }]} />;
     case "questionnaire":
-      return <Items items={[{ label: t("questionnaireTypes.controleName"), text: t("questionnaireControle") }, { label: t("questionnaireTypes.simpleName"), text: th("questionnaire.simple") }]} highlight={focus} />;
+      return <Items items={[{ label: t("questionnaireTypes.controleName"), text: t("questionnaireControle"), icon: sourceIcon("os_certified") }, { label: t("questionnaireTypes.simpleName"), text: th("questionnaire.simple"), icon: sourceIcon("os_simple") }]} highlight={focus} />;
     case "activity":
-      return <Items items={[{ label: t("activity.osLabel"), text: th("activity") }, { label: t("activity.importLabel"), text: th("activityImport") }]} />;
+      return <Paragraph>{th("activity")}</Paragraph>;
     case "levels":
       return <Items items={[{ label: t("levels.recommendationName"), text: th("recommendation") }, { label: t("levels.satisfactionName"), text: th("satisfaction") }]} />;
     case "collaborator":

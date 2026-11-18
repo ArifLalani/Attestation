@@ -26,10 +26,11 @@ import { DefinitionsSheet } from "@/variants/finale/components/certificate/Defin
 import { HelpButton, definitionFor, type HelpGroup, type HelpRequest } from "./ReviewHelp";
 
 const sourceIcons: Record<ReviewSource, FigmaIconName> = {
-  os_certified: "source-os-certified",
-  os_simple: "source-os-simple",
-  import_iso: "source-imported",
-  import_other: "source-imported",
+  // Opinion System reviews show their questionnaire (certifié or interne); the Opinion System mark is OpinionSystemIcon.
+  os_certified: "rv-q-certifie",
+  os_simple: "rv-q-interne",
+  import_iso: "rv-import",
+  import_other: "rv-import",
 };
 
 /** Figma "Source Icon" (1376:92924): a 24 px slot. */
@@ -38,7 +39,16 @@ export function SourceIcon({ review, alt = "", size = 24 }: { review: Pick<Revie
   const icon = review.platform === "google" ? "source-google" : sourceIcons[review.source];
   return (
     <Box sx={{ width: size, height: size, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, "& img": { maxWidth: size, maxHeight: size } }}>
-      <FigmaIcon name={icon} alt={alt} />
+      <FigmaIcon name={icon} alt={alt} size={icon.startsWith("rv-") ? size : undefined} />
+    </Box>
+  );
+}
+
+/** The Opinion System mark: the source « Opinion System » (not a questionnaire). */
+export function OpinionSystemIcon({ alt = "", size = 24 }: { alt?: string; size?: number }) {
+  return (
+    <Box sx={{ width: size, height: size, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+      <FigmaIcon name="source-os-certified" alt={alt} />
     </Box>
   );
 }
@@ -86,7 +96,7 @@ function TypeChip({ status }: { status: Review["status"] }) {
   const controle = status === "controle";
   return (
     <Box sx={{ display: "inline-flex", alignItems: "center", flexShrink: 0, height: 28, px: 1, borderRadius: "999px", bgcolor: controle ? tokens.successLight2 : tokens.bleu10 }}>
-      {controle && <FigmaIcon name="certified-badge" />}
+      <FigmaIcon name={controle ? "rv-controle" : "rv-non-controle"} size={18} />
       <Typography component="span" sx={{ px: "4px", fontSize: 12, fontWeight: 500, lineHeight: "18px", color: controle ? tokens.vertOs : tokens.bleu600, whiteSpace: "nowrap" }}>
         {t(controle ? "controle" : "nonControle")}
       </Typography>
@@ -242,7 +252,7 @@ function ReviewDetails({ review, onHelp }: { review: Review; onHelp: (group: Hel
         <BlockTitle title={tv("details")} onHelp={(anchor) => onHelp("details", anchor)} />
         <Box component="ul" sx={{ listStyle: "none", m: 0, p: 0.5, bgcolor: tokens.blanc, borderRadius: "16px", border: `1px solid ${tokens.grisMoyen1}`, "& > li + li": { borderTop: `1px solid ${tokens.grisMoyen1}` } }}>
           <FactRow label={t("source")} value={sourceName} onOpen={(anchor) => onHelp("details", anchor, "source")}>
-            <SourceIcon review={survey ? { source: "os_certified" } : review} size={20} />
+            {survey ? <OpinionSystemIcon size={20} /> : <SourceIcon review={review} size={20} />}
             {sourceName}
           </FactRow>
           {survey && questionnaire && (
@@ -256,9 +266,12 @@ function ReviewDetails({ review, onHelp }: { review: Review; onHelp: (group: Hel
               {person.name}
             </FactRow>
           )}
-          <FactRow label={t("activity")} value={ta(review.product)} onOpen={(anchor) => onHelp("details", anchor, "activity")}>
-            {ta(review.product)}
-          </FactRow>
+          {/* Only a certified Opinion System questionnaire has an activité professionnelle (it is the questionnaire type). */}
+          {review.source === "os_certified" && (
+            <FactRow label={t("activity")} value={ta(review.product)} onOpen={(anchor) => onHelp("details", anchor, "activity")}>
+              {ta(review.product)}
+            </FactRow>
+          )}
           <FactRow label={t("number")} value={review.reviewNumber} onOpen={(anchor) => onHelp("details", anchor, "number")}>
             {review.reviewNumber}
           </FactRow>

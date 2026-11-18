@@ -6,7 +6,6 @@ import ButtonBase from "@mui/material/ButtonBase";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import SearchOff from "@mui/icons-material/SearchOff";
-import VerifiedRounded from "@mui/icons-material/VerifiedRounded";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useCertificate } from "@/components/certificate/CertificateContext";
@@ -183,7 +182,7 @@ export function ReviewsSection() {
           <ChoiceChip
             selected={filters.type === "controle"}
             onClick={() => update({ type: filters.type === "controle" ? undefined : "controle" })}
-            icon={<VerifiedRounded sx={{ fontSize: 18, ml: -0.25, color: tokens.vertOs }} />}
+            icon={<Box component="span" sx={{ ml: -0.25, display: "inline-flex" }}><FigmaIcon name="rv-controle" size={18} /></Box>}
           >
             {tvf("typeControle")}
           </ChoiceChip>

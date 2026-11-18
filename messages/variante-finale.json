@@ -34,7 +34,7 @@
       "close": "Fermer"
     },
     "agencies": {
-      "seeReviews": "Voir les avis",
+      "seeReviews": "Lire les avis",
       "seeCertificate": "Voir son certificat",
       "selected": "Affichée sur la carte"
     },
@@ -47,9 +47,9 @@
     },
     "hero": {
       "sector": "{sector} à {city}",
-      "reviews": "{count} avis clients",
+      "reviews": "{count} avis",
       "reviewsControle": "{count} avis contrôlés",
-      "scoreCount": "<b>{count}</b> avis clients",
+      "scoreCount": "<b>{count}</b> avis",
       "scoreCountControle": "<b>{count}</b> avis contrôlés",
       "scoreAria": "{score} sur 5, {count}. Voir le détail de la note",
       "talk": "Parlons de votre projet",
@@ -72,7 +72,7 @@
       "detail": "{role} · {count} avis"
     },
     "widget": {
-      "contact": "Contacter l’agence",
+      "contact": "Contacter l’entreprise",
       "share": "Partager",
       "open": "Ouvert",
       "expand": "Voir les notes, les horaires et les actions de l’agence",
@@ -207,8 +207,7 @@
         "controle": "Un questionnaire certifié, conçu par Opinion System. C’est ce qui fait de cet avis un avis contrôlé."
       },
       "collaborator": "{name} est la personne de l’agence qui a envoyé le questionnaire à ce client.",
-      "activity": "Le service dont le client a bénéficié. Il détermine le questionnaire envoyé, et donc les critères notés.",
-      "activityImport": "Le service dont le client a bénéficié, d’après la source de l’avis.",
+      "activity": "L’activité professionnelle est le secteur ou le service pour lequel le client a fait appel à l’agence : vente, achat, location, gestion locative… Elle n’existe que pour les avis recueillis par un questionnaire certifié Opinion System : c’est le type de questionnaire certifié envoyé au client, avec les critères propres à cette activité.",
       "number": "L’identifiant unique de l’avis chez Opinion System, utile pour le retrouver en cas de question ou de signalement."
     },
     "definitions": {
@@ -223,7 +222,7 @@
         "filters": "Les filtres"
       },
       "label": {
-        "global": "Avis global",
+        "global": "Tous les avis",
         "controle": "Avis Contrôlés",
         "source": "Source de l’avis",
         "type": "Type d’avis",
@@ -243,10 +242,6 @@
         "criteria": "Le questionnaire est conçu pour l’activité du client : chaque activité est notée sur ses propres critères."
       },
       "questionnaireControle": "Un questionnaire conçu et certifié par Opinion System. C’est ce qui fait d’un avis un avis contrôlé : il compte dans le score Avis Contrôlés et dans le score global.",
-      "activity": {
-        "osLabel": "Avis Opinion System",
-        "importLabel": "Avis importé"
-      },
       "collaborator": "La personne de l’agence qui a envoyé le questionnaire au client.",
       "questionnaireTypes": {
         "controle": "Certifié",

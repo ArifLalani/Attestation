@@ -46,12 +46,20 @@ const icons = {
   "source-os-simple": [20, 20],
   "source-imported": [20, 20],
   "source-google": [24, 24],
+  // Review icons drawn for the prototype (24 × 24, shown at the size asked).
+  "rv-all": [24, 24],
+  "rv-all-white": [24, 24],
+  "rv-controle": [24, 24],
+  "rv-non-controle": [24, 24],
+  "rv-import": [24, 24],
+  "rv-q-certifie": [24, 24],
+  "rv-q-interne": [24, 24],
 } as const;
 
 export type FigmaIconName = keyof typeof icons;
 
-export function FigmaIcon({ name, alt = "" }: { name: FigmaIconName; alt?: string }) {
-  const [width, height] = icons[name];
+export function FigmaIcon({ name, alt = "", size }: { name: FigmaIconName; alt?: string; /** Square size in px; the exported size when left out. */ size?: number }) {
+  const [width, height] = size ? [size, size] : icons[name];
   return (
     <Image
       src={`/figma/${name}.svg`}

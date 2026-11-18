@@ -20,7 +20,6 @@ import LanguageOutlined from "@mui/icons-material/LanguageOutlined";
 import RateReviewOutlined from "@mui/icons-material/RateReviewOutlined";
 import StarRounded from "@mui/icons-material/StarRounded";
 import StorefrontOutlined from "@mui/icons-material/StorefrontOutlined";
-import VerifiedRounded from "@mui/icons-material/VerifiedRounded";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
@@ -100,7 +99,7 @@ function PillContent({ open }: { open: boolean }) {
     <>
       {visible && (
         <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, fontSize: 16, fontWeight: 700, color: tokens.blanc }}>
-          {controle ? <VerifiedRounded sx={{ fontSize: 18, color: tokens.vertOs }} /> : <StarRounded sx={{ fontSize: 19, color: tokens.rating }} />}
+          {controle ? <FigmaIcon name="rv-controle" size={18} /> : <StarRounded sx={{ fontSize: 19, color: tokens.rating }} />}
           {formatScore(summary.average!)}
         </Box>
       )}
@@ -137,7 +136,7 @@ function ScoreTile({ view, onDone }: { view: ScoreView; onDone: () => void }) {
       sx={{ flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start", gap: 0.25, p: 1.5, borderRadius: "12px", bgcolor: controle ? "rgba(67, 182, 163, 0.12)" : tokens.bleu10, textAlign: "left", fontFamily: "inherit", "&:hover": { filter: "brightness(0.97)" }, ...focusSx }}
     >
       <Box component="span" sx={{ display: "flex", alignItems: "center", gap: 0.5, fontSize: 11, fontWeight: 700, letterSpacing: "0.04em", textTransform: "uppercase", color: controle ? "#2a8f7e" : tokens.bleu600 }}>
-        {controle && <VerifiedRounded sx={{ fontSize: 15 }} />}
+        <FigmaIcon name={controle ? "rv-controle" : "rv-all"} size={16} />
         {tr(`views.${view}`)}
       </Box>
       <Box component="span" sx={{ display: "flex", alignItems: "baseline", gap: 0.5 }}>

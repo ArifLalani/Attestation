@@ -56,7 +56,7 @@
     "wholeTeam": "Toute l'équipe",
     "changeCollaborator": "Changer de collaborateur",
     "views": {
-      "global": "Avis global",
+      "global": "Tous les avis",
       "controle": "Avis Contrôlés"
     },
     "outOf": "/5",
@@ -75,9 +75,9 @@
     "learnLess": "Masquer les détails."
   },
   "LearnMore": {
-    "titleGlobal": "Avis global : comment est calculée la note ?",
+    "titleGlobal": "Tous les avis : comment est calculée la note ?",
     "titleControle": "Qu'est-ce qu'un avis contrôlé ?",
-    "introGlobal": "La note Avis global est la moyenne de tous les avis de l’agence, quelle que soit leur source. Aucun avis ne peut être masqué par l’agence.",
+    "introGlobal": "La note « Tous les avis » est la moyenne de tous les avis de l’agence, quelle que soit leur source. Aucun avis ne peut être masqué par l’agence.",
     "introControle": "Les avis contrôlés viennent des propres clients de l'agence. Chaque questionnaire est conçu et géré par Opinion System, organisme certifié AFNOR, puis contrôlé avant publication.",
     "sourcesTitle": "D'où viennent ces avis ?",
     "controlTitle": "Comment Opinion System les contrôle",
@@ -157,7 +157,7 @@
   },
   "Team": {
     "eyebrow": "L’ÉQUIPE",
-    "heading": "Les personnes qui vous accompagnent",
+    "heading": "L’équipe {name}",
     "showMore": "Voir toute l’équipe",
     "showLess": "Voir moins",
     "openProfile": "Voir le profil de {name}",
@@ -208,7 +208,7 @@
     "badgeAlt": "Avis contrôlés Opinion System — ISO 20252",
     "verified": "Avis contrôlés · identité & achat vérifiés",
     "recommendation": "Niveau de Recommandation",
-    "readReviews": "Lire les avis clients",
+    "readReviews": "Lire les avis",
     "certifications": {
       "nf": {
         "title": "NF Service 522 / ISO 20488",
@@ -227,7 +227,7 @@
   "BusinessPitch": {
     "title": "Vous êtes une entreprise ?",
     "heading": "Affichez une e-réputation vérifiée et incontestable.",
-    "description": "Rejoignez les entreprises qui collectent des avis contrôlés par le seul organisme triplement certifié AFNOR en Europe.",
+    "description": "Rejoignez +60 000 professionnels qui collectent déjà des avis contrôlés par le seul organisme triplement certifié AFNOR en Europe.",
     "signup": "Inscrire mon entreprise"
   },
   "Actions": {
@@ -283,7 +283,7 @@
     "empty": "Aucun avis ne correspond à ces filtres.",
     "clearFilters": "Effacer les filtres",
     "showMore": "Afficher plus d’avis",
-    "leaveReview": "Déposer un avis",
+    "leaveReview": "Demander à déposer un avis",
     "noComment": "Pas de commentaire",
     "controle": "Contrôlé",
     "nonControle": "Non contrôlé",
@@ -560,7 +560,7 @@
         "team": "Voir l'équipe",
         "person": "Voir les avis de {name}",
         "verified": "Voir les avis contrôlés",
-        "contact": "Contacter l'agence"
+        "contact": "Contacter l'entreprise"
       }
     }
   }

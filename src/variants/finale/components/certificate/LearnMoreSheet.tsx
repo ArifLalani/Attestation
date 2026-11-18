@@ -12,6 +12,7 @@ import { formatCount } from "@/lib/format";
 import type { ScoreView } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
 import { useCertificate } from "@/components/certificate/CertificateContext";
+import { SourceIcon } from "@/variants/finale/components/reviews/ReviewCard";
 
 const globalSources: ReviewSource[] = ["os_certified", "import_iso", "os_simple", "import_other"];
 const controleSources: ReviewSource[] = ["os_certified", "import_iso"];
@@ -69,7 +70,10 @@ export function LearnMoreContent({ view, inline = false, onSource }: { view: Sco
             const count = counts[source] ?? 0;
             const verified = source === "os_certified" || source === "import_iso";
             const row = (
-              <>
+              <Box sx={{ display: "flex", gap: 1.25, alignItems: "flex-start" }}>
+                {/* The source icon, as on the review cards; it sits level with the first line. */}
+                <Box sx={{ pt: "1px" }}><SourceIcon review={{ source }} size={20} /></Box>
+                <Box sx={{ flex: 1, minWidth: 0 }}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.75 }}>
                   <Box sx={{ flex: 1, minWidth: 0 }}>
                     <Typography sx={{ fontSize: 14, lineHeight: 1.5 }}>{ts(source)}</Typography>
@@ -83,7 +87,8 @@ export function LearnMoreContent({ view, inline = false, onSource }: { view: Sco
                 <Box sx={{ height: 6, borderRadius: "3px", bgcolor: tokens.grisClair1, overflow: "hidden" }}>
                   <Box sx={{ height: "100%", width: `${(count / largest) * 100}%`, bgcolor: verified ? tokens.vertOs : tokens.bleu400, borderRadius: "3px" }} />
                 </Box>
-              </>
+                </Box>
+              </Box>
             );
             return (
               <Box component="li" key={source}>

@@ -68,7 +68,7 @@ export function TeamSection() {
 
   return (
     <Box component="section" aria-labelledby="team-title" sx={{ bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCard, px: 1.5, py: 2, display: "flex", flexDirection: "column", gap: 2 }}>
-      <CardTitle id="team-title" eyebrow={t("eyebrow")} heading={t("heading")} />
+      <CardTitle id="team-title" eyebrow={t("eyebrow")} heading={t("heading", { name: agency.name })} />
       <Box id="team-grid" sx={{ display: "grid", gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", md: "repeat(4, minmax(0, 1fr))" }, gap: 2 }}>
         {(expanded ? people : people.slice(0, 4)).map(({ person, summary }) => (
           <Box key={person.id} component="article" sx={{ position: "relative", bgcolor: tokens.grisClair1, border: `1px solid ${tokens.grisMoyen1}`, borderRadius: "12px", py: 1.5, minWidth: 0 }}>

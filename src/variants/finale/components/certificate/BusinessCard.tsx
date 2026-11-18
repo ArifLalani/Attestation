@@ -102,7 +102,7 @@ export function BusinessCard() {
         overflow: "hidden",
         isolation: "isolate",
         // Large bottom-right curve, as in option D.
-        borderRadius: { xs: "20px 20px 72px 20px", md: "20px 20px 140px 20px" },
+        borderRadius: { xs: "20px 20px 72px 20px", md: "20px 20px 96px 20px" },
         display: "grid",
         // Phone: the photo shows above the sign, which overlaps its lower part. Desktop: the sign floats on the left.
         gridTemplateAreas: { xs: '"caption" "sign"', md: '"sign caption"' },

@@ -69,7 +69,7 @@ export function QualitySection() {
             </Link>
           </Box>)}
         </Box>
-        <CtaButton variant="secondary" sx={{ mt: { lg: "auto" } }} onClick={() => { setFilters(emptyFilters); setScoreCollaboratorId(undefined); goToSection("avis"); }}>{t("readReviews")}</CtaButton>
+        <CtaButton variant="secondary" icon="icon-right-arrow" sx={{ mt: { lg: "auto" } }} onClick={() => { setFilters(emptyFilters); setScoreCollaboratorId(undefined); goToSection("avis"); }}>{t("readReviews")}</CtaButton>
       </Box>
     </Box>
   );

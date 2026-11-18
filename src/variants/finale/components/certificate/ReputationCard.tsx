@@ -5,7 +5,6 @@ import ButtonBase from "@mui/material/ButtonBase";
 import Link from "@mui/material/Link";
 import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
-import VerifiedRounded from "@mui/icons-material/VerifiedRounded";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
@@ -48,8 +47,8 @@ function ViewToggle({ view, counts, onChange }: { view: ScoreView; counts: Recor
   const t = useTranslations("Reputation.views");
   const tr = useTranslations("Reputation");
   const segments: { value: ScoreView; icon: React.ReactNode; iconBox: number }[] = [
-    { value: "global", icon: <FigmaIcon name={view === "global" ? "globe-white" : "globe-navy"} />, iconBox: 4 },
-    { value: "controle", icon: <FigmaIcon name={view === "controle" ? "check-badge-white" : "check-badge-navy"} />, iconBox: 3.429 },
+    { value: "global", icon: <FigmaIcon name={view === "global" ? "rv-all-white" : "rv-all"} size={20} />, iconBox: 2 },
+    { value: "controle", icon: <FigmaIcon name="rv-controle" size={20} />, iconBox: 2 },
   ];
   return (
     <Box
@@ -93,7 +92,7 @@ function ViewToggle({ view, counts, onChange }: { view: ScoreView; counts: Recor
               flex: "1 1 0",
               minWidth: 0,
               minHeight: 44,
-              px: { xs: 1, sm: 1.5 },
+              px: { xs: 0.75, sm: 1.5 },
               borderRadius: "9px",
               gap: 0,
               color: active ? tokens.blanc : tokens.bleuFonce,
@@ -291,7 +290,7 @@ export function ReputationCard() {
           border: `1px solid ${tokens.bleu20}`,
         }}
       >
-        <VerifiedRounded sx={{ fontSize: 22, mt: "1px", color: controle ? tokens.vertOs : tokens.bleu600, flexShrink: 0 }} />
+        <Box sx={{ mt: "2px", flexShrink: 0 }}><FigmaIcon name={controle ? "rv-controle" : "rv-all"} size={22} /></Box>
         <Typography sx={{ fontSize: 14, lineHeight: 1.6, color: tokens.bleuFonce }}>
           {controle ? t("explainControle", { since: agency.memberSince }) : t("explainGlobal")}{" "}
           <Link

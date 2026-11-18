@@ -6,7 +6,6 @@ import Collapse from "@mui/material/Collapse";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import OpenInNew from "@mui/icons-material/OpenInNew";
-import VerifiedRounded from "@mui/icons-material/VerifiedRounded";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
@@ -161,14 +160,14 @@ export function AgenciesSection() {
                 </Link>
               </Typography>
             </Box>
-            <OpeningHours key={`hours-${selected.id}`} agency={selected} openRequest={hoursRequest} />
             <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, py: 0.25 }}>
               <Box sx={{ p: 0.5, display: "flex" }}><FigmaIcon name="agency-phone" /></Box>
               <Link href={`tel:${selected.phone.replace(/\s/g, "")}`} sx={{ ...linkSx, fontSize: 14 }}>{selected.phone}</Link>
             </Box>
+            <OpeningHours key={`hours-${selected.id}`} agency={selected} openRequest={hoursRequest} />
             {/* The score and the number of Avis Contrôlés, in green as on the Réputation display. */}
             <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, py: 0.25 }}>
-              <Box sx={{ p: 0.5, display: "flex", color: tokens.vertOs }}><VerifiedRounded sx={{ fontSize: 20 }} /></Box>
+              <Box sx={{ p: 0.5, display: "flex" }}><FigmaIcon name="rv-controle" size={20} /></Box>
               <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 0.75 }}>
                 {isPublic(summary.count, selected.publicThreshold) && summary.average !== null && <RatingChip value={summary.average} />}
                 <Typography sx={{ fontSize: 14, fontWeight: 600, color: tokens.vertOs }}>{t("verifiedCount", { count: formatCount(summary.count) })}</Typography>
@@ -179,9 +178,9 @@ export function AgenciesSection() {
           {/* This agency: Voir les avis (they are on this page). Another one: Voir son certificat (its page, new tab). Then the button that shows the other agencies (hidden at first). */}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: { md: "auto" }, pt: 0.5 }}>
             {isCurrent ? (
-              <ButtonBase onClick={() => goToSection("avis")} sx={primaryLinkSx}>
+              <CtaButton variant="secondary" icon="icon-right-arrow" onClick={() => goToSection("avis")}>
                 {tv("seeReviews")}
-              </ButtonBase>
+              </CtaButton>
             ) : (
               <ButtonBase component="a" href={certificateUrl} target="_blank" rel="noopener" aria-label={t("certificateLink", { name: selected.name, city: selected.city })} sx={primaryLinkSx}>
                 {tv("seeCertificate")}
