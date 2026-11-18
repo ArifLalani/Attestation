@@ -318,30 +318,30 @@ function ReviewDetails({ review, onHelp }: { review: Review; onHelp: (group: Hel
 }
 
 /** Public reply (not in the Figma yet): green rule, staff avatar, name · agency, date, text. */
-function ReviewReplyBlock({ review }: { review: Review }) {
+function ReviewReplyBlock({ review, showFull = false }: { review: Review; showFull?: boolean }) {
   const t = useTranslations("Reviews.reply");
   const tv = useTranslations("VarianteFinale.reviews");
   const relative = useRelativeDate();
   const { team, agency } = useCertificate();
   const [open, setOpen] = useState(false);
-  const reply = review.reply!;
+  const reply = review.reply;
+  if (!reply) return null;
   const person = team.find((member) => member.id === reply.collaboratorId);
-  if (!person) return null;
-  const long = reply.text.length > 160;
+  const canExpand = !showFull && reply.text.length > 160;
 
   return (
     <Box sx={{ pl: 1.5, py: 0.25, borderLeft: `3px solid ${tokens.vertOs}`, display: "flex", flexDirection: "column", gap: 0.75 }}>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-        <StaffAvatar person={person} size={28} />
+        {person && <StaffAvatar person={person} size={28} />}
         <Box sx={{ minWidth: 0 }}>
           <Typography sx={{ fontSize: 14, fontWeight: 600, lineHeight: 1.3, color: tokens.bleuFonce }}>{tv("replyFrom", { agency: agency.name })}</Typography>
-          <Typography sx={{ fontSize: 12, lineHeight: 1.3, color: tokens.gris }}>{person.name} · {relative(review.daysAgo - reply.daysAfter)}</Typography>
+          <Typography sx={{ fontSize: 12, lineHeight: 1.3, color: tokens.gris }}>{person && `${person.name} · `}{relative(review.daysAgo - reply.daysAfter)}</Typography>
         </Box>
       </Box>
-      <Typography sx={{ fontSize: 14, lineHeight: 1.5, color: tokens.bleuFonce, ...(long && !open ? { display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" } : {}) }}>
+      <Typography sx={{ fontSize: 14, lineHeight: 1.5, color: tokens.bleuFonce, ...(canExpand && !open ? { display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" } : {}) }}>
         {reply.text}
       </Typography>
-      {long && (
+      {canExpand && (
         <ButtonBase onClick={() => setOpen(!open)} sx={{ alignSelf: "flex-start", minHeight: 32, fontFamily: "inherit", fontSize: 13, fontWeight: 600, color: tokens.bleu600, borderRadius: "6px", ...focusSx }}>
           {open ? t("readLess") : t("readMore")}
         </ButtonBase>
@@ -431,6 +431,7 @@ export function ReviewDetailsContent({ review }: { review: Review }) {
         <RatingLine review={review} />
         {/* The review itself, in full. */}
         {review.comment && <Typography sx={{ fontSize: 15, lineHeight: 1.6, color: tokens.bleuFonce }}>{review.comment}</Typography>}
+        {review.reply && <ReviewReplyBlock review={review} showFull />}
       </Box>
       <ReviewDetails review={review} onHelp={openHelp} />
       <DefinitionsSheet open={helpOpen} onClose={() => setHelpOpen(false)} initial={definitionFor(review, help)} review={review} view={review.status === "controle" ? "controle" : "global"} />
