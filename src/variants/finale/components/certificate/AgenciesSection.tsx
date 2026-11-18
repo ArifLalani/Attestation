@@ -3,26 +3,22 @@
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import Collapse from "@mui/material/Collapse";
-import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-import OpenInNew from "@mui/icons-material/OpenInNew";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { CtaButton } from "@/variants/finale/components/ui/CtaButton";
 import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
-import { RatingChip } from "@/variants/finale/components/ui/RatingChip";
 import { getAgency } from "@/data/agencies";
 import { getAgencyDataset } from "@/data/reviews";
 import type { Agency } from "@/data/types";
 import { formatCount, formatScore } from "@/lib/format";
-import { useNow } from "@/lib/hooks";
-import { localClock } from "@/lib/hours";
 import { isPublic, reviewsForScore, summarize } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
-import { useCertificate } from "@/components/certificate/CertificateContext";
+import { emptyFilters, useCertificate } from "@/components/certificate/CertificateContext";
 import { AgencyPhotos } from "./AgencyPhotos";
+import { HoursSheet } from "./HoursSheet";
 import { OpenStatus } from "./OpenStatus";
 import { CardTitle } from "./ReputationCard";
 
@@ -35,45 +31,25 @@ function AgencyLetter({ index, active, size = 28 }: { index: number; active?: bo
 /** The outline of H's cards (as on the team cards). */
 const cardBorder = "#d6e4f3";
 
-/** The card's links: navy text with a light underline. */
-const linkSx = { color: tokens.bleuFonce, textDecorationColor: "rgba(4, 27, 68, 0.35)", textUnderlineOffset: "3px", "&:hover": { textDecorationColor: "currentColor" } } as const;
+const agencyActionSx = {
+  textAlign: "left",
+  "&:focus-visible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: -2 },
+} as const;
 
-const primaryLinkSx = { height: 45, gap: 1, px: 2, borderRadius: "8px", bgcolor: tokens.bleu10, color: tokens.bleuFonce, fontFamily: "inherit", fontSize: 14, fontWeight: 600, "&:hover": { bgcolor: tokens.bleu20 }, "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 } } as const;
+const agencyActionLabelSx = { flex: 1, minWidth: 0, overflowWrap: "anywhere" } as const;
 
-/** Sent by the hero's open/closed status: scroll here with this agency's week of hours open. */
-export const openHoursEvent = "finale:open-hours";
-
-function OpeningHours({ agency, openRequest }: { agency: Agency; openRequest: number }) {
-  const t = useTranslations("Agencies");
+/** The open/closed line of the agency shown; it opens the Horaires sheet (today, the week, holidays and other exceptions). */
+function OpeningHours({ agency }: { agency: Agency }) {
   const th = useTranslations("Hours");
-  // Collapsed to one line, as in the Figma; the arrow shows the week.
-  const [expanded, setExpanded] = useState(false);
-  const hoursId = useId();
-  // A new request from the hero opens the week (adjusted while rendering rather than in an effect).
-  const [seenRequest, setSeenRequest] = useState(openRequest);
-  if (openRequest !== seenRequest) {
-    setSeenRequest(openRequest);
-    if (openRequest) setExpanded(true);
-  }
-  const now = useNow();
-  const today = now ? localClock(now).weekday : -1;
+  const [open, setOpen] = useState(false);
   return (
-    <Box>
-      <ButtonBase onClick={() => setExpanded((value) => !value)} aria-label={t("toggleHours")} aria-expanded={expanded} aria-controls={hoursId}
-        sx={{ display: "flex", gap: 1.5, width: "100%", justifyContent: "flex-start", textAlign: "left", py: 0.25, borderRadius: 1 }}>
-        <Box sx={{ p: 0.5, display: "flex" }}><FigmaIcon name="agency-clock" /></Box>
-        <Box sx={{ flex: 1, minWidth: 0, "& p": { whiteSpace: "normal" } }}><OpenStatus hours={agency.hours} split /></Box>
-        <Box sx={{ transform: expanded ? "none" : "rotate(180deg)", display: "flex" }}><FigmaIcon name="agency-collapse" /></Box>
-      </ButtonBase>
-      <Collapse in={expanded}>
-        <Box id={hoursId} component="dl" sx={{ m: 0, ml: 4, p: 1, bgcolor: tokens.grisClair1, borderRadius: "12px" }}>
-          {agency.hours.map((ranges, day) => <Box key={day} sx={{ display: "flex", justifyContent: "space-between", gap: 1, py: 0.75, fontSize: 14, fontWeight: day === today ? 700 : 500 }}>
-            <Box component="dt" sx={{ flexShrink: 0 }}>{th(`daysTitle.${day}`)}</Box>
-            <Box component="dd" sx={{ m: 0, textAlign: "right" }}>{ranges.length ? ranges.map(([start, end]) => <Box key={start}>{start} – {end}</Box>) : th("closed")}</Box>
-          </Box>)}
-        </Box>
-      </Collapse>
-    </Box>
+    <>
+      <CtaButton variant="secondary" icon="icon-right-arrow" onClick={() => setOpen(true)} aria-haspopup="dialog" aria-label={th("open")} sx={agencyActionSx}>
+        <FigmaIcon name="agency-clock" />
+        <Box sx={agencyActionLabelSx}><OpenStatus hours={agency.hours} split /></Box>
+      </CtaButton>
+      <HoursSheet agency={agency} open={open} onClose={() => setOpen(false)} />
+    </>
   );
 }
 
@@ -81,11 +57,10 @@ function OpeningHours({ agency, openRequest }: { agency: Agency; openRequest: nu
 export function AgenciesSection() {
   const t = useTranslations("Agencies");
   const tv = useTranslations("VarianteFinale.agencies");
-  const { agency, goToSection } = useCertificate();
+  const { agency, goToSection, setFilters } = useCertificate();
   const [selectedId, setSelectedId] = useState(agency.id);
   const [expanded, setExpanded] = useState(false);
   const [mapVisible, setMapVisible] = useState(false);
-  const [hoursRequest, setHoursRequest] = useState(0);
   const mapContainer = useRef<HTMLDivElement>(null);
   const listId = useId();
   const locations = useMemo(() => [agency, ...agency.sisterAgencyIds.map(getAgency).filter((item): item is Agency => Boolean(item))], [agency]);
@@ -97,24 +72,17 @@ export function AgenciesSection() {
   })), [locations, summaries]);
   const selected = locations.find((location) => location.id === selectedId) ?? agency;
   const selectedIndex = locations.indexOf(selected);
-  const summary = summaries.get(selected.id)!;
-  // Another agency: its own page in this version. This agency: we are already on its page.
+  const globalSummary = useMemo(() => summarize(getAgencyDataset(selected).reviews), [selected]);
   const isCurrent = selected.id === agency.id;
-  const certificateUrl = `/fr-fr/variantes/finale/${selected.id}`;
+  const reviewLink = isCurrent ? undefined : {
+    href: `/fr-fr/variantes/finale/${selected.id}#avis`,
+    target: "_blank",
+    rel: "noopener",
+  };
 
   const selectAgency = (id: string) => {
     setSelectedId(id);
-    setHoursRequest(0);
   };
-
-  useEffect(() => {
-    const openHours = () => {
-      setSelectedId(agency.id);
-      setHoursRequest((value) => value + 1);
-    };
-    window.addEventListener(openHoursEvent, openHours);
-    return () => window.removeEventListener(openHoursEvent, openHours);
-  }, [agency.id]);
 
   // The WebGL map is below the reviews; load it only as the visitor approaches it.
   useEffect(() => {
@@ -145,48 +113,48 @@ export function AgenciesSection() {
 
           <AgencyPhotos key={selected.id} agency={selected} />
 
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-            <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1.5, py: 0.25 }}>
-              <Box sx={{ p: 0.5, display: "flex" }}><FigmaIcon name="agency-pin" /></Box>
-              <Typography component="address" sx={{ fontSize: 14, fontStyle: "normal", flex: 1, pt: "4px", lineHeight: 1.45 }}>
-                <Link
-                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selected.address)}`}
-                  target="_blank"
-                  rel="noopener"
-                  aria-label={t("addressMapsLink", { address: selected.address })}
-                  sx={linkSx}
-                >
-                  {selected.address}
-                </Link>
-              </Typography>
-            </Box>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, py: 0.25 }}>
-              <Box sx={{ p: 0.5, display: "flex" }}><FigmaIcon name="agency-phone" /></Box>
-              <Link href={`tel:${selected.phone.replace(/\s/g, "")}`} sx={{ ...linkSx, fontSize: 14 }}>{selected.phone}</Link>
-            </Box>
-            <OpeningHours key={`hours-${selected.id}`} agency={selected} openRequest={hoursRequest} />
-            {/* The score and the number of Avis Contrôlés, in green as on the Réputation display. */}
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, py: 0.25 }}>
-              <Box sx={{ p: 0.5, display: "flex" }}><FigmaIcon name="rv-controle" size={20} /></Box>
-              <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 0.75 }}>
-                {isPublic(summary.count, selected.publicThreshold) && summary.average !== null && <RatingChip value={summary.average} />}
-                <Typography sx={{ fontSize: 14, fontWeight: 600, color: tokens.vertOs }}>{t("verifiedCount", { count: formatCount(summary.count) })}</Typography>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <CtaButton
+              variant="secondary"
+              icon="icon-right-arrow"
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selected.address)}`}
+              target="_blank"
+              rel="noopener"
+              aria-label={t("addressMapsLink", { address: selected.address })}
+              sx={agencyActionSx}
+            >
+              <FigmaIcon name="agency-pin" />
+              <Box component="span" sx={agencyActionLabelSx}>{selected.address}</Box>
+            </CtaButton>
+            <CtaButton variant="secondary" icon="icon-right-arrow" href={`tel:${selected.phone.replace(/\s/g, "")}`} sx={agencyActionSx}>
+              <FigmaIcon name="agency-phone" />
+              <Box component="span" sx={agencyActionLabelSx}>{selected.phone}</Box>
+            </CtaButton>
+            <OpeningHours key={`hours-${selected.id}`} agency={selected} />
+            <CtaButton
+              variant="secondary"
+              icon="icon-right-arrow"
+              {...reviewLink}
+              onClick={isCurrent ? () => {
+                setFilters(emptyFilters);
+                goToSection("avis");
+              } : undefined}
+              sx={agencyActionSx}
+            >
+              <FigmaIcon name="rv-all" size={18} />
+              <Box component="span" sx={{ ...agencyActionLabelSx, display: "flex", alignItems: "center", flexWrap: "wrap", gap: 0.75 }}>
+                {isPublic(globalSummary.count, selected.publicThreshold) && globalSummary.average !== null && (
+                  <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.25, px: 0.75, border: `1px solid ${tokens.grisMoyen1}`, borderRadius: "6px" }}>
+                    {formatScore(globalSummary.average)}
+                    <FigmaIcon name="star-small" />
+                  </Box>
+                )}
+                {tv("globalReviews", { count: formatCount(globalSummary.count) })}
               </Box>
-            </Box>
+            </CtaButton>
           </Box>
 
-          {/* This agency: Voir les avis (they are on this page). Another one: Voir son certificat (its page, new tab). Then the button that shows the other agencies (hidden at first). */}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: { md: "auto" }, pt: 0.5 }}>
-            {isCurrent ? (
-              <CtaButton variant="secondary" icon="icon-right-arrow" onClick={() => goToSection("avis")}>
-                {tv("seeReviews")}
-              </CtaButton>
-            ) : (
-              <ButtonBase component="a" href={certificateUrl} target="_blank" rel="noopener" aria-label={t("certificateLink", { name: selected.name, city: selected.city })} sx={primaryLinkSx}>
-                {tv("seeCertificate")}
-                <OpenInNew sx={{ fontSize: 18 }} />
-              </ButtonBase>
-            )}
             <CtaButton variant="secondary" aria-expanded={expanded} aria-controls={listId} onClick={() => setExpanded((value) => !value)} sx={{ px: 2, "& img": { transform: expanded ? "rotate(180deg)" : "none" } }}>{t(expanded ? "showLess" : "showMore")}</CtaButton>
           </Box>
         </Box>

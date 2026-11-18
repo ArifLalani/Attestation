@@ -77,7 +77,7 @@ export default function AgencyMap({ agencies, selectedId, onSelect, scores }: { 
                 pl: 0.5,
                 pr: score === null || score === undefined ? 0.5 : 1.25,
                 mb: "8px",
-                borderRadius: "999px",
+                borderRadius: "8px",
                 bgcolor: active ? tokens.bleuFonce : tokens.blanc,
                 color: active ? tokens.blanc : tokens.bleuFonce,
                 fontFamily: "inherit",

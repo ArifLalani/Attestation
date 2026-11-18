@@ -4,18 +4,20 @@ import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import InputBase from "@mui/material/InputBase";
 import Link from "@mui/material/Link";
 import CloseRounded from "@mui/icons-material/CloseRounded";
 import EmailOutlined from "@mui/icons-material/EmailOutlined";
 import Facebook from "@mui/icons-material/Facebook";
 import Instagram from "@mui/icons-material/Instagram";
+import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import LinkedIn from "@mui/icons-material/LinkedIn";
 import SearchRounded from "@mui/icons-material/SearchRounded";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { ReportSheet } from "@/variants/finale/components/reviews/ReportSheet";
-import { ReviewCard } from "@/variants/finale/components/reviews/ReviewCard";
+import { ReviewCard, ReviewDetailsContent, ReviewDetailsFooter } from "@/variants/finale/components/reviews/ReviewCard";
 import { CtaButton } from "@/variants/finale/components/ui/CtaButton";
 import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
 import { ResponsiveSheet } from "@/variants/finale/components/ui/ResponsiveSheet";
@@ -27,6 +29,7 @@ import { isPublic, reviewsForScore, summarize } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
 import { emptyFilters, useCertificate } from "@/components/certificate/CertificateContext";
 import { CardTitle } from "./ReputationCard";
+import { DefinitionsSheet } from "./DefinitionsSheet";
 
 const networks = [
   { key: "instagram", icon: <Instagram /> },
@@ -57,7 +60,7 @@ function SocialLinks({ person }: { person: Collaborator }) {
 /** "★ 4,7" in a white pill over the bottom of the photo (from option G), with H's yellow star. */
 function ScorePill({ value }: { value: number }) {
   return (
-    <Box sx={{ position: "absolute", left: "50%", bottom: -10, transform: "translateX(-50%)", display: "inline-flex", alignItems: "center", gap: 0.25, height: 24, pl: 0.75, pr: 1, borderRadius: "999px", bgcolor: tokens.blanc, boxShadow: "0 2px 8px rgba(4, 27, 68, 0.16)", fontSize: 13, fontWeight: 700, lineHeight: 1, color: tokens.bleuFonce, whiteSpace: "nowrap" }}>
+    <Box sx={{ position: "absolute", left: "50%", bottom: -10, transform: "translateX(-50%)", display: "inline-flex", alignItems: "center", gap: 0.25, height: 24, pl: 0.75, pr: 1, borderRadius: "6px", bgcolor: tokens.blanc, boxShadow: "0 2px 8px rgba(4, 27, 68, 0.16)", fontSize: 13, fontWeight: 700, lineHeight: 1, color: tokens.bleuFonce, whiteSpace: "nowrap" }}>
       <FigmaIcon name="star-small" />
       {formatScore(value)}
     </Box>
@@ -92,7 +95,7 @@ function TeamSearch({ value, onChange }: { value: string; onChange: (value: stri
   return (
     <Box
       role="search"
-      sx={{ display: "flex", alignItems: "center", gap: 1, minHeight: 48, pl: 2, pr: 0.5, borderRadius: "999px", border: `1px solid ${tokens.grisMoyen1}`, bgcolor: tokens.grisClair1, color: tokens.gris, transition: "border-color 150ms ease", "&:focus-within": { borderColor: tokens.bleuFonce, bgcolor: tokens.blanc } }}
+      sx={{ display: "flex", alignItems: "center", gap: 1, minHeight: 48, pl: 2, pr: 0.5, borderRadius: "8px", border: `1px solid ${tokens.grisMoyen1}`, bgcolor: tokens.grisClair1, color: tokens.gris, transition: "border-color 150ms ease", "&:focus-within": { borderColor: tokens.bleuFonce, bgcolor: tokens.blanc } }}
     >
       <SearchRounded aria-hidden sx={{ fontSize: 20, flexShrink: 0 }} />
       <InputBase
@@ -133,7 +136,14 @@ export function TeamSection() {
   const [expanded, setExpanded] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string>();
+  const [scoreHelpOpen, setScoreHelpOpen] = useState(false);
   const [reporting, setReporting] = useState<Review | null>(null);
+  // A review’s details open as the profile’s second page (back arrow), not as a new panel. The review stays set while it slides out.
+  const [detailsReview, setDetailsReview] = useState<Review>();
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const tvr = useTranslations("VarianteFinale.reviews");
+  // Desktop: the details are the profile panel’s second page. Phones: a sheet rising from the bottom, over the profile.
+  const desktop = useMediaQuery("(min-width:900px)", { noSsr: true });
   const people = useMemo(() => team.map((person) => ({
     person, summary: summarize(reviewsForScore(reviews, scoreView, person.id)),
   })).filter(({ summary }) => isPublic(summary.count, agency.publicThreshold))
@@ -195,10 +205,25 @@ export function TeamSection() {
       <ResponsiveSheet
         side
         open={Boolean(selected)}
-        onClose={() => setSelectedId(undefined)}
+        onClose={() => {
+          setSelectedId(undefined);
+          setDetailsOpen(false);
+        }}
         title={t("profile")}
         closeLabel={t("close")}
         footer={selected ? <Box sx={{ p: 2, borderTop: `1px solid ${tokens.grisMoyen1}` }}><CtaButton onClick={seeReviews}>{t("seeReviews")}</CtaButton></Box> : undefined}
+        subPage={
+          selected
+            ? {
+                open: detailsOpen,
+                title: tvr("details"),
+                backLabel: tv("backToProfile"),
+                onBack: () => setDetailsOpen(false),
+                children: detailsReview ? <ReviewDetailsContent review={detailsReview} /> : null,
+                footer: detailsReview ? <ReviewDetailsFooter review={detailsReview} onReport={setReporting} /> : undefined,
+              }
+            : undefined
+        }
       >
         {selected && (
           <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2.5 }}>
@@ -214,11 +239,23 @@ export function TeamSection() {
               <Box component="dl" sx={{ m: 0, display: "flex", flexDirection: "column" }}>
                 {[
                   // Avis Contrôlés in the green of the Réputation display.
-                  ...scores.map(({ view, average, count }) => ({ label: `${tr(`views.${view}`)} (${formatCount(count)})`, value: average !== null ? <>{formatScore(average)}<FigmaIcon name="star-small" /></> : "—", color: view === "controle" ? tokens.vertOs : undefined })),
-                  { label: tv("agency"), value: agency.city, color: undefined },
+                  ...scores.map(({ view, average, count }) => ({ key: view, label: `${tr(`views.${view}`)} (${formatCount(count)})`, value: average !== null ? <>{formatScore(average)}<FigmaIcon name="star-small" /></> : "—", color: view === "controle" ? tokens.vertOs : undefined })),
+                  { key: "agency", label: tv("agency"), value: agency.city, color: undefined },
                 ].map((stat, index) => (
-                  <Box key={stat.label} sx={{ display: "flex", flexDirection: "column-reverse", py: 1.25, borderTop: index ? `1px solid ${tokens.grisMoyen1}` : "none" }}>
-                    <Typography component="dt" sx={{ fontSize: 12, fontWeight: 600, color: stat.color ?? tokens.gris }}>{stat.label}</Typography>
+                  <Box key={stat.key} sx={{ display: "flex", flexDirection: "column-reverse", py: 1.25, borderTop: index ? `1px solid ${tokens.grisMoyen1}` : "none" }}>
+                    <Typography component="dt" sx={{ fontSize: 12, fontWeight: 600, color: stat.color ?? tokens.gris }}>
+                      {stat.label}
+                      {stat.key === "controle" && (
+                        <IconButton
+                          onClick={() => setScoreHelpOpen(true)}
+                          aria-haspopup="dialog"
+                          aria-label={tvr("explain", { title: tr("views.controle") })}
+                          sx={{ ml: 0.25, my: -0.5, width: 24, height: 24, verticalAlign: "middle", color: tokens.bleu600, ...focusSx }}
+                        >
+                          <InfoOutlined sx={{ fontSize: 15 }} />
+                        </IconButton>
+                      )}
+                    </Typography>
                     <Box component="dd" sx={{ m: 0, display: "flex", alignItems: "center", gap: 0.25, fontSize: 20, fontWeight: 700, lineHeight: 1.2, color: stat.color ?? tokens.bleuFonce }}>{stat.value}</Box>
                   </Box>
                 ))}
@@ -228,7 +265,7 @@ export function TeamSection() {
               <ButtonBase
                 component="a"
                 href={`mailto:${selected.person.email}`}
-                sx={{ maxWidth: "100%", height: 40, gap: 1, px: 1.75, borderRadius: "999px", bgcolor: tokens.bleu10, color: tokens.bleuFonce, fontFamily: "inherit", fontSize: 14, fontWeight: 600, "&:hover": { bgcolor: tokens.bleu20 }, ...focusSx }}
+                sx={{ maxWidth: "100%", height: 40, gap: 1, px: 1.75, borderRadius: "8px", bgcolor: tokens.bleu10, color: tokens.bleuFonce, fontFamily: "inherit", fontSize: 14, fontWeight: 600, "&:hover": { bgcolor: tokens.bleu20 }, ...focusSx }}
               >
                 <EmailOutlined sx={{ fontSize: 18 }} />
                 <Box component="span" sx={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{selected.person.email}</Box>
@@ -237,10 +274,27 @@ export function TeamSection() {
             </Box>
             <Box sx={{ borderTop: `1px solid ${tokens.grisMoyen1}` }} />
             <Typography component="h3" sx={{ fontSize: 18, fontWeight: 600, color: tokens.bleuFonce }}>{t("recentReviews")}</Typography>
-            {recent.map((review) => <ReviewCard key={review.id} review={review} onReport={setReporting} outlined />)}
+            {recent.map((review) => (
+              <ReviewCard
+                key={review.id}
+                review={review}
+                onReport={setReporting}
+                outlined
+                detailsBackLabel={tv("backToProfile")}
+                onOpenDetails={
+                  desktop
+                    ? (chosen) => {
+                        setDetailsReview(chosen);
+                        setDetailsOpen(true);
+                      }
+                    : undefined
+                }
+              />
+            ))}
           </Box>
         )}
       </ResponsiveSheet>
+      <DefinitionsSheet open={scoreHelpOpen} onClose={() => setScoreHelpOpen(false)} initial="controle" view="controle" />
       <ReportSheet review={reporting} onClose={() => setReporting(null)} />
     </Box>
   );

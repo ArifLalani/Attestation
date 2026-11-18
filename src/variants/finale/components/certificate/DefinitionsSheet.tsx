@@ -189,7 +189,7 @@ function DefinitionPage({ name, review, view, heading, focus, onGo, back }: { na
               <ButtonBase
                 key={key}
                 onClick={() => onGo(key)}
-                sx={{ display: "inline-flex", alignItems: "center", gap: 0.25, minHeight: 36, pl: 1.5, pr: 1, borderRadius: "18px", border: `1px solid ${tokens.grisMoyen1}`, fontFamily: "inherit", fontSize: 14, fontWeight: 500, color: tokens.bleuFonce, "&:hover": { bgcolor: tokens.grisClair1 }, ...focusSx }}
+                sx={{ display: "inline-flex", alignItems: "center", gap: 0.25, minHeight: 36, pl: 1.5, pr: 1, borderRadius: "8px", border: `1px solid ${tokens.grisMoyen1}`, fontFamily: "inherit", fontSize: 14, fontWeight: 500, color: tokens.bleuFonce, "&:hover": { bgcolor: tokens.grisClair1 }, ...focusSx }}
               >
                 {t(`label.${key}`)}
                 <ChevronRight sx={{ fontSize: 18 }} />

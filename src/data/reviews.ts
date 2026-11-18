@@ -1,4 +1,4 @@
-import { closings, firstNames, lastInitials, middles, moodCriteria, moodOf, openings, questionnaireCriteria, replies } from "./content";
+import { closings, firstNames, lastNames, middles, moodCriteria, moodOf, openings, questionnaireCriteria, replies } from "./content";
 import { createRng, seedFrom, type Rng } from "./rng";
 import { lbiTeam, type TeamMemberSeed } from "./team";
 import type { Agency, Collaborator, ImportPlatform, Product, Review, ReviewSource } from "./types";
@@ -142,7 +142,8 @@ export function getAgencyDataset(agency: Agency): AgencyDataset {
       source,
       rating,
       daysAgo,
-      authorName: `${firstName} ${rng.pick(lastInitials)}.`,
+      // Full name (the same draw as the old initial, so every other value of the demo stays the same).
+      authorName: `${firstName} ${rng.pick(lastNames)}`,
       comment: writeComment(rng, rating, product),
       product,
       criteria: rng.sample(moodCriteria[mood], rng.int(1, 3)),

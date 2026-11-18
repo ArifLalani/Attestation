@@ -14,7 +14,7 @@ import { useCertificate } from "@/components/certificate/CertificateContext";
  * so the count, the list and the empty state follow like any other filter. Each option passes its own look in `sx`
  * (the box) and `inputSx` (the text).
  */
-export function ReviewSearchField({ sx, inputSx }: { sx?: SxProps<Theme>; inputSx?: SxProps<Theme> }) {
+export function ReviewSearchField({ sx, inputSx, onFocus, onBlur, inputRef, hideClear = false, placeholder, children }: { sx?: SxProps<Theme>; inputSx?: SxProps<Theme>; onFocus?: () => void; onBlur?: () => void; inputRef?: React.Ref<HTMLInputElement>; /** Leave out the small clear cross (another control ends the typing). */ hideClear?: boolean; placeholder?: string; /** Controls inside the box, after the text (e.g. Filtres and the sort). */ children?: React.ReactNode }) {
   const t = useTranslations("Reviews");
   const { filters, setFilters } = useCertificate();
   const value = filters.query ?? "";
@@ -48,13 +48,16 @@ export function ReviewSearchField({ sx, inputSx }: { sx?: SxProps<Theme>; inputS
         type="search"
         value={value}
         onChange={(event) => setQuery(event.target.value)}
+        onFocus={onFocus}
+        onBlur={onBlur}
+        inputRef={inputRef}
         onKeyDown={(event) => {
           if (event.key === "Escape" && value) {
             event.preventDefault();
             setQuery("");
           }
         }}
-        placeholder={t("searchPlaceholder")}
+        placeholder={placeholder ?? t("searchPlaceholder")}
         inputProps={{ "aria-label": t("search"), enterKeyHint: "search" }}
         sx={[
           {
@@ -69,11 +72,12 @@ export function ReviewSearchField({ sx, inputSx }: { sx?: SxProps<Theme>; inputS
           ...(Array.isArray(inputSx) ? inputSx : [inputSx]),
         ]}
       />
-      {value && (
+      {value && !hideClear && (
         <IconButton size="small" onClick={() => setQuery("")} aria-label={t("searchClear")} sx={{ color: "inherit" }}>
           <CloseRounded fontSize="small" />
         </IconButton>
       )}
+      {children}
     </Box>
   );
 }

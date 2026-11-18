@@ -22,7 +22,6 @@ import { formatCount, formatScore } from "@/lib/format";
 import { isPublic, reviewsForScore, summarize } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
 import { useCertificate } from "@/components/certificate/CertificateContext";
-import { openHoursEvent } from "./AgenciesSection";
 import { OpenStatus } from "./OpenStatus";
 
 export const cardSx = {
@@ -217,13 +216,12 @@ export function BusinessCard() {
         </Box>
 
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 1 }}>
-          {/* The status opens this agency's week of hours in Nos Agences. */}
+          {/* The status opens the Horaires sheet (today, the week, holidays and other exceptions). */}
           <Link
             href="#nos-agences"
             onClick={(event) => {
               event.preventDefault();
-              window.dispatchEvent(new Event(openHoursEvent));
-              scrollToAgencies();
+              setPanel("hours");
             }}
             sx={{ ...metaLinkSx, "&:hover p": { textDecoration: "underline", textUnderlineOffset: "3px" } }}
           >

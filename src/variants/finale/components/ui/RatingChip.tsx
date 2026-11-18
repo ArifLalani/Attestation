@@ -14,7 +14,7 @@ export function RatingChip({ value }: { value: number }) {
         px: "6px",
         bgcolor: tokens.blanc,
         border: `1px solid ${tokens.grisMoyen1}`,
-        borderRadius: "16px",
+        borderRadius: "6px",
         flexShrink: 0,
       }}
     >

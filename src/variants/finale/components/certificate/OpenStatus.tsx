@@ -8,6 +8,7 @@ import type { WeekHours } from "@/data/types";
 import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
 import { useNow } from "@/lib/hooks";
 import { frenchTime, openingStatus } from "@/lib/hours";
+import { specialDaysAround } from "@/lib/specialHours";
 import { tokens } from "@/theme/theme";
 
 /** Live "Ouvert · Ferme à 19 h" status, computed in the browser from the current Paris time. */
@@ -16,7 +17,8 @@ import { tokens } from "@/theme/theme";
 export function OpenStatus({ hours, split = false, boxed = false }: { hours: WeekHours; split?: boolean; boxed?: boolean }) {
   const t = useTranslations("Hours");
   const now = useNow();
-  const status = now ? openingStatus(hours, now) : null;
+  // Public holidays, shorter days and closures replace the usual hours.
+  const status = now ? openingStatus(hours, now, undefined, specialDaysAround(now)) : null;
 
   const label = !status
     ? " "
@@ -42,7 +44,7 @@ export function OpenStatus({ hours, split = false, boxed = false }: { hours: Wee
 
   const closed = !!status && !status.open;
   const box = boxed
-    ? { height: 30, px: 1.25, borderRadius: "999px", bgcolor: closed ? "rgba(255,240,233,0.5)" : "rgba(233,255,242,0.5)", border: `1px solid ${closed ? "rgba(252,101,48,0.5)" : "rgba(67,182,163,0.5)"}` }
+    ? { height: 30, px: 1.25, borderRadius: "8px", bgcolor: closed ? "rgba(255,240,233,0.5)" : "rgba(233,255,242,0.5)", border: `1px solid ${closed ? "rgba(252,101,48,0.5)" : "rgba(67,182,163,0.5)"}` }
     : {};
 
   return (

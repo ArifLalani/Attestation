@@ -34,8 +34,7 @@
       "close": "Fermer"
     },
     "agencies": {
-      "seeReviews": "Lire les avis",
-      "seeCertificate": "Voir son certificat",
+      "globalReviews": "Tous les avis ({count})",
       "selected": "Affichée sur la carte"
     },
     "team": {
@@ -43,7 +42,8 @@
       "search": "Rechercher dans l’équipe",
       "searchPlaceholder": "Rechercher un nom, un métier…",
       "searchClear": "Effacer la recherche",
-      "noMatch": "Personne dans l’équipe ne correspond à « {query} »."
+      "noMatch": "Personne dans l’équipe ne correspond à « {query} ».",
+      "backToProfile": "Retour au profil"
     },
     "hero": {
       "sector": "{sector} à {city}",
@@ -176,6 +176,10 @@
       "replyFrom": "Réponse de {agency}",
       "levels": "Niveaux",
       "details": "Détails de l’avis",
+    "info": "Informations",
+    "searchClose": "Fermer la recherche",
+    "searchShort": "Rechercher…",
+    "openDetails": "Voir les détails de l’avis de {name}",
       "explain": "Comprendre : {title}",
       "explainItem": "{label} : {value}. Comprendre",
       "close": "Fermer",
@@ -203,7 +207,7 @@
         "import_other": "L’avis a été importé depuis {source}, une source non certifiée ISO : il compte dans le score global uniquement."
       },
       "questionnaire": {
-        "simple": "Un questionnaire interne, créé par l’agence elle-même et non contrôlé par Opinion System. Un questionnaire contrôlé, lui, est conçu et certifié par Opinion System.",
+        "simple": "Un questionnaire interne, créé par l’agence elle-même et non contrôlé par Opinion System. Un questionnaire certifié, lui, est conçu par Opinion System.",
         "controle": "Un questionnaire certifié, conçu par Opinion System. C’est ce qui fait de cet avis un avis contrôlé."
       },
       "collaborator": "{name} est la personne de l’agence qui a envoyé le questionnaire à ce client.",

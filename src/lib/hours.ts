@@ -21,25 +21,47 @@ const toMinutes = (time: string) => {
   return h * 60 + m;
 };
 
+/** Calendar days are handled as noon UTC, so adding days never crosses a daylight-saving edge. */
+export const calendarDay = (y: number, m: number, d: number) => new Date(Date.UTC(y, m - 1, d, 12));
+export const isoDate = (date: Date) => date.toISOString().slice(0, 10);
+export const addDays = (date: Date, days: number) => new Date(date.getTime() + days * 86_400_000);
+/** Monday = 0 … Sunday = 6 of a calendar day. */
+export const weekdayOf = (date: Date) => (date.getUTCDay() + 6) % 7;
+
+/** Today's calendar date in the agency's time zone. */
+export function localDay(now: Date, timeZone = AGENCY_TIME_ZONE) {
+  const [y, m, d] = new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" }).format(now).split("-").map(Number);
+  return calendarDay(y, m, d);
+}
+
 export type OpeningStatus =
   | { open: true; closesAt: string }
   | { open: false; opensAt: string; /** Weekday of the next opening, `null` if it is later today. */ opensDay: number | null }
   | { open: false; opensAt: null; opensDay: null };
 
-export function openingStatus(hours: WeekHours, now: Date, timeZone = AGENCY_TIME_ZONE): OpeningStatus {
-  const { weekday, minutes } = localClock(now, timeZone);
+/**
+ * Open now, or when it opens next. `special` (by "YYYY-MM-DD") replaces the usual hours on public holidays,
+ * shorter days or closures.
+ */
+export function openingStatus(hours: WeekHours, now: Date, timeZone = AGENCY_TIME_ZONE, special?: Map<string, { ranges: [string, string][] }>): OpeningStatus {
+  const { minutes } = localClock(now, timeZone);
+  const today = localDay(now, timeZone);
+  const rangesOn = (offset: number) => {
+    const date = addDays(today, offset);
+    return special?.get(isoDate(date))?.ranges ?? hours[weekdayOf(date)] ?? [];
+  };
 
-  for (const [start, end] of hours[weekday] ?? []) {
+  for (const [start, end] of rangesOn(0)) {
     if (minutes >= toMinutes(start) && minutes < toMinutes(end)) return { open: true, closesAt: end };
   }
 
-  const laterToday = (hours[weekday] ?? []).find(([start]) => toMinutes(start) > minutes);
+  const laterToday = rangesOn(0).find(([start]) => toMinutes(start) > minutes);
   if (laterToday) return { open: false, opensAt: laterToday[0], opensDay: null };
 
-  for (let offset = 1; offset <= 7; offset++) {
-    const day = (weekday + offset) % 7;
-    const first = hours[day]?.[0];
-    if (first) return { open: false, opensAt: first[0], opensDay: day };
+  // Up to three weeks ahead (a closed week in August, then the usual hours).
+  for (let offset = 1; offset <= 21; offset++) {
+    const first = rangesOn(offset)[0];
+    if (first) return { open: false, opensAt: first[0], opensDay: weekdayOf(addDays(today, offset)) };
   }
   return { open: false, opensAt: null, opensDay: null };
 }

@@ -38,10 +38,12 @@ interface ResponsiveSheetProps {
    * Desktop side sheet only: a second page that slides in from the right with a back arrow, like the team list in Filtres.
    * Échap on it goes back. Phones ignore it (open a second sheet instead).
    */
-  subPage?: { open: boolean; title: React.ReactNode; backLabel: string; onBack: () => void; header?: React.ReactNode; children: React.ReactNode };
+  subPage?: { open: boolean; title: React.ReactNode; backLabel: string; onBack: () => void; header?: React.ReactNode; footer?: React.ReactNode; children: React.ReactNode };
   /** A back arrow left of the title (e.g. to the list of definitions). */
   onBack?: () => void;
   backLabel?: string;
+  /** No close button: with `onBack`, for a sheet opened from another one (the arrow goes back to it). */
+  hideClose?: boolean;
 }
 
 /**
@@ -49,7 +51,7 @@ interface ResponsiveSheetProps {
  * From 900 px: a full-height side sheet from the right, over the page with a light backdrop, like the filters;
  * a small window under `anchorEl` when one is given (unless `side`).
  */
-export function ResponsiveSheet({ open, onClose, title, closeLabel, actions, header, footer, children, anchorEl, dropdownWidth = 420, dropdownAlign = "right", dialogWidth, side = false, subPage, onBack, backLabel }: ResponsiveSheetProps) {
+export function ResponsiveSheet({ open, onClose, title, closeLabel, actions, header, footer, children, anchorEl, dropdownWidth = 420, dropdownAlign = "right", dialogWidth, side = false, subPage, onBack, backLabel, hideClose = false }: ResponsiveSheetProps) {
   const desktop = useMediaQuery("(min-width:900px)", { noSsr: true });
   const titleId = useId();
   // Desktop: everything that used to be a centred window opens as a side sheet.
@@ -92,9 +94,11 @@ export function ResponsiveSheet({ open, onClose, title, closeLabel, actions, hea
           {title}
         </Typography>
         {actions}
-        <IconButton onClick={onClose} aria-label={closeLabel} sx={{ p: 1.5, m: -1.5, ml: 0 }}>
-          <FigmaIcon name="close" />
-        </IconButton>
+        {!hideClose && (
+          <IconButton onClick={onClose} aria-label={closeLabel} sx={{ p: 1.5, m: -1.5, ml: 0 }}>
+            <FigmaIcon name="close" />
+          </IconButton>
+        )}
       </Box>
       {header}
       <Box sx={{ overflowY: "auto", overscrollBehavior: "contain", flex: 1 }}>{children}</Box>
@@ -103,7 +107,7 @@ export function ResponsiveSheet({ open, onClose, title, closeLabel, actions, hea
   );
 
   const subBody = sub && (
-    <Box sx={{ display: "flex", flexDirection: "column", height: "100%", bgcolor: tokens.blanc }}>
+    <Box sx={{ display: "flex", flexDirection: "column", height: "100%", flex: 1, minHeight: 0, bgcolor: tokens.blanc }}>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1, px: 1, py: 1.5, minHeight: 61, borderBottom: `1px solid ${tokens.grisMoyen1}`, flexShrink: 0 }}>
         <IconButton ref={backRef} onClick={sub.onBack} aria-label={sub.backLabel} sx={{ color: tokens.bleuFonce }}>
           <ArrowBackRounded />
@@ -114,6 +118,7 @@ export function ResponsiveSheet({ open, onClose, title, closeLabel, actions, hea
       </Box>
       {sub.header}
       <Box sx={{ overflowY: "auto", overscrollBehavior: "contain", flex: 1, minHeight: 0 }}>{sub.children}</Box>
+      {sub.footer}
     </Box>
   );
 

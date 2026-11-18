@@ -44,6 +44,38 @@
       "Samedi",
       "Dimanche"
     ]
+,
+    "sheetTitle": "Horaires",
+    "today": "Aujourd’hui",
+    "usual": "Horaires habituels",
+    "specialTitle": "Horaires exceptionnels",
+    "noSpecial": "Aucun horaire exceptionnel prévu dans les prochains mois.",
+    "range": "Du {from} au {to}",
+    "note": "Horaires communiqués par l’agence. En cas de doute, appelez avant de vous déplacer.",
+    "contact": "Contacter l’agence",
+    "close": "Fermer",
+    "open": "Voir les horaires",
+    "special": {
+      "jourAn": "Jour de l’an",
+      "lundiPaques": "Lundi de Pâques",
+      "feteTravail": "Fête du Travail",
+      "victoire1945": "Victoire 1945",
+      "ascension": "Ascension",
+      "lundiPentecote": "Lundi de Pentecôte",
+      "feteNationale": "Fête nationale",
+      "assomption": "Assomption",
+      "toussaint": "Toussaint",
+      "armistice": "Armistice 1918",
+      "noel": "Noël",
+      "veilleNoel": "Veille de Noël",
+      "saintSylvestre": "Saint-Sylvestre",
+      "conges": "Congés d’été"
+    },
+    "kind": {
+      "holiday": "Jour férié",
+      "reduced": "Horaires réduits",
+      "closure": "Fermeture"
+    }
   },
   "Reputation": {
     "eyebrow": "RÉPUTATION",
@@ -65,6 +97,10 @@
     "scoreSource": {
       "global": "Toutes sources confondues",
       "controle": "Uniquement les avis contrôlés Opinion System"
+    },
+    "scoreCaption": {
+      "global": "{count} avis de toutes sources confondues",
+      "controle": "{count} avis uniquement contrôlés par Opinion System"
     },
     "bucketLabel": "{stars} étoiles : {count} avis. Voir ces avis",
     "explainGlobal": "Cette note regroupe les avis contrôlés par Opinion System et ceux provenant de toutes les sources.",
@@ -317,7 +353,7 @@
       "satisfactionLevel": "Niveau de Satisfaction",
       "source": "Source de l’avis",
       "questionnaire": "Questionnaire",
-      "questionnaireControle": "Contrôlé",
+      "questionnaireControle": "Certifié",
       "questionnaireSimple": "Interne",
       "collaborator": "Collaborateur",
       "activity": "Activité professionnelle",

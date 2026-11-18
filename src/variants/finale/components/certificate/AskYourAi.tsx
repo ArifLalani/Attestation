@@ -305,7 +305,7 @@ export function AskYourAi() {
             <ButtonBase
               onClick={() => { setQuestion(item); openAssistant(); }}
               aria-haspopup="dialog"
-              sx={{ px: { xs: 1.25, md: 1.5 }, py: { xs: 0.75, md: 1 }, borderRadius: "999px", fontFamily: "inherit", fontSize: { xs: 12, md: 12.5 }, fontWeight: 500, color: tokens.blanc, bgcolor: "rgba(255, 255, 255, 0.1)", border: "1px solid rgba(255, 255, 255, 0.22)", transition: "background-color 150ms ease", "&:hover": { bgcolor: "rgba(255, 255, 255, 0.18)" }, "&.Mui-focusVisible": { outline: "3px solid #6dd3c1", outlineOffset: 2 } }}
+              sx={{ px: { xs: 1.25, md: 1.5 }, py: { xs: 0.75, md: 1 }, borderRadius: "8px", fontFamily: "inherit", fontSize: { xs: 12, md: 12.5 }, fontWeight: 500, color: tokens.blanc, bgcolor: "rgba(255, 255, 255, 0.1)", border: "1px solid rgba(255, 255, 255, 0.22)", transition: "background-color 150ms ease", "&:hover": { bgcolor: "rgba(255, 255, 255, 0.18)" }, "&.Mui-focusVisible": { outline: "3px solid #6dd3c1", outlineOffset: 2 } }}
             >
               {t(`questions.${item}`)}
             </ButtonBase>

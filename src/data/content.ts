@@ -19,6 +19,15 @@ export const womenFirstNames = new Set([
 
 export const lastInitials = "ABCDEFGHJLMNPRSTV".split("");
 
+/** Reviewers' surnames (demo): common French family names, shown in full on the review cards. */
+export const lastNames = [
+  "Martin", "Bernard", "Thomas", "Petit", "Robert", "Richard", "Durand", "Dubois", "Moreau", "Laurent",
+  "Simon", "Michel", "Lefebvre", "Leroy", "Roux", "David", "Bertrand", "Morel", "Fournier", "Girard",
+  "Bonnet", "Dupont", "Lambert", "Fontaine", "Rousseau", "Vincent", "Muller", "Lefèvre", "Faure", "André",
+  "Mercier", "Blanc", "Guérin", "Boyer", "Garnier", "Chevalier", "François", "Legrand", "Gauthier", "Garcia",
+  "Perrin", "Robin", "Lemoine", "Morin", "Nicolas", "Henry", "Roussel", "Mathieu", "Gautier", "Masson",
+];
+
 /** Criteria of each product's questionnaire, scored out of 10 in Détails. */
 export const questionnaireCriteria: Record<Product, string[]> = {
   vente: [

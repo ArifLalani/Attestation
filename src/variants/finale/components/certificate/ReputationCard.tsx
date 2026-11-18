@@ -215,7 +215,7 @@ export function ReputationCard() {
                 {t(`heading.${headingFor(summary.average!)}`)}
               </Typography>
               <Typography sx={{ fontSize: 14, color: tokens.gris, lineHeight: 1.4 }}>
-                {t(`scoreSource.${scoreView}`)} · {tf("basedOn", { count: formatCount(summary.count) })}
+                {t(`scoreCaption.${scoreView}`, { count: formatCount(summary.count) })}
               </Typography>
             </Box>
           ) : (

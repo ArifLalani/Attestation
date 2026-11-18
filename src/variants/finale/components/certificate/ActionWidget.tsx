@@ -27,12 +27,12 @@ import { opinionSystemLinks } from "@/data/opinionSystem";
 import { formatCount, formatScore } from "@/lib/format";
 import { useNow } from "@/lib/hooks";
 import { openingStatus } from "@/lib/hours";
+import { specialDaysAround } from "@/lib/specialHours";
 import { isPublic, reviewsForScore, summarize, type ScoreView } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
 import { useCertificate } from "@/components/certificate/CertificateContext";
 import { CtaButton } from "@/variants/finale/components/ui/CtaButton";
 import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
-import { openHoursEvent } from "./AgenciesSection";
 import { DefinitionsSheet } from "./DefinitionsSheet";
 import { OpenStatus } from "./OpenStatus";
 
@@ -93,7 +93,7 @@ function PillContent({ open }: { open: boolean }) {
   const { agency } = useCertificate();
   const { summary, visible, controle } = useActiveScore();
   const now = useNow();
-  const status = now ? openingStatus(agency.hours, now) : null;
+  const status = now ? openingStatus(agency.hours, now, undefined, specialDaysAround(now)) : null;
   const statusColor = status?.open ? "#6dd3c1" : tokens.error3;
   return (
     <>
@@ -198,9 +198,7 @@ function CardContent({ onDone, titleId, onLearnMore }: { onDone: () => void; tit
 
   const showHours = () => {
     onDone();
-    window.dispatchEvent(new Event(openHoursEvent));
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    document.getElementById("nos-agences")?.scrollIntoView({ behavior: reduced ? "instant" : "smooth" });
+    setPanel("hours");
   };
 
   return (

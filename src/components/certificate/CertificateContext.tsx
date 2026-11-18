@@ -10,7 +10,7 @@ import type { ScoreView } from "@/lib/scoring";
 export { emptyFilters, type ReviewFilters } from "@/lib/reviewFilters";
 
 /** Panels that several places can open (toolbar in the card and in the pinned header, floating button…). */
-export type SharedPanel = "filters" | "sort" | "reviewRequest" | "contact" | "assistant";
+export type SharedPanel = "filters" | "sort" | "reviewRequest" | "contact" | "assistant" | "hours";
 
 interface CertificateState {
   agency: Agency;

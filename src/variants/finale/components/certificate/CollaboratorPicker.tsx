@@ -99,7 +99,7 @@ export function useCollaboratorChooser({ selectedId, onChoose, view, allowAll = 
           gap: 1,
           px: 2,
           height: 48,
-          borderRadius: "999px",
+          borderRadius: "8px",
           bgcolor: tokens.grisClair1,
           border: `1px solid ${tokens.grisMoyen1}`,
           transition: "border-color 150ms ease, background-color 150ms ease",

@@ -1,59 +1,35 @@
 "use client";
 
 import Box from "@mui/material/Box";
-import Collapse from "@mui/material/Collapse";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import Typography from "@mui/material/Typography";
 import VerifiedRounded from "@mui/icons-material/VerifiedRounded";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { ReviewToolbar } from "@/variants/finale/components/reviews/ReviewToolbar";
-import { ActiveFilterChips } from "@/variants/finale/components/reviews/ActiveFilterChips";
 import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
 import { tokens } from "@/theme/theme";
-import { sectionIds, useCertificate, type SectionId } from "@/components/certificate/CertificateContext";
+import { sectionIds, type SectionId } from "@/components/certificate/CertificateContext";
 
 export const pageColumnSx = { width: "100%", maxWidth: { xs: 640, md: 1100 }, mx: "auto" } as const;
 /** Content column: phone width up to 640 px, then 1100 px centred on desktop. */
 export const contentColumnSx = { width: "100%", maxWidth: { xs: 640, md: 1100 }, mx: "auto" } as const;
 
 /**
- * Figma "Top Header": trust banner + section tabs, pinned to the top (Sticky variant once scrolled).
- * Phones and tablets, while reading the reviews (the Avis toolbar pinned): scrolling down slides the banner and the tabs
- * away so only the Avis toolbar and its filter chips stay at the top; the smallest scroll up brings them back.
+ * Figma "Top Header": trust banner + section tabs, always pinned to the top (phones and desktop).
+ * While reading the reviews, their search line sticks right under it.
  */
 export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (id: SectionId) => void }) {
   const t = useTranslations("Header");
   const [scrolled, setScrolled] = useState(false);
-  const { toolbarPinned } = useCertificate();
-  const returningToReviews = useRef(false);
   const headerRef = useRef<HTMLElement>(null);
   const bannerRef = useRef<HTMLDivElement>(null);
   const tabsRef = useRef<HTMLDivElement>(null);
-  // Height of the banner + tabs (how far the header slides up when they hide).
-  const [barsHeight, setBarsHeight] = useState(0);
-  const hiddenRef = useRef(false);
-  const compact = useMediaQuery("(max-width:899.95px)", { noSsr: true });
-  const [barsHidden, setBarsHidden] = useState(false);
-  // Programmatic scrolls (a tab, Lire les avis…) must not hide the bars on their way down.
-  const quietUntil = useRef(0);
-
-  // Leaving the reviews (or a wider screen) always shows the bars again.
-  if (barsHidden && (!toolbarPinned || !compact)) setBarsHidden(false);
-  const hideBars = barsHidden && toolbarPinned && compact;
-
-  // The visible height of the header, for the scrolls that stop under it (sections, a review's details).
-  // Measured from the page each time: on every size change of the header and whenever the bars hide or show.
+  // The height of the header, for what sits right under it (the reviews' sticky search line) and for the scrolls to a section.
   useEffect(() => {
     const header = headerRef.current;
     if (!header) return;
-    const write = () => {
-      const bars = (bannerRef.current?.offsetHeight ?? 0) + (tabsRef.current?.offsetHeight ?? 0);
-      setBarsHeight(bars);
-      document.documentElement.style.setProperty("--certificate-header-height", `${header.offsetHeight - (hiddenRef.current ? bars : 0)}px`);
-    };
+    const write = () => document.documentElement.style.setProperty("--certificate-header-height", `${header.offsetHeight}px`);
     const observer = new ResizeObserver(write);
     observer.observe(header);
     write();
@@ -62,38 +38,8 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
       document.documentElement.style.removeProperty("--certificate-header-height");
     };
   }, []);
-  useEffect(() => {
-    hiddenRef.current = hideBars;
-    const header = headerRef.current;
-    if (!header) return;
-    const bars = (bannerRef.current?.offsetHeight ?? 0) + (tabsRef.current?.offsetHeight ?? 0);
-    document.documentElement.style.setProperty("--certificate-header-height", `${header.offsetHeight - (hideBars ? bars : 0)}px`);
-  }, [hideBars]);
-
-  // Direction of the scroll: about 24 px down hides, about 4 px up shows (so a small jitter does nothing).
-  useEffect(() => {
-    if (!compact) return;
-    let lastY = window.scrollY;
-    let travel = 0;
-    const onScroll = () => {
-      const y = window.scrollY;
-      const delta = y - lastY;
-      lastY = y;
-      if (performance.now() < quietUntil.current) {
-        travel = 0;
-        return;
-      }
-      travel = Math.sign(delta) === Math.sign(travel) ? travel + delta : delta;
-      if (travel > 24) setBarsHidden(true);
-      else if (travel < -4) setBarsHidden(false);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [compact]);
 
   const select = (id: SectionId) => {
-    setBarsHidden(false);
-    quietUntil.current = performance.now() + 1200;
     onSelect(id);
   };
 
@@ -112,12 +58,9 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
         position: "sticky",
         top: 0,
         zIndex: (theme) => theme.zIndex.appBar,
-        transform: hideBars ? `translateY(-${barsHeight}px)` : "none",
-        transition: "transform 220ms cubic-bezier(0.2, 0, 0, 1)",
-        "@media (prefers-reduced-motion: reduce)": { transition: "none" },
       }}
     >
-      <Box ref={bannerRef} inert={hideBars} sx={{ background: "linear-gradient(to right, #001c4e, #11141a)", boxShadow: tokens.elevation3 }}>
+      <Box ref={bannerRef} sx={{ background: "linear-gradient(to right, #001c4e, #11141a)", boxShadow: tokens.elevation3 }}>
         <Box sx={{ ...pageColumnSx, display: "flex", alignItems: "center", gap: 1, p: 2 }}>
           <FigmaIcon name="os-icon-logo" />
           <Typography sx={{ flex: 1, fontSize: 16, fontWeight: 600, color: tokens.blanc, lineHeight: "normal" }}>
@@ -134,14 +77,19 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
         component="nav"
         sx={{
           bgcolor: "rgba(255, 255, 255, 0.96)",
+          // No shadow while the reviews' search line is stuck under the tabs: it carries the shadow.
           boxShadow: scrolled ? "0px 4px 12px 0px rgba(0,0,0,0.08)" : "none",
           transition: "box-shadow 200ms ease",
           backdropFilter: "saturate(180%) blur(8px)",
+          // While the reviews' search line is stuck under it (set by the reviews during the scroll, without a redraw):
+          // solid white and no shadow of its own, so tabs and search read as one block with one shadow under it.
+          '&[data-reviews-stuck="on"]': { bgcolor: tokens.blanc, boxShadow: "none", backdropFilter: "none" },
+          // The search line has slid away under the tabs: the tabs carry the shadow again.
+          '&[data-reviews-stuck="on"][data-reviews-search-hidden="on"]': { boxShadow: "0px 4px 12px 0px rgba(0,0,0,0.08)" },
         }}
       >
         <Tabs
           ref={tabsRef}
-          inert={hideBars}
           value={active}
           onChange={(_, id: SectionId) => select(id)}
           variant="fullWidth"
@@ -173,21 +121,6 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
             />
           ))}
         </Tabs>
-        {/* Figma "Top Header" Sticky + showFilteres: the review toolbar follows while scrolling the reviews. */}
-        <Collapse in={toolbarPinned} timeout={180} onExited={() => {
-          if (returningToReviews.current) {
-            returningToReviews.current = false;
-            // Collapsing the toolbar changes the header's height in the page flow.
-            onSelect("avis");
-          }
-        }}>
-          <Box sx={{ ...contentColumnSx, bgcolor: tokens.blanc, px: 2, py: 1 }}>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              <ReviewToolbar onCountClick={() => { returningToReviews.current = true; select("avis"); }} />
-              <ActiveFilterChips />
-            </Box>
-          </Box>
-        </Collapse>
       </Box>
     </Box>
   );
