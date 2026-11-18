@@ -4,22 +4,23 @@ import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import IconButton from "@mui/material/IconButton";
 import Link from "@mui/material/Link";
+import Rating from "@mui/material/Rating";
 import Snackbar from "@mui/material/Snackbar";
 import Typography from "@mui/material/Typography";
 import DirectionsOutlined from "@mui/icons-material/DirectionsOutlined";
 import LanguageOutlined from "@mui/icons-material/LanguageOutlined";
 import PlaceOutlined from "@mui/icons-material/PlaceOutlined";
 import ChevronRight from "@mui/icons-material/ChevronRight";
-import StarOutlineRounded from "@mui/icons-material/StarOutlineRounded";
 import StarRounded from "@mui/icons-material/StarRounded";
 import Verified from "@mui/icons-material/Verified";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CtaButton } from "@/variants/finale/components/ui/CtaButton";
 import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
+import { ResponsiveSheet } from "@/variants/finale/components/ui/ResponsiveSheet";
 import { formatCount, formatScore } from "@/lib/format";
-import { isPublic, reviewsForScore, summarize } from "@/lib/scoring";
+import { displayScore, isPublic, reviewsForScore, summarize } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
 import { useCertificate } from "@/components/certificate/CertificateContext";
 import { OpenStatus } from "./OpenStatus";
@@ -32,9 +33,6 @@ export const cardSx = {
 
 /** Secondary text on the frosted sign: full navy, as in the Figma (1742:88885), so it reads over the blurred photo. */
 const glassMuted = tokens.bleuFonce;
-
-/** Faint diagonal light reflection across the frosted sign. */
-const sheen = "linear-gradient(115deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 34%, rgba(255,255,255,0) 62%, rgba(255,255,255,0.28) 72%, rgba(255,255,255,0) 84%)";
 
 const metaLinkSx = {
   display: "inline-flex",
@@ -67,16 +65,70 @@ function scrollToAgencies() {
 
 /**
  * Hero taken from option D (text on the left, team photo with a caption on the right), drawn in the prototype's look:
- * white card, navy text, yellow CTA, Poppins. The score follows the Avis global / Avis Contrôlés switch and the advisor.
+ * white card, navy text, yellow CTA, Poppins. The score follows the review mode and the advisor.
  */
 export function BusinessCard() {
   const t = useTranslations("Business");
   const th = useTranslations("VarianteFinale.hero");
+  const tr = useTranslations("Reputation.views");
+  const tc = useTranslations("Contact");
   const { agency, reviews, scoreView, scoreCollaboratorId, setPanel, goToSection } = useCertificate();
   const [copied, setCopied] = useState(false);
+  const [nameClipped, setNameClipped] = useState(false);
+  const [nameOpen, setNameOpen] = useState(false);
+  const nameRef = useRef<HTMLHeadingElement>(null);
+  const scoreRef = useRef<HTMLButtonElement>(null);
+  const reflectionRef = useRef<HTMLSpanElement>(null);
   const summary = useMemo(() => summarize(reviewsForScore(reviews, scoreView, scoreCollaboratorId)), [reviews, scoreView, scoreCollaboratorId]);
-  const visible = summary.average !== null && isPublic(summary.count, agency.publicThreshold);
-  const countLabel = th(scoreView === "controle" ? "reviewsControle" : "reviews", { count: formatCount(summary.count) });
+  const average = isPublic(summary.count, agency.publicThreshold) ? summary.average : null;
+  const visible = average !== null;
+  const controlled = scoreView === "controle";
+  const modeLabel = tr(scoreView);
+  const countLabel = th("reviews", { count: formatCount(summary.count) });
+  const ratingColor = controlled ? "#167968" : "#316ca4";
+
+  useEffect(() => {
+    const heading = nameRef.current;
+    if (!heading) return;
+    let active = true;
+    const measure = () => {
+      if (active) setNameClipped(heading.scrollHeight > heading.clientHeight + 1);
+    };
+    const observer = new ResizeObserver(measure);
+    observer.observe(heading);
+    measure();
+    void document.fonts.ready.then(measure);
+    return () => {
+      active = false;
+      observer.disconnect();
+    };
+  }, [agency.name]);
+
+  useEffect(() => {
+    const card = scoreRef.current;
+    const reflection = reflectionRef.current;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (!card || !reflection || reducedMotion.matches) return;
+
+    let animation: Animation | undefined;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry || entry.intersectionRatio < 0.4) return;
+      observer.disconnect();
+      if (reducedMotion.matches) return;
+      animation = reflection.animate([
+        { opacity: 0, transform: "translateX(-78%)" },
+        { opacity: 0.85, offset: 0.24 },
+        { opacity: 0.72, offset: 0.7 },
+        { opacity: 0, transform: "translateX(78%)" },
+      ], { duration: 2100, easing: "cubic-bezier(.25,.6,.45,1)" });
+    }, { threshold: 0.4 });
+    observer.observe(card);
+
+    return () => {
+      observer.disconnect();
+      animation?.cancel();
+    };
+  }, [visible, scoreView]);
 
   const share = async () => {
     const data = { title: agency.name, text: t("shareText", { name: agency.name }), url: window.location.href };
@@ -126,92 +178,105 @@ export function BusinessCard() {
           alignSelf: { xs: "center", md: "end" },
           display: "flex",
           flexDirection: "column",
-          gap: 2,
+          gap: 1.5,
           p: { xs: 2, sm: 3, lg: 3.5 },
           minWidth: 0,
           borderRadius: "16px",
           // On phones and tablets the sign reaches the curved corner, so its own corner follows it (72 px minus the padding).
           borderBottomRightRadius: { xs: "60px", sm: "56px", md: "16px" },
-          // Frosted plastic: mostly white, a strong blur of the photo behind, and a faint diagonal sheen.
-          // A little whiter on phones and tablets, where the lower part of the sign sits on navy instead of the photo.
-          background: {
-            xs: `${sheen}, rgba(255,255,255,0.72)`,
-            md: `${sheen}, rgba(255,255,255,0.58)`,
-          },
-          backdropFilter: "blur(16px) saturate(160%)",
-          WebkitBackdropFilter: "blur(16px) saturate(160%)",
+          bgcolor: "#e7eef6",
           boxShadow: "0 32px 64px -16px rgba(4,27,68,0.45), 0 12px 24px -8px rgba(4,27,68,0.25)",
         }}
       >
-        {/*
-          Every size (Figma 1742:88885): the name next to the logo with the sector under it, the share icon top right.
-          The name is 24 px on phones, 28 px from 900 px.
-        */}
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: "48px minmax(0, 1fr) auto",
-            gridTemplateAreas: '"logo name share" "logo sector share"',
-            gridTemplateRows: "auto 1fr",
-            columnGap: 1.5,
-            rowGap: 0,
-            alignItems: "start",
+            gridTemplateColumns: "26px minmax(0, 1fr) auto",
+            gridTemplateAreas: '"logo sector share" "name name name"',
+            columnGap: 0.75,
+            rowGap: 0.5,
+            alignItems: "center",
           }}
         >
-          <Box sx={{ gridArea: "logo", width: 48, height: 48, borderRadius: "12px", overflow: "hidden", flexShrink: 0, bgcolor: tokens.blanc, border: `1px solid ${tokens.grisMoyen1}`, display: "grid", placeItems: "center" }}>
-            {/* Crop of the logo image as set in Figma ("image 4"). */}
-            <Box sx={{ position: "relative", width: 40, height: 36, overflow: "hidden" }}>
+          <Box sx={{ gridArea: "logo", width: 26, height: 26, borderRadius: "7px", overflow: "hidden", bgcolor: tokens.blanc, border: `1px solid ${tokens.grisMoyen1}`, display: "grid", placeItems: "center" }}>
+            <Box sx={{ position: "relative", width: 22, height: 20, overflow: "hidden" }}>
               <Box sx={{ position: "absolute", width: "133.24%", height: "145.41%", left: "-14.28%", top: "-22.96%" }}>
-                <Image src={agency.logo} alt={t("logoAlt", { name: agency.name })} fill sizes="80px" />
+                <Image src={agency.logo} alt="" fill sizes="30px" />
               </Box>
             </Box>
           </Box>
-          <Typography component="h1" sx={{ gridArea: "name", fontSize: { xs: 24, md: 28 }, fontWeight: 700, lineHeight: 1.05, letterSpacing: "-0.03em", color: tokens.bleuFonce, textWrap: "balance" }}>
-            {agency.name}
-          </Typography>
-          <Typography sx={{ gridArea: "sector", fontSize: 14, color: glassMuted, lineHeight: 1.5 }}>{th("sector", { sector: agency.sector, city: agency.city })}</Typography>
-          <IconButton onClick={share} aria-label={t("share")} sx={{ gridArea: "share", alignSelf: "start", p: 1, m: -1, borderRadius: "8px" }}>
+          <Box sx={{ gridArea: "name", position: "relative", alignSelf: "start", minWidth: 0, fontSize: { xs: 24, md: 28 } }}>
+            <Typography ref={nameRef} component="h1" sx={{
+              fontSize: "inherit", fontWeight: 700, lineHeight: 1.08, letterSpacing: "-0.04em", color: tokens.bleuFonce,
+              display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", overflowWrap: "anywhere",
+            }}>
+              {agency.name}
+            </Typography>
+            {nameClipped && <ButtonBase
+              aria-haspopup="dialog"
+              aria-label={th("showCompanyName")}
+              onClick={() => setNameOpen(true)}
+              sx={{ position: "absolute", inset: 0, borderRadius: "6px", "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}` } }}
+            />}
+          </Box>
+          <Typography sx={{ gridArea: "sector", fontSize: 12, color: "#405c74", lineHeight: 1.35 }}>{th("sector", { sector: agency.sector, city: agency.city })}</Typography>
+          <IconButton onClick={share} aria-label={t("share")} sx={{ gridArea: "share", p: 1, my: -1, mr: -1, borderRadius: "8px" }}>
             <FigmaIcon name="share" />
           </IconButton>
         </Box>
 
-        {visible && (
+        {average !== null && (
           <ButtonBase
+            ref={scoreRef}
             // Opens the Réputation score card (#note), not the reviews list.
             onClick={() => {
               const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
               document.getElementById("note")?.scrollIntoView({ behavior: reduced ? "instant" : "smooth" });
             }}
-            aria-label={th("scoreAria", { score: formatScore(summary.average!), count: countLabel })}
-            sx={{ width: "100%", maxWidth: { sm: 400 }, alignSelf: { xs: "stretch", sm: "flex-start" }, containerType: "inline-size", alignItems: "center", gap: 1.25, px: 2, py: 3.5, borderRadius: "16px", bgcolor: "rgba(255,255,255,0.75)", border: "1px solid #b8c2cc", textAlign: "left", fontFamily: "inherit", "&:hover": { bgcolor: tokens.blanc }, "&:hover .score-chevron": { transform: "translateX(2px)" }, "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 } }}
+            aria-label={th("scoreAria", { mode: modeLabel, score: formatScore(average), count: countLabel })}
+            sx={{
+              width: "100%", maxWidth: { sm: 400 }, alignSelf: { xs: "stretch", sm: "flex-start" },
+              position: "relative", isolation: "isolate", overflow: "hidden", containerType: "inline-size",
+              display: "grid", gridTemplateColumns: "minmax(max-content, 1fr) minmax(0, 1fr) auto", columnGap: "clamp(6px, 2.5%, 13px)",
+              minHeight: { xs: 108, sm: 124 }, px: { xs: 1.5, sm: 2 }, py: 1.75, borderRadius: "21px",
+              border: `1px solid ${controlled ? "#b8dacf" : "#ceddeb"}`,
+              background: controlled
+                ? "linear-gradient(117deg, #fff 6%, #f5fcfa 48%, #ddefe9)"
+                : "linear-gradient(117deg, #fff 6%, #f7fbff 48%, #e2ecf8)",
+              color: tokens.bleuFonce, textAlign: "left", fontFamily: "inherit",
+              boxShadow: "0 4px 10px rgba(21,44,80,0.09)", transition: "box-shadow 180ms ease",
+              "&:hover": { boxShadow: "0 7px 16px rgba(21,44,80,0.18)" },
+              "&:hover .score-chevron": { transform: "translateX(2px)" },
+              "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 },
+              "@media (prefers-reduced-motion: reduce)": { "& .score-reflection": { display: "none" }, "&:hover .score-chevron": { transform: "none" } },
+            }}
           >
-            {/* The score out of 5, a divider, the stars (green for Avis Contrôlés) over the number of reviews, an arrow to the detail. */}
-            <Box component="span" sx={{ display: "flex", alignItems: "baseline", flexShrink: 0, color: tokens.bleuFonce, lineHeight: 1 }}>
-              <Box component="span" sx={{ fontSize: "min(54px, 15.5cqi)", fontWeight: 700, letterSpacing: "-0.03em" }}>{formatScore(summary.average!)}</Box>
-              <Box component="span" sx={{ fontSize: "min(22px, 6.5cqi)", fontWeight: 400, color: "#5d7387", ml: 0.25 }}>/5</Box>
+            <Box ref={reflectionRef} component="span" className="score-reflection" aria-hidden sx={{
+              position: "absolute", inset: "-55%", zIndex: -1, pointerEvents: "none", opacity: 0,
+              background: "linear-gradient(108deg, transparent 22%, #b4e6f449 38%, #fffc 47%, #b3bdf744 54%, #d9ffff55 62%, transparent 78%)",
+            }} />
+            <Box component="span" sx={{ display: "inline-flex", justifySelf: "center", alignItems: "baseline", whiteSpace: "nowrap", lineHeight: 0.96, fontVariantNumeric: "tabular-nums" }}>
+              <Box component="span" sx={{ fontSize: "clamp(34px, 19cqi, 59px)", fontWeight: 700, letterSpacing: "-0.08em" }}>{formatScore(average)}</Box>
+              <Box component="span" sx={{ fontSize: "clamp(11px, 4.5cqi, 15px)", color: "#456379", ml: "4px" }}>/5</Box>
             </Box>
-            <Box aria-hidden sx={{ alignSelf: "stretch", width: "1px", bgcolor: "rgba(4, 27, 68, 0.14)", flexShrink: 0 }} />
-            <Box component="span" sx={{ display: "flex", flexDirection: "column", gap: 0.75, minWidth: 0 }}>
-              <Box component="span" aria-hidden sx={{ display: "flex", gap: 0.25 }}>
-                {[1, 2, 3, 4, 5].map((star) => star <= Math.round(summary.average!)
-                  ? <StarRounded key={star} sx={{ fontSize: "min(30px, 8.6cqi)", color: scoreView === "controle" ? tokens.vertOs : "#ffb400" }} />
-                  : <StarOutlineRounded key={star} sx={{ fontSize: "min(30px, 8.6cqi)", color: "#8ea1b2" }} />)}
+            <Box component="span" sx={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: 0.35, minWidth: 0 }}>
+              <Box component="span" sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 0.5, fontSize: "clamp(11px, 4.6cqi, 14px)", lineHeight: 1.2, fontWeight: 600 }}>
+                <FigmaIcon name={controlled ? "rv-controle" : "rv-all"} size={16} />
+                {modeLabel}
               </Box>
-              <Box component="span" sx={{ display: "flex", alignItems: "center", gap: 0.5, fontSize: "min(18px, 4.8cqi)", lineHeight: 1.3, fontWeight: 400, color: tokens.bleuFonce, whiteSpace: "nowrap" }}>
-                {/* Only the number is bold. */}
-                <span>{th.rich(scoreView === "controle" ? "scoreCountControle" : "scoreCount", { count: formatCount(summary.count), b: (chunks) => <b>{chunks}</b> })}</span>
-              </Box>
+              <Rating value={displayScore(average)} precision={0.1} readOnly aria-hidden
+                icon={<StarRounded fontSize="inherit" />} emptyIcon={<StarRounded fontSize="inherit" />}
+                sx={{ fontSize: "clamp(13px, 5.7cqi, 18px)", color: ratingColor, "& .MuiRating-iconFilled": { color: ratingColor }, "& .MuiRating-iconEmpty": { color: "#8ea6ba", opacity: 0.48 } }}
+              />
+              <Box component="span" sx={{ fontSize: "clamp(11px, 4.5cqi, 13px)", lineHeight: 1.25, color: "#456379" }}>{countLabel}</Box>
             </Box>
-            <ChevronRight className="score-chevron" sx={{ ml: "auto", flexShrink: 0, fontSize: 26, color: tokens.bleuFonce, transition: "transform 150ms ease" }} />
+            <ChevronRight aria-hidden className="score-chevron" sx={{ fontSize: 21, transition: "transform 150ms ease" }} />
           </ButtonBase>
         )}
 
         {/* Side by side on every width; on phones the text is 13 px and the padding tighter so both fit on one line. */}
         <Box sx={{ display: "flex", gap: { xs: 1, sm: 1.5 }, "& > .MuiButton-root": { width: "auto", minWidth: 0, flex: { xs: "1 1 0", sm: "0 0 auto" }, px: { xs: 1.25, sm: 3 }, fontSize: { xs: 13, sm: 14 }, whiteSpace: { xs: "nowrap", sm: "normal" } } }}>
-          <CtaButton onClick={() => setPanel("contact")}>
-            <Box component="span" sx={{ display: { xs: "inline", sm: "none" } }}>{th("talkShort")}</Box>
-            <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>{th("talk")}</Box>
-          </CtaButton>
+          <CtaButton onClick={() => setPanel("contact")}>{th("talkShort")}</CtaButton>
           <CtaButton variant="secondary" icon="icon-right-arrow" onClick={() => goToSection("avis")}>{th("read")}</CtaButton>
         </Box>
 
@@ -223,12 +288,18 @@ export function BusinessCard() {
               event.preventDefault();
               setPanel("hours");
             }}
-            sx={{ ...metaLinkSx, "&:hover p": { textDecoration: "underline", textUnderlineOffset: "3px" } }}
+            sx={{
+              ...metaLinkSx,
+              width: "100%", minHeight: 36, pb: 0.5, borderBottom: "1px solid #c3d3e3",
+              "& > [role=status]": { flex: 1 },
+              "& > [role=status] > span": { color: "inherit" },
+            }}
           >
-            <OpenStatus hours={agency.hours} boxed />
+            <Box component="span" aria-hidden sx={{ width: 6, height: 6, mx: 0.5, flexShrink: 0, borderRadius: "50%", bgcolor: "#2b6598" }} />
+            <OpenStatus hours={agency.hours} split />
             <Box component="span" sx={visuallyHidden}>{th("hoursLink")}</Box>
+            <ChevronRight aria-hidden />
           </Link>
-          <Box aria-hidden sx={{ height: 8 }} />
           {/* Jumps to the map and hours in Nos Agences. */}
           <Link
             href="#nos-agences"
@@ -237,9 +308,9 @@ export function BusinessCard() {
               event.preventDefault();
               scrollToAgencies();
             }}
-            sx={metaLinkSx}
+            sx={{ ...metaLinkSx, alignItems: "flex-start" }}
           >
-            <PlaceOutlined />
+            <PlaceOutlined sx={{ flexShrink: 0, mt: "1px" }} />
             {agency.address}
           </Link>
           <Box sx={{ display: "flex", flexWrap: "wrap", columnGap: 2.5, rowGap: 1 }}>
@@ -270,6 +341,9 @@ export function BusinessCard() {
         <Typography sx={{ whiteSpace: "nowrap", fontSize: { xs: "min(20px, 4.1cqi)", md: "min(26px, 4.1cqi)" }, fontWeight: 600, lineHeight: 1.2, letterSpacing: "-0.02em" }}>{th("photoTitle")}</Typography>
       </Box>
 
+      <ResponsiveSheet open={nameOpen} onClose={() => setNameOpen(false)} title={th("companyName")} closeLabel={tc("close")}>
+        <Typography sx={{ p: 2, overflowWrap: "anywhere" }}>{agency.name}</Typography>
+      </ResponsiveSheet>
       <Snackbar open={copied} autoHideDuration={2500} onClose={() => setCopied(false)} message={t("linkCopied")} anchorOrigin={{ vertical: "bottom", horizontal: "center" }} />
     </Box>
   );

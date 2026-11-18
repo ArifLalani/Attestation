@@ -46,12 +46,14 @@
       "backToProfile": "Retour au profil"
     },
     "hero": {
-      "sector": "{sector} à {city}",
+      "sector": "{sector} · {city}",
+      "companyName": "Nom de l’agence",
+      "showCompanyName": "Afficher le nom complet de l’agence",
       "reviews": "{count} avis",
       "reviewsControle": "{count} avis contrôlés",
       "scoreCount": "<b>{count}</b> avis",
       "scoreCountControle": "<b>{count}</b> avis contrôlés",
-      "scoreAria": "{score} sur 5, {count}. Voir le détail de la note",
+      "scoreAria": "{mode}, {score} sur 5, {count}. Voir le détail de la note",
       "talk": "Parlons de votre projet",
       "talkShort": "Contacter",
       "read": "Lire les avis",
