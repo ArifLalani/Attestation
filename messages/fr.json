@@ -3,6 +3,10 @@
     "brand": "Opinion System",
     "badge": "RÉPUTATION VÉRIFIÉE",
     "tabsLabel": "Sections de la page",
+    "taglineTop": "N°1 des avis contrôlés",
+    "taglineBottom": "pour les professionnels du service",
+    "signup": "Inscrire mon entreprise",
+    "homeLabel": "Opinion System, accueil",
     "tabs": {
       "synthese": "Synthèse",
       "avis": "Avis",
