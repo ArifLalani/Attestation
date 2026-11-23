@@ -99,9 +99,9 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
             rel="noopener noreferrer"
             aria-label={t("homeLabel")}
             tabIndex={folded ? -1 : undefined}
-            sx={{ position: "relative", flex: "none", display: "block", width: { xs: 72, md: 108 }, height: { xs: 30, md: 45 } }}
+            sx={{ position: "relative", flex: "none", display: "block", width: { xs: 62, md: 86 }, height: { xs: 26, md: 36 } }}
           >
-            <Image src="/variantes/f/os-logo-white.svg" alt="" fill sizes="108px" unoptimized priority />
+            <Image src="/variantes/f/os-logo-white.svg" alt="" fill sizes="86px" unoptimized priority />
           </Box>
           <Typography sx={{ display: { xs: "none", lg: "block" }, fontSize: 12, lineHeight: 1.3, color: "rgba(255, 255, 255, 0.8)", whiteSpace: "nowrap" }}>
             {t("taglineTop")}
