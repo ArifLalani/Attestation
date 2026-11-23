@@ -13,7 +13,6 @@ import { formatScore } from "@/lib/format";
 import { usePrefersReducedMotion } from "@/lib/hooks";
 import { tokens } from "@/theme/theme";
 import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
-import { appGradientWide } from "@/variants/finale/appGradient";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 // MapLibre 6 ships a separate ES-module worker; Next emits this URL as a hashed asset.
@@ -79,7 +78,7 @@ export default function AgencyMap({ agencies, selectedId, onSelect, scores }: { 
                 pr: score === null || score === undefined ? 0.5 : 1.25,
                 mb: "8px",
                 borderRadius: "8px",
-                background: active ? appGradientWide : tokens.blanc,
+                bgcolor: active ? tokens.bleuFonce : tokens.blanc,
                 color: active ? tokens.blanc : tokens.bleuFonce,
                 fontFamily: "inherit",
                 fontSize: 14,
