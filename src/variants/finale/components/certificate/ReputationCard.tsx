@@ -16,6 +16,7 @@ import { displayScore, headingFor, isPublic, reviewsForScore, summarize, type Sc
 import { tokens } from "@/theme/theme";
 import { emptyFilters, useCertificate } from "@/components/certificate/CertificateContext";
 import { CollaboratorPicker } from "./CollaboratorPicker";
+import { appGradientWide } from "@/variants/finale/appGradient";
 import { DefinitionsSheet } from "./DefinitionsSheet";
 
 const cardSx = {
@@ -72,7 +73,7 @@ function ViewToggle({ view, counts, onChange }: { view: ScoreView; counts: Recor
           left: 2,
           width: "calc(50% - 2px)",
           borderRadius: "9px",
-          bgcolor: tokens.bleuFonce,
+          background: appGradientWide,
           filter: "drop-shadow(0px 2px 3px rgba(4,27,68,0.18))",
           transform: view === "global" ? "translateX(0)" : "translateX(100%)",
           transition: "transform 260ms cubic-bezier(0.2, 0, 0, 1)",

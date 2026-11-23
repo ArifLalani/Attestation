@@ -34,6 +34,7 @@ import { useCertificate } from "@/components/certificate/CertificateContext";
 import { CtaButton } from "@/variants/finale/components/ui/CtaButton";
 import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
 import { DefinitionsSheet } from "./DefinitionsSheet";
+import { appGradientWide } from "@/variants/finale/appGradient";
 import { OpenStatus } from "./OpenStatus";
 
 const focusSx = { "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 } } as const;
@@ -328,7 +329,7 @@ function DesktopWidget() {
     <ClickAwayListener onClickAway={() => setExpanded(false)} mouseEvent={open ? "onClick" : false} touchEvent={open ? "onTouchEnd" : false}>
       <Box sx={{ display: { xs: "none", md: "block" }, position: "fixed", right: 24, bottom: 24, zIndex: (theme) => theme.zIndex.speedDial }}>
         <Grow in={shown} style={{ transformOrigin: "bottom right" }}>
-          <Box sx={{ width: open ? 388 : pillWidth ?? "auto", p: "4px", bgcolor: tokens.bleuFonce, borderRadius: "30px", boxShadow: tokens.elevation6, overflow: "hidden", transition: `width ${ease}` }}>
+          <Box sx={{ width: open ? 388 : pillWidth ?? "auto", p: "4px", background: appGradientWide, borderRadius: "30px", boxShadow: tokens.elevation6, overflow: "hidden", transition: `width ${ease}` }}>
             <Collapse in={open} timeout={300} easing={{ enter: "cubic-bezier(0.2, 0, 0, 1)", exit: "cubic-bezier(0.2, 0, 0, 1)" }}>
               <Box
                 id={bodyId}
@@ -385,7 +386,7 @@ function PhoneWidget() {
             aria-haspopup="dialog"
             aria-expanded={open}
             aria-label={t("expand")}
-            sx={{ height: 56, display: "flex", alignItems: "center", gap: 1.25, pl: 2, pr: 1, borderRadius: "28px", bgcolor: tokens.bleuFonce, boxShadow: "0 8px 24px rgba(4, 27, 68, 0.35)", fontFamily: "inherit", whiteSpace: "nowrap", ...focusSx }}
+            sx={{ height: 56, display: "flex", alignItems: "center", gap: 1.25, pl: 2, pr: 1, borderRadius: "28px", background: appGradientWide, boxShadow: "0 8px 24px rgba(4, 27, 68, 0.35)", fontFamily: "inherit", whiteSpace: "nowrap", ...focusSx }}
           >
             <PillContent open={open} />
           </ButtonBase>

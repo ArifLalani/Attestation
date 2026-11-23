@@ -20,12 +20,13 @@ import { emptyFilters, useCertificate } from "@/components/certificate/Certifica
 import { AgencyPhotos } from "./AgencyPhotos";
 import { HoursSheet } from "./HoursSheet";
 import { OpenStatus } from "./OpenStatus";
+import { appGradientWide } from "@/variants/finale/appGradient";
 import { CardTitle } from "./ReputationCard";
 
 const AgencyMap = dynamic(() => import("./AgencyMap"), { ssr: false });
 /** The agency's letter, in the colours of its pin on the map: navy once selected, light blue otherwise. */
 function AgencyLetter({ index, active, size = 28 }: { index: number; active?: boolean; size?: number }) {
-  return <Box aria-hidden sx={{ width: size, height: size, display: "grid", placeItems: "center", borderRadius: "50%", bgcolor: active ? tokens.bleuFonce : tokens.bleu10, color: active ? tokens.blanc : tokens.bleuFonce, fontSize: 13, fontWeight: 700, flexShrink: 0 }}>{String.fromCharCode(65 + index)}</Box>;
+  return <Box aria-hidden sx={{ width: size, height: size, display: "grid", placeItems: "center", borderRadius: "50%", background: active ? appGradientWide : tokens.bleu10, color: active ? tokens.blanc : tokens.bleuFonce, fontSize: 13, fontWeight: 700, flexShrink: 0 }}>{String.fromCharCode(65 + index)}</Box>;
 }
 
 /** The outline of H's cards (as on the team cards). */

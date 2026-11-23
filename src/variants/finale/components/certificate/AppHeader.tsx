@@ -11,6 +11,7 @@ import { useEffect, useRef, useState } from "react";
 import { CtaButton } from "@/variants/finale/components/ui/CtaButton";
 import { opinionSystemLinks } from "@/data/opinionSystem";
 import { tokens } from "@/theme/theme";
+import { appGradientWide } from "@/variants/finale/appGradient";
 import { sectionIds, type SectionId } from "@/components/certificate/CertificateContext";
 
 export const pageColumnSx = { width: "100%", maxWidth: { xs: 640, md: 1100 }, mx: "auto" } as const;
@@ -67,7 +68,7 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
         position: "sticky",
         top: 0,
         zIndex: (theme) => theme.zIndex.appBar,
-        background: "linear-gradient(to right, #001c4e, #11141a)",
+        background: appGradientWide,
         boxShadow: scrolled ? "0px 4px 14px 0px rgba(4, 27, 68, 0.2)" : tokens.elevation3,
         transition: "box-shadow 200ms ease",
         // While the reviews' search line is stuck under the tabs it carries the shadow; once it has slid away the header takes it back.

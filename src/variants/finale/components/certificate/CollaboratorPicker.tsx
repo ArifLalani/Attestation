@@ -14,6 +14,7 @@ import { StaffAvatar, TeamAvatar } from "@/variants/finale/components/ui/StaffAv
 import { formatCount } from "@/lib/format";
 import { isPublic, reviewsForScore, summarize, type ScoreView } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
+import { appGradientWide } from "@/variants/finale/appGradient";
 import { useCertificate } from "@/components/certificate/CertificateContext";
 
 type StaffSort = "alpha" | "best" | "worst";
@@ -47,7 +48,7 @@ function SortChip({ selected, onClick, children }: { selected: boolean; onClick:
         height: 36,
         px: 1.5,
         borderRadius: "8px",
-        bgcolor: selected ? tokens.bleuFonce : tokens.grisClair2,
+        background: selected ? appGradientWide : tokens.grisClair2,
         border: `1px solid ${selected ? tokens.bleuFonce : tokens.grisMoyen1}`,
         color: selected ? tokens.blanc : tokens.bleuFonce,
         fontFamily: "inherit",

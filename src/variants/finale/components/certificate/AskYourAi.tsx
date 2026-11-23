@@ -13,6 +13,7 @@ import { useCertificate } from "@/components/certificate/CertificateContext";
 import { tokens } from "@/theme/theme";
 import { AiLogo, aiModels, type AiModel } from "@/variants/finale/components/ui/AiLogo";
 import { CtaButton } from "@/variants/finale/components/ui/CtaButton";
+import { appGradientWide } from "@/variants/finale/appGradient";
 import { ResponsiveSheet } from "@/variants/finale/components/ui/ResponsiveSheet";
 
 const questions = ["reviews", "team", "agencies", "custom"] as const;
@@ -221,7 +222,7 @@ export function AskYourAi() {
         borderRadius: "20px",
         overflow: "hidden",
         boxShadow: tokens.shadowCardSoft,
-        background: "linear-gradient(160deg, #0c2d68 0%, #041b44 55%, #03163a 100%)",
+        background: appGradientWide,
         color: tokens.blanc,
         display: "grid",
         gridTemplateColumns: { xs: "minmax(0, 1fr) auto", md: "minmax(0, 1fr) minmax(0, 1fr)" },
