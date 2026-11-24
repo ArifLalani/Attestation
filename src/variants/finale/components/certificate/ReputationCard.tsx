@@ -170,7 +170,7 @@ export function ReputationCard() {
     : "linear-gradient(120deg, rgba(44, 149, 255, 0.01) 0%, rgba(26, 89, 153, 0.10) 100%)";
 
   return (
-    <Box component="section" id="note" aria-labelledby="reputation-heading" sx={{ ...cardSx, scrollMarginTop: `${tokens.headerHeight + 16}px`, px: { xs: 1.5, md: 2 }, gap: { xs: 2, md: 3 } }}>
+    <Box component="section" id="note" aria-labelledby="reputation-heading" sx={{ ...cardSx, scrollMarginTop: `calc(var(--certificate-header-height, ${tokens.headerHeight}px) + 16px)`, px: { xs: 1.5, md: 2 }, gap: { xs: 2, md: 3 } }}>
       {/* The section title is the header's « Réputation vérifiée » badge, icon included. */}
       <Typography id="reputation-heading" component="h2" sx={{ display: "flex", alignItems: "center", gap: 0.75, fontSize: 14, fontWeight: 700, color: tokens.vertOs, letterSpacing: "0.8px", textTransform: "uppercase", lineHeight: "normal" }}>
         <VerifiedRounded aria-hidden sx={{ fontSize: 20 }} />

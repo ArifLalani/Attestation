@@ -36,6 +36,7 @@ import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
 import { DefinitionsSheet } from "./DefinitionsSheet";
 import { appGradientWide } from "@/variants/finale/appGradient";
 import { OpenStatus } from "./OpenStatus";
+import { BOTTOM_NAV_HEIGHT } from "./AppHeader";
 
 const focusSx = { "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 } } as const;
 const ease = "300ms cubic-bezier(0.2, 0, 0, 1)";
@@ -83,7 +84,7 @@ function useShare() {
     await navigator.clipboard?.writeText(data.url);
     setCopied(true);
   };
-  const snackbar = <Snackbar open={copied} autoHideDuration={2500} onClose={() => setCopied(false)} message={tb("linkCopied")} anchorOrigin={{ vertical: "bottom", horizontal: "center" }} />;
+  const snackbar = <Snackbar open={copied} autoHideDuration={2500} onClose={() => setCopied(false)} message={tb("linkCopied")} anchorOrigin={{ vertical: "bottom", horizontal: "center" }} sx={{ bottom: { xs: `calc(${BOTTOM_NAV_HEIGHT + 16}px + env(safe-area-inset-bottom))` } }} />;
   return { share, snackbar };
 }
 
@@ -371,7 +372,7 @@ function PhoneWidget() {
 
   return (
     <>
-      <Box sx={{ display: { xs: "block", md: "none" }, position: "fixed", right: 16, bottom: "calc(16px + env(safe-area-inset-bottom))", zIndex: (theme) => theme.zIndex.speedDial }}>
+      <Box sx={{ display: { xs: "block", md: "none" }, position: "fixed", right: 16, bottom: `calc(${BOTTOM_NAV_HEIGHT + 12}px + env(safe-area-inset-bottom))`, zIndex: (theme) => theme.zIndex.speedDial }}>
         <Grow in={shown} style={{ transformOrigin: "bottom right" }}>
           <ButtonBase
             onClick={() => setOpen(true)}

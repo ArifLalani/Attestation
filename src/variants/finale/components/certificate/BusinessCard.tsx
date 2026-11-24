@@ -25,6 +25,7 @@ import { tokens } from "@/theme/theme";
 import { useCertificate } from "@/components/certificate/CertificateContext";
 import { appGradientTall } from "@/variants/finale/appGradient";
 import { OpenStatus } from "./OpenStatus";
+import { BOTTOM_NAV_HEIGHT } from "./AppHeader";
 
 export const cardSx = {
   bgcolor: tokens.blanc,
@@ -356,7 +357,7 @@ export function BusinessCard() {
       <ResponsiveSheet open={nameOpen} onClose={() => setNameOpen(false)} title={th("companyName")} closeLabel={tc("close")}>
         <Typography sx={{ p: 2, overflowWrap: "anywhere" }}>{agency.name}</Typography>
       </ResponsiveSheet>
-      <Snackbar open={copied} autoHideDuration={2500} onClose={() => setCopied(false)} message={t("linkCopied")} anchorOrigin={{ vertical: "bottom", horizontal: "center" }} />
+      <Snackbar open={copied} autoHideDuration={2500} onClose={() => setCopied(false)} message={t("linkCopied")} anchorOrigin={{ vertical: "bottom", horizontal: "center" }} sx={{ bottom: { xs: `calc(${BOTTOM_NAV_HEIGHT + 16}px + env(safe-area-inset-bottom))` } }} />
     </Box>
   );
 }

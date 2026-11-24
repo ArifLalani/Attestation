@@ -94,7 +94,7 @@ export function AgenciesSection() {
   }, []);
 
   return (
-    <Box component="section" id="nos-agences" aria-labelledby="agencies-title" sx={{ scrollMarginTop: `${tokens.headerHeight + 16}px`, bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCard, px: { xs: 1.5, md: 2 }, py: { xs: 1.5, md: 2 }, display: "flex", flexDirection: "column", gap: 2 }}>
+    <Box component="section" id="nos-agences" aria-labelledby="agencies-title" sx={{ scrollMarginTop: `calc(var(--certificate-header-height, ${tokens.headerHeight}px) + 16px)`, bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCard, px: { xs: 1.5, md: 2 }, py: { xs: 1.5, md: 2 }, display: "flex", flexDirection: "column", gap: 2 }}>
       <CardTitle id="agencies-title" eyebrow={t("eyebrow")} heading={t("heading")} />
       <Typography sx={{ fontSize: 14, color: tokens.gris }}>{t("description", { name: agency.name })}</Typography>
       {/* Option B's layout: the map on the left, the agency card on the right. The two share the row's height,

@@ -3,9 +3,10 @@
 import Box from "@mui/material/Box";
 import { ReviewsSection } from "@/variants/finale/components/reviews/ReviewsSection";
 import { getAgency } from "@/data/agencies";
+import { useEffect, useState } from "react";
 import { useScrollSpy } from "@/lib/hooks";
 import { tokens } from "@/theme/theme";
-import { AppHeader, contentColumnSx } from "./AppHeader";
+import { AppHeader, BOTTOM_NAV_HEIGHT, contentColumnSx } from "./AppHeader";
 import { BusinessCard } from "./BusinessCard";
 import { CertificateProvider, sectionIds, type SectionId } from "@/components/certificate/CertificateContext";
 import { ReputationCard } from "./ReputationCard";
@@ -22,12 +23,23 @@ const sectionSx = {
   flexDirection: "column",
   // The same space between every section: 16 px on phones, 24 px on desktop (as between the groups).
   gap: { xs: 2, md: 3 },
-  scrollMarginTop: `${tokens.headerHeight + 16}px`,
+  // 16 px under the pinned bar, whatever its height (52 px on phones, 64 px on desktop).
+  scrollMarginTop: `calc(var(--certificate-header-height, ${tokens.headerHeight}px) + 16px)`,
 } as const;
 
 export function CertificatePage({ agencyId }: { agencyId: string }) {
   const agency = getAgency(agencyId)!;
-  const { active, goTo } = useScrollSpy(sectionIds, tokens.headerHeight + 16);
+  // The scroll spy and the jumps to a section follow the real height of the pinned bar.
+  const [headerHeight, setHeaderHeight] = useState<number>(tokens.headerHeight);
+  useEffect(() => {
+    const header = document.querySelector("header");
+    if (!header) return;
+    const observer = new ResizeObserver(() => setHeaderHeight(header.offsetHeight));
+    observer.observe(header);
+    setHeaderHeight(header.offsetHeight);
+    return () => observer.disconnect();
+  }, []);
+  const { active, goTo } = useScrollSpy(sectionIds, headerHeight + 16);
   const goToSection = goTo as (id: SectionId) => void;
 
   return (
@@ -55,6 +67,8 @@ export function CertificatePage({ agencyId }: { agencyId: string }) {
         </Box>
       </Box>
       <CertificateFooter />
+      {/* Phones: room for the bottom navigation, so the end of the footer is never hidden under it. */}
+      <Box aria-hidden sx={{ display: { xs: "block", md: "none" }, height: `calc(${BOTTOM_NAV_HEIGHT}px + env(safe-area-inset-bottom))` }} />
       <CertificateActions />
     </CertificateProvider>
   );
