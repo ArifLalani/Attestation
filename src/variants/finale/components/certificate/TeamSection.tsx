@@ -255,26 +255,25 @@ export function TeamSection() {
         {selected && (
           <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2.5 }}>
             {/* The profile card (option G): photo, name and role on the left, the numbers on the right. */}
-            <Box sx={{ display: "grid", gridTemplateColumns: "minmax(0, 1.25fr) minmax(0, 1fr)", alignItems: "center", gap: 2, p: 2, borderRadius: "16px", bgcolor: tokens.blanc, boxShadow: tokens.shadowCard }}>
+            <Box sx={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1.45fr)", alignItems: "center", gap: 1, p: 1.5, borderRadius: "16px", bgcolor: tokens.blanc, boxShadow: tokens.shadowCard }}>
               <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0.75, textAlign: "center", minWidth: 0 }}>
                 <StaffAvatar person={selected.person} size={96} />
                 <Typography sx={{ mt: 0.5, fontSize: 20, fontWeight: 600, lineHeight: 1.2, color: tokens.bleuFonce }}>{selected.person.name}</Typography>
                 <Typography sx={{ fontSize: 13, color: tokens.gris, lineHeight: 1.35 }}>{selected.person.role}</Typography>
-                {/* The number of reviews under the job, as on the cards (saves a row on the right). */}
-                <Typography sx={{ fontSize: 13, fontWeight: 600, color: tokens.bleuFonce }}>{t("reviewCount", { count: formatCount(selected.summary.count) })}</Typography>
+                {/* The agency under the job (the scores on the right carry the numbers of reviews). */}
+                <Typography sx={{ fontSize: 13, fontWeight: 600, color: tokens.bleuFonce }}>{tv("agency")} {agency.city}</Typography>
               </Box>
               <Box component="dl" sx={{ m: 0, display: "flex", flexDirection: "column" }}>
                 {[
                   // Avis Contrôlés in the green of the Réputation display.
-                  ...scores.map(({ view, average, count }) => ({ key: view, view: count > 0 ? view : undefined, count, label: `${tr(`views.${view}`)} (${formatCount(count)})`, value: average !== null ? <>{formatScore(average)}<Rating value={displayScore(average)} precision={0.1} readOnly aria-hidden icon={<StarRounded fontSize="inherit" />} emptyIcon={<StarRounded fontSize="inherit" />} sx={{ ml: 0.5, fontSize: 16, "& .MuiRating-iconFilled": { color: tokens.rating }, "& .MuiRating-iconEmpty": { color: "#8ea6ba", opacity: 0.48 } }} /></> : "—", color: view === "controle" ? tokens.vertOs : undefined })),
-                  { key: "agency", view: undefined, count: 0, label: tv("agency"), value: agency.city, color: undefined },
+                  ...scores.map(({ view, average, count }) => ({ key: view, view: count > 0 ? view : undefined, count, label: `${tr(`views.${view}`)} (${formatCount(count)})`, value: average !== null ? <>{formatScore(average)}<Rating value={displayScore(average)} precision={0.1} readOnly aria-hidden icon={<StarRounded fontSize="inherit" />} emptyIcon={<StarRounded fontSize="inherit" />} sx={{ ml: 0.5, fontSize: 16, "& .MuiRating-iconFilled": { color: tokens.rating }, "& .MuiRating-iconEmpty": { color: "#8ea6ba", opacity: 0.48 } }} /></> : "—", color: view === "controle" ? tokens.vertOs : undefined }))
                 ].map((stat, index, stats) => {
                   // The score of the view chosen in the Réputation tabs is highlighted (blue for all reviews, green for controlled ones).
                   const current = stat.key === scoreView;
                   const lineAbove = index > 0 && !current && stats[index - 1].key !== scoreView;
                   return (
                   <Box key={stat.key} sx={{
-                    position: "relative", display: "flex", flexDirection: "column-reverse", py: 1.25, px: 1, pr: stat.view ? 4.5 : 1,
+                    position: "relative", display: "flex", flexDirection: "column-reverse", py: 1.25, px: 1, pr: stat.view ? 3.5 : 1,
                     borderRadius: current ? "10px" : 0, border: "1px solid transparent", borderTopColor: lineAbove ? tokens.grisMoyen1 : "transparent",
                     ...(current && { bgcolor: stat.key === "controle" ? tokens.successLight2 : tokens.bleu10, borderColor: stat.key === "controle" ? "#b8e6d3" : "rgba(44, 149, 255, 0.25)" }),
                     transition: "background-color 200ms ease, border-color 200ms ease",
@@ -288,10 +287,10 @@ export function TeamSection() {
                           aria-label={t("seeViewReviews", { view: tr(`views.${stat.view}`), count: formatCount(stat.count), name: selected.person.name })}
                           sx={{ position: "absolute", inset: 0, borderRadius: "8px", "&:hover": { bgcolor: "rgba(44, 149, 255, 0.06)" }, ...focusSx }}
                         />
-                        <ChevronRight aria-hidden className="stat-chevron" sx={{ position: "absolute", right: 8, top: "50%", mt: "-11px", fontSize: 22, color: tokens.bleuFonce, pointerEvents: "none", transition: "transform 150ms ease" }} />
+                        <ChevronRight aria-hidden className="stat-chevron" sx={{ position: "absolute", right: 4, top: "50%", mt: "-10px", fontSize: 20, color: tokens.bleuFonce, pointerEvents: "none", transition: "transform 150ms ease" }} />
                       </>
                     )}
-                    <Typography component="dt" sx={{ pointerEvents: "none", fontSize: 12, fontWeight: 600, color: stat.color ?? tokens.gris }}>
+                    <Typography component="dt" sx={{ pointerEvents: "none", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontSize: 12, fontWeight: 600, color: stat.color ?? tokens.gris }}>
                       {stat.label}
                     </Typography>
                     <Box component="dd" sx={{ pointerEvents: "none", m: 0, display: "flex", alignItems: "center", gap: 0.25, fontSize: 20, fontWeight: 700, lineHeight: 1.2, color: stat.color ?? tokens.bleuFonce }}>{stat.value}</Box>
