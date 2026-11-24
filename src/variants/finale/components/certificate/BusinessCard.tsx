@@ -305,7 +305,8 @@ export function BusinessCard() {
             }}
           >
             <Box component="span" aria-hidden sx={{ width: 6, height: 6, mx: 0.5, flexShrink: 0, borderRadius: "50%", bgcolor: "#2b6598" }} />
-            <OpenStatus hours={agency.hours} split colors={{ open: tokens.bleuFonce, closed: "#ae391b" }} />
+            {/* Ouvert in a darker shade of the brand green (#43b6a3 is too light to read on the frosted card). */}
+            <OpenStatus hours={agency.hours} split colors={{ open: "#1d7a6b", closed: "#ae391b" }} />
             <Box component="span" sx={visuallyHidden}>{th("hoursLink")}</Box>
             <ChevronRight aria-hidden />
           </Link>
