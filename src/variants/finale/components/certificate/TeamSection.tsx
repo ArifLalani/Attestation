@@ -1,6 +1,7 @@
 "use client";
 
 import Box from "@mui/material/Box";
+import Rating from "@mui/material/Rating";
 import ButtonBase from "@mui/material/ButtonBase";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
@@ -9,6 +10,7 @@ import InputBase from "@mui/material/InputBase";
 import Link from "@mui/material/Link";
 import ChevronRight from "@mui/icons-material/ChevronRight";
 import CloseRounded from "@mui/icons-material/CloseRounded";
+import StarRounded from "@mui/icons-material/StarRounded";
 import EmailOutlined from "@mui/icons-material/EmailOutlined";
 import Facebook from "@mui/icons-material/Facebook";
 import Instagram from "@mui/icons-material/Instagram";
@@ -25,7 +27,7 @@ import { StaffAvatar } from "@/variants/finale/components/ui/StaffAvatar";
 import type { Collaborator, Review } from "@/data/types";
 import { formatCount, formatScore } from "@/lib/format";
 import { normalize } from "@/lib/assistant";
-import { isPublic, reviewsForScore, summarize } from "@/lib/scoring";
+import { displayScore, isPublic, reviewsForScore, summarize } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
 import { emptyFilters, useCertificate } from "@/components/certificate/CertificateContext";
 import { CardTitle } from "./ReputationCard";
@@ -237,7 +239,7 @@ export function TeamSection() {
               <Box component="dl" sx={{ m: 0, display: "flex", flexDirection: "column" }}>
                 {[
                   // Avis Contrôlés in the green of the Réputation display.
-                  ...scores.map(({ view, average, count }) => ({ key: view, view: count > 0 ? view : undefined, count, label: `${tr(`views.${view}`)} (${formatCount(count)})`, value: average !== null ? <>{formatScore(average)}<FigmaIcon name="star-small" /></> : "—", color: view === "controle" ? tokens.vertOs : undefined })),
+                  ...scores.map(({ view, average, count }) => ({ key: view, view: count > 0 ? view : undefined, count, label: `${tr(`views.${view}`)} (${formatCount(count)})`, value: average !== null ? <>{formatScore(average)}<Rating value={displayScore(average)} precision={0.1} readOnly aria-hidden icon={<StarRounded fontSize="inherit" />} emptyIcon={<StarRounded fontSize="inherit" />} sx={{ ml: 0.5, fontSize: 16, "& .MuiRating-iconFilled": { color: tokens.rating }, "& .MuiRating-iconEmpty": { color: "#8ea6ba", opacity: 0.48 } }} /></> : "—", color: view === "controle" ? tokens.vertOs : undefined })),
                   { key: "agency", view: undefined, count: 0, label: tv("agency"), value: agency.city, color: undefined },
                 ].map((stat, index) => (
                   <Box key={stat.key} sx={{ position: "relative", display: "flex", flexDirection: "column-reverse", py: 1.25, pr: stat.view ? 3.5 : 0, borderTop: index ? `1px solid ${tokens.grisMoyen1}` : "none", "&:hover .stat-chevron": { transform: "translateX(2px)" } }}>
