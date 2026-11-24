@@ -471,8 +471,10 @@ export function ReviewCard({ review, onReport, framed = true, outlined = false, 
 
   const openDetails = () => {
     if (onOpenDetails) return onOpenDetails(review);
+    if (detailsUsed) return setDetailsOpen(true);
+    // First time: build the sheet closed, then open it on the next frame so it slides in (a sheet created already open just appears).
     setDetailsUsed(true);
-    setDetailsOpen(true);
+    requestAnimationFrame(() => requestAnimationFrame(() => setDetailsOpen(true)));
   };
   // A tap anywhere on the card opens its details, except on its own buttons and links (Utile, Signaler, Lire la suite…),
   // when text is being selected, or from inside the sheets it opens (their clicks reach here through React).
