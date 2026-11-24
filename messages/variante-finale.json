@@ -5,7 +5,7 @@
       "heading": "Une question sur {name} ? Votre IA vous répond.",
       "text": "Choisissez votre IA et une question : elle lit cette page (avis, équipe, horaires) et vous répond en quelques secondes.",
       "cta": "Poser une question",
-      "ctaShort": "Demander",
+      "ctaShort": "Poser",
       "listLabel": "Choisir votre IA",
       "askWith": "Demander à {model}",
       "questionsLabel": "Questions toutes prêtes",
