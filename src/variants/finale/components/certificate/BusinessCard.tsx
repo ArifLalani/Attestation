@@ -198,21 +198,21 @@ export function BusinessCard() {
           sx={{
             display: "grid",
             // The logo beside the big company name, the sector and city under the name.
-            gridTemplateColumns: { xs: "34px minmax(0, 1fr) auto", md: "38px minmax(0, 1fr) auto" },
+            gridTemplateColumns: { xs: "30px minmax(0, 1fr) auto", md: "34px minmax(0, 1fr) auto" },
             gridTemplateAreas: '"logo name share" ". sector ."',
             columnGap: 1.25,
-            rowGap: 0.25,
+            rowGap: 0,
             alignItems: "center",
           }}
         >
-          <Box sx={{ gridArea: "logo", width: { xs: 34, md: 38 }, height: { xs: 34, md: 38 }, borderRadius: "9px", overflow: "hidden", bgcolor: tokens.blanc, border: `1px solid ${tokens.grisMoyen1}`, display: "grid", placeItems: "center" }}>
-            <Box sx={{ position: "relative", width: { xs: 29, md: 32 }, height: { xs: 26, md: 29 }, overflow: "hidden" }}>
+          <Box sx={{ gridArea: "logo", alignSelf: "center", width: { xs: 30, md: 34 }, height: { xs: 30, md: 34 }, borderRadius: "8px", overflow: "hidden", bgcolor: tokens.blanc, border: `1px solid ${tokens.grisMoyen1}`, display: "grid", placeItems: "center" }}>
+            <Box sx={{ position: "relative", width: { xs: 26, md: 29 }, height: { xs: 23, md: 26 }, overflow: "hidden" }}>
               <Box sx={{ position: "absolute", width: "133.24%", height: "145.41%", left: "-14.28%", top: "-22.96%" }}>
                 <Image src={agency.logo} alt="" fill sizes="48px" />
               </Box>
             </Box>
           </Box>
-          <Box sx={{ gridArea: "name", position: "relative", alignSelf: "start", minWidth: 0, fontSize: { xs: 24, md: 28 } }}>
+          <Box sx={{ gridArea: "name", position: "relative", alignSelf: "center", minWidth: 0, fontSize: { xs: 24, md: 28 } }}>
             <Typography ref={nameRef} component="h1" sx={{
               fontSize: "inherit", fontWeight: 700, lineHeight: 1.08, letterSpacing: "-0.04em", color: tokens.bleuFonce,
               display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", overflowWrap: "anywhere",
@@ -227,7 +227,7 @@ export function BusinessCard() {
             />}
           </Box>
           <Typography sx={{ gridArea: "sector", fontSize: 12, color: "#405c74", lineHeight: 1.35 }}>{th("sector", { sector: agency.sector, city: agency.city })}</Typography>
-          <IconButton onClick={share} aria-label={t("share")} sx={{ gridArea: "share", p: 1, my: -1, mr: -1, borderRadius: "8px" }}>
+          <IconButton onClick={share} aria-label={t("share")} sx={{ gridArea: "share", alignSelf: "center", p: 1, my: -1, mr: -1, borderRadius: "8px" }}>
             <FigmaIcon name="share" />
           </IconButton>
         </Box>
