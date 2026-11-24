@@ -262,7 +262,7 @@ export function TeamSection() {
                 <Typography sx={{ mt: 0.75, fontSize: 17, fontWeight: 600, lineHeight: 1.2, color: tokens.bleuFonce }}>{selected.person.name}</Typography>
                 <Typography sx={{ fontSize: 12.5, color: tokens.gris, lineHeight: 1.3 }}>{selected.person.role}</Typography>
                 {/* The agency under the job (the scores on the right carry the numbers of reviews). */}
-                <Typography sx={{ fontSize: 12.5, fontWeight: 600, lineHeight: 1.3, color: tokens.bleuFonce }}>{tv("agency")} {agency.city}</Typography>
+                <Typography sx={{ fontSize: 12.5, color: tokens.gris, lineHeight: 1.3 }}>{tv("agency")} {agency.city}</Typography>
               </Box>
               <Box aria-hidden sx={{ alignSelf: "stretch", bgcolor: tokens.grisMoyen1 }} />
               <Box component="dl" sx={{ m: 0, display: "flex", flexDirection: "column", gap: 0.5, minWidth: 0 }}>
