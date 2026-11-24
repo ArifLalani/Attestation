@@ -5,12 +5,8 @@ import ButtonBase from "@mui/material/ButtonBase";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import Typography from "@mui/material/Typography";
-import ForumRounded from "@mui/icons-material/ForumRounded";
-import SpaceDashboardRounded from "@mui/icons-material/SpaceDashboardRounded";
 import StarRounded from "@mui/icons-material/StarRounded";
-import StorefrontRounded from "@mui/icons-material/StorefrontRounded";
 import VerifiedRounded from "@mui/icons-material/VerifiedRounded";
-import WorkspacePremiumRounded from "@mui/icons-material/WorkspacePremiumRounded";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -27,15 +23,6 @@ export const contentColumnSx = { width: "100%", maxWidth: { xs: 640, md: 1100 },
 
 /** Light blue of the active tab's underline (from option F). */
 const underline = "#2c95ff";
-/** Height of the phones' bottom navigation, without the safe area. */
-export const BOTTOM_NAV_HEIGHT = 58;
-
-const sectionIcons: Record<SectionId, typeof ForumRounded> = {
-  synthese: SpaceDashboardRounded,
-  avis: ForumRounded,
-  agences: StorefrontRounded,
-  qualite: WorkspacePremiumRounded,
-};
 
 const fade = (shown: boolean) => ({
   position: "absolute",
@@ -68,10 +55,10 @@ function OsLogo({ label, small = false, tabIndex }: { label: string; small?: boo
 }
 
 /**
- * Header, option 4 (stakeholder review, 2026-11-24).
- * One slim navy bar, always pinned. At the top of the page it shows the Opinion System logo and « Réputation vérifiée »;
- * once the company's name has scrolled away it cross-fades to the company (logo, name, score), tapping it goes back to the top.
- * Desktop: the tabs sit in that bar. Phones: the tabs move to a navigation bar at the bottom of the screen, near the thumbs.
+ * Header, option 1 « swap on scroll » (stakeholder review, 2026-11-24). One navy bar, always pinned.
+ * At the top of the page it shows the Opinion System logo and « Réputation vérifiée »; once the company's name has scrolled away
+ * that row cross-fades to the company (logo, name, score), tapping it goes back to the top. The tabs stay: under that row on phones,
+ * beside it on desktop (with the Opinion System logo moving to the right end once scrolled).
  */
 export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (id: SectionId) => void }) {
   const t = useTranslations("Header");
@@ -141,9 +128,9 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
           '&:has(nav[data-reviews-stuck="on"]:not([data-reviews-search-hidden="on"]))': { boxShadow: "none" },
         }}
       >
-        <Box sx={{ ...pageColumnSx, display: "flex", alignItems: "center", columnGap: 3, height: { xs: 52, md: 64 }, px: 2 }}>
+        <Box sx={{ ...pageColumnSx, display: "flex", flexWrap: { xs: "wrap", md: "nowrap" }, alignItems: "center", columnGap: 3, px: { xs: 0, md: 2 } }}>
           {/* Left: Opinion System + Réputation vérifiée at the top of the page, the company once scrolled. */}
-          <Box sx={{ position: "relative", height: "100%", flex: { xs: 1, md: "0 0 340px" }, minWidth: 0 }}>
+          <Box sx={{ position: "relative", height: { xs: 48, md: 64 }, width: { xs: "100%", md: "auto" }, flex: { md: "0 0 340px" }, minWidth: 0, mx: { xs: 2, md: 0 } }}>
             <Box sx={fade(!company)} aria-hidden={company || undefined}>
               <OsLogo label={t("homeLabel")} tabIndex={company ? -1 : undefined} />
               <Box sx={{ flex: { xs: 1, md: "none" } }} />
@@ -178,13 +165,13 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
             </ButtonBase>
           </Box>
 
-          {/* Desktop tabs. On phones the nav stays in the bar (hidden) so the reviews can still mark it, the tabs are at the bottom. */}
-          <Box component="nav" aria-label={t("tabsLabel")} sx={{ flex: 1, minWidth: 0, display: { xs: "none", md: "flex" }, justifyContent: "center" }}>
+          {/* The tabs: a second row on phones, the middle of the bar on desktop. */}
+          <Box component="nav" aria-label={t("tabsLabel")} sx={{ flex: { md: 1 }, width: { xs: "100%", md: "auto" }, minWidth: 0, display: "flex", justifyContent: "center", px: { xs: 1, md: 0 } }}>
             <Tabs
               value={active}
               onChange={(_, id: SectionId) => onSelect(id)}
               variant="fullWidth"
-              sx={{ width: "100%", maxWidth: 520, minHeight: 64, "& .MuiTabs-indicator": { height: 3, borderRadius: "2px", bgcolor: underline } }}
+              sx={{ width: "100%", maxWidth: { md: 520 }, minHeight: { xs: 48, md: 64 }, "& .MuiTabs-indicator": { height: 3, borderRadius: "2px", bgcolor: underline } }}
             >
               {sectionIds.map((id) => (
                 <Tab
@@ -193,7 +180,7 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
                   label={t(`tabs.${id}`)}
                   disableRipple
                   sx={{
-                    minWidth: 0, minHeight: 64, px: 2, py: 1.5, fontSize: 15, lineHeight: "normal", fontWeight: 400,
+                    minWidth: 0, minHeight: { xs: 48, md: 64 }, px: { xs: 1, md: 2 }, py: 1.5, fontSize: { xs: 14, md: 15 }, lineHeight: "normal", fontWeight: 400,
                     color: "rgba(255, 255, 255, 0.72)",
                     "&:hover": { color: tokens.blanc },
                     "&.Mui-selected": { color: tokens.blanc, fontWeight: 600 },
@@ -211,47 +198,6 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
         </Box>
       </Box>
 
-      {/* Phones: the sections as a bottom navigation bar. */}
-      <Box
-        component="nav"
-        aria-label={t("tabsLabel")}
-        sx={{
-          display: { xs: "flex", md: "none" },
-          position: "fixed",
-          left: 0,
-          right: 0,
-          bottom: 0,
-          zIndex: (theme) => theme.zIndex.appBar,
-          background: appGradientWide,
-          boxShadow: "0 -4px 14px rgba(4, 27, 68, 0.18)",
-          pb: "env(safe-area-inset-bottom)",
-        }}
-      >
-        <Box sx={{ ...pageColumnSx, display: "flex", height: BOTTOM_NAV_HEIGHT, px: 0.5 }}>
-          {sectionIds.map((id) => {
-            const selected = id === active;
-            const Icon = sectionIcons[id];
-            return (
-              <ButtonBase
-                key={id}
-                onClick={() => onSelect(id)}
-                aria-current={selected ? "page" : undefined}
-                sx={{
-                  flex: 1, minWidth: 0, flexDirection: "column", gap: 0.25, fontFamily: "inherit",
-                  color: selected ? tokens.blanc : "rgba(255, 255, 255, 0.7)",
-                  transition: "color 200ms ease",
-                  "&.Mui-focusVisible": { outline: `2px solid ${underline}`, outlineOffset: -4, borderRadius: "10px" },
-                }}
-              >
-                <Box component="span" sx={{ display: "grid", placeItems: "center", width: 52, height: 28, borderRadius: "14px", bgcolor: selected ? "rgba(44, 149, 255, 0.32)" : "transparent", transition: "background-color 200ms ease" }}>
-                  <Icon aria-hidden sx={{ fontSize: 21 }} />
-                </Box>
-                <Box component="span" sx={{ fontSize: 11.5, lineHeight: 1.2, fontWeight: selected ? 600 : 400, whiteSpace: "nowrap" }}>{t(`tabs.${id}`)}</Box>
-              </ButtonBase>
-            );
-          })}
-        </Box>
-      </Box>
     </>
   );
 }

@@ -6,7 +6,7 @@ import { getAgency } from "@/data/agencies";
 import { useEffect, useState } from "react";
 import { useScrollSpy } from "@/lib/hooks";
 import { tokens } from "@/theme/theme";
-import { AppHeader, BOTTOM_NAV_HEIGHT, contentColumnSx } from "./AppHeader";
+import { AppHeader, contentColumnSx } from "./AppHeader";
 import { BusinessCard } from "./BusinessCard";
 import { CertificateProvider, sectionIds, type SectionId } from "@/components/certificate/CertificateContext";
 import { ReputationCard } from "./ReputationCard";
@@ -23,7 +23,7 @@ const sectionSx = {
   flexDirection: "column",
   // The same space between every section: 16 px on phones, 24 px on desktop (as between the groups).
   gap: { xs: 2, md: 3 },
-  // 16 px under the pinned bar, whatever its height (52 px on phones, 64 px on desktop).
+  // 16 px under the pinned bar, whatever its height (96 px on phones, 64 px on desktop).
   scrollMarginTop: `calc(var(--certificate-header-height, ${tokens.headerHeight}px) + 16px)`,
 } as const;
 
@@ -67,8 +67,6 @@ export function CertificatePage({ agencyId }: { agencyId: string }) {
         </Box>
       </Box>
       <CertificateFooter />
-      {/* Phones: room for the bottom navigation, so the end of the footer is never hidden under it. */}
-      <Box aria-hidden sx={{ display: { xs: "block", md: "none" }, height: `calc(${BOTTOM_NAV_HEIGHT}px + env(safe-area-inset-bottom))` }} />
       <CertificateActions />
     </CertificateProvider>
   );

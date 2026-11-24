@@ -15,7 +15,6 @@ import { AiLogo, aiModels, type AiModel } from "@/variants/finale/components/ui/
 import { CtaButton } from "@/variants/finale/components/ui/CtaButton";
 import { appGradientWide } from "@/variants/finale/appGradient";
 import { ResponsiveSheet } from "@/variants/finale/components/ui/ResponsiveSheet";
-import { BOTTOM_NAV_HEIGHT } from "./AppHeader";
 
 const questions = ["reviews", "team", "agencies", "custom"] as const;
 type Question = (typeof questions)[number];
@@ -316,7 +315,7 @@ export function AskYourAi() {
       </Box>
 
       <AskYourAiSheet question={question} setQuestion={setQuestion} onCopied={() => setCopied(true)} />
-      <Snackbar open={copied} autoHideDuration={4000} onClose={() => setCopied(false)} message={t("copied")} anchorOrigin={{ vertical: "bottom", horizontal: "center" }} sx={{ bottom: { xs: `calc(${BOTTOM_NAV_HEIGHT + 16}px + env(safe-area-inset-bottom))` } }} />
+      <Snackbar open={copied} autoHideDuration={4000} onClose={() => setCopied(false)} message={t("copied")} anchorOrigin={{ vertical: "bottom", horizontal: "center" }} />
     </Box>
   );
 }
