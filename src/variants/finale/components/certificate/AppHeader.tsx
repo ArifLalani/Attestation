@@ -54,6 +54,16 @@ function OsLogo({ label, small = false, tabIndex }: { label: string; small?: boo
   );
 }
 
+/** « Réputation vérifiée » with the verified seal, in the brand green. */
+function VerifiedBadge({ label }: { label: string }) {
+  return (
+    <Typography sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, fontSize: { xs: 10.5, md: 12 }, fontWeight: 600, color: tokens.vertOs, letterSpacing: "0.6px", lineHeight: "normal", whiteSpace: "nowrap" }}>
+      <VerifiedRounded aria-hidden sx={{ fontSize: "1.45em" }} />
+      {label}
+    </Typography>
+  );
+}
+
 /**
  * Header, option 1 « swap on scroll » (stakeholder review, 2026-11-24). One navy bar, always pinned.
  * At the top of the page it shows the Opinion System logo and « Réputation vérifiée »; once the company's name has scrolled away
@@ -134,10 +144,10 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
             <Box sx={fade(!company)} aria-hidden={company || undefined}>
               <OsLogo label={t("homeLabel")} tabIndex={company ? -1 : undefined} />
               <Box sx={{ flex: { xs: 1, md: "none" } }} />
-              <Typography sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, fontSize: { xs: 10.5, md: 12 }, fontWeight: 600, color: tokens.vertOs, letterSpacing: "0.6px", lineHeight: "normal", whiteSpace: "nowrap" }}>
-                <VerifiedRounded aria-hidden sx={{ fontSize: "1.45em" }} />
-                {t("badge")}
-              </Typography>
+              {/* Phones: the badge at the right of this row. Desktop: it sits at the right end of the bar instead. */}
+              <Box sx={{ display: { xs: "inline-flex", md: "none" } }}>
+                <VerifiedBadge label={t("badge")} />
+              </Box>
             </Box>
             <ButtonBase
               onClick={toTop}
@@ -191,9 +201,14 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
             </Tabs>
           </Box>
 
-          {/* Desktop, once scrolled: the Opinion System logo moves to the right end. */}
-          <Box sx={{ display: { xs: "none", md: "flex" }, flex: "0 0 340px", justifyContent: "flex-end", opacity: company ? 1 : 0, transition: "opacity 220ms ease" }} aria-hidden={!company || undefined}>
-            <OsLogo label={t("homeLabel")} small tabIndex={company ? undefined : -1} />
+          {/* Desktop, right end: « Réputation vérifiée » at the top of the page, the Opinion System logo once scrolled. */}
+          <Box sx={{ display: { xs: "none", md: "block" }, position: "relative", flex: "0 0 340px", height: 64 }}>
+            <Box sx={{ ...fade(!company), justifyContent: "flex-end" }} aria-hidden={company || undefined}>
+              <VerifiedBadge label={t("badge")} />
+            </Box>
+            <Box sx={{ ...fade(company), justifyContent: "flex-end" }} aria-hidden={!company || undefined}>
+              <OsLogo label={t("homeLabel")} small tabIndex={company ? undefined : -1} />
+            </Box>
           </Box>
         </Box>
       </Box>
