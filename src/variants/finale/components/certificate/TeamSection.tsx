@@ -62,30 +62,28 @@ function SocialLinks({ person }: { person: Collaborator }) {
 const controlledGreen = "#1d7a6b";
 
 /**
- * Under the job: « ★ 4,8 · 42 avis ». With Avis Contrôlés chosen in the Réputation tabs, both turn green
- * and a Contrôlés badge sits beside them (it drops under them when the card is narrow).
+ * Under the job: « 4,8 ★ · 42 avis » (option C2, 2026-11-24). With Avis Contrôlés chosen in the Réputation tabs
+ * the line turns green and ends with the Contrôlé seal; no words are added.
  */
 function PersonScore({ average, count, controlled }: { average: number | null; count: number; controlled: boolean }) {
   const t = useTranslations("Team");
+  const tr = useTranslations("Reputation.views");
   const color = controlled ? controlledGreen : tokens.bleuFonce;
   return (
-    <Box sx={{ mt: 0.75, display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "center", columnGap: 0.75, rowGap: 0.5 }}>
-      <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, fontSize: 13, fontWeight: 600, lineHeight: 1.3, color, whiteSpace: "nowrap", transition: "color 200ms ease" }}>
-        {average !== null && (
-          <>
-            <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.25, fontWeight: 700 }}>
-              <StarRounded aria-hidden sx={{ fontSize: 17, color: tokens.rating }} />
-              {formatScore(average)}
-            </Box>
-            <Box component="span" aria-hidden sx={{ color: controlled ? controlledGreen : tokens.gris }}>·</Box>
-          </>
-        )}
-        {t("reviewCount", { count: formatCount(count) })}
-      </Box>
+    <Box sx={{ mt: 0.75, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 0.5, fontSize: 13, fontWeight: 600, lineHeight: 1.3, color, whiteSpace: "nowrap", transition: "color 200ms ease" }}>
+      {average !== null && (
+        <>
+          <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.25, fontWeight: 700 }}>
+            {formatScore(average)}
+            <StarRounded aria-hidden sx={{ fontSize: 16, color: tokens.rating }} />
+          </Box>
+          <Box component="span" aria-hidden sx={{ opacity: 0.55 }}>·</Box>
+        </>
+      )}
+      {t("reviewCount", { count: formatCount(count) })}
       {controlled && (
-        <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, height: 22, pl: 0.75, pr: 1, borderRadius: "6px", bgcolor: tokens.successLight2, fontSize: 11.5, fontWeight: 600, lineHeight: 1, color: controlledGreen, whiteSpace: "nowrap" }}>
-          <FigmaIcon name="rv-controle" size={14} />
-          {t("controlledBadge")}
+        <Box component="span" role="img" aria-label={tr("controle")} sx={{ display: "inline-flex" }}>
+          <FigmaIcon name="rv-controle" size={16} />
         </Box>
       )}
     </Box>
@@ -203,12 +201,12 @@ export function TeamSection() {
         {shown.map(({ person, summary }) => (
           <li key={person.id}>
             <Box component="article" sx={personCardSx}>
-              <ButtonBase onClick={() => setSelectedId(person.id)} aria-label={t("openProfile", { name: person.name })} aria-haspopup="dialog" sx={{ flexDirection: "column", width: "100%", px: 0.5, borderRadius: "12px", ...focusSx }}>
+              <ButtonBase onClick={() => setSelectedId(person.id)} aria-label={t("openProfile", { name: person.name })} aria-haspopup="dialog" sx={{ flex: "1 0 auto", flexDirection: "column", justifyContent: "flex-start", width: "100%", px: 0.5, borderRadius: "12px", ...focusSx }}>
                 <Box sx={{ position: "relative", borderRadius: "50%", p: "3px", bgcolor: tokens.blanc, boxShadow: "0 0 0 1px #d6e4f3" }}>
                   <StaffAvatar person={person} size={80} />
                 </Box>
                 <Typography component="h3" sx={{ mt: 2, fontSize: 16, fontWeight: 600, lineHeight: 1.25, color: tokens.bleuFonce }}>{person.name}</Typography>
-                <Typography sx={{ fontSize: 13, color: tokens.gris, lineHeight: 1.35, minHeight: 35 }}>{person.role}</Typography>
+                <Typography sx={{ fontSize: 13, color: tokens.gris, lineHeight: 1.35 }}>{person.role}</Typography>
                 <PersonScore average={summary.average} count={summary.count} controlled={scoreView === "controle"} />
               </ButtonBase>
               <SocialLinks person={person} />
