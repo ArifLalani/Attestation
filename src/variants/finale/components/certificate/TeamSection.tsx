@@ -255,8 +255,8 @@ export function TeamSection() {
         {selected && (
           <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2.5 }}>
             {/* The profile card: photo, name, job and agency on the left, a divider, the two scores on the right.
-                Both sides hug their content (the right side the « Tous les avis (61) » line) and the pair is centred, to keep it short. */}
-            <Box sx={{ display: "grid", gridTemplateColumns: "minmax(0, auto) 1px max-content", justifyContent: "center", alignItems: "center", columnGap: 1.5, p: 1.5, borderRadius: "16px", bgcolor: tokens.blanc, boxShadow: tokens.shadowCard }}>
+                Two even halves: the person centred on the left, the score buttons filling the right (never narrower than the « Tous les avis (61) » line). */}
+            <Box sx={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) 1px minmax(max-content, 1fr)", alignItems: "center", columnGap: 1.5, p: 1.5, borderRadius: "16px", bgcolor: tokens.blanc, boxShadow: tokens.shadowCard }}>
               <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0.25, textAlign: "center", minWidth: 0 }}>
                 <StaffAvatar person={selected.person} size={72} />
                 <Typography sx={{ mt: 0.75, fontSize: 17, fontWeight: 600, lineHeight: 1.2, color: tokens.bleuFonce }}>{selected.person.name}</Typography>
