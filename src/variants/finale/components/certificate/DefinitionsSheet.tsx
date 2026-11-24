@@ -7,6 +7,7 @@ import ArrowBackRounded from "@mui/icons-material/ArrowBackRounded";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ChevronRight from "@mui/icons-material/ChevronRight";
+import ViewSidebarOutlined from "@mui/icons-material/ViewSidebarOutlined";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useCertificate } from "@/components/certificate/CertificateContext";
@@ -267,6 +268,8 @@ export function DefinitionsSheet({ open, onClose, initial, review, view = "globa
   const [focus, setFocus] = useState<number>();
   // The definitions read before, when one was reached from another (a source row, « Voir aussi »): the back arrow returns to them.
   const [history, setHistory] = useState<{ key: DefinitionKey; focus?: number }[]>([]);
+  // Desktop: the menu of all the definitions, hidden at first (only the definition shows); a toggle beside the title opens it.
+  const [menuOpen, setMenuOpen] = useState(false);
   const [wasOpen, setWasOpen] = useState(open);
   // Each opening starts on the definition that was tapped.
   if (open !== wasOpen) {
@@ -277,6 +280,7 @@ export function DefinitionsSheet({ open, onClose, initial, review, view = "globa
       setVisited(!startOnList);
       setFocus(undefined);
       setHistory([]);
+      setMenuOpen(false);
     }
   }
   const show = (key: DefinitionKey, item?: number) => {
@@ -305,11 +309,35 @@ export function DefinitionsSheet({ open, onClose, initial, review, view = "globa
 
   if (desktop) {
     return (
-      <ResponsiveSheet open={open} onClose={onClose} title={t("title")} closeLabel={t("close")} dialogWidth={760}>
+      <ResponsiveSheet
+        open={open}
+        onClose={onClose}
+        title={t("title")}
+        closeLabel={t("close")}
+        // Only the definition: 440 px. With the menu: 760 px, the sheet grows to the left.
+        dialogWidth={menuOpen ? 760 : 440}
+        leading={
+          <IconButton
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label={t(menuOpen ? "hideMenu" : "showMenu")}
+            aria-expanded={menuOpen}
+            aria-controls="definitions-menu"
+            sx={{ m: -1, mr: 0, color: menuOpen ? tokens.bleu600 : tokens.bleuFonce, bgcolor: menuOpen ? tokens.bleu10 : "transparent", borderRadius: "8px", "&:hover": { bgcolor: tokens.bleu10 } }}
+          >
+            <ViewSidebarOutlined sx={{ transform: "scaleX(-1)" }} />
+          </IconButton>
+        }
+      >
         <Box sx={{ display: "flex", height: "100%", minHeight: 0 }}>
-          {/* The menu on a light grey, the definition on white. */}
-          <Box sx={{ width: 250, flexShrink: 0, borderRight: `1px solid ${tokens.grisMoyen1}`, bgcolor: tokens.grisClair2, overflowY: "auto" }}>
-            <DefinitionList current={current} onGo={pick} compact />
+          {/* The menu on a light grey, the definition on white; the menu slides open with the sheet. */}
+          <Box
+            id="definitions-menu"
+            inert={!menuOpen}
+            sx={{ width: menuOpen ? 250 : 0, flexShrink: 0, overflow: "hidden", borderRight: menuOpen ? `1px solid ${tokens.grisMoyen1}` : "none", bgcolor: tokens.grisClair2, transition: "width 260ms cubic-bezier(0.2, 0, 0, 1)", "@media (prefers-reduced-motion: reduce)": { transition: "none" } }}
+          >
+            <Box sx={{ width: 250, height: "100%", overflowY: "auto" }}>
+              <DefinitionList current={current} onGo={pick} compact />
+            </Box>
           </Box>
           <Box key={current} sx={{ flex: 1, minWidth: 0, overflowY: "auto" }}>
             <DefinitionPage name={current} review={review} view={view} heading focus={focus} onGo={go} back={previous ? { label: backLabel, onBack: back } : undefined} />

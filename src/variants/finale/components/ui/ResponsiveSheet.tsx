@@ -39,6 +39,8 @@ interface ResponsiveSheetProps {
    * Échap on it goes back. Phones ignore it (open a second sheet instead).
    */
   subPage?: { open: boolean; title: React.ReactNode; backLabel: string; onBack: () => void; header?: React.ReactNode; footer?: React.ReactNode; children: React.ReactNode };
+  /** A control left of the title (e.g. the toggle of a side menu). */
+  leading?: React.ReactNode;
   /** A back arrow left of the title (e.g. to the list of definitions). */
   onBack?: () => void;
   backLabel?: string;
@@ -51,7 +53,7 @@ interface ResponsiveSheetProps {
  * From 900 px: a full-height side sheet from the right, over the page with a light backdrop, like the filters;
  * a small window under `anchorEl` when one is given (unless `side`).
  */
-export function ResponsiveSheet({ open, onClose, title, closeLabel, actions, header, footer, children, anchorEl, dropdownWidth = 420, dropdownAlign = "right", dialogWidth, side = false, subPage, onBack, backLabel, hideClose = false }: ResponsiveSheetProps) {
+export function ResponsiveSheet({ open, onClose, title, closeLabel, actions, header, footer, children, anchorEl, dropdownWidth = 420, dropdownAlign = "right", dialogWidth, side = false, subPage, leading, onBack, backLabel, hideClose = false }: ResponsiveSheetProps) {
   const desktop = useMediaQuery("(min-width:900px)", { noSsr: true });
   const titleId = useId();
   // Desktop: everything that used to be a centred window opens as a side sheet.
@@ -85,6 +87,7 @@ export function ResponsiveSheet({ open, onClose, title, closeLabel, actions, hea
           flexShrink: 0,
         }}
       >
+        {leading}
         {onBack && (
           <IconButton onClick={onBack} aria-label={backLabel} sx={{ m: -1, mr: 0, color: tokens.bleuFonce }}>
             <ArrowBackRounded />
@@ -130,7 +133,7 @@ export function ResponsiveSheet({ open, onClose, title, closeLabel, actions, hea
         onClose={(_event, reason) => (reason === "escapeKeyDown" && subOpen ? sub?.onBack() : onClose())}
         slotProps={{
           backdrop: { sx: { bgcolor: "rgba(4, 27, 68, 0.18)" } },
-          paper: { role: "dialog", "aria-labelledby": titleId, sx: { width: dialogWidth ?? 440, maxWidth: "100vw", boxShadow: "-12px 0 40px rgba(4, 27, 68, 0.16)", overflow: "hidden" } },
+          paper: { role: "dialog", "aria-labelledby": titleId, sx: { width: dialogWidth ?? 440, maxWidth: "100vw", boxShadow: "-12px 0 40px rgba(4, 27, 68, 0.16)", overflow: "hidden", transition: "width 260ms cubic-bezier(0.2, 0, 0, 1) !important", "@media (prefers-reduced-motion: reduce)": { transition: "none !important" } } },
         }}
       >
         {subBody ? (

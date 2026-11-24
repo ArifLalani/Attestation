@@ -219,6 +219,8 @@
     "definitions": {
       "title": "Comprendre les avis",
       "close": "Fermer",
+      "showMenu": "Afficher le menu des définitions",
+      "hideMenu": "Masquer le menu des définitions",
       "all": "Toutes les définitions ({count})",
       "forReview": "Pour cet avis",
       "seeAlso": "Voir aussi",
