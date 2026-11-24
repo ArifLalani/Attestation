@@ -23,7 +23,7 @@ import { formatCount, formatScore } from "@/lib/format";
 import { displayScore, isPublic, reviewsForScore, summarize } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
 import { useCertificate } from "@/components/certificate/CertificateContext";
-import { appGradientTall } from "@/variants/finale/appGradient";
+import { appGradientTall, appGradientWide } from "@/variants/finale/appGradient";
 import { OpenStatus } from "./OpenStatus";
 
 export const cardSx = {
@@ -239,15 +239,14 @@ export function BusinessCard() {
             sx={{
               width: "100%", maxWidth: { sm: 400 }, alignSelf: { xs: "stretch", sm: "flex-start" },
               position: "relative", isolation: "isolate", overflow: "hidden", containerType: "inline-size",
-              display: "grid", gridTemplateColumns: "minmax(max-content, 1fr) minmax(0, 1.2fr) auto", columnGap: "clamp(6px, 2.5%, 13px)",
+              display: "grid", gridTemplateColumns: "max-content minmax(0, 1fr) auto", columnGap: "clamp(10px, 4.5%, 16px)", alignItems: "center",
               minHeight: { xs: 108, sm: 124 }, px: { xs: 1.5, sm: 2 }, py: 1.75, borderRadius: "21px",
-              border: `1px solid ${controlled ? "#b8dacf" : "#ceddeb"}`,
-              background: controlled
-                ? "linear-gradient(117deg, #fff 6%, #f5fcfa 48%, #ddefe9)"
-                : "linear-gradient(117deg, #fff 6%, #f7fbff 48%, #e2ecf8)",
-              color: tokens.bleuFonce, textAlign: "left", fontFamily: "inherit",
-              boxShadow: "0 4px 10px rgba(21,44,80,0.09)", transition: "box-shadow 180ms ease",
-              "&:hover": { boxShadow: "0 7px 16px rgba(21,44,80,0.18)" },
+              // Option 10 (2026-11-24): the darkest, strongest block on the light card, in the app gradient.
+              border: "none",
+              background: appGradientWide,
+              color: tokens.blanc, textAlign: "left", fontFamily: "inherit",
+              boxShadow: "0 8px 20px rgba(4,27,68,0.25)", transition: "box-shadow 180ms ease",
+              "&:hover": { boxShadow: "0 12px 28px rgba(4,27,68,0.34)" },
               "&:hover .score-chevron": { transform: "translateX(2px)" },
               "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 },
               "@media (prefers-reduced-motion: reduce)": { "& .score-reflection": { display: "none" }, "&:hover .score-chevron": { transform: "none" } },
@@ -255,22 +254,22 @@ export function BusinessCard() {
           >
             <Box ref={reflectionRef} component="span" className="score-reflection" aria-hidden sx={{
               position: "absolute", inset: "-55%", zIndex: -1, pointerEvents: "none", opacity: 0,
-              background: "linear-gradient(108deg, transparent 22%, #b4e6f449 38%, #fffc 47%, #b3bdf744 54%, #d9ffff55 62%, transparent 78%)",
+              background: "linear-gradient(108deg, transparent 22%, #b4e6f422 38%, #ffffff40 47%, #b3bdf722 54%, #d9ffff22 62%, transparent 78%)",
             }} />
-            <Box component="span" sx={{ display: "inline-flex", justifySelf: "center", alignItems: "baseline", whiteSpace: "nowrap", lineHeight: 0.96, fontVariantNumeric: "tabular-nums" }}>
+            <Box component="span" sx={{ display: "inline-flex", justifySelf: "start", alignItems: "baseline", whiteSpace: "nowrap", lineHeight: 0.96, fontVariantNumeric: "tabular-nums" }}>
               <Box component="span" sx={{ fontSize: "clamp(34px, 19cqi, 59px)", fontWeight: 700, letterSpacing: "-0.08em" }}>{formatScore(average)}</Box>
-              <Box component="span" sx={{ fontSize: "clamp(11px, 4.5cqi, 15px)", color: "#456379", ml: "4px" }}>/5</Box>
+              <Box component="span" sx={{ fontSize: "clamp(11px, 4.5cqi, 16px)", color: "rgba(255, 255, 255, 0.7)", ml: "4px" }}>/5</Box>
             </Box>
-            <Box component="span" sx={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: 0.5, minWidth: 0 }}>
+            <Box component="span" sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", textAlign: "left", gap: 0.625, minWidth: 0 }}>
               <Box component="span" sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 0.5, fontSize: "clamp(13px, 5.5cqi, 17px)", lineHeight: 1.2, fontWeight: 600 }}>
-                <FigmaIcon name={controlled ? "rv-controle" : "rv-all"} size={18} />
+                <FigmaIcon name={controlled ? "rv-controle" : "rv-all-white"} size={18} />
                 {modeLabel}
               </Box>
               <Rating value={displayScore(average)} precision={0.1} readOnly aria-hidden
                 icon={<StarRounded fontSize="inherit" />} emptyIcon={<StarRounded fontSize="inherit" />}
-                sx={{ fontSize: "clamp(16px, 7.6cqi, 23px)", "& .MuiRating-iconFilled": { color: tokens.rating }, "& .MuiRating-iconEmpty": { color: "#8ea6ba", opacity: 0.48 } }}
+                sx={{ fontSize: "clamp(16px, 7.6cqi, 23px)", "& .MuiRating-iconFilled": { color: tokens.rating }, "& .MuiRating-iconEmpty": { color: "rgba(255, 255, 255, 0.25)" } }}
               />
-              <Box component="span" sx={{ fontSize: "clamp(13px, 5.4cqi, 16px)", lineHeight: 1.25, color: "#456379" }}>{countLabel}</Box>
+              <Box component="span" sx={{ fontSize: "clamp(13px, 5.4cqi, 16px)", lineHeight: 1.25, color: "rgba(255, 255, 255, 0.75)" }}>{countLabel}</Box>
             </Box>
             <ChevronRight aria-hidden className="score-chevron" sx={{ fontSize: 21, transition: "transform 150ms ease" }} />
           </ButtonBase>
