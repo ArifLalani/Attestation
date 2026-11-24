@@ -47,7 +47,7 @@ function OsLogo({ label, small = false, tabIndex }: { label: string; small?: boo
       rel="noopener noreferrer"
       aria-label={label}
       tabIndex={tabIndex}
-      sx={{ position: "relative", flex: "none", display: "block", width: small ? 62 : { xs: 62, md: 86 }, height: small ? 26 : { xs: 26, md: 36 } }}
+      sx={{ position: "relative", flex: "none", display: "block", width: small ? 62 : { xs: 76, md: 86 }, height: small ? 26 : { xs: 32, md: 36 } }}
     >
       <Image src="/variantes/f/os-logo-white.svg" alt="" fill sizes="86px" unoptimized priority />
     </Box>
