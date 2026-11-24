@@ -13,10 +13,12 @@ import { tokens } from "@/theme/theme";
 
 /** Live "Ouvert · Ferme à 19 h" status, computed in the browser from the current Paris time. */
 /** `split`: "Fermé" in colour then "· Ouvre…" in navy, without the dot (the agency card, from option C). */
+/** `dot` (with `split`): a small dot before the status, in the same green or orange. */
 /** `boxed`: a light tinted pill with a chevron (it opens the week's hours), so the status stands out on the hero's frosted glass. */
-export function OpenStatus({ hours, split = false, boxed = false, colors }: {
+export function OpenStatus({ hours, split = false, dot = false, boxed = false, colors }: {
   hours: WeekHours;
   split?: boolean;
+  dot?: boolean;
   boxed?: boolean;
   colors?: { open: string; closed: string };
 }) {
@@ -41,6 +43,7 @@ export function OpenStatus({ hours, split = false, boxed = false, colors }: {
     const [state, ...rest] = label.split(" · ");
     return (
       <Typography role="status" sx={{ fontSize: 14, lineHeight: 1.45, color: tokens.bleuFonce, visibility: status ? "visible" : "hidden" }}>
+        {dot && <Box component="span" aria-hidden sx={{ display: "inline-block", width: 6, height: 6, ml: "4px", mr: "8px", borderRadius: "50%", bgcolor: color, verticalAlign: "middle", position: "relative", top: "-1px" }} />}
         <Box component="span" sx={{ fontWeight: 600, color }}>{state}</Box>
         {rest.length > 0 && <> · {rest.join(" · ")}</>}
       </Typography>

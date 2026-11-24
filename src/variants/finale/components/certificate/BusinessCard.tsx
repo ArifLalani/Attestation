@@ -289,8 +289,7 @@ export function BusinessCard() {
               "& > [role=status]": { flex: 1 },
             }}
           >
-            <Box component="span" aria-hidden sx={{ width: 6, height: 6, mx: 0.5, flexShrink: 0, borderRadius: "50%", bgcolor: "#2b6598" }} />
-            <OpenStatus hours={agency.hours} split />
+            <OpenStatus hours={agency.hours} split dot />
             <Box component="span" sx={visuallyHidden}>{th("hoursLink")}</Box>
             <ChevronRight aria-hidden />
           </Link>
