@@ -58,12 +58,36 @@ function SocialLinks({ person }: { person: Collaborator }) {
   );
 }
 
-/** "★ 4,7" in a white pill over the bottom of the photo (from option G), with H's yellow star. */
-function ScorePill({ value }: { value: number }) {
+/** Avis Contrôlés green, a little darker than the brand green so it reads as text on white. */
+const controlledGreen = "#1d7a6b";
+
+/**
+ * Under the job: « ★ 4,8 · 42 avis ». With Avis Contrôlés chosen in the Réputation tabs, both turn green
+ * and a Contrôlés badge sits beside them (it drops under them when the card is narrow).
+ */
+function PersonScore({ average, count, controlled }: { average: number | null; count: number; controlled: boolean }) {
+  const t = useTranslations("Team");
+  const color = controlled ? controlledGreen : tokens.bleuFonce;
   return (
-    <Box sx={{ position: "absolute", left: "50%", bottom: -10, transform: "translateX(-50%)", display: "inline-flex", alignItems: "center", gap: 0.25, height: 24, pl: 0.75, pr: 1, borderRadius: "6px", bgcolor: tokens.blanc, boxShadow: "0 2px 8px rgba(4, 27, 68, 0.16)", fontSize: 13, fontWeight: 700, lineHeight: 1, color: tokens.bleuFonce, whiteSpace: "nowrap" }}>
-      <FigmaIcon name="star-small" />
-      {formatScore(value)}
+    <Box sx={{ mt: 0.75, display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "center", columnGap: 0.75, rowGap: 0.5 }}>
+      <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, fontSize: 13, fontWeight: 600, lineHeight: 1.3, color, whiteSpace: "nowrap", transition: "color 200ms ease" }}>
+        {average !== null && (
+          <>
+            <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.25, fontWeight: 700 }}>
+              <StarRounded aria-hidden sx={{ fontSize: 17, color: tokens.rating }} />
+              {formatScore(average)}
+            </Box>
+            <Box component="span" aria-hidden sx={{ color: controlled ? controlledGreen : tokens.gris }}>·</Box>
+          </>
+        )}
+        {t("reviewCount", { count: formatCount(count) })}
+      </Box>
+      {controlled && (
+        <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, height: 22, pl: 0.75, pr: 1, borderRadius: "6px", bgcolor: tokens.successLight2, fontSize: 11.5, fontWeight: 600, lineHeight: 1, color: controlledGreen, whiteSpace: "nowrap" }}>
+          <FigmaIcon name="rv-controle" size={14} />
+          {t("controlledBadge")}
+        </Box>
+      )}
     </Box>
   );
 }
@@ -126,7 +150,7 @@ function TeamSearch({ value, onChange }: { value: string; onChange: (value: stri
 const teamButtonSx = { width: { md: "auto" }, minWidth: { md: 180 }, px: { md: 2.5 }, alignSelf: { md: "flex-end" } } as const;
 
 /**
- * L'équipe (cards and profile from option G, in H's look): the score pill overlaps each photo; a tap opens the profile,
+ * L'équipe (cards and profile from option G, in H's look): the score sits beside the number of reviews under the job; a tap opens the profile,
  * a side sheet on desktop and a bottom sheet on phones.
  */
 export function TeamSection() {
@@ -182,11 +206,10 @@ export function TeamSection() {
               <ButtonBase onClick={() => setSelectedId(person.id)} aria-label={t("openProfile", { name: person.name })} aria-haspopup="dialog" sx={{ flexDirection: "column", width: "100%", px: 0.5, borderRadius: "12px", ...focusSx }}>
                 <Box sx={{ position: "relative", borderRadius: "50%", p: "3px", bgcolor: tokens.blanc, boxShadow: "0 0 0 1px #d6e4f3" }}>
                   <StaffAvatar person={person} size={80} />
-                  {summary.average !== null && <ScorePill value={summary.average} />}
                 </Box>
                 <Typography component="h3" sx={{ mt: 2, fontSize: 16, fontWeight: 600, lineHeight: 1.25, color: tokens.bleuFonce }}>{person.name}</Typography>
                 <Typography sx={{ fontSize: 13, color: tokens.gris, lineHeight: 1.35, minHeight: 35 }}>{person.role}</Typography>
-                <Typography sx={{ mt: 0.5, fontSize: 13, fontWeight: 600, color: tokens.bleuFonce }}>{t("reviewCount", { count: formatCount(summary.count) })}</Typography>
+                <PersonScore average={summary.average} count={summary.count} controlled={scoreView === "controle"} />
               </ButtonBase>
               <SocialLinks person={person} />
             </Box>

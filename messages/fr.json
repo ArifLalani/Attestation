@@ -207,6 +207,7 @@
     "recentReviews": "Ses derniers avis",
     "seeReviews": "Voir tous ses avis",
     "seeViewReviews": "Voir les avis {view} de {name} ({count})",
+    "controlledBadge": "Contrôlés",
     "empty": "Les profils seront affichés dès qu’ils auront reçu suffisamment d’avis.",
     "social": "{network} de {name}",
     "networks": {
