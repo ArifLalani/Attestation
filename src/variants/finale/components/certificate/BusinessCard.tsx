@@ -247,7 +247,7 @@ export function BusinessCard() {
               // Option 3 (2026-11-24): a big score on the left; big stars on the right with the mode and the count under them.
               display: "grid", gridTemplateColumns: "max-content minmax(0, 1fr) auto", gridTemplateAreas: '"score stars chevron" "score caption caption"',
               columnGap: "clamp(10px, 4%, 16px)", rowGap: 0.5, alignItems: "center",
-              px: { xs: 2, sm: 2.25 }, py: { xs: 1.75, sm: 2 }, borderRadius: "21px",
+              px: { xs: 2, sm: 2.25 }, py: { xs: 1.75, sm: 2 }, borderRadius: "8px",
               border: `1px solid ${controlled ? "#b8dacf" : "#ceddeb"}`,
               background: controlled
                 ? "linear-gradient(117deg, #fff 6%, #f5fcfa 48%, #ddefe9)"
