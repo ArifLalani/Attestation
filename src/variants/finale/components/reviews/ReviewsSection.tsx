@@ -5,7 +5,7 @@ import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import SearchOff from "@mui/icons-material/SearchOff";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useCertificate } from "@/components/certificate/CertificateContext";
 import { SortSheet } from "@/variants/finale/components/certificate/SortSheet";
 import { ChoiceChip } from "@/variants/finale/components/ui/FilterChip";
@@ -196,6 +196,41 @@ export function ReviewsSection() {
       }
     };
   }, []);
+
+  // Once more reviews have been loaded and the visitor has scrolled past the whole section (on to Nos Agences), the list folds back
+  // to the first three, so coming back up is short. It waits until the scroll has settled (so a smooth scroll to a tab is never cut),
+  // and the page is shifted by what was removed above the screen, so nothing moves under the visitor.
+  const foldFrom = useRef<number | null>(null);
+  useEffect(() => {
+    if (visible <= PAGE_SIZE) return;
+    let timer = 0;
+    const check = () => {
+      const section = sectionRef.current;
+      if (!section) return;
+      const bottom = section.getBoundingClientRect().bottom;
+      if (bottom >= 0) return;
+      foldFrom.current = bottom;
+      setVisible(PAGE_SIZE);
+    };
+    const onScroll = () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(check, 250);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.clearTimeout(timer);
+    };
+  }, [visible]);
+  useLayoutEffect(() => {
+    const before = foldFrom.current;
+    const section = sectionRef.current;
+    if (before === null || !section) return;
+    foldFrom.current = null;
+    // The browser may already have kept the place (scroll anchoring); only the remaining difference is corrected.
+    const shift = section.getBoundingClientRect().bottom - before;
+    if (Math.abs(shift) > 0.5) window.scrollBy({ top: shift, behavior: "instant" });
+  }, [visible]);
 
   // Back to the first reviews, and up to the section if its top has scrolled away.
   const showLess = () => {
