@@ -198,16 +198,16 @@ export function BusinessCard() {
         <Box
           sx={{
             display: "grid",
-            // The logo beside the big company name, the sector and city under the name.
-            gridTemplateColumns: { xs: "30px minmax(0, 1fr) auto", md: "34px minmax(0, 1fr) auto" },
-            gridTemplateAreas: '"logo name share" ". sector ."',
+            // The logo as tall as the company name and the line under it; the sector and city under the name.
+            gridTemplateColumns: { xs: "42px minmax(0, 1fr) auto", md: "46px minmax(0, 1fr) auto" },
+            gridTemplateAreas: '"logo name share" "logo sector share"',
             columnGap: 1.25,
             rowGap: 0,
             alignItems: "center",
           }}
         >
-          <Box sx={{ gridArea: "logo", alignSelf: "center", width: { xs: 30, md: 34 }, height: { xs: 30, md: 34 }, borderRadius: "8px", overflow: "hidden", bgcolor: tokens.blanc, border: `1px solid ${tokens.grisMoyen1}`, display: "grid", placeItems: "center" }}>
-            <Box sx={{ position: "relative", width: { xs: 26, md: 29 }, height: { xs: 23, md: 26 }, overflow: "hidden" }}>
+          <Box sx={{ gridArea: "logo", alignSelf: "center", width: { xs: 42, md: 46 }, height: { xs: 42, md: 46 }, borderRadius: "10px", overflow: "hidden", bgcolor: tokens.blanc, border: `1px solid ${tokens.grisMoyen1}`, display: "grid", placeItems: "center" }}>
+            <Box sx={{ position: "relative", width: { xs: 36, md: 40 }, height: { xs: 32, md: 36 }, overflow: "hidden" }}>
               <Box sx={{ position: "absolute", width: "133.24%", height: "145.41%", left: "-14.28%", top: "-22.96%" }}>
                 <Image src={agency.logo} alt="" fill sizes="48px" />
               </Box>
