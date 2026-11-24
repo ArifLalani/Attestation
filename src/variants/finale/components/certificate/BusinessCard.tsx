@@ -239,9 +239,9 @@ export function BusinessCard() {
             sx={{
               width: "100%", maxWidth: { sm: 400 }, alignSelf: { xs: "stretch", sm: "flex-start" },
               position: "relative", isolation: "isolate", overflow: "hidden", containerType: "inline-size",
-              // Option 3 (2026-11-24): the score and big stars on one line, the mode and the count in a caption under them.
-              display: "grid", gridTemplateColumns: "max-content minmax(0, 1fr) auto", gridTemplateAreas: '"score stars chevron" "caption caption caption"',
-              columnGap: "clamp(8px, 3.5%, 14px)", rowGap: 0.75, alignItems: "center",
+              // Option 3 (2026-11-24): a big score on the left; big stars on the right with the mode and the count under them.
+              display: "grid", gridTemplateColumns: "max-content minmax(0, 1fr) auto", gridTemplateAreas: '"score stars chevron" "score caption chevron"',
+              columnGap: "clamp(10px, 4%, 16px)", rowGap: 0.5, alignItems: "center",
               px: { xs: 2, sm: 2.25 }, py: { xs: 1.75, sm: 2 }, borderRadius: "21px",
               border: `1px solid ${controlled ? "#b8dacf" : "#ceddeb"}`,
               background: controlled
@@ -259,21 +259,20 @@ export function BusinessCard() {
               position: "absolute", inset: "-55%", zIndex: -1, pointerEvents: "none", opacity: 0,
               background: "linear-gradient(108deg, transparent 22%, #b4e6f449 38%, #fffc 47%, #b3bdf744 54%, #d9ffff55 62%, transparent 78%)",
             }} />
-            <Box component="span" sx={{ gridArea: "score", display: "inline-flex", alignItems: "baseline", whiteSpace: "nowrap", lineHeight: 0.9, fontVariantNumeric: "tabular-nums" }}>
-              <Box component="span" sx={{ fontSize: "clamp(34px, 16cqi, 54px)", fontWeight: 700, letterSpacing: "-0.07em" }}>{formatScore(average)}</Box>
-              <Box component="span" sx={{ fontSize: "clamp(11px, 4.2cqi, 15px)", color: "#456379", ml: "4px" }}>/5</Box>
+            <Box component="span" sx={{ gridArea: "score", alignSelf: "center", display: "inline-flex", alignItems: "baseline", whiteSpace: "nowrap", lineHeight: 0.9, fontVariantNumeric: "tabular-nums" }}>
+              <Box component="span" sx={{ fontSize: "clamp(40px, 20cqi, 66px)", fontWeight: 700, letterSpacing: "-0.07em" }}>{formatScore(average)}</Box>
+              <Box component="span" sx={{ fontSize: "clamp(12px, 4.6cqi, 16px)", color: "#456379", ml: "4px" }}>/5</Box>
             </Box>
             <Rating value={displayScore(average)} precision={0.1} readOnly aria-hidden
               icon={<StarRounded fontSize="inherit" />} emptyIcon={<StarRounded fontSize="inherit" />}
-              sx={{ gridArea: "stars", fontSize: "clamp(20px, 9cqi, 30px)", "& .MuiRating-iconFilled": { color: tokens.rating }, "& .MuiRating-iconEmpty": { color: "#8ea6ba", opacity: 0.48 } }}
+              sx={{ gridArea: "stars", alignSelf: "end", ml: "-2px", fontSize: "clamp(22px, 10cqi, 34px)", "& .MuiRating-iconFilled": { color: tokens.rating }, "& .MuiRating-iconEmpty": { color: "#8ea6ba", opacity: 0.48 } }}
             />
             <ChevronRight aria-hidden className="score-chevron" sx={{ gridArea: "chevron", fontSize: 21, transition: "transform 150ms ease" }} />
-            <Box component="span" sx={{ gridArea: "caption", display: "flex", alignItems: "center", flexWrap: "wrap", columnGap: 0.75, rowGap: 0.25, fontSize: "clamp(12px, 4cqi, 14px)", lineHeight: 1.3, color: "#456379" }}>
+            <Box component="span" sx={{ gridArea: "caption", alignSelf: "start", display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 0.25, fontSize: "clamp(12px, 4cqi, 14px)", lineHeight: 1.3, color: "#456379" }}>
               <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, fontWeight: 600, color: tokens.bleuFonce, whiteSpace: "nowrap" }}>
                 <FigmaIcon name={controlled ? "rv-controle" : "rv-all"} size={18} />
                 {modeLabel}
               </Box>
-              <Box component="span" aria-hidden>·</Box>
               <Box component="span" sx={{ whiteSpace: "nowrap" }}>{countLabel}</Box>
             </Box>
           </ButtonBase>
