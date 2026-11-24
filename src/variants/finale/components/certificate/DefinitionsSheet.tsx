@@ -7,7 +7,8 @@ import ArrowBackRounded from "@mui/icons-material/ArrowBackRounded";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ChevronRight from "@mui/icons-material/ChevronRight";
-import ViewSidebarOutlined from "@mui/icons-material/ViewSidebarOutlined";
+import CloseFullscreenRounded from "@mui/icons-material/CloseFullscreenRounded";
+import OpenInFullRounded from "@mui/icons-material/OpenInFullRounded";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useCertificate } from "@/components/certificate/CertificateContext";
@@ -324,7 +325,8 @@ export function DefinitionsSheet({ open, onClose, initial, review, view = "globa
             aria-controls="definitions-menu"
             sx={{ m: -1, mr: 0, color: menuOpen ? tokens.bleu600 : tokens.bleuFonce, bgcolor: menuOpen ? tokens.bleu10 : "transparent", borderRadius: "8px", "&:hover": { bgcolor: tokens.bleu10 } }}
           >
-            <ViewSidebarOutlined sx={{ transform: "scaleX(-1)" }} />
+            {/* Two diagonal arrows: outwards to widen the sheet with the menu, inwards to narrow it back. */}
+            {menuOpen ? <CloseFullscreenRounded sx={{ fontSize: 20 }} /> : <OpenInFullRounded sx={{ fontSize: 20 }} />}
           </IconButton>
         }
       >
