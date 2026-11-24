@@ -58,29 +58,34 @@ function SocialLinks({ person }: { person: Collaborator }) {
   );
 }
 
-/** Avis Contrôlés green, a little darker than the brand green so it reads as text on white. */
-const controlledGreen = "#1d7a6b";
-
 /**
- * Under the job: « 4,8 ★ · 42 avis » (option C2, 2026-11-24). With Avis Contrôlés chosen in the Réputation tabs
- * the line turns green and ends with the Contrôlé seal; no words are added.
+ * Under the job, centred in a chip: « 4,8 ★ · 42 avis » in the type of the profile's scores (bold score, semibold count).
+ * With Avis Contrôlés chosen in the Réputation tabs the chip turns green (the site's Avis Contrôlés green) and ends with the Contrôlé seal.
  */
 function PersonScore({ average, count, controlled }: { average: number | null; count: number; controlled: boolean }) {
   const t = useTranslations("Team");
   const tr = useTranslations("Reputation.views");
-  const color = controlled ? controlledGreen : tokens.bleuFonce;
+  const color = controlled ? tokens.vertOs : tokens.bleuFonce;
   return (
-    <Box sx={{ mt: 0.75, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 0.5, fontSize: 13, fontWeight: 600, lineHeight: 1.3, color, whiteSpace: "nowrap", transition: "color 200ms ease" }}>
+    <Box
+      sx={{
+        mt: 0.75, alignSelf: "center", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 0.5,
+        height: 30, px: 1.25, borderRadius: "8px", border: "1px solid", whiteSpace: "nowrap", color,
+        bgcolor: controlled ? tokens.successLight2 : tokens.bleu10,
+        borderColor: controlled ? "#b8e6d3" : "transparent",
+        transition: "color 200ms ease, background-color 200ms ease, border-color 200ms ease",
+      }}
+    >
       {average !== null && (
         <>
-          <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.25, fontWeight: 700 }}>
+          <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.25, fontSize: 15, fontWeight: 700, lineHeight: 1 }}>
             {formatScore(average)}
             <StarRounded aria-hidden sx={{ fontSize: 16, color: tokens.rating }} />
           </Box>
-          <Box component="span" aria-hidden sx={{ opacity: 0.55 }}>·</Box>
+          <Box component="span" aria-hidden sx={{ fontSize: 12, opacity: 0.55 }}>·</Box>
         </>
       )}
-      {t("reviewCount", { count: formatCount(count) })}
+      <Box component="span" sx={{ fontSize: 12, fontWeight: 600, lineHeight: 1 }}>{t("reviewCount", { count: formatCount(count) })}</Box>
       {controlled && (
         <Box component="span" role="img" aria-label={tr("controle")} sx={{ display: "inline-flex" }}>
           <FigmaIcon name="rv-controle" size={16} />
