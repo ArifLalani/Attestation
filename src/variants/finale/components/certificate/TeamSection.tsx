@@ -60,7 +60,7 @@ function SocialLinks({ person }: { person: Collaborator }) {
 
 /**
  * Under the job, centred in a chip: « 4,8 ★ · 42 avis » in the type of the profile's scores (bold score, semibold count).
- * With Avis Contrôlés chosen in the Réputation tabs the chip turns green (the site's Avis Contrôlés green) and ends with the Contrôlé seal.
+ * With Avis Contrôlés chosen in the Réputation tabs the writing turns green (the site's Avis Contrôlés green) and ends with the Contrôlé seal.
  */
 function PersonScore({ average, count, controlled }: { average: number | null; count: number; controlled: boolean }) {
   const t = useTranslations("Team");
@@ -71,9 +71,10 @@ function PersonScore({ average, count, controlled }: { average: number | null; c
       sx={{
         mt: 0.75, alignSelf: "center", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 0.5,
         height: 30, px: 1.25, borderRadius: "8px", border: "1px solid", whiteSpace: "nowrap", color,
-        bgcolor: controlled ? tokens.successLight2 : tokens.bleu10,
-        borderColor: controlled ? "#b8e6d3" : "transparent",
-        transition: "color 200ms ease, background-color 200ms ease, border-color 200ms ease",
+        // The light grey of the Réputation tabs' track; only the writing changes colour.
+        bgcolor: tokens.grisClair2,
+        borderColor: tokens.grisMoyen1,
+        transition: "color 200ms ease",
       }}
     >
       {average !== null && (
@@ -210,7 +211,7 @@ export function TeamSection() {
                 <Box sx={{ position: "relative", borderRadius: "50%", p: "3px", bgcolor: tokens.blanc, boxShadow: "0 0 0 1px #d6e4f3" }}>
                   <StaffAvatar person={person} size={80} />
                 </Box>
-                <Typography component="h3" sx={{ mt: 2, fontSize: 16, fontWeight: 600, lineHeight: 1.25, color: tokens.bleuFonce }}>{person.name}</Typography>
+                <Typography component="h3" sx={{ mt: 1, fontSize: 16, fontWeight: 600, lineHeight: 1.25, color: tokens.bleuFonce }}>{person.name}</Typography>
                 <Typography sx={{ fontSize: 13, color: tokens.gris, lineHeight: 1.35 }}>{person.role}</Typography>
                 <PersonScore average={summary.average} count={summary.count} controlled={scoreView === "controle"} />
               </ButtonBase>
