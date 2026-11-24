@@ -26,7 +26,7 @@ import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { opinionSystemLinks } from "@/data/opinionSystem";
 import { formatCount, formatScore } from "@/lib/format";
 import { useNow } from "@/lib/hooks";
-import { openingStatus } from "@/lib/hours";
+import { frenchTime, openingStatus } from "@/lib/hours";
 import { specialDaysAround } from "@/lib/specialHours";
 import { isPublic, reviewsForScore, summarize, type ScoreView } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
@@ -87,7 +87,7 @@ function useShare() {
   return { share, snackbar };
 }
 
-/** The closed button: ★ 4,3 · ● Ouvert, and the yellow arrow (turned over when open). */
+/** The closed button: ★ 4,3 · ● Ouvert – 19 h, and the yellow arrow (turned over when open). */
 function PillContent({ open }: { open: boolean }) {
   const t = useTranslations("VarianteFinale.widget");
   const th = useTranslations("Hours");
@@ -96,6 +96,9 @@ function PillContent({ open }: { open: boolean }) {
   const now = useNow();
   const status = now ? openingStatus(agency.hours, now, undefined, specialDaysAround(now)) : null;
   const statusColor = status?.open ? "#6dd3c1" : tokens.error3;
+  // « Ouvert – 19 h » (closing time) or « Fermé – 9 h » (reopening time, with the day when it is not today: « Fermé – lun. 9 h »).
+  const time = !status ? null : status.open ? frenchTime(status.closesAt) : status.opensAt === null ? null
+    : status.opensDay === null ? frenchTime(status.opensAt) : `${th(`days.${status.opensDay}`).slice(0, 3)}. ${frenchTime(status.opensAt)}`;
   return (
     <>
       {visible && (
@@ -107,6 +110,7 @@ function PillContent({ open }: { open: boolean }) {
       <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.75, fontSize: 13, fontWeight: 600, color: statusColor, visibility: status ? "visible" : "hidden" }}>
         <Box component="span" sx={{ width: 8, height: 8, borderRadius: "50%", bgcolor: statusColor, boxShadow: `0 0 0 3px ${status?.open ? "rgba(67, 182, 163, 0.3)" : "rgba(252, 101, 48, 0.3)"}` }} />
         {status?.open ? t("open") : th("closed")}
+        {time && <Box component="span" sx={{ fontWeight: 500, whiteSpace: "nowrap" }}>– {time}</Box>}
       </Box>
       <Box component="span" sx={{ ml: "auto", width: 40, height: 40, flexShrink: 0, borderRadius: "50%", bgcolor: tokens.jaune400, color: tokens.bleuFonce, display: "grid", placeItems: "center" }}>
         <ExpandLessRounded sx={{ transform: open ? "rotate(180deg)" : "none", transition: `transform ${ease}` }} />
