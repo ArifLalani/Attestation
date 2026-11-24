@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import InputBase from "@mui/material/InputBase";
 import Link from "@mui/material/Link";
+import ChevronRight from "@mui/icons-material/ChevronRight";
 import CloseRounded from "@mui/icons-material/CloseRounded";
 import EmailOutlined from "@mui/icons-material/EmailOutlined";
 import Facebook from "@mui/icons-material/Facebook";
@@ -160,9 +161,10 @@ export function TeamSection() {
     : [];
   const recent = selected ? reviewsForScore(reviews, scoreView, selected.person.id).slice().sort((a, b) => a.daysAgo - b.daysAgo).slice(0, 3) : [];
 
-  const seeReviews = () => {
+  /** Each score opens the front page's reviews of this person, in that view (all of them, or the controlled ones only). */
+  const seeReviews = (view: "global" | "controle") => {
     if (!selected) return;
-    setFilters({ ...emptyFilters, collaboratorId: selected.person.id, type: scoreView === "controle" ? "controle" : undefined });
+    setFilters({ ...emptyFilters, collaboratorId: selected.person.id, type: view === "controle" ? "controle" : undefined });
     setScoreCollaboratorId(selected.person.id);
     setReviewSort("recent");
     setSelectedId(undefined);
@@ -211,7 +213,6 @@ export function TeamSection() {
         }}
         title={t("profile")}
         closeLabel={t("close")}
-        footer={selected ? <Box sx={{ p: 2, borderTop: `1px solid ${tokens.grisMoyen1}` }}><CtaButton onClick={seeReviews}>{t("seeReviews")}</CtaButton></Box> : undefined}
         subPage={
           selected
             ? {
@@ -239,24 +240,35 @@ export function TeamSection() {
               <Box component="dl" sx={{ m: 0, display: "flex", flexDirection: "column" }}>
                 {[
                   // Avis Contrôlés in the green of the Réputation display.
-                  ...scores.map(({ view, average, count }) => ({ key: view, label: `${tr(`views.${view}`)} (${formatCount(count)})`, value: average !== null ? <>{formatScore(average)}<FigmaIcon name="star-small" /></> : "—", color: view === "controle" ? tokens.vertOs : undefined })),
-                  { key: "agency", label: tv("agency"), value: agency.city, color: undefined },
+                  ...scores.map(({ view, average, count }) => ({ key: view, view: count > 0 ? view : undefined, count, label: `${tr(`views.${view}`)} (${formatCount(count)})`, value: average !== null ? <>{formatScore(average)}<FigmaIcon name="star-small" /></> : "—", color: view === "controle" ? tokens.vertOs : undefined })),
+                  { key: "agency", view: undefined, count: 0, label: tv("agency"), value: agency.city, color: undefined },
                 ].map((stat, index) => (
-                  <Box key={stat.key} sx={{ display: "flex", flexDirection: "column-reverse", py: 1.25, borderTop: index ? `1px solid ${tokens.grisMoyen1}` : "none" }}>
-                    <Typography component="dt" sx={{ fontSize: 12, fontWeight: 600, color: stat.color ?? tokens.gris }}>
+                  <Box key={stat.key} sx={{ position: "relative", display: "flex", flexDirection: "column-reverse", py: 1.25, pr: stat.view ? 3.5 : 0, borderTop: index ? `1px solid ${tokens.grisMoyen1}` : "none", "&:hover .stat-chevron": { transform: "translateX(2px)" } }}>
+                    {/* The two scores open these reviews on the page: the whole row is the button, the ⓘ stays its own button above it. */}
+                    {stat.view && (
+                      <>
+                        <ButtonBase
+                          onClick={() => seeReviews(stat.view!)}
+                          aria-label={t("seeViewReviews", { view: tr(`views.${stat.view}`), count: formatCount(stat.count), name: selected.person.name })}
+                          sx={{ position: "absolute", inset: 0, borderRadius: "8px", "&:hover": { bgcolor: "rgba(44, 149, 255, 0.06)" }, ...focusSx }}
+                        />
+                        <ChevronRight aria-hidden className="stat-chevron" sx={{ position: "absolute", right: 0, top: "50%", mt: "-11px", fontSize: 22, color: tokens.bleuFonce, pointerEvents: "none", transition: "transform 150ms ease" }} />
+                      </>
+                    )}
+                    <Typography component="dt" sx={{ pointerEvents: "none", "& button": { pointerEvents: "auto" }, fontSize: 12, fontWeight: 600, color: stat.color ?? tokens.gris }}>
                       {stat.label}
                       {stat.key === "controle" && (
                         <IconButton
                           onClick={() => setScoreHelpOpen(true)}
                           aria-haspopup="dialog"
                           aria-label={tvr("explain", { title: tr("views.controle") })}
-                          sx={{ ml: 0.25, my: -0.5, width: 24, height: 24, verticalAlign: "middle", color: tokens.bleu600, ...focusSx }}
+                          sx={{ position: "relative", zIndex: 1, ml: 0.25, my: -0.5, width: 24, height: 24, verticalAlign: "middle", color: tokens.bleu600, ...focusSx }}
                         >
                           <InfoOutlined sx={{ fontSize: 15 }} />
                         </IconButton>
                       )}
                     </Typography>
-                    <Box component="dd" sx={{ m: 0, display: "flex", alignItems: "center", gap: 0.25, fontSize: 20, fontWeight: 700, lineHeight: 1.2, color: stat.color ?? tokens.bleuFonce }}>{stat.value}</Box>
+                    <Box component="dd" sx={{ pointerEvents: "none", m: 0, display: "flex", alignItems: "center", gap: 0.25, fontSize: 20, fontWeight: 700, lineHeight: 1.2, color: stat.color ?? tokens.bleuFonce }}>{stat.value}</Box>
                   </Box>
                 ))}
               </Box>
