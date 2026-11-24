@@ -47,7 +47,7 @@ function ViewToggle({ view, counts, onChange }: { view: ScoreView; counts: Recor
   const t = useTranslations("Reputation.views");
   const tr = useTranslations("Reputation");
   const segments: { value: ScoreView; icon: React.ReactNode; iconBox: number }[] = [
-    { value: "global", icon: <FigmaIcon name="rv-all" size={20} />, iconBox: 2 },
+    { value: "global", icon: <FigmaIcon name={view === "global" ? "rv-all-white" : "rv-all"} size={20} />, iconBox: 2 },
     { value: "controle", icon: <FigmaIcon name="rv-controle" size={20} />, iconBox: 2 },
   ];
   return (
@@ -56,24 +56,24 @@ function ViewToggle({ view, counts, onChange }: { view: ScoreView; counts: Recor
       sx={{
         position: "relative",
         display: "flex",
-        p: "3px",
+        p: "2px",
         bgcolor: tokens.grisClair2,
         border: `1px solid ${tokens.grisMoyen1}`,
-        borderRadius: "10px",
+        borderRadius: "8px",
       }}
     >
-      {/* Option B (2026-11-24): a white raised tab slides behind the active segment. */}
+      {/* Sliding navy pill behind the active segment. */}
       <Box
         aria-hidden
         sx={{
           position: "absolute",
-          top: 3,
-          bottom: 3,
-          left: 3,
-          width: "calc(50% - 3px)",
-          borderRadius: "8px",
-          bgcolor: tokens.blanc,
-          boxShadow: "0 1px 3px rgba(4,27,68,0.14), 0 0 0 1px rgba(4,27,68,0.04)",
+          top: 2,
+          bottom: 2,
+          left: 2,
+          width: "calc(50% - 2px)",
+          borderRadius: "9px",
+          bgcolor: tokens.bleuFonce,
+          filter: "drop-shadow(0px 2px 3px rgba(4,27,68,0.18))",
           transform: view === "global" ? "translateX(0)" : "translateX(100%)",
           transition: "transform 260ms cubic-bezier(0.2, 0, 0, 1)",
         }}
@@ -93,9 +93,9 @@ function ViewToggle({ view, counts, onChange }: { view: ScoreView; counts: Recor
               minWidth: 0,
               minHeight: 44,
               px: { xs: 0.75, sm: 1.5 },
-              borderRadius: "8px",
+              borderRadius: "9px",
               gap: 0,
-              color: active ? tokens.bleuFonce : "#5b6b85",
+              color: active ? tokens.blanc : tokens.bleuFonce,
               transition: "color 200ms ease",
             }}
           >
