@@ -254,16 +254,18 @@ export function TeamSection() {
       >
         {selected && (
           <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2.5 }}>
-            {/* The profile card (option G): photo, name and role on the left, the numbers on the right. */}
-            <Box sx={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1.45fr)", alignItems: "center", gap: 1, p: 1.5, borderRadius: "16px", bgcolor: tokens.blanc, boxShadow: tokens.shadowCard }}>
-              <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0.75, textAlign: "center", minWidth: 0 }}>
-                <StaffAvatar person={selected.person} size={96} />
-                <Typography sx={{ mt: 0.5, fontSize: 20, fontWeight: 600, lineHeight: 1.2, color: tokens.bleuFonce }}>{selected.person.name}</Typography>
-                <Typography sx={{ fontSize: 13, color: tokens.gris, lineHeight: 1.35 }}>{selected.person.role}</Typography>
+            {/* The profile card: photo, name, job and agency on the left, a divider, the two scores on the right.
+                Both sides hug their content (the right side the « Tous les avis (61) » line) and the pair is centred, to keep it short. */}
+            <Box sx={{ display: "grid", gridTemplateColumns: "minmax(0, auto) 1px max-content", justifyContent: "center", alignItems: "center", columnGap: 1.5, p: 1.5, borderRadius: "16px", bgcolor: tokens.blanc, boxShadow: tokens.shadowCard }}>
+              <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0.25, textAlign: "center", minWidth: 0 }}>
+                <StaffAvatar person={selected.person} size={72} />
+                <Typography sx={{ mt: 0.75, fontSize: 17, fontWeight: 600, lineHeight: 1.2, color: tokens.bleuFonce }}>{selected.person.name}</Typography>
+                <Typography sx={{ fontSize: 12.5, color: tokens.gris, lineHeight: 1.3 }}>{selected.person.role}</Typography>
                 {/* The agency under the job (the scores on the right carry the numbers of reviews). */}
-                <Typography sx={{ fontSize: 13, fontWeight: 600, color: tokens.bleuFonce }}>{tv("agency")} {agency.city}</Typography>
+                <Typography sx={{ fontSize: 12.5, fontWeight: 600, lineHeight: 1.3, color: tokens.bleuFonce }}>{tv("agency")} {agency.city}</Typography>
               </Box>
-              <Box component="dl" sx={{ m: 0, display: "flex", flexDirection: "column" }}>
+              <Box aria-hidden sx={{ alignSelf: "stretch", bgcolor: tokens.grisMoyen1 }} />
+              <Box component="dl" sx={{ m: 0, display: "flex", flexDirection: "column", gap: 0.5, minWidth: 0 }}>
                 {[
                   // Avis Contrôlés in the green of the Réputation display.
                   ...scores.map(({ view, average, count }) => ({ key: view, view: count > 0 ? view : undefined, count, label: `${tr(`views.${view}`)} (${formatCount(count)})`, value: average !== null ? <>{formatScore(average)}<Rating value={displayScore(average)} precision={0.1} readOnly aria-hidden icon={<StarRounded fontSize="inherit" />} emptyIcon={<StarRounded fontSize="inherit" />} sx={{ ml: 0.5, fontSize: 16, "& .MuiRating-iconFilled": { color: tokens.rating }, "& .MuiRating-iconEmpty": { color: "#8ea6ba", opacity: 0.48 } }} /></> : "—", color: view === "controle" ? tokens.vertOs : undefined }))
@@ -273,7 +275,7 @@ export function TeamSection() {
                   const lineAbove = index > 0 && !current && stats[index - 1].key !== scoreView;
                   return (
                   <Box key={stat.key} sx={{
-                    position: "relative", display: "flex", flexDirection: "column-reverse", py: 1.25, px: 1, pr: stat.view ? 3.5 : 1,
+                    position: "relative", display: "flex", flexDirection: "column-reverse", py: 1.25, px: 1, pr: stat.view ? 3 : 1,
                     borderRadius: current ? "10px" : 0, border: "1px solid transparent", borderTopColor: lineAbove ? tokens.grisMoyen1 : "transparent",
                     ...(current && { bgcolor: stat.key === "controle" ? tokens.successLight2 : tokens.bleu10, borderColor: stat.key === "controle" ? "#b8e6d3" : "rgba(44, 149, 255, 0.25)" }),
                     transition: "background-color 200ms ease, border-color 200ms ease",
@@ -287,7 +289,7 @@ export function TeamSection() {
                           aria-label={t("seeViewReviews", { view: tr(`views.${stat.view}`), count: formatCount(stat.count), name: selected.person.name })}
                           sx={{ position: "absolute", inset: 0, borderRadius: "8px", "&:hover": { bgcolor: "rgba(44, 149, 255, 0.06)" }, ...focusSx }}
                         />
-                        <ChevronRight aria-hidden className="stat-chevron" sx={{ position: "absolute", right: 4, top: "50%", mt: "-10px", fontSize: 20, color: tokens.bleuFonce, pointerEvents: "none", transition: "transform 150ms ease" }} />
+                        <ChevronRight aria-hidden className="stat-chevron" sx={{ position: "absolute", right: 2, top: "50%", mt: "-10px", fontSize: 20, color: tokens.bleuFonce, pointerEvents: "none", transition: "transform 150ms ease" }} />
                       </>
                     )}
                     <Typography component="dt" sx={{ pointerEvents: "none", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontSize: 12, fontWeight: 600, color: stat.color ?? tokens.gris }}>
