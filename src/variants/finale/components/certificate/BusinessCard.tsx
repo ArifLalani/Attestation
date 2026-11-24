@@ -240,7 +240,7 @@ export function BusinessCard() {
               width: "100%", maxWidth: { sm: 400 }, alignSelf: { xs: "stretch", sm: "flex-start" },
               position: "relative", isolation: "isolate", overflow: "hidden", containerType: "inline-size",
               // Option 3 (2026-11-24): a big score on the left; big stars on the right with the mode and the count under them.
-              display: "grid", gridTemplateColumns: "max-content minmax(0, 1fr) auto", gridTemplateAreas: '"score stars chevron" "score caption chevron"',
+              display: "grid", gridTemplateColumns: "max-content minmax(0, 1fr) auto", gridTemplateAreas: '"score stars chevron" "score caption caption"',
               columnGap: "clamp(10px, 4%, 16px)", rowGap: 0.5, alignItems: "center",
               px: { xs: 2, sm: 2.25 }, py: { xs: 1.75, sm: 2 }, borderRadius: "21px",
               border: `1px solid ${controlled ? "#b8dacf" : "#ceddeb"}`,
@@ -268,12 +268,13 @@ export function BusinessCard() {
               sx={{ gridArea: "stars", alignSelf: "end", ml: "-2px", fontSize: "clamp(22px, 10cqi, 34px)", "& .MuiRating-iconFilled": { color: tokens.rating }, "& .MuiRating-iconEmpty": { color: "#8ea6ba", opacity: 0.48 } }}
             />
             <ChevronRight aria-hidden className="score-chevron" sx={{ gridArea: "chevron", fontSize: 21, transition: "transform 150ms ease" }} />
-            <Box component="span" sx={{ gridArea: "caption", alignSelf: "start", display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 0.25, fontSize: "clamp(12px, 4cqi, 14px)", lineHeight: 1.3, color: "#456379" }}>
+            <Box component="span" sx={{ gridArea: "caption", alignSelf: "start", display: "flex", alignItems: "center", flexWrap: "nowrap", columnGap: 0.5, minWidth: 0, fontSize: "clamp(12px, 4cqi, 14px)", lineHeight: 1.3, color: "#456379" }}>
               <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, fontWeight: 600, color: tokens.bleuFonce, whiteSpace: "nowrap" }}>
                 <FigmaIcon name={controlled ? "rv-controle" : "rv-all"} size={18} />
                 {modeLabel}
               </Box>
-              <Box component="span" sx={{ whiteSpace: "nowrap" }}>{countLabel}</Box>
+              {/* "Tous les avis – 2 500" on one line; the full "2 500 avis" is in the button's label for screen readers. */}
+              <Box component="span" aria-hidden sx={{ whiteSpace: "nowrap" }}>– {formatCount(summary.count)}</Box>
             </Box>
           </ButtonBase>
         )}
