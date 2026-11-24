@@ -182,7 +182,8 @@ export function BusinessCard() {
           maxWidth: { md: 460 },
           display: "flex",
           flexDirection: "column",
-          gap: 1.5,
+          // 16 px between every block: heading, score, buttons, status, address, links.
+          gap: 2,
           p: { xs: 2, sm: 3, lg: 3.5 },
           minWidth: 0,
           borderRadius: "16px",
@@ -300,7 +301,8 @@ export function BusinessCard() {
             }}
             sx={{
               ...metaLinkSx,
-              width: "100%", minHeight: 36, pb: 0.5, borderBottom: "1px solid #c3d3e3",
+              // The divider sits halfway: 8 px under the status, 8 px over the address.
+              width: "100%", pb: 1, borderBottom: "1px solid #c3d3e3",
               "& > [role=status]": { flex: 1 },
             }}
           >
@@ -323,7 +325,7 @@ export function BusinessCard() {
             <PlaceOutlined sx={{ flexShrink: 0, mt: "1px" }} />
             {agency.address}
           </Link>
-          <Box sx={{ display: "flex", flexWrap: "wrap", columnGap: 2.5, rowGap: 1 }}>
+          <Box sx={{ display: "flex", flexWrap: "wrap", columnGap: 2.5, rowGap: 1, mt: 1 }}>
             <Link href={agency.website} target="_blank" rel="noopener noreferrer" sx={metaLinkSx}>
               <LanguageOutlined />
               {t("website")}
