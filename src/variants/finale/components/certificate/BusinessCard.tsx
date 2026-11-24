@@ -24,7 +24,7 @@ import { tokens } from "@/theme/theme";
 import { useCertificate } from "@/components/certificate/CertificateContext";
 import { appGradientTall } from "@/variants/finale/appGradient";
 import { OpenStatus } from "./OpenStatus";
-import { CompanySheet } from "./CompanySheet";
+import { AgencySheet } from "./ActionWidget";
 
 export const cardSx = {
   bgcolor: tokens.blanc,
@@ -202,7 +202,7 @@ export function BusinessCard() {
             }}>
               {agency.name}
             </Typography>
-            {/* The name opens the agency's information (its full name too, when it is cut). */}
+            {/* The name opens the agency card, the same as the floating button's (its full name too, when it is cut). */}
             <ButtonBase
               aria-haspopup="dialog"
               aria-label={th("showCompanyName")}
@@ -336,7 +336,7 @@ export function BusinessCard() {
         <Typography sx={{ whiteSpace: "nowrap", fontSize: { xs: "min(20px, 4.1cqi)", md: "min(26px, 4.1cqi)" }, fontWeight: 600, lineHeight: 1.2, letterSpacing: "-0.02em" }}>{th("photoTitle")}</Typography>
       </Box>
 
-      <CompanySheet open={nameOpen} onClose={() => setNameOpen(false)} />
+      <AgencySheet open={nameOpen} onClose={() => setNameOpen(false)} />
       <Snackbar open={copied} autoHideDuration={2500} onClose={() => setCopied(false)} message={t("linkCopied")} anchorOrigin={{ vertical: "bottom", horizontal: "center" }} />
     </Box>
   );

@@ -4,12 +4,14 @@ import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import Collapse from "@mui/material/Collapse";
+import Drawer from "@mui/material/Drawer";
 import Grow from "@mui/material/Grow";
 import IconButton from "@mui/material/IconButton";
 import Rating from "@mui/material/Rating";
 import Snackbar from "@mui/material/Snackbar";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import AutoAwesome from "@mui/icons-material/AutoAwesome";
 import ChevronRightRounded from "@mui/icons-material/ChevronRightRounded";
 import CloseRounded from "@mui/icons-material/CloseRounded";
@@ -370,8 +372,6 @@ function PhoneWidget() {
   const shown = useAfterFirstScroll();
   const [open, setOpen] = useState(false);
   const startY = useRef<number | null>(null);
-  const titleId = useId();
-  const [learnOpen, setLearnOpen] = useState(false);
 
   return (
     <>
@@ -397,23 +397,52 @@ function PhoneWidget() {
         </Grow>
       </Box>
 
-      <SwipeableDrawer
-        anchor="bottom"
-        open={open}
-        onClose={() => setOpen(false)}
-        onOpen={() => setOpen(true)}
-        disableSwipeToOpen
-        sx={{ display: { md: "none" } }}
-        slotProps={{
-          backdrop: { sx: { bgcolor: "rgba(4, 27, 68, 0.4)" } },
-          paper: { role: "dialog", "aria-modal": true, "aria-labelledby": titleId, sx: { maxWidth: 640, mx: "auto", maxHeight: "88dvh", borderTopLeftRadius: 22, borderTopRightRadius: 22, overflow: "hidden", display: "flex", flexDirection: "column" } },
-        }}
-      >
-        <Box sx={{ pt: 1, display: "flex", justifyContent: "center", flexShrink: 0 }}>
-          <Box sx={{ width: 40, height: 5, borderRadius: 2.5, bgcolor: tokens.grisMoyen1 }} />
-        </Box>
-        <CardContent onDone={() => setOpen(false)} titleId={titleId} onLearnMore={() => setLearnOpen(true)} />
-      </SwipeableDrawer>
+      <AgencySheet open={open} onClose={() => setOpen(false)} />
+    </>
+  );
+}
+
+/**
+ * The agency card (scores, hours, every action) as a sheet: the floating button's sheet on phones, a side sheet on desktop.
+ * The floating button opens it on phones; the company name in the business card opens it everywhere.
+ */
+export function AgencySheet({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const desktop = useMediaQuery("(min-width:900px)", { noSsr: true });
+  const titleId = useId();
+  const [learnOpen, setLearnOpen] = useState(false);
+  const content = <CardContent onDone={onClose} titleId={titleId} onLearnMore={() => setLearnOpen(true)} />;
+  return (
+    <>
+      {desktop ? (
+        <Drawer
+          anchor="right"
+          open={open}
+          onClose={onClose}
+          slotProps={{
+            backdrop: { sx: { bgcolor: "rgba(4, 27, 68, 0.18)" } },
+            paper: { role: "dialog", "aria-labelledby": titleId, sx: { width: 440, maxWidth: "100vw", boxShadow: "-12px 0 40px rgba(4, 27, 68, 0.16)", overflow: "hidden", display: "flex", flexDirection: "column" } },
+          }}
+        >
+          {content}
+        </Drawer>
+      ) : (
+        <SwipeableDrawer
+          anchor="bottom"
+          open={open}
+          onClose={onClose}
+          onOpen={() => {}}
+          disableSwipeToOpen
+          slotProps={{
+            backdrop: { sx: { bgcolor: "rgba(4, 27, 68, 0.4)" } },
+            paper: { role: "dialog", "aria-modal": true, "aria-labelledby": titleId, sx: { maxWidth: 640, mx: "auto", maxHeight: "88dvh", borderTopLeftRadius: 22, borderTopRightRadius: 22, overflow: "hidden", display: "flex", flexDirection: "column" } },
+          }}
+        >
+          <Box sx={{ pt: 1, display: "flex", justifyContent: "center", flexShrink: 0 }}>
+            <Box sx={{ width: 40, height: 5, borderRadius: 2.5, bgcolor: tokens.grisMoyen1 }} />
+          </Box>
+          {content}
+        </SwipeableDrawer>
+      )}
       <DefinitionsSheet open={learnOpen} onClose={() => setLearnOpen(false)} initial="global" startOnList />
     </>
   );
