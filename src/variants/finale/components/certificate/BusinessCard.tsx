@@ -176,6 +176,10 @@ export function BusinessCard() {
           gridArea: "sign",
           // Desktop: the card sits at the bottom of the hero, level with the caption on the right.
           alignSelf: { xs: "center", md: "end" },
+          // Desktop: the card hugs its content (the score block, the address) instead of filling the column.
+          justifySelf: { md: "start" },
+          width: { md: "fit-content" },
+          maxWidth: { md: 460 },
           display: "flex",
           flexDirection: "column",
           gap: 1.5,
@@ -237,7 +241,7 @@ export function BusinessCard() {
             }}
             aria-label={th("scoreAria", { mode: modeLabel, score: formatScore(average), count: countLabel })}
             sx={{
-              width: "100%", maxWidth: { sm: 400 }, alignSelf: { xs: "stretch", sm: "flex-start" },
+              width: "100%", maxWidth: { sm: 400, md: "none" }, alignSelf: { xs: "stretch", sm: "flex-start", md: "stretch" },
               position: "relative", isolation: "isolate", overflow: "hidden", containerType: "inline-size",
               // Option 3 (2026-11-24): a big score on the left; big stars on the right with the mode and the count under them.
               display: "grid", gridTemplateColumns: "max-content minmax(0, 1fr) auto", gridTemplateAreas: '"score stars chevron" "score caption caption"',
