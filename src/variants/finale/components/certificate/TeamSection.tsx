@@ -12,7 +12,6 @@ import CloseRounded from "@mui/icons-material/CloseRounded";
 import EmailOutlined from "@mui/icons-material/EmailOutlined";
 import Facebook from "@mui/icons-material/Facebook";
 import Instagram from "@mui/icons-material/Instagram";
-import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import LinkedIn from "@mui/icons-material/LinkedIn";
 import SearchRounded from "@mui/icons-material/SearchRounded";
 import { useTranslations } from "next-intl";
@@ -30,7 +29,6 @@ import { isPublic, reviewsForScore, summarize } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
 import { emptyFilters, useCertificate } from "@/components/certificate/CertificateContext";
 import { CardTitle } from "./ReputationCard";
-import { DefinitionsSheet } from "./DefinitionsSheet";
 
 const networks = [
   { key: "instagram", icon: <Instagram /> },
@@ -137,7 +135,6 @@ export function TeamSection() {
   const [expanded, setExpanded] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string>();
-  const [scoreHelpOpen, setScoreHelpOpen] = useState(false);
   const [reporting, setReporting] = useState<Review | null>(null);
   // A review’s details open as the profile’s second page (back arrow), not as a new panel. The review stays set while it slides out.
   const [detailsReview, setDetailsReview] = useState<Review>();
@@ -244,7 +241,7 @@ export function TeamSection() {
                   { key: "agency", view: undefined, count: 0, label: tv("agency"), value: agency.city, color: undefined },
                 ].map((stat, index) => (
                   <Box key={stat.key} sx={{ position: "relative", display: "flex", flexDirection: "column-reverse", py: 1.25, pr: stat.view ? 3.5 : 0, borderTop: index ? `1px solid ${tokens.grisMoyen1}` : "none", "&:hover .stat-chevron": { transform: "translateX(2px)" } }}>
-                    {/* The two scores open these reviews on the page: the whole row is the button, the ⓘ stays its own button above it. */}
+                    {/* The two scores open these reviews on the page: the whole row is the button. */}
                     {stat.view && (
                       <>
                         <ButtonBase
@@ -255,18 +252,8 @@ export function TeamSection() {
                         <ChevronRight aria-hidden className="stat-chevron" sx={{ position: "absolute", right: 0, top: "50%", mt: "-11px", fontSize: 22, color: tokens.bleuFonce, pointerEvents: "none", transition: "transform 150ms ease" }} />
                       </>
                     )}
-                    <Typography component="dt" sx={{ pointerEvents: "none", "& button": { pointerEvents: "auto" }, fontSize: 12, fontWeight: 600, color: stat.color ?? tokens.gris }}>
+                    <Typography component="dt" sx={{ pointerEvents: "none", fontSize: 12, fontWeight: 600, color: stat.color ?? tokens.gris }}>
                       {stat.label}
-                      {stat.key === "controle" && (
-                        <IconButton
-                          onClick={() => setScoreHelpOpen(true)}
-                          aria-haspopup="dialog"
-                          aria-label={tvr("explain", { title: tr("views.controle") })}
-                          sx={{ position: "relative", zIndex: 1, ml: 0.25, my: -0.5, width: 24, height: 24, verticalAlign: "middle", color: tokens.bleu600, ...focusSx }}
-                        >
-                          <InfoOutlined sx={{ fontSize: 15 }} />
-                        </IconButton>
-                      )}
                     </Typography>
                     <Box component="dd" sx={{ pointerEvents: "none", m: 0, display: "flex", alignItems: "center", gap: 0.25, fontSize: 20, fontWeight: 700, lineHeight: 1.2, color: stat.color ?? tokens.bleuFonce }}>{stat.value}</Box>
                   </Box>
@@ -306,7 +293,6 @@ export function TeamSection() {
           </Box>
         )}
       </ResponsiveSheet>
-      <DefinitionsSheet open={scoreHelpOpen} onClose={() => setScoreHelpOpen(false)} initial="controle" view="controle" />
       <ReportSheet review={reporting} onClose={() => setReporting(null)} />
     </Box>
   );
