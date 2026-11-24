@@ -262,8 +262,18 @@ export function TeamSection() {
                   // Avis Contrôlés in the green of the Réputation display.
                   ...scores.map(({ view, average, count }) => ({ key: view, view: count > 0 ? view : undefined, count, label: `${tr(`views.${view}`)} (${formatCount(count)})`, value: average !== null ? <>{formatScore(average)}<Rating value={displayScore(average)} precision={0.1} readOnly aria-hidden icon={<StarRounded fontSize="inherit" />} emptyIcon={<StarRounded fontSize="inherit" />} sx={{ ml: 0.5, fontSize: 16, "& .MuiRating-iconFilled": { color: tokens.rating }, "& .MuiRating-iconEmpty": { color: "#8ea6ba", opacity: 0.48 } }} /></> : "—", color: view === "controle" ? tokens.vertOs : undefined })),
                   { key: "agency", view: undefined, count: 0, label: tv("agency"), value: agency.city, color: undefined },
-                ].map((stat, index) => (
-                  <Box key={stat.key} sx={{ position: "relative", display: "flex", flexDirection: "column-reverse", py: 1.25, pr: stat.view ? 3.5 : 0, borderTop: index ? `1px solid ${tokens.grisMoyen1}` : "none", "&:hover .stat-chevron": { transform: "translateX(2px)" } }}>
+                ].map((stat, index, stats) => {
+                  // The score of the view chosen in the Réputation tabs is highlighted (blue for all reviews, green for controlled ones).
+                  const current = stat.key === scoreView;
+                  const lineAbove = index > 0 && !current && stats[index - 1].key !== scoreView;
+                  return (
+                  <Box key={stat.key} sx={{
+                    position: "relative", display: "flex", flexDirection: "column-reverse", py: 1.25, px: 1, pr: stat.view ? 4.5 : 1,
+                    borderRadius: current ? "10px" : 0, border: "1px solid transparent", borderTopColor: lineAbove ? tokens.grisMoyen1 : "transparent",
+                    ...(current && { bgcolor: stat.key === "controle" ? tokens.successLight2 : tokens.bleu10, borderColor: stat.key === "controle" ? "#b8e6d3" : "rgba(44, 149, 255, 0.25)" }),
+                    transition: "background-color 200ms ease, border-color 200ms ease",
+                    "&:hover .stat-chevron": { transform: "translateX(2px)" },
+                  }}>
                     {/* The two scores open these reviews on the page: the whole row is the button. */}
                     {stat.view && (
                       <>
@@ -272,7 +282,7 @@ export function TeamSection() {
                           aria-label={t("seeViewReviews", { view: tr(`views.${stat.view}`), count: formatCount(stat.count), name: selected.person.name })}
                           sx={{ position: "absolute", inset: 0, borderRadius: "8px", "&:hover": { bgcolor: "rgba(44, 149, 255, 0.06)" }, ...focusSx }}
                         />
-                        <ChevronRight aria-hidden className="stat-chevron" sx={{ position: "absolute", right: 0, top: "50%", mt: "-11px", fontSize: 22, color: tokens.bleuFonce, pointerEvents: "none", transition: "transform 150ms ease" }} />
+                        <ChevronRight aria-hidden className="stat-chevron" sx={{ position: "absolute", right: 8, top: "50%", mt: "-11px", fontSize: 22, color: tokens.bleuFonce, pointerEvents: "none", transition: "transform 150ms ease" }} />
                       </>
                     )}
                     <Typography component="dt" sx={{ pointerEvents: "none", fontSize: 12, fontWeight: 600, color: stat.color ?? tokens.gris }}>
@@ -280,7 +290,8 @@ export function TeamSection() {
                     </Typography>
                     <Box component="dd" sx={{ pointerEvents: "none", m: 0, display: "flex", alignItems: "center", gap: 0.25, fontSize: 20, fontWeight: 700, lineHeight: 1.2, color: stat.color ?? tokens.bleuFonce }}>{stat.value}</Box>
                   </Box>
-                ))}
+                  );
+                })}
               </Box>
             </Box>
             <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 1 }}>
