@@ -18,13 +18,13 @@ import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CtaButton } from "@/variants/finale/components/ui/CtaButton";
 import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
-import { ResponsiveSheet } from "@/variants/finale/components/ui/ResponsiveSheet";
 import { formatCount, formatScore } from "@/lib/format";
 import { displayScore, isPublic, reviewsForScore, summarize } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
 import { useCertificate } from "@/components/certificate/CertificateContext";
 import { appGradientTall } from "@/variants/finale/appGradient";
 import { OpenStatus } from "./OpenStatus";
+import { CompanySheet } from "./CompanySheet";
 
 export const cardSx = {
   bgcolor: tokens.blanc,
@@ -72,10 +72,8 @@ export function BusinessCard() {
   const t = useTranslations("Business");
   const th = useTranslations("VarianteFinale.hero");
   const tr = useTranslations("Reputation.views");
-  const tc = useTranslations("Contact");
   const { agency, reviews, scoreView, scoreCollaboratorId, setPanel, goToSection } = useCertificate();
   const [copied, setCopied] = useState(false);
-  const [nameClipped, setNameClipped] = useState(false);
   const [nameOpen, setNameOpen] = useState(false);
   const nameRef = useRef<HTMLHeadingElement>(null);
   const scoreRef = useRef<HTMLButtonElement>(null);
@@ -87,22 +85,6 @@ export function BusinessCard() {
   const modeLabel = tr(scoreView);
   const countLabel = th("reviews", { count: formatCount(summary.count) });
 
-  useEffect(() => {
-    const heading = nameRef.current;
-    if (!heading) return;
-    let active = true;
-    const measure = () => {
-      if (active) setNameClipped(heading.scrollHeight > heading.clientHeight + 1);
-    };
-    const observer = new ResizeObserver(measure);
-    observer.observe(heading);
-    measure();
-    void document.fonts.ready.then(measure);
-    return () => {
-      active = false;
-      observer.disconnect();
-    };
-  }, [agency.name]);
 
   useEffect(() => {
     const card = scoreRef.current;
@@ -220,12 +202,13 @@ export function BusinessCard() {
             }}>
               {agency.name}
             </Typography>
-            {nameClipped && <ButtonBase
+            {/* The name opens the agency's information (its full name too, when it is cut). */}
+            <ButtonBase
               aria-haspopup="dialog"
               aria-label={th("showCompanyName")}
               onClick={() => setNameOpen(true)}
               sx={{ position: "absolute", inset: 0, borderRadius: "6px", "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}` } }}
-            />}
+            />
           </Box>
           <Typography sx={{ gridArea: "sector", fontSize: 12, color: "#405c74", lineHeight: 1.35 }}>{th("sector", { sector: agency.sector, city: agency.city })}</Typography>
           <IconButton onClick={share} aria-label={t("share")} sx={{ gridArea: "share", alignSelf: "center", p: 1, my: -1, mr: -1, borderRadius: "8px" }}>
@@ -353,9 +336,7 @@ export function BusinessCard() {
         <Typography sx={{ whiteSpace: "nowrap", fontSize: { xs: "min(20px, 4.1cqi)", md: "min(26px, 4.1cqi)" }, fontWeight: 600, lineHeight: 1.2, letterSpacing: "-0.02em" }}>{th("photoTitle")}</Typography>
       </Box>
 
-      <ResponsiveSheet open={nameOpen} onClose={() => setNameOpen(false)} title={th("companyName")} closeLabel={tc("close")}>
-        <Typography sx={{ p: 2, overflowWrap: "anywhere" }}>{agency.name}</Typography>
-      </ResponsiveSheet>
+      <CompanySheet open={nameOpen} onClose={() => setNameOpen(false)} />
       <Snackbar open={copied} autoHideDuration={2500} onClose={() => setCopied(false)} message={t("linkCopied")} anchorOrigin={{ vertical: "bottom", horizontal: "center" }} />
     </Box>
   );
