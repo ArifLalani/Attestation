@@ -6,7 +6,6 @@ import ChevronRight from "@mui/icons-material/ChevronRight";
 import ScheduleOutlined from "@mui/icons-material/ScheduleOutlined";
 import { useTranslations } from "next-intl";
 import type { WeekHours } from "@/data/types";
-import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
 import { useNow } from "@/lib/hooks";
 import { frenchTime, openingStatus } from "@/lib/hours";
 import { specialDaysAround } from "@/lib/specialHours";
@@ -62,14 +61,8 @@ export function OpenStatus({ hours, split = false, dot = false, clock = false, b
 
   return (
     <Box sx={{ display: "inline-flex", alignItems: "center", gap: "6px", visibility: status ? "visible" : "hidden", ...box }} role="status">
-      {status && !status.open ? (
-        // Closed state isn't in the Figma: same dot, in the ERROR3 orange.
-        <Box sx={{ width: 14, height: 10, display: "flex", justifyContent: "center", flexShrink: 0 }}>
-          <Box sx={{ width: 10, height: 10, borderRadius: "50%", bgcolor: color }} />
-        </Box>
-      ) : (
-        <FigmaIcon name="open-dot" />
-      )}
+      {/* A clock in the status colour (green open, orange closed), as on the hero card (2026-11-25). */}
+      <ScheduleOutlined aria-hidden sx={{ fontSize: 20, color, flexShrink: 0 }} />
       <Typography sx={{ fontSize: 14, fontWeight: 600, color, lineHeight: "normal", whiteSpace: "nowrap" }}>{label}</Typography>
       {boxed && <ChevronRight aria-hidden sx={{ fontSize: 20, color, mx: "-2px" }} />}
     </Box>
