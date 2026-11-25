@@ -58,6 +58,8 @@ const twinkle = keyframes`
 `;
 const SPARKLE = "M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12z";
 const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
+/** Where the score starts counting from. */
+const COUNT_FROM = 2;
 
 /** www.la-boite-immo.com → la-boite-immo.com, for the website line on desktop. */
 const websiteHost = (url: string) => {
@@ -183,13 +185,14 @@ export function BusinessCard() {
   const countLabel = th("reviews", { count: formatCount(summary.count) });
 
 
-  // The score counts up from 0 (and the stars fill) when the box comes into view, then two shooting stars cross it.
+  // The score counts up from 2 (and the stars fill) when the box comes into view, then two shooting stars cross it.
   // Switching Tous les avis / Avis Contrôlés counts from the current value to the new one. Reduced motion: the final value, no effects.
   const target = average === null ? 0 : displayScore(average);
-  // Starts at 0 (also in the server HTML) so the page never shows 4,3 then jumps back to 0 before counting.
-  const [shown, setShown] = useState<number | null>(0);
+  // Starts at 2,0 (also in the server HTML, so the page never shows 4,3 then jumps back before counting).
+  const [shown, setShown] = useState<number | null>(COUNT_FROM);
   const [landed, setLanded] = useState(0);
-  const shownRef = useRef<number | null>(0);
+  const shownRef = useRef<number | null>(COUNT_FROM);
+  const countedRef = useRef(false);
   useEffect(() => {
     const card = scoreRef.current;
     if (!card || average === null) return;
@@ -200,8 +203,9 @@ export function BusinessCard() {
     }
     let frame = 0;
     const run = () => {
-      const from = shownRef.current ?? 0;
-      const duration = from === 0 ? 1100 : 600;
+      const from = shownRef.current ?? COUNT_FROM;
+      const duration = countedRef.current ? 600 : 1100;
+      countedRef.current = true;
       const start = performance.now();
       const step = (now: number) => {
         const progress = Math.min(1, (now - start) / duration);
