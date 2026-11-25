@@ -189,6 +189,8 @@ export function BusinessCard() {
         // Desktop: tall enough that the big Réputation score starts below the first screen (only the switch shows under the hero).
         // 41 px more than V1, whose header was 41 px taller, so the page folds at the same place.
         minHeight: { md: "clamp(501px, calc(100svh - 304px), 761px)" },
+        // Phones: the same idea, the first screen ends at the Réputation switch; the extra height goes to the photo (2026-11-25).
+        ...{ "@media (max-width: 599.95px)": { minHeight: "calc(100svh - 266px)", gridTemplateRows: "1fr auto" } },
         p: { xs: 1.5, sm: 2, md: 3 },
         columnGap: 4,
         background: noPhoto ? auroraBackground : { xs: appGradientTall, md: "linear-gradient(147.875deg, rgb(143,178,219) 0%, rgb(201,219,240) 71.429%)" },
@@ -202,7 +204,7 @@ export function BusinessCard() {
         </Box>
       )}
       {/* The team photo runs behind the whole hero on desktop; on phones and tablets it fills the top and fades into navy under the sign. */}
-      {!noPhoto && <Box sx={{ position: "absolute", zIndex: -1, inset: { xs: "-70px 0 auto 0", sm: "0 0 auto 0", md: 0 }, height: { xs: 330, sm: 470, md: "auto" }, maskImage: { xs: "linear-gradient(#000 55%, transparent 100%)", md: "none" }, "& img": { objectPosition: { xs: "50% center", sm: "70% center" } } }}>
+      {!noPhoto && <Box sx={{ position: "absolute", zIndex: -1, inset: { xs: "-70px 0 auto 0", sm: "0 0 auto 0", md: 0 }, height: { xs: "max(330px, calc(100svh - 400px))", sm: 470, md: "auto" }, maskImage: { xs: "linear-gradient(#000 55%, transparent 100%)", md: "none" }, "& img": { objectPosition: { xs: "50% center", sm: "70% center" } } }}>
         <Image src={agency.coverPhoto} alt={t("coverAlt", { name: agency.name })} fill priority sizes="(min-width: 1200px) 1100px, 100vw" style={{ objectFit: "cover" }} />
         <Box aria-hidden sx={{ position: "absolute", inset: { xs: "72px 0 0 0", sm: 0 }, background: { xs: "linear-gradient(rgba(4,27,68,0.25) 0%, rgba(4,27,68,0.6) 30%, rgba(4,27,68,0.7) 55%, rgba(4,27,68,0.85) 100%)", md: "linear-gradient(rgba(4,27,68,0) 30%, rgba(4,27,68,0.45) 65%, rgba(4,27,68,0.8) 100%)" } }} />
       </Box>}
