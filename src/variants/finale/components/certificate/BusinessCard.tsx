@@ -7,6 +7,7 @@ import Link from "@mui/material/Link";
 import Rating from "@mui/material/Rating";
 import Snackbar from "@mui/material/Snackbar";
 import Typography from "@mui/material/Typography";
+import { keyframes } from "@mui/material/styles";
 import DirectionsOutlined from "@mui/icons-material/DirectionsOutlined";
 import LanguageOutlined from "@mui/icons-material/LanguageOutlined";
 import PlaceOutlined from "@mui/icons-material/PlaceOutlined";
@@ -42,6 +43,21 @@ const auroraBackground =
   "linear-gradient(112deg, transparent 28%, rgba(255,255,255,0.13) 42%, rgba(255,255,255,0.04) 50%, transparent 62%), radial-gradient(60% 55% at 72% 0%, rgba(255,255,255,0.22), transparent 70%), linear-gradient(125deg, #041b44 0%, #08306b 34%, #0b5a86 62%, #1a8f8c 84%, #3fb59f 100%)";
 /** A fine sparkle grain over the lights. */
 const sparkles = `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120">${Array.from({ length: 60 }, (_, i) => `<circle cx="${(i * 37) % 120}" cy="${(i * 53) % 120}" r=".7" fill="rgba(255,255,255,.25)"/>`).join("")}</svg>`)}")`;
+
+/** Score box, option D « Étoiles filantes » (2026-11-25): two shooting stars cross the box once the score has counted up, and leave a sparkle. */
+const shoot = keyframes`
+  0% { opacity: 0; left: -30%; }
+  20% { opacity: 1; }
+  100% { opacity: 0; left: 105%; }
+`;
+const twinkle = keyframes`
+  0% { opacity: 0; transform: scale(0) rotate(0); }
+  30% { opacity: 1; transform: scale(1.25) rotate(45deg); }
+  60% { transform: scale(0.9) rotate(70deg); }
+  100% { opacity: 0.55; transform: scale(1) rotate(90deg); }
+`;
+const SPARKLE = "M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12z";
+const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
 
 /** www.la-boite-immo.com → la-boite-immo.com, for the website line on desktop. */
 const websiteHost = (url: string) => {
@@ -110,7 +126,6 @@ export function BusinessCard() {
   const [nameOpen, setNameOpen] = useState(false);
   const nameRef = useRef<HTMLHeadingElement>(null);
   const scoreRef = useRef<HTMLButtonElement>(null);
-  const reflectionRef = useRef<HTMLSpanElement>(null);
   const heroRef = useRef<HTMLElement>(null);
   const signRef = useRef<HTMLDivElement>(null);
 
@@ -150,7 +165,6 @@ export function BusinessCard() {
   }, []);
   const summary = useMemo(() => summarize(reviewsForScore(reviews, scoreView, scoreCollaboratorId)), [reviews, scoreView, scoreCollaboratorId]);
   const average = isPublic(summary.count, agency.publicThreshold) ? summary.average : null;
-  const visible = average !== null;
   const controlled = scoreView === "controle";
   const tp = useTranslations("Products");
   const relativeDate = useRelativeDate();
@@ -169,31 +183,47 @@ export function BusinessCard() {
   const countLabel = th("reviews", { count: formatCount(summary.count) });
 
 
+  // The score counts up from 0 (and the stars fill) when the box comes into view, then two shooting stars cross it.
+  // Switching Tous les avis / Avis Contrôlés counts from the current value to the new one. Reduced motion: the final value, no effects.
+  const target = average === null ? 0 : displayScore(average);
+  // Starts at 0 (also in the server HTML) so the page never shows 4,3 then jumps back to 0 before counting.
+  const [shown, setShown] = useState<number | null>(0);
+  const [landed, setLanded] = useState(0);
+  const shownRef = useRef<number | null>(0);
   useEffect(() => {
     const card = scoreRef.current;
-    const reflection = reflectionRef.current;
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (!card || !reflection || reducedMotion.matches) return;
-
-    let animation: Animation | undefined;
+    if (!card || average === null) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      shownRef.current = null;
+      setShown(null);
+      return;
+    }
+    let frame = 0;
+    const run = () => {
+      const from = shownRef.current ?? 0;
+      const duration = from === 0 ? 1100 : 600;
+      const start = performance.now();
+      const step = (now: number) => {
+        const progress = Math.min(1, (now - start) / duration);
+        const value = from + (target - from) * easeOutCubic(progress);
+        shownRef.current = value;
+        setShown(value);
+        if (progress < 1) frame = requestAnimationFrame(step);
+        else setLanded((count) => count + 1);
+      };
+      frame = requestAnimationFrame(step);
+    };
     const observer = new IntersectionObserver(([entry]) => {
       if (!entry || entry.intersectionRatio < 0.4) return;
       observer.disconnect();
-      if (reducedMotion.matches) return;
-      animation = reflection.animate([
-        { opacity: 0, transform: "translateX(-78%)" },
-        { opacity: 0.85, offset: 0.24 },
-        { opacity: 0.72, offset: 0.7 },
-        { opacity: 0, transform: "translateX(78%)" },
-      ], { duration: 2100, easing: "cubic-bezier(.25,.6,.45,1)" });
+      run();
     }, { threshold: 0.4 });
     observer.observe(card);
-
     return () => {
       observer.disconnect();
-      animation?.cancel();
+      cancelAnimationFrame(frame);
     };
-  }, [visible, scoreView]);
+  }, [target, average]);
 
   const share = async () => {
     const data = { title: agency.name, text: t("shareText", { name: agency.name }), url: window.location.href };
@@ -324,35 +354,46 @@ export function BusinessCard() {
               // Desktop: bigger, the score, the stars and the mode stacked and centred.
               justifyItems: { md: "center" },
               // Option 3 (2026-11-24): a big score on the left; big stars on the right with the mode and the count under them.
-              display: "grid", gridTemplateColumns: { xs: "max-content minmax(0, 1fr) auto", md: "minmax(0, 1fr)" }, gridTemplateAreas: { xs: '"score stars chevron" "score caption caption"', md: '"score" "stars" "caption"' },
+              // Phones: the stars and the mode centred in the space right of the score (not hugging it); the chevron centred on the right.
+              display: "grid", gridTemplateColumns: { xs: "max-content minmax(0, 1fr) auto", md: "minmax(0, 1fr)" }, gridTemplateAreas: { xs: '"score stars chevron" "score caption chevron"', md: '"score" "stars" "caption"' },
               columnGap: "clamp(10px, 4%, 16px)", rowGap: 0.5, alignItems: "center",
               px: { xs: 2, sm: 2.25 }, py: { xs: 1.75, sm: 2, md: 2.5 }, borderRadius: "8px",
               border: `1px solid ${controlled ? "#b8dacf" : "#ceddeb"}`,
-              background: controlled
-                ? "linear-gradient(117deg, #fff 6%, #f5fcfa 48%, #ddefe9)"
-                : "linear-gradient(117deg, #fff 6%, #f7fbff 48%, #e2ecf8)",
+              // A fine dotted wallpaper, clear around the score.
+              background: `radial-gradient(55% 75% at 50% 50%, #fff 30%, rgba(255,255,255,0) 78%), radial-gradient(${controlled ? "#c4e3d8" : "#cddbea"} 1px, transparent 1.4px) 0 0/12px 12px, ${controlled ? "linear-gradient(117deg, #fff, #e6f5ef)" : "linear-gradient(117deg, #fff, #eaf2fb)"}`,
               color: tokens.bleuFonce, textAlign: "left", fontFamily: "inherit",
               boxShadow: "0 4px 10px rgba(21,44,80,0.09)", transition: "box-shadow 180ms ease",
               "&:hover": { boxShadow: "0 7px 16px rgba(21,44,80,0.18)" },
               "&:hover .score-chevron": { transform: "translateX(2px)" },
               "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 },
-              "@media (prefers-reduced-motion: reduce)": { "& .score-reflection": { display: "none" }, "&:hover .score-chevron": { transform: "none" } },
+              "@media (prefers-reduced-motion: reduce)": { "& .score-effects": { display: "none" }, "&:hover .score-chevron": { transform: "none" } },
             }}
           >
-            <Box ref={reflectionRef} component="span" className="score-reflection" aria-hidden sx={{
-              position: "absolute", inset: "-55%", zIndex: -1, pointerEvents: "none", opacity: 0,
-              background: "linear-gradient(108deg, transparent 22%, #b4e6f449 38%, #fffc 47%, #b3bdf744 54%, #d9ffff55 62%, transparent 78%)",
-            }} />
+            {/* Shooting stars and sparkles, replayed each time the score lands (the key restarts them). */}
+            <Box key={landed} component="span" className="score-effects" aria-hidden sx={{ position: "absolute", inset: 0, zIndex: -1, pointerEvents: "none", display: landed ? "block" : "none" }}>
+              {[{ top: "22%", delay: 0, length: 150 }, { top: "72%", delay: 0.4, length: 110 }].map((line) => (
+                <Box key={line.top} component="span" sx={{ position: "absolute", top: line.top, left: "-30%", width: line.length, height: 2, borderRadius: 2, opacity: 0, transform: "rotate(-12deg)", background: "linear-gradient(90deg, transparent, #ffd76a 70%, #fff)", animation: `${shoot} 0.9s ease-out ${line.delay}s forwards` }} />
+              ))}
+              {[{ left: "calc(100% - 22px)", top: "9%", size: 13, delay: 0.75 }, { left: "7px", top: "9%", size: 11, delay: 1.15 }].map((spark) => (
+                <Box key={spark.left} component="svg" viewBox="0 0 24 24" sx={{ position: "absolute", left: spark.left, top: spark.top, width: spark.size, height: spark.size, opacity: 0, animation: `${twinkle} 1.8s ease-out ${spark.delay}s forwards` }}>
+                  <path d={SPARKLE} fill="#ffc83d" />
+                </Box>
+              ))}
+            </Box>
             <Box component="span" sx={{ gridArea: "score", alignSelf: "center", display: "inline-flex", alignItems: "baseline", whiteSpace: "nowrap", lineHeight: 0.9, fontVariantNumeric: "tabular-nums" }}>
-              <Box component="span" sx={{ fontSize: { xs: "clamp(40px, 20cqi, 66px)", md: 80 }, fontWeight: 700, letterSpacing: "-0.07em" }}>{formatScore(average)}</Box>
+              {/* The final value keeps its width while the number counts, so nothing beside it moves. */}
+              <Box component="span" sx={{ position: "relative", display: "inline-block", fontSize: { xs: "clamp(40px, 20cqi, 66px)", md: 80 }, fontWeight: 700, letterSpacing: "-0.07em" }}>
+                <Box component="span" sx={{ visibility: "hidden" }}>{formatScore(average)}</Box>
+                <Box component="span" sx={{ position: "absolute", right: 0, top: 0, whiteSpace: "nowrap" }}>{formatScore(shown ?? target)}</Box>
+              </Box>
               <Box component="span" sx={{ fontSize: { xs: "clamp(12px, 4.6cqi, 16px)", md: 18 }, color: "#456379", ml: "4px" }}>/5</Box>
             </Box>
-            <Rating value={displayScore(average)} precision={0.1} readOnly aria-hidden
+            <Rating value={shown ?? target} precision={0.1} readOnly aria-hidden
               icon={<StarRounded fontSize="inherit" />} emptyIcon={<StarRounded fontSize="inherit" />}
-              sx={{ gridArea: "stars", alignSelf: "end", ml: { xs: "-2px", md: 0 }, mt: { md: 1 }, fontSize: { xs: "clamp(22px, 10cqi, 34px)", md: 34 }, "& .MuiRating-iconFilled": { color: tokens.rating }, "& .MuiRating-iconEmpty": { color: "#8ea6ba", opacity: 0.48 } }}
+              sx={{ gridArea: "stars", alignSelf: "end", justifySelf: { xs: "center", md: "auto" }, ml: { xs: "-2px", md: 0 }, mt: { md: 1 }, fontSize: { xs: "clamp(22px, 10cqi, 34px)", md: 34 }, "& .MuiRating-iconFilled": { color: tokens.rating }, "& .MuiRating-iconEmpty": { color: "#8ea6ba", opacity: 0.48 } }}
             />
-            <ChevronRight aria-hidden className="score-chevron" sx={{ gridArea: { xs: "chevron", md: "auto" }, position: { md: "absolute" }, top: { md: 14 }, right: { md: 12 }, fontSize: 21, transition: "transform 150ms ease" }} />
-            <Box component="span" sx={{ gridArea: "caption", alignSelf: "start", display: "flex", alignItems: "center", flexWrap: "nowrap", columnGap: 0.5, minWidth: 0, fontSize: { xs: "clamp(12px, 4cqi, 14px)", md: 14.5 }, lineHeight: 1.3, color: "#456379" }}>
+            <ChevronRight aria-hidden className="score-chevron" sx={{ gridArea: { xs: "chevron", md: "auto" }, position: { md: "absolute" }, top: { md: "calc(50% - 10.5px)" }, right: { md: 12 }, fontSize: 21, transition: "transform 150ms ease" }} />
+            <Box component="span" sx={{ gridArea: "caption", alignSelf: "start", justifySelf: { xs: "center", md: "auto" }, display: "flex", alignItems: "center", flexWrap: "nowrap", columnGap: 0.5, minWidth: 0, fontSize: { xs: "clamp(12px, 4cqi, 14px)", md: 14.5 }, lineHeight: 1.3, color: "#456379" }}>
               <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, fontWeight: 600, color: tokens.bleuFonce, whiteSpace: "nowrap" }}>
                 <FigmaIcon name={controlled ? "rv-controle" : "rv-all"} size={18} />
                 {modeLabel}
