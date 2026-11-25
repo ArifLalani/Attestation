@@ -293,10 +293,12 @@ export function BusinessCard() {
               event.preventDefault();
               scrollToAgencies();
             }}
-            sx={{ ...metaLinkSx, alignItems: "flex-start" }}
+            title={agency.address}
+            // One line: the address is cut with … when it is too long (the full address is in the label and the tooltip).
+            sx={{ ...metaLinkSx, maxWidth: "100%", minWidth: 0 }}
           >
-            <PlaceOutlined sx={{ flexShrink: 0, mt: "1px" }} />
-            {agency.address}
+            <PlaceOutlined sx={{ flexShrink: 0 }} />
+            <Box component="span" sx={{ minWidth: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{agency.address}</Box>
           </Link>
           <Box sx={{ display: "flex", flexWrap: "wrap", columnGap: 2.5, rowGap: 1, mt: 1 }}>
             <Link href={agency.website} target="_blank" rel="noopener noreferrer" sx={metaLinkSx}>
