@@ -171,7 +171,7 @@ export function FiltersSheet() {
                 px: 2,
                 py: person ? 0.5 : 1.5,
                 minHeight: 45,
-                bgcolor: tokens.blanc,
+                bgcolor: tokens.grisClair1,
                 border: `1px solid ${tokens.grisMoyen1}`,
                 borderRadius: "8px",
                 textAlign: "left",
