@@ -36,14 +36,15 @@ export function ChoiceChip({
         fontFamily: "inherit",
         borderRadius: "8px",
         border: `1px solid ${selected ? tokens.bleu30 : tokens.grisMoyen1}`,
-        bgcolor: selected ? tokens.bleu10 : tokens.blanc,
+        // Unselected chips: a slight grey inside instead of white (2026-11-25).
+        bgcolor: selected ? tokens.bleu10 : tokens.grisClair2,
         color: selected ? tokens.bleu600 : tokens.bleuFonce,
         fontSize: 14,
         fontWeight: 500,
         lineHeight: "normal",
         whiteSpace: "nowrap",
         transition: "background-color 150ms ease, border-color 150ms ease, color 150ms ease",
-        "&:hover": { bgcolor: selected ? tokens.bleu20 : tokens.grisClair1, borderColor: selected ? tokens.bleu30 : "#c9d7e0" },
+        "&:hover": { bgcolor: selected ? tokens.bleu20 : "#e6eef3", borderColor: selected ? tokens.bleu30 : "#c9d7e0" },
         "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 },
       }}
     >
