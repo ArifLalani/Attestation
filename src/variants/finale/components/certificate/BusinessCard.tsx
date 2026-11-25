@@ -244,7 +244,7 @@ export function BusinessCard() {
       {/* The team photo runs behind the whole hero on desktop; on phones and tablets it fills the top and fades into navy under the sign. */}
       {!noPhoto && <Box sx={{ position: "absolute", zIndex: -1, inset: { xs: "-70px 0 auto 0", sm: "0 0 auto 0", md: 0 }, height: { xs: "max(330px, var(--hero-photo-height, 330px))", sm: 470, md: "auto" }, maskImage: { xs: "linear-gradient(#000 70%, transparent 100%)", md: "none" }, "& img": { objectPosition: { xs: "50% center", sm: "70% center" } } }}>
         <Image src={agency.coverPhoto} alt={t("coverAlt", { name: agency.name })} fill priority sizes="(min-width: 1200px) 1100px, 100vw" style={{ objectFit: "cover" }} />
-        <Box aria-hidden sx={{ position: "absolute", inset: { xs: "72px 0 0 0", sm: 0 }, background: { xs: "linear-gradient(rgba(4,27,68,0.1) 0%, rgba(4,27,68,0.1) 35%, rgba(4,27,68,0.6) 70%, rgba(4,27,68,0.85) 100%)", md: "linear-gradient(rgba(4,27,68,0) 30%, rgba(4,27,68,0.45) 65%, rgba(4,27,68,0.8) 100%)" } }} />
+        <Box aria-hidden sx={{ position: "absolute", inset: { xs: "72px 0 0 0", sm: 0 }, background: { xs: "linear-gradient(rgba(4,27,68,0.1) 0%, rgba(4,27,68,0.18) 30%, rgba(4,27,68,0.62) 55%, rgba(4,27,68,0.85) 80%)", md: "linear-gradient(rgba(4,27,68,0) 30%, rgba(4,27,68,0.45) 65%, rgba(4,27,68,0.8) 100%)" } }} />
       </Box>}
 
       <Box
