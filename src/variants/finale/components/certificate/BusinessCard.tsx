@@ -269,12 +269,6 @@ export function BusinessCard() {
           </ButtonBase>
         )}
 
-        {/* Side by side on every width, sharing the card width on phones and desktop; on phones the text is 13 px and the padding tighter so both fit on one line. */}
-        <Box sx={{ display: "flex", gap: { xs: 1, sm: 1.5 }, "& > .MuiButton-root": { width: "auto", minWidth: 0, flex: { xs: "1 1 0", sm: "0 0 auto", md: "1 1 0" }, px: { xs: 1.25, sm: 3 }, fontSize: { xs: 13, sm: 14 }, whiteSpace: { xs: "nowrap", sm: "normal" } } }}>
-          <CtaButton onClick={() => setPanel("contact")}>{th("talkShort")}</CtaButton>
-          <CtaButton variant="secondary" icon="icon-right-arrow" onClick={() => goToSection("avis")}>{th("read")}</CtaButton>
-        </Box>
-
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 1 }}>
           {/* The status opens the Horaires sheet (today, the week, holidays and other exceptions). */}
           <Link
@@ -323,6 +317,12 @@ export function BusinessCard() {
               {t("directions")}
             </Link>
           </Box>
+        </Box>
+
+        {/* At the foot of the card (2026-11-25). Side by side on every width, sharing the card width on phones and desktop; on phones the text is 13 px and the padding tighter so both fit on one line. */}
+        <Box sx={{ display: "flex", gap: { xs: 1, sm: 1.5 }, "& > .MuiButton-root": { width: "auto", minWidth: 0, flex: { xs: "1 1 0", sm: "0 0 auto", md: "1 1 0" }, px: { xs: 1.25, sm: 3 }, fontSize: { xs: 13, sm: 14 }, whiteSpace: { xs: "nowrap", sm: "normal" } } }}>
+          <CtaButton onClick={() => setPanel("contact")}>{th("talkShort")}</CtaButton>
+          <CtaButton variant="secondary" icon="icon-right-arrow" onClick={() => goToSection("avis")}>{th("read")}</CtaButton>
         </Box>
       </Box>
 
