@@ -37,6 +37,12 @@ export const cardSx = {
 /** Secondary text on the frosted sign: full navy, as in the Figma (1742:88885), so it reads over the blurred photo. */
 const glassMuted = tokens.bleuFonce;
 
+/** The hero without a photo (option C2, « Aurore »): the blue → green gradient with a light sweep and a glow at the top. */
+const auroraBackground =
+  "linear-gradient(112deg, transparent 28%, rgba(255,255,255,0.13) 42%, rgba(255,255,255,0.04) 50%, transparent 62%), radial-gradient(60% 55% at 72% 0%, rgba(255,255,255,0.22), transparent 70%), linear-gradient(125deg, #041b44 0%, #08306b 34%, #0b5a86 62%, #1a8f8c 84%, #3fb59f 100%)";
+/** A fine sparkle grain over the lights. */
+const sparkles = `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120">${Array.from({ length: 60 }, (_, i) => `<circle cx="${(i * 37) % 120}" cy="${(i * 53) % 120}" r=".7" fill="rgba(255,255,255,.25)"/>`).join("")}</svg>`)}")`;
+
 const metaLinkSx = {
   display: "inline-flex",
   alignItems: "center",
@@ -95,6 +101,7 @@ export function BusinessCard() {
         .sort((a, b) => a.daysAgo - b.daysAgo)[0],
     [reviews],
   );
+  const quoteInitials = quote ? quote.authorName.split(" ").slice(0, 2).map((part) => part[0]).join("").toUpperCase() : "";
   const quoteAuthor = quote ? (([first, last]) => (last ? `${first} ${last[0]}.` : first))(quote.authorName.split(" ")) : "";
   const modeLabel = tr(scoreView);
   const countLabel = th("reviews", { count: formatCount(summary.count) });
@@ -159,17 +166,14 @@ export function BusinessCard() {
         minHeight: { md: "clamp(501px, calc(100svh - 304px), 761px)" },
         p: { xs: 1.5, sm: 2, md: 3 },
         columnGap: 4,
-        background: { xs: appGradientTall, md: noPhoto ? "linear-gradient(125deg, #041b44 0%, #0c2a55 50%, #21406a 100%)" : "linear-gradient(147.875deg, rgb(143,178,219) 0%, rgb(201,219,240) 71.429%)" },
+        background: noPhoto ? auroraBackground : { xs: appGradientTall, md: "linear-gradient(147.875deg, rgb(143,178,219) 0%, rgb(201,219,240) 71.429%)" },
       }}
     >
-      {/* No photo (options 3 + 5): the agency's colour glows over the navy, its logo large and faded behind the client's words.
-          The colour is the logo's lime here; per agency it would come from its logo. */}
+      {/* No photo (option C2, « Aurore », 2026-11-25): soft teal, blue and mint lights over the blue → green gradient, with a fine sparkle grain. */}
       {noPhoto && (
         <Box aria-hidden sx={{ position: "absolute", zIndex: -1, inset: 0, overflow: "hidden", pointerEvents: "none" }}>
-          <Box sx={{ position: "absolute", inset: 0, background: { xs: "radial-gradient(70% 45% at 85% 12%, rgba(181,204,24,0.38), transparent 70%)", md: "radial-gradient(55% 75% at 82% 45%, rgba(181,204,24,0.42), transparent 65%)" } }} />
-          <Box sx={{ position: "absolute", right: { xs: "-12%", md: "-4%" }, top: { xs: "-4%", md: "50%" }, height: { xs: 260, md: "120%" }, aspectRatio: "1", transform: { xs: "rotate(-8deg)", md: "translateY(-50%) rotate(-8deg)" }, opacity: 0.12, filter: "grayscale(0.2) blur(1px)" }}>
-            <Image src={agency.logo} alt="" fill sizes="600px" style={{ objectFit: "contain" }} />
-          </Box>
+          <Box sx={{ position: "absolute", inset: "-20%", filter: "blur(30px)", background: "radial-gradient(40% 30% at 30% 20%, rgba(63,181,159,0.55), transparent 70%), radial-gradient(35% 40% at 75% 35%, rgba(44,149,255,0.5), transparent 70%), radial-gradient(45% 30% at 60% 85%, rgba(126,224,201,0.35), transparent 70%)" }} />
+          <Box sx={{ position: "absolute", inset: 0, background: `${sparkles} 0 0/120px 120px` }} />
         </Box>
       )}
       {/* The team photo runs behind the whole hero on desktop; on phones and tablets it fills the top and fades into navy under the sign. */}
@@ -350,14 +354,28 @@ export function BusinessCard() {
       </Box>
 
       {noPhoto && quote ? (
-        <Box component="figure" aria-label={th("quoteLabel")} sx={{ gridArea: "caption", m: 0, alignSelf: { xs: "end", md: "center" }, minHeight: { xs: 170, sm: 220, md: 0 }, display: "flex", flexDirection: "column", justifyContent: "flex-end", gap: { xs: 1, md: 1.5 }, px: { xs: 1, md: 0 }, pr: { md: 4 }, pt: { xs: 2, md: 0 }, pb: { xs: 2, md: 0 }, color: tokens.blanc }}>
-          <Rating value={5} readOnly size="small" sx={{ fontSize: { xs: 18, md: 24 }, "& .MuiRating-iconFilled": { color: tokens.rating } }} aria-hidden />
-          <Box component="blockquote" sx={{ m: 0, fontSize: { xs: 17, md: 27 }, fontWeight: 600, lineHeight: 1.3, letterSpacing: "-0.02em", display: "-webkit-box", WebkitLineClamp: { xs: 4, md: 5 }, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-            « {quote.comment} »
+        // The review in a frosted glass bubble (white text, the lights show through), the client's initials and the controlled seal under it.
+        <Box component="figure" aria-label={th("quoteLabel")} sx={{ gridArea: "caption", m: 0, alignSelf: { xs: "end", md: "center" }, display: "flex", flexDirection: "column", gap: { xs: 1, md: 1.75 }, maxWidth: { md: 540 }, px: { xs: 0.5, md: 0 }, pr: { md: 4 }, pt: { xs: 1, md: 0 }, pb: { xs: 2, md: 0 }, color: tokens.blanc }}>
+          <Box sx={{
+            borderRadius: { xs: "12px 12px 12px 4px", md: "18px 18px 18px 4px" }, px: { xs: 1.75, md: 3 }, py: { xs: 1.5, md: 2.75 },
+            background: "linear-gradient(135deg, rgba(255,255,255,0.26), rgba(255,255,255,0.1))", border: "1px solid rgba(255,255,255,0.35)",
+            backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)",
+            boxShadow: "0 24px 50px -20px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.4)",
+          }}>
+            <Rating value={5} readOnly aria-hidden sx={{ fontSize: { xs: 15, md: 22 }, "& .MuiRating-iconFilled": { color: tokens.rating } }} />
+            <Box component="blockquote" sx={{ m: 0, mt: { xs: 0.5, md: 1 }, fontSize: { xs: 14, md: 24 }, fontWeight: 600, lineHeight: 1.32, letterSpacing: "-0.02em", display: "-webkit-box", WebkitLineClamp: { xs: 3, md: 5 }, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+              « {quote.comment} »
+            </Box>
           </Box>
-          <Box component="figcaption" sx={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 0.75, fontSize: { xs: 12, md: 13.5 }, color: "rgba(255,255,255,0.88)" }}>
-            <Verified sx={{ fontSize: 17, color: tokens.vertOs }} />
-            {th("quoteMeta", { name: quoteAuthor, product: tp(quote.product), date: relativeDate(quote.daysAgo) })} · {th("quoteControlled")}
+          <Box component="figcaption" sx={{ display: "flex", alignItems: "center", gap: { xs: 1, md: 1.5 } }}>
+            <Box component="span" aria-hidden sx={{ flex: "none", width: { xs: 28, md: 42 }, height: { xs: 28, md: 42 }, borderRadius: "50%", bgcolor: "#7ee0c9", color: tokens.bleuFonce, display: "grid", placeItems: "center", fontWeight: 700, fontSize: { xs: 11, md: 15 }, boxShadow: "0 0 0 3px rgba(255,255,255,0.25)" }}>{quoteInitials}</Box>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography sx={{ fontSize: { xs: 12, md: 15 }, fontWeight: 600, lineHeight: 1.3 }}>{quoteAuthor}</Typography>
+              <Typography sx={{ display: "flex", alignItems: "center", gap: 0.5, fontSize: { xs: 10.5, md: 12.5 }, lineHeight: 1.3, color: "rgba(255,255,255,0.88)" }}>
+                <Verified sx={{ fontSize: { xs: 13, md: 15 }, color: "#7ee0c9" }} />
+                {th("quoteDetails", { product: tp(quote.product), date: relativeDate(quote.daysAgo) })}
+              </Typography>
+            </Box>
           </Box>
         </Box>
       ) : (
