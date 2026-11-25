@@ -43,6 +43,31 @@ const auroraBackground =
 /** A fine sparkle grain over the lights. */
 const sparkles = `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120">${Array.from({ length: 60 }, (_, i) => `<circle cx="${(i * 37) % 120}" cy="${(i * 53) % 120}" r=".7" fill="rgba(255,255,255,.25)"/>`).join("")}</svg>`)}")`;
 
+/** www.la-boite-immo.com → la-boite-immo.com, for the website line on desktop. */
+const websiteHost = (url: string) => {
+  try {
+    return new URL(url).hostname.replace(/^www./, "");
+  } catch {
+    return url;
+  }
+};
+
+/**
+ * Desktop: the info lines (hours, address, website, directions) one per line, with a thin divider between them and a chevron
+ * at the end; the grey details (domain, Google Maps) only show here. Phones keep the compact list.
+ */
+const infoLinesSx = {
+  "& .line-chevron, & .line-detail": { display: { xs: "none", md: "inline" } },
+  "& .line-detail": { color: "#456379" },
+  "& .line-chevron": { ml: "auto", flexShrink: 0, color: "#456379", fontSize: "20px !important" },
+  "& > a, & > div > a": {
+    display: { md: "flex" }, width: { md: "100%" }, gap: { md: 1.25 }, py: { md: 1.5 },
+    borderBottom: { md: "1px solid #c3d3e3" }, fontSize: { md: 15 }, "& .MuiSvgIcon-root": { fontSize: { md: 20 } },
+  },
+  "& > div > a:last-of-type": { borderBottom: { md: "none" }, pb: { md: 0 } },
+  "& > a:first-of-type": { pt: { md: 0 } },
+} as const;
+
 const metaLinkSx = {
   display: "inline-flex",
   alignItems: "center",
@@ -185,15 +210,15 @@ export function BusinessCard() {
       <Box
         sx={{
           gridArea: "sign",
-          // Desktop: the card sits at the bottom of the hero, level with the caption on the right.
-          alignSelf: { xs: "center", md: "end" },
-          // Desktop: the card hugs its content (the score block, the address) instead of filling the column.
+          // Desktop (option 3, 2026-11-25): the card runs the full height of the hero; its four blocks (heading, score, info lines,
+          // buttons) share the spare height evenly.
+          alignSelf: { xs: "center", md: "stretch" },
           justifySelf: { md: "start" },
-          width: { md: "fit-content" },
-          maxWidth: { md: 460 },
+          width: { md: 440 },
           display: "flex",
           flexDirection: "column",
-          // 16 px between every block: heading, score, buttons, status, address, links.
+          justifyContent: { md: "space-between" },
+          // At least 16 px between every block: heading, score, info lines, buttons.
           gap: 2,
           p: { xs: 2, sm: 3, lg: 3.5 },
           minWidth: 0,
@@ -255,10 +280,12 @@ export function BusinessCard() {
             sx={{
               width: "100%", maxWidth: { sm: 400, md: "none" }, alignSelf: { xs: "stretch", sm: "flex-start", md: "stretch" },
               position: "relative", isolation: "isolate", overflow: "hidden", containerType: "inline-size",
+              // Desktop: bigger, the score, the stars and the mode stacked and centred.
+              justifyItems: { md: "center" },
               // Option 3 (2026-11-24): a big score on the left; big stars on the right with the mode and the count under them.
-              display: "grid", gridTemplateColumns: "max-content minmax(0, 1fr) auto", gridTemplateAreas: '"score stars chevron" "score caption caption"',
+              display: "grid", gridTemplateColumns: { xs: "max-content minmax(0, 1fr) auto", md: "minmax(0, 1fr)" }, gridTemplateAreas: { xs: '"score stars chevron" "score caption caption"', md: '"score" "stars" "caption"' },
               columnGap: "clamp(10px, 4%, 16px)", rowGap: 0.5, alignItems: "center",
-              px: { xs: 2, sm: 2.25 }, py: { xs: 1.75, sm: 2 }, borderRadius: "8px",
+              px: { xs: 2, sm: 2.25 }, py: { xs: 1.75, sm: 2, md: 2.5 }, borderRadius: "8px",
               border: `1px solid ${controlled ? "#b8dacf" : "#ceddeb"}`,
               background: controlled
                 ? "linear-gradient(117deg, #fff 6%, #f5fcfa 48%, #ddefe9)"
@@ -276,15 +303,15 @@ export function BusinessCard() {
               background: "linear-gradient(108deg, transparent 22%, #b4e6f449 38%, #fffc 47%, #b3bdf744 54%, #d9ffff55 62%, transparent 78%)",
             }} />
             <Box component="span" sx={{ gridArea: "score", alignSelf: "center", display: "inline-flex", alignItems: "baseline", whiteSpace: "nowrap", lineHeight: 0.9, fontVariantNumeric: "tabular-nums" }}>
-              <Box component="span" sx={{ fontSize: "clamp(40px, 20cqi, 66px)", fontWeight: 700, letterSpacing: "-0.07em" }}>{formatScore(average)}</Box>
-              <Box component="span" sx={{ fontSize: "clamp(12px, 4.6cqi, 16px)", color: "#456379", ml: "4px" }}>/5</Box>
+              <Box component="span" sx={{ fontSize: { xs: "clamp(40px, 20cqi, 66px)", md: 80 }, fontWeight: 700, letterSpacing: "-0.07em" }}>{formatScore(average)}</Box>
+              <Box component="span" sx={{ fontSize: { xs: "clamp(12px, 4.6cqi, 16px)", md: 18 }, color: "#456379", ml: "4px" }}>/5</Box>
             </Box>
             <Rating value={displayScore(average)} precision={0.1} readOnly aria-hidden
               icon={<StarRounded fontSize="inherit" />} emptyIcon={<StarRounded fontSize="inherit" />}
-              sx={{ gridArea: "stars", alignSelf: "end", ml: "-2px", fontSize: "clamp(22px, 10cqi, 34px)", "& .MuiRating-iconFilled": { color: tokens.rating }, "& .MuiRating-iconEmpty": { color: "#8ea6ba", opacity: 0.48 } }}
+              sx={{ gridArea: "stars", alignSelf: "end", ml: { xs: "-2px", md: 0 }, mt: { md: 1 }, fontSize: { xs: "clamp(22px, 10cqi, 34px)", md: 34 }, "& .MuiRating-iconFilled": { color: tokens.rating }, "& .MuiRating-iconEmpty": { color: "#8ea6ba", opacity: 0.48 } }}
             />
-            <ChevronRight aria-hidden className="score-chevron" sx={{ gridArea: "chevron", fontSize: 21, transition: "transform 150ms ease" }} />
-            <Box component="span" sx={{ gridArea: "caption", alignSelf: "start", display: "flex", alignItems: "center", flexWrap: "nowrap", columnGap: 0.5, minWidth: 0, fontSize: "clamp(12px, 4cqi, 14px)", lineHeight: 1.3, color: "#456379" }}>
+            <ChevronRight aria-hidden className="score-chevron" sx={{ gridArea: { xs: "chevron", md: "auto" }, position: { md: "absolute" }, top: { md: 14 }, right: { md: 12 }, fontSize: 21, transition: "transform 150ms ease" }} />
+            <Box component="span" sx={{ gridArea: "caption", alignSelf: "start", display: "flex", alignItems: "center", flexWrap: "nowrap", columnGap: 0.5, minWidth: 0, fontSize: { xs: "clamp(12px, 4cqi, 14px)", md: 14.5 }, lineHeight: 1.3, color: "#456379" }}>
               <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, fontWeight: 600, color: tokens.bleuFonce, whiteSpace: "nowrap" }}>
                 <FigmaIcon name={controlled ? "rv-controle" : "rv-all"} size={18} />
                 {modeLabel}
@@ -295,7 +322,9 @@ export function BusinessCard() {
           </ButtonBase>
         )}
 
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 1 }}>
+        {/* Phones: the status, the address, then the website and the directions side by side.
+            Desktop: one line each, with a thin divider and a chevron, straight on the glass (no panel). */}
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: { xs: "flex-start", md: "stretch" }, gap: { xs: 1, md: 0 }, ...infoLinesSx }}>
           {/* The status opens the Horaires sheet (today, the week, holidays and other exceptions). */}
           <Link
             href="#nos-agences"
@@ -312,6 +341,7 @@ export function BusinessCard() {
           >
             <OpenStatus hours={agency.hours} split clock />
             <Box component="span" sx={visuallyHidden}>{th("hoursLink")}</Box>
+            <ChevronRight aria-hidden className="line-chevron" />
           </Link>
           {/* Jumps to the map and hours in Nos Agences. */}
           <Link
@@ -327,11 +357,16 @@ export function BusinessCard() {
           >
             <PlaceOutlined sx={{ flexShrink: 0 }} />
             <Box component="span" sx={{ minWidth: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{agency.address}</Box>
+            <ChevronRight aria-hidden className="line-chevron" />
           </Link>
-          <Box sx={{ display: "flex", flexWrap: "wrap", columnGap: 2.5, rowGap: 1, mt: 1 }}>
+          <Box sx={{ display: { xs: "flex", md: "contents" }, flexWrap: "wrap", columnGap: 2.5, rowGap: 1, mt: 1 }}>
             <Link href={agency.website} target="_blank" rel="noopener noreferrer" sx={metaLinkSx}>
               <LanguageOutlined />
-              {t("website")}
+              <span>
+                {t("website")}
+                <Box component="span" className="line-detail"> · {websiteHost(agency.website)}</Box>
+              </span>
+              <ChevronRight aria-hidden className="line-chevron" />
             </Link>
             <Link
               href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(agency.address)}`}
@@ -341,7 +376,11 @@ export function BusinessCard() {
               sx={metaLinkSx}
             >
               <DirectionsOutlined />
-              {t("directions")}
+              <span>
+                {t("directions")}
+                <Box component="span" className="line-detail"> · Google Maps</Box>
+              </span>
+              <ChevronRight aria-hidden className="line-chevron" />
             </Link>
           </Box>
         </Box>
