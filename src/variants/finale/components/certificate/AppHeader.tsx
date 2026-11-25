@@ -153,7 +153,7 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
               onClick={toTop}
               aria-hidden={!company || undefined}
               tabIndex={company ? 0 : -1}
-              aria-label={agency.name}
+              aria-label={`${agency.name}, ${agency.city}`}
               sx={{ ...fade(company), justifyContent: "flex-start", textAlign: "left", fontFamily: "inherit", borderRadius: "8px", "&.Mui-focusVisible": { outline: `2px solid ${underline}`, outlineOffset: 2 } }}
             >
               <Box sx={{ flex: "none", width: { xs: 28, md: 32 }, height: { xs: 28, md: 32 }, borderRadius: "7px", overflow: "hidden", bgcolor: tokens.blanc, display: "grid", placeItems: "center" }}>
@@ -163,9 +163,15 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
                   </Box>
                 </Box>
               </Box>
-              <Typography component="span" sx={{ minWidth: 0, flex: { xs: 1, md: "0 1 auto" }, fontSize: { xs: 16, md: 18 }, fontWeight: 700, letterSpacing: "-0.03em", color: tokens.blanc, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                {agency.name}
-              </Typography>
+              {/* The name, with the agency's city under it in small (2026-11-25). */}
+              <Box component="span" sx={{ minWidth: 0, flex: { xs: 1, md: "0 1 auto" }, display: "flex", flexDirection: "column", lineHeight: 1.15 }}>
+                <Typography component="span" sx={{ fontSize: { xs: 16, md: 18 }, lineHeight: "inherit", fontWeight: 700, letterSpacing: "-0.03em", color: tokens.blanc, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {agency.name}
+                </Typography>
+                <Typography component="span" sx={{ fontSize: { xs: 11, md: 12 }, lineHeight: "inherit", color: "rgba(255, 255, 255, 0.72)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {agency.city}
+                </Typography>
+              </Box>
               {average !== null && (
                 <Box component="span" sx={{ flex: "none", display: "inline-flex", alignItems: "center", gap: 0.25, fontSize: 14, fontWeight: 700, color: tokens.blanc }}>
                   <StarRounded aria-hidden sx={{ fontSize: 18, color: tokens.rating }} />
