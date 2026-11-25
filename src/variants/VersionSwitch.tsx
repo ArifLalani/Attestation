@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { presentation } from "@/variants/presentation";
 
 /** Presentation only: V1 is the version validated on 2026-11-23, V2 the one after the stakeholder feedback. */
 const versions: Record<string, string> = { "1": "finale-v1", "2": "finale" };
@@ -9,6 +10,7 @@ const sections = ["synthese", "avis", "agences", "qualite"];
 
 /**
  * Nothing on screen: pressing 1 shows V1, pressing 2 shows V2, to compare the two versions while presenting.
+ * Pressing 3 shows (or hides again) V2's hero as it looks for an agency without a photo.
  * Switching keeps the section being looked at (Synthèse, Avis, Agence, Qualité). Ignored while typing in a field.
  */
 export function VersionSwitch() {
@@ -21,7 +23,11 @@ export function VersionSwitch() {
       if (event.ctrlKey || event.metaKey || event.altKey || event.repeat) return;
       const target = event.target as HTMLElement | null;
       if (target?.closest("input, textarea, select, [contenteditable=true]")) return;
-      const segment = versions[event.key];
+      if (event.key === "3") {
+        presentation.setNoPhoto(current === "finale-v1" ? true : !presentation.noPhoto());
+        if (current === "finale") return;
+      }
+      const segment = event.key === "3" ? "finale" : versions[event.key];
       if (!segment || segment === current) return;
       // The section whose top has reached the header (the last one that has).
       const headerBottom = document.querySelector("header")?.getBoundingClientRect().bottom ?? 0;

@@ -24,6 +24,8 @@ import { tokens } from "@/theme/theme";
 import { useCertificate } from "@/components/certificate/CertificateContext";
 import { appGradientTall } from "@/variants/finale/appGradient";
 import { OpenStatus } from "./OpenStatus";
+import { useRelativeDate } from "@/variants/finale/components/reviews/ReviewCard";
+import { useNoPhotoPreview } from "@/variants/presentation";
 import { AgencySheet } from "./ActionWidget";
 
 export const cardSx = {
@@ -82,6 +84,18 @@ export function BusinessCard() {
   const average = isPublic(summary.count, agency.publicThreshold) ? summary.average : null;
   const visible = average !== null;
   const controlled = scoreView === "controle";
+  const tp = useTranslations("Products");
+  const relativeDate = useRelativeDate();
+  // No photo (or the presentation's key 3): option 3, « La parole aux clients », a recent 5★ controlled review on the brand navy.
+  const noPhoto = useNoPhotoPreview() || !agency.coverPhoto;
+  const quote = useMemo(
+    () =>
+      reviews
+        .filter((review) => review.status === "controle" && review.rating >= 5 && review.comment && review.comment.length >= 40 && review.comment.length <= 170)
+        .sort((a, b) => a.daysAgo - b.daysAgo)[0],
+    [reviews],
+  );
+  const quoteAuthor = quote ? (([first, last]) => (last ? `${first} ${last[0]}.` : first))(quote.authorName.split(" ")) : "";
   const modeLabel = tr(scoreView);
   const countLabel = th("reviews", { count: formatCount(summary.count) });
 
@@ -145,14 +159,16 @@ export function BusinessCard() {
         minHeight: { md: "clamp(501px, calc(100svh - 304px), 761px)" },
         p: { xs: 1.5, sm: 2, md: 3 },
         columnGap: 4,
-        background: { xs: appGradientTall, md: "linear-gradient(147.875deg, rgb(143,178,219) 0%, rgb(201,219,240) 71.429%)" },
+        background: { xs: appGradientTall, md: noPhoto ? "linear-gradient(120deg, #041b44 0%, #0b2d63 55%, #0f4a6e 100%)" : "linear-gradient(147.875deg, rgb(143,178,219) 0%, rgb(201,219,240) 71.429%)" },
       }}
     >
+      {/* No photo: a large faded quotation mark behind the client's words. */}
+      {noPhoto && <Box aria-hidden sx={{ position: "absolute", zIndex: -1, right: { xs: 12, md: "4%" }, top: { xs: -28, md: "-6%" }, fontFamily: "Georgia, serif", fontSize: { xs: 200, md: 340 }, lineHeight: 1, color: "rgba(255,255,255,0.07)", pointerEvents: "none" }}>“</Box>}
       {/* The team photo runs behind the whole hero on desktop; on phones and tablets it fills the top and fades into navy under the sign. */}
-      <Box sx={{ position: "absolute", zIndex: -1, inset: { xs: "-70px 0 auto 0", sm: "0 0 auto 0", md: 0 }, height: { xs: 330, sm: 470, md: "auto" }, maskImage: { xs: "linear-gradient(#000 55%, transparent 100%)", md: "none" }, "& img": { objectPosition: { xs: "50% center", sm: "70% center" } } }}>
+      {!noPhoto && <Box sx={{ position: "absolute", zIndex: -1, inset: { xs: "-70px 0 auto 0", sm: "0 0 auto 0", md: 0 }, height: { xs: 330, sm: 470, md: "auto" }, maskImage: { xs: "linear-gradient(#000 55%, transparent 100%)", md: "none" }, "& img": { objectPosition: { xs: "50% center", sm: "70% center" } } }}>
         <Image src={agency.coverPhoto} alt={t("coverAlt", { name: agency.name })} fill priority sizes="(min-width: 1200px) 1100px, 100vw" style={{ objectFit: "cover" }} />
         <Box aria-hidden sx={{ position: "absolute", inset: { xs: "72px 0 0 0", sm: 0 }, background: { xs: "linear-gradient(rgba(4,27,68,0.25) 0%, rgba(4,27,68,0.6) 30%, rgba(4,27,68,0.7) 55%, rgba(4,27,68,0.85) 100%)", md: "linear-gradient(rgba(4,27,68,0) 30%, rgba(4,27,68,0.45) 65%, rgba(4,27,68,0.8) 100%)" } }} />
-      </Box>
+      </Box>}
 
       <Box
         sx={{
@@ -325,6 +341,18 @@ export function BusinessCard() {
         </Box>
       </Box>
 
+      {noPhoto && quote ? (
+        <Box component="figure" aria-label={th("quoteLabel")} sx={{ gridArea: "caption", m: 0, alignSelf: { xs: "end", md: "center" }, minHeight: { xs: 170, sm: 220, md: 0 }, display: "flex", flexDirection: "column", justifyContent: "flex-end", gap: { xs: 1, md: 1.5 }, px: { xs: 1, md: 0 }, pr: { md: 4 }, pt: { xs: 2, md: 0 }, pb: { xs: 2, md: 0 }, color: tokens.blanc }}>
+          <Rating value={5} readOnly size="small" sx={{ fontSize: { xs: 18, md: 24 }, "& .MuiRating-iconFilled": { color: tokens.rating } }} aria-hidden />
+          <Box component="blockquote" sx={{ m: 0, fontSize: { xs: 17, md: 27 }, fontWeight: 600, lineHeight: 1.3, letterSpacing: "-0.02em", display: "-webkit-box", WebkitLineClamp: { xs: 4, md: 5 }, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+            « {quote.comment} »
+          </Box>
+          <Box component="figcaption" sx={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 0.75, fontSize: { xs: 12, md: 13.5 }, color: "rgba(255,255,255,0.88)" }}>
+            <Verified sx={{ fontSize: 17, color: tokens.vertOs }} />
+            {th("quoteMeta", { name: quoteAuthor, product: tp(quote.product), date: relativeDate(quote.daysAgo) })} · {th("quoteControlled")}
+          </Box>
+        </Box>
+      ) : (
       <Box sx={{ gridArea: "caption", containerType: "inline-size", alignSelf: "end", minHeight: { xs: 170, sm: 220, md: 0 }, display: "flex", flexDirection: "column", justifyContent: "flex-end", px: { xs: 1, md: 0 }, pr: { md: "64px" }, pb: { xs: 2, md: 0 }, color: tokens.blanc, textShadow: "0 1px 12px rgba(4,27,68,0.45)" }}>
         <Typography sx={{ display: "flex", alignItems: "center", gap: 0.75, mb: 0.75, fontSize: 13, lineHeight: "normal" }}>
           <Verified sx={{ fontSize: 18, color: tokens.vertOs }} />
@@ -333,6 +361,7 @@ export function BusinessCard() {
         {/* Always one line: the size follows the width of the photo (up to 20 px on phones, 26 px on desktop). Desktop keeps clear of the curved corner. */}
         <Typography sx={{ whiteSpace: "nowrap", fontSize: { xs: "min(20px, 4.1cqi)", md: "min(26px, 4.1cqi)" }, fontWeight: 600, lineHeight: 1.2, letterSpacing: "-0.02em" }}>{th("photoTitle")}</Typography>
       </Box>
+      )}
 
       <AgencySheet open={nameOpen} onClose={() => setNameOpen(false)} />
       <Snackbar open={copied} autoHideDuration={2500} onClose={() => setCopied(false)} message={t("linkCopied")} anchorOrigin={{ vertical: "bottom", horizontal: "center" }} />
