@@ -282,7 +282,7 @@ export function BusinessCard() {
               "& > [role=status]": { flex: 1 },
             }}
           >
-            <OpenStatus hours={agency.hours} split dot />
+            <OpenStatus hours={agency.hours} split clock />
             <Box component="span" sx={visuallyHidden}>{th("hoursLink")}</Box>
           </Link>
           {/* Jumps to the map and hours in Nos Agences. */}

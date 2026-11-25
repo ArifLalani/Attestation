@@ -3,6 +3,7 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import ChevronRight from "@mui/icons-material/ChevronRight";
+import ScheduleOutlined from "@mui/icons-material/ScheduleOutlined";
 import { useTranslations } from "next-intl";
 import type { WeekHours } from "@/data/types";
 import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
@@ -13,12 +14,13 @@ import { tokens } from "@/theme/theme";
 
 /** Live "Ouvert · Ferme à 19 h" status, computed in the browser from the current Paris time. */
 /** `split`: "Fermé" in colour then "· Ouvre…" in navy, without the dot (the agency card, from option C). */
-/** `dot` (with `split`): a small dot before the status, in the same green or orange. */
+/** `dot` (with `split`): a small dot before the status, in the same green or orange. `clock`: a clock icon instead, in that colour too. */
 /** `boxed`: a light tinted pill with a chevron (it opens the week's hours), so the status stands out on the hero's frosted glass. */
-export function OpenStatus({ hours, split = false, dot = false, boxed = false, colors }: {
+export function OpenStatus({ hours, split = false, dot = false, clock = false, boxed = false, colors }: {
   hours: WeekHours;
   split?: boolean;
   dot?: boolean;
+  clock?: boolean;
   boxed?: boolean;
   colors?: { open: string; closed: string };
 }) {
@@ -42,10 +44,13 @@ export function OpenStatus({ hours, split = false, dot = false, boxed = false, c
   if (split) {
     const [state, ...rest] = label.split(" · ");
     return (
-      <Typography role="status" sx={{ fontSize: 14, lineHeight: 1.45, color: tokens.bleuFonce, visibility: status ? "visible" : "hidden" }}>
+      <Typography role="status" sx={{ fontSize: 14, lineHeight: 1.45, color: tokens.bleuFonce, visibility: status ? "visible" : "hidden", ...(clock && { display: "flex", alignItems: "center", gap: 0.5 }) }}>
+        {clock && <ScheduleOutlined aria-hidden sx={{ fontSize: 19, color, flexShrink: 0 }} />}
         {dot && <Box component="span" aria-hidden sx={{ display: "inline-block", width: 6, height: 6, ml: "4px", mr: "8px", borderRadius: "50%", bgcolor: color, verticalAlign: "middle", position: "relative", top: "-1px" }} />}
-        <Box component="span" sx={{ fontWeight: 600, color }}>{state}</Box>
-        {rest.length > 0 && <> · {rest.join(" · ")}</>}
+        <Box component="span">
+          <Box component="span" sx={{ fontWeight: 600, color }}>{state}</Box>
+          {rest.length > 0 && <> · {rest.join(" · ")}</>}
+        </Box>
       </Typography>
     );
   }
