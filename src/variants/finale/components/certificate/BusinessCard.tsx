@@ -141,7 +141,8 @@ export function BusinessCard() {
         gridTemplateAreas: { xs: '"caption" "sign"', md: '"sign caption"' },
         gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1.05fr) minmax(0, 1fr)" },
         // Desktop: tall enough that the big Réputation score starts below the first screen (only the switch shows under the hero).
-        minHeight: { md: "clamp(460px, calc(100svh - 345px), 720px)" },
+        // 41 px more than V1, whose header was 41 px taller, so the page folds at the same place.
+        minHeight: { md: "clamp(501px, calc(100svh - 304px), 761px)" },
         p: { xs: 1.5, sm: 2, md: 3 },
         columnGap: 4,
         background: { xs: appGradientTall, md: "linear-gradient(147.875deg, rgb(143,178,219) 0%, rgb(201,219,240) 71.429%)" },
