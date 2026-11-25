@@ -284,7 +284,6 @@ export function BusinessCard() {
           >
             <OpenStatus hours={agency.hours} split dot />
             <Box component="span" sx={visuallyHidden}>{th("hoursLink")}</Box>
-            <ChevronRight aria-hidden />
           </Link>
           {/* Jumps to the map and hours in Nos Agences. */}
           <Link
