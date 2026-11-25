@@ -159,11 +159,19 @@ export function BusinessCard() {
         minHeight: { md: "clamp(501px, calc(100svh - 304px), 761px)" },
         p: { xs: 1.5, sm: 2, md: 3 },
         columnGap: 4,
-        background: { xs: appGradientTall, md: noPhoto ? "linear-gradient(120deg, #041b44 0%, #0b2d63 55%, #0f4a6e 100%)" : "linear-gradient(147.875deg, rgb(143,178,219) 0%, rgb(201,219,240) 71.429%)" },
+        background: { xs: appGradientTall, md: noPhoto ? "linear-gradient(125deg, #041b44 0%, #0c2a55 50%, #21406a 100%)" : "linear-gradient(147.875deg, rgb(143,178,219) 0%, rgb(201,219,240) 71.429%)" },
       }}
     >
-      {/* No photo: a large faded quotation mark behind the client's words. */}
-      {noPhoto && <Box aria-hidden sx={{ position: "absolute", zIndex: -1, right: { xs: 12, md: "4%" }, top: { xs: -28, md: "-6%" }, fontFamily: "Georgia, serif", fontSize: { xs: 200, md: 340 }, lineHeight: 1, color: "rgba(255,255,255,0.07)", pointerEvents: "none" }}>“</Box>}
+      {/* No photo (options 3 + 5): the agency's colour glows over the navy, its logo large and faded behind the client's words.
+          The colour is the logo's lime here; per agency it would come from its logo. */}
+      {noPhoto && (
+        <Box aria-hidden sx={{ position: "absolute", zIndex: -1, inset: 0, overflow: "hidden", pointerEvents: "none" }}>
+          <Box sx={{ position: "absolute", inset: 0, background: { xs: "radial-gradient(70% 45% at 85% 12%, rgba(181,204,24,0.38), transparent 70%)", md: "radial-gradient(55% 75% at 82% 45%, rgba(181,204,24,0.42), transparent 65%)" } }} />
+          <Box sx={{ position: "absolute", right: { xs: "-12%", md: "-4%" }, top: { xs: "-4%", md: "50%" }, height: { xs: 260, md: "120%" }, aspectRatio: "1", transform: { xs: "rotate(-8deg)", md: "translateY(-50%) rotate(-8deg)" }, opacity: 0.12, filter: "grayscale(0.2) blur(1px)" }}>
+            <Image src={agency.logo} alt="" fill sizes="600px" style={{ objectFit: "contain" }} />
+          </Box>
+        </Box>
+      )}
       {/* The team photo runs behind the whole hero on desktop; on phones and tablets it fills the top and fades into navy under the sign. */}
       {!noPhoto && <Box sx={{ position: "absolute", zIndex: -1, inset: { xs: "-70px 0 auto 0", sm: "0 0 auto 0", md: 0 }, height: { xs: 330, sm: 470, md: "auto" }, maskImage: { xs: "linear-gradient(#000 55%, transparent 100%)", md: "none" }, "& img": { objectPosition: { xs: "50% center", sm: "70% center" } } }}>
         <Image src={agency.coverPhoto} alt={t("coverAlt", { name: agency.name })} fill priority sizes="(min-width: 1200px) 1100px, 100vw" style={{ objectFit: "cover" }} />
