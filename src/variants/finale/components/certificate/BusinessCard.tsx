@@ -111,6 +111,43 @@ export function BusinessCard() {
   const nameRef = useRef<HTMLHeadingElement>(null);
   const scoreRef = useRef<HTMLButtonElement>(null);
   const reflectionRef = useRef<HTMLSpanElement>(null);
+  const heroRef = useRef<HTMLElement>(null);
+  const signRef = useRef<HTMLDivElement>(null);
+
+  // Phones: the first screen ends right under the Réputation switch (Tous les avis / Avis Contrôlés), whatever the phone's size and
+  // fonts: measured once the page has its fonts, the extra height goes to the photo. Only recomputed when the width changes
+  // (the address bar showing or hiding must not make the hero jump).
+  useEffect(() => {
+    const hero = heroRef.current;
+    const sign = signRef.current;
+    if (!hero || !sign) return;
+    let width = 0;
+    const fit = () => {
+      if (window.innerWidth >= 600) {
+        hero.style.removeProperty("--hero-fold-min");
+        hero.style.removeProperty("--hero-photo-height");
+        return;
+      }
+      const toggle = document.querySelector<HTMLElement>("#synthese [role=radiogroup]");
+      if (!toggle) return;
+      const heroBox = hero.getBoundingClientRect();
+      const heroTop = heroBox.top + window.scrollY;
+      const below = toggle.getBoundingClientRect().bottom - heroBox.bottom;
+      const minHeight = Math.round(window.innerHeight - 12 - below - heroTop);
+      hero.style.setProperty("--hero-fold-min", `${minHeight}px`);
+      // The photo reaches 80 px under the top of the card (fading out there), and starts 70 px above the hero.
+      requestAnimationFrame(() => hero.style.setProperty("--hero-photo-height", `${Math.round(sign.offsetTop + 150)}px`));
+    };
+    const onResize = () => {
+      if (window.innerWidth === width) return;
+      width = window.innerWidth;
+      fit();
+    };
+    onResize();
+    document.fonts?.ready.then(fit);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
   const summary = useMemo(() => summarize(reviewsForScore(reviews, scoreView, scoreCollaboratorId)), [reviews, scoreView, scoreCollaboratorId]);
   const average = isPublic(summary.count, agency.publicThreshold) ? summary.average : null;
   const visible = average !== null;
@@ -175,6 +212,7 @@ export function BusinessCard() {
   return (
     <Box
       component="article"
+      ref={heroRef}
       sx={{
         ...cardSx,
         position: "relative",
@@ -190,7 +228,7 @@ export function BusinessCard() {
         // 41 px more than V1, whose header was 41 px taller, so the page folds at the same place.
         minHeight: { md: "clamp(501px, calc(100svh - 304px), 761px)" },
         // Phones: the same idea, the first screen ends at the Réputation switch; the extra height goes to the photo (2026-11-25).
-        ...{ "@media (max-width: 599.95px)": { minHeight: "calc(100svh - 266px)", gridTemplateRows: "1fr auto" } },
+        ...{ "@media (max-width: 599.95px)": { minHeight: "var(--hero-fold-min, 0px)", gridTemplateRows: "1fr auto" } },
         p: { xs: 1.5, sm: 2, md: 3 },
         columnGap: 4,
         background: noPhoto ? auroraBackground : { xs: appGradientTall, md: "linear-gradient(147.875deg, rgb(143,178,219) 0%, rgb(201,219,240) 71.429%)" },
@@ -204,12 +242,13 @@ export function BusinessCard() {
         </Box>
       )}
       {/* The team photo runs behind the whole hero on desktop; on phones and tablets it fills the top and fades into navy under the sign. */}
-      {!noPhoto && <Box sx={{ position: "absolute", zIndex: -1, inset: { xs: "-70px 0 auto 0", sm: "0 0 auto 0", md: 0 }, height: { xs: "max(330px, calc(100svh - 400px))", sm: 470, md: "auto" }, maskImage: { xs: "linear-gradient(#000 55%, transparent 100%)", md: "none" }, "& img": { objectPosition: { xs: "50% center", sm: "70% center" } } }}>
+      {!noPhoto && <Box sx={{ position: "absolute", zIndex: -1, inset: { xs: "-70px 0 auto 0", sm: "0 0 auto 0", md: 0 }, height: { xs: "max(330px, var(--hero-photo-height, 330px))", sm: 470, md: "auto" }, maskImage: { xs: "linear-gradient(#000 70%, transparent 100%)", md: "none" }, "& img": { objectPosition: { xs: "50% center", sm: "70% center" } } }}>
         <Image src={agency.coverPhoto} alt={t("coverAlt", { name: agency.name })} fill priority sizes="(min-width: 1200px) 1100px, 100vw" style={{ objectFit: "cover" }} />
-        <Box aria-hidden sx={{ position: "absolute", inset: { xs: "72px 0 0 0", sm: 0 }, background: { xs: "linear-gradient(rgba(4,27,68,0.25) 0%, rgba(4,27,68,0.6) 30%, rgba(4,27,68,0.7) 55%, rgba(4,27,68,0.85) 100%)", md: "linear-gradient(rgba(4,27,68,0) 30%, rgba(4,27,68,0.45) 65%, rgba(4,27,68,0.8) 100%)" } }} />
+        <Box aria-hidden sx={{ position: "absolute", inset: { xs: "72px 0 0 0", sm: 0 }, background: { xs: "linear-gradient(rgba(4,27,68,0.1) 0%, rgba(4,27,68,0.1) 35%, rgba(4,27,68,0.6) 70%, rgba(4,27,68,0.85) 100%)", md: "linear-gradient(rgba(4,27,68,0) 30%, rgba(4,27,68,0.45) 65%, rgba(4,27,68,0.8) 100%)" } }} />
       </Box>}
 
       <Box
+        ref={signRef}
         sx={{
           gridArea: "sign",
           // Desktop (option 3, 2026-11-25): the card runs the full height of the hero; its four blocks (heading, score, info lines,
