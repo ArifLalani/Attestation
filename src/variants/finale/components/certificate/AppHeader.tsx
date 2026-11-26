@@ -203,7 +203,8 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
                   label={id === "agences" ? sector.tab : t(`tabs.${id}`)}
                   disableRipple
                   sx={{
-                    minWidth: 0, minHeight: { xs: 48, md: 64 }, px: { xs: 1, md: 2 }, py: 1.5, fontSize: { xs: 14, md: 15 }, lineHeight: "normal", fontWeight: 400,
+                    // Desktop: each tab as wide as its label plus an equal share of the rest, so « Établissement » (case 4) is never cut.
+                    minWidth: 0, flexBasis: { md: "auto" }, whiteSpace: "nowrap", minHeight: { xs: 48, md: 64 }, px: { xs: 1, md: 2 }, py: 1.5, fontSize: { xs: 14, md: 15 }, lineHeight: "normal", fontWeight: 400,
                     color: "rgba(255, 255, 255, 0.72)",
                     "&:hover": { color: tokens.blanc },
                     "&.Mui-selected": { color: tokens.blanc, fontWeight: 600 },
