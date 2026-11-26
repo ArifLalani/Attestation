@@ -229,37 +229,34 @@ export function AskYourAi() {
         background: appGradientWide,
         color: tokens.blanc,
         display: "grid",
-        gridTemplateColumns: { xs: "minmax(0, 1fr) auto auto", sm: "minmax(0, 1fr) auto", md: "minmax(0, 1fr) minmax(0, 1fr)" },
+        gridTemplateColumns: { xs: "minmax(0, 1fr) auto", sm: "minmax(0, 1fr) auto", md: "minmax(0, 1fr) minmax(0, 1fr)" },
         gridTemplateRows: { xs: "auto", sm: "auto auto", md: "1fr auto auto 1fr" },
-        gridTemplateAreas: { xs: '"pitch tiles chevron"', sm: '"pitch tiles" "pills pills"', md: '"pitch ." "pitch tiles" "pitch pills" "pitch ."' },
+        // The « Demandez à votre IA › » line nudges its chevron when the card is hovered.
+        "&:hover .ask-ai-link svg:last-of-type": { transform: "translateX(3px)" },
+        gridTemplateAreas: { xs: '"pitch tiles"', sm: '"pitch tiles" "pills pills"', md: '"pitch ." "pitch tiles" "pitch pills" "pitch ."' },
       }}
     >
-      {/* Phones (2026-11-25): no yellow button; the whole card opens the sheet, with a chevron on the right. The logo tiles stay
-          their own buttons above it (they open the sheet with that AI chosen). */}
+      {/* 2026-11-26: no yellow button and no chevron on the right, on every screen size: the whole card opens the sheet, and the
+          title is followed by « Demandez à votre IA › ». The logo tiles and the question pills stay their own buttons above it. */}
       <Box
         component="button"
         type="button"
         onClick={() => openAssistant()}
         aria-haspopup="dialog"
         aria-label={t("cta")}
-        sx={{ display: { xs: "block", sm: "none" }, position: "absolute", inset: 0, zIndex: 1, m: 0, p: 0, border: 0, borderRadius: "inherit", bgcolor: "transparent", cursor: "pointer", "&:focus-visible": { outline: "2px solid #6dd3c1", outlineOffset: -3 } }}
+        sx={{ display: "block", position: "absolute", inset: 0, zIndex: 1, m: 0, p: 0, border: 0, borderRadius: "inherit", bgcolor: "transparent", cursor: "pointer", "&:focus-visible": { outline: "2px solid #6dd3c1", outlineOffset: -3 } }}
       />
-      <ChevronRight aria-hidden sx={{ display: { xs: "block", sm: "none" }, gridArea: "chevron", alignSelf: "center", mr: 0.75, fontSize: 24, color: tokens.blanc, pointerEvents: "none" }} />
       {/* A soft green and blue glow behind the tiles. */}
       <Box aria-hidden sx={{ position: "absolute", top: { xs: "38%", md: "50%" }, right: { xs: 96, sm: 120, md: "25%" }, width: { xs: 220, md: 360 }, height: { xs: 220, md: 360 }, transform: "translate(50%, -50%)", borderRadius: "50%", background: "radial-gradient(circle, rgba(109, 211, 193, 0.28) 0, rgba(44, 149, 255, 0.12) 45%, transparent 70%)", pointerEvents: "none" }} />
 
       <Box sx={{ gridArea: "pitch", position: "relative", minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "center", gap: { xs: 1, md: 1.5 }, pl: { xs: 2, sm: 3, md: 4.5 }, pr: { xs: 0, md: 4.5 }, pt: { xs: 2.5, sm: 3, md: 4.5 }, pb: { xs: 2.5, sm: 2, md: 4.5 } }}>
-        <Typography id={titleId} component="h2" sx={{ display: "flex", alignItems: "center", gap: 0.75, fontSize: { xs: 10.5, md: 12 }, fontWeight: 600, letterSpacing: { xs: "0.04em", sm: "0.08em" }, whiteSpace: "nowrap", textTransform: "uppercase", color: "#6dd3c1" }}>
+        <Typography id={titleId} component="h2" sx={{ fontSize: { xs: 18, sm: 22, md: 28 }, "@media (max-width:374.95px)": { fontSize: 16 }, fontWeight: 700, lineHeight: 1.2, letterSpacing: { xs: "-0.3px", md: "-0.5px" }, textWrap: "balance" }}>{t("heading", { name: agency.name })}</Typography>
+        <Typography component="p" className="ask-ai-link" aria-hidden sx={{ display: "flex", alignItems: "center", gap: 0.75, fontSize: { xs: 10.5, md: 12 }, fontWeight: 600, letterSpacing: { xs: "0.04em", sm: "0.08em" }, whiteSpace: "nowrap", textTransform: "uppercase", color: "#6dd3c1", "& svg": { transition: "transform 150ms ease" } }}>
           <AutoAwesome sx={{ fontSize: 15 }} />
           {t("eyebrow")}
+          <ChevronRight sx={{ fontSize: 18, ml: -0.5 }} />
         </Typography>
-        <Typography component="h3" sx={{ fontSize: { xs: 18, sm: 22, md: 28 }, "@media (max-width:374.95px)": { fontSize: 16 }, fontWeight: 700, lineHeight: 1.2, letterSpacing: { xs: "-0.3px", md: "-0.5px" }, textWrap: "balance" }}>{t("heading", { name: agency.name })}</Typography>
         <Typography sx={{ display: { xs: "none", sm: "block" }, fontSize: 14, lineHeight: 1.6, color: "rgba(255, 255, 255, 0.82)" }}>Choisissez votre IA et une question : elle lit cette page ({reads}) et vous répond en quelques secondes.</Typography>
-        {/* Phones: the button takes the width of the text column, its label centred. */}
-        <CtaButton onClick={() => openAssistant()} aria-haspopup="dialog" sx={{ display: { xs: "none", sm: "inline-flex" }, mt: { xs: 0.5, md: 1.5 }, width: { xs: "100%", sm: "auto" }, alignSelf: { xs: "stretch", sm: "flex-start" }, justifyContent: "center", px: { xs: 1.75, md: 2.5 } }}>
-          <Box component="span" sx={{ display: { xs: "inline", sm: "none" } }}>{t("ctaShort")}</Box>
-          <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>{t("cta")}</Box>
-        </CtaButton>
       </Box>
 
       {/* Phones and tablets: 3 + 2 tiles (logos only on phones); from 900 px: the 5 in a row, every other one a little lower. */}
@@ -316,7 +313,7 @@ export function AskYourAi() {
         ))}
       </Box>
 
-      <Box component="ul" aria-label={t("questionsLabel")} sx={{ gridArea: "pills", position: "relative", listStyle: "none", m: 0, px: { sm: 3, md: 4.5 }, pt: { sm: 0.5, md: 3 }, pb: { sm: 3, md: 0 }, display: { xs: "none", sm: "flex" }, flexWrap: "wrap", justifyContent: { xs: "flex-start", md: "center" }, gap: 1 }}>
+      <Box component="ul" aria-label={t("questionsLabel")} sx={{ gridArea: "pills", position: "relative", zIndex: 2, listStyle: "none", m: 0, px: { sm: 3, md: 4.5 }, pt: { sm: 0.5, md: 3 }, pb: { sm: 3, md: 0 }, display: { xs: "none", sm: "flex" }, flexWrap: "wrap", justifyContent: { xs: "flex-start", md: "center" }, gap: 1 }}>
         {list.map((item) => (
           <li key={item.key}>
             <ButtonBase
