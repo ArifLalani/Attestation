@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import type { AiModel } from "@/components/ui/AiLogo";
-import { getAgencyDataset } from "@/data/reviews";
+import { getAgencyDataset, type AgencyDataset } from "@/data/reviews";
 import type { Agency, Collaborator, Review } from "@/data/types";
 import { emptyFilters, type ReviewFilters, type ReviewSort } from "@/lib/reviewFilters";
 import type { ScoreView } from "@/lib/scoring";
@@ -50,13 +50,16 @@ const CertificateContext = createContext<CertificateState | null>(null);
 export function CertificateProvider({
   agency,
   goToSection,
+  dataset,
   children,
 }: {
   agency: Agency;
   goToSection: (id: SectionId) => void;
+  /** Demo data that replaces the agency's own (the use cases of the version finale). */
+  dataset?: AgencyDataset;
   children: React.ReactNode;
 }) {
-  const { team, reviews } = useMemo(() => getAgencyDataset(agency), [agency]);
+  const { team, reviews } = useMemo(() => dataset ?? getAgencyDataset(agency), [agency, dataset]);
   const [filters, setFilters] = useState<ReviewFilters>(emptyFilters);
   // The Réputation switch and the "Type" filter are one setting: Avis Contrôlés lists only verified reviews,
   // and removing the "Contrôlé" filter brings the score back to Avis global.

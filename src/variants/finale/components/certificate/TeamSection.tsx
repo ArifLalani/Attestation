@@ -29,6 +29,7 @@ import { formatCount, formatScore } from "@/lib/format";
 import { normalize } from "@/lib/assistant";
 import { displayScore, isPublic, reviewsForScore, summarize } from "@/lib/scoring";
 import { tokens } from "@/theme/theme";
+import { useCaseData } from "@/variants/finale/cases";
 import { emptyFilters, useCertificate } from "@/components/certificate/CertificateContext";
 import { CardTitle } from "./ReputationCard";
 
@@ -162,6 +163,7 @@ export function TeamSection() {
   const tr = useTranslations("Reputation");
   const tv = useTranslations("VarianteFinale.team");
   const { team, reviews, agency, scoreView, setScoreCollaboratorId, setFilters, setReviewSort, goToSection } = useCertificate();
+  const { sector } = useCaseData();
   const [expanded, setExpanded] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string>();
@@ -201,7 +203,8 @@ export function TeamSection() {
 
   return (
     <Box component="section" aria-labelledby="team-title" sx={{ bgcolor: tokens.blanc, borderRadius: "20px", boxShadow: tokens.shadowCard, px: 1.5, py: { xs: 1.5, md: 2 }, display: "flex", flexDirection: "column", gap: 2 }}>
-      <CardTitle id="team-title" eyebrow={t("eyebrow")} heading={t("heading", { name: agency.name })} />
+      {/* Case 4: the team as the trade calls it (Nos négociateurs, Nos conseillers, Nos moniteurs, L’équipe). */}
+      <CardTitle id="team-title" eyebrow={sector.team === "Équipe" ? "L’équipe" : `Nos ${sector.team.toLowerCase()}`} heading={t("heading", { name: agency.name })} />
       {people.length > 4 && <TeamSearch value={query} onChange={setQuery} />}
       <Box id="team-grid" component="ul" sx={{ listStyle: "none", m: 0, p: 0, display: "grid", gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", md: "repeat(4, minmax(0, 1fr))" }, gap: { xs: 1, md: 2 } }}>
         {shown.map(({ person, summary }) => (

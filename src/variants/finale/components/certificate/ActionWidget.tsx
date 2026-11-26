@@ -24,6 +24,7 @@ import ScheduleOutlined from "@mui/icons-material/ScheduleOutlined";
 import StarRounded from "@mui/icons-material/StarRounded";
 import StorefrontOutlined from "@mui/icons-material/StorefrontOutlined";
 import Image from "next/image";
+import { LogoInitials } from "@/variants/finale/components/ui/LogoInitials";
 import { useTranslations } from "next-intl";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { opinionSystemLinks } from "@/data/opinionSystem";
@@ -201,7 +202,7 @@ function CardContent({ onDone, titleId, onLearnMore }: { onDone: () => void; tit
   const th = useTranslations("VarianteFinale.hero");
   const tb = useTranslations("Business");
   const ta = useTranslations("Actions");
-  const { agency, setPanel, openAssistant } = useCertificate();
+  const { agency, reviews, setPanel, openAssistant } = useCertificate();
   const { share, snackbar } = useShare();
 
   const showHours = () => {
@@ -214,7 +215,7 @@ function CardContent({ onDone, titleId, onLearnMore }: { onDone: () => void; tit
       <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto", overscrollBehavior: "contain", p: 2, display: "flex", flexDirection: "column", gap: 1.5 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.25 }}>
           <Box sx={{ position: "relative", width: 44, height: 44, flexShrink: 0, borderRadius: "10px", overflow: "hidden", border: `1px solid ${tokens.grisMoyen1}`, bgcolor: tokens.blanc }}>
-            <Image src={agency.logo} alt="" fill sizes="44px" style={{ objectFit: "contain", padding: 4 }} />
+            {agency.logo ? <Image src={agency.logo} alt="" fill sizes="44px" style={{ objectFit: "contain", padding: 4 }} /> : <LogoInitials name={agency.name} fontSize={16} />}
           </Box>
           <Box sx={{ minWidth: 0, flex: 1 }}>
             <Typography id={titleId} component="h2" sx={{ fontSize: 16, fontWeight: 700, lineHeight: 1.25, color: tokens.bleuFonce }}>{agency.name}</Typography>
@@ -225,10 +226,23 @@ function CardContent({ onDone, titleId, onLearnMore }: { onDone: () => void; tit
           </IconButton>
         </Box>
 
-        <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1 }}>
-          <ScoreTile view="global" onDone={onDone} />
-          <ScoreTile view="controle" onDone={onDone} />
-        </Box>
+        {reviews.length > 0 ? (
+          <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1 }}>
+            <ScoreTile view="global" onDone={onDone} />
+            <ScoreTile view="controle" onDone={onDone} />
+          </Box>
+        ) : (
+          // Case 3: no reviews yet, one tile instead of the two scores.
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, p: 1.5, borderRadius: "12px", bgcolor: "rgba(67, 182, 163, 0.12)" }}>
+            <Box sx={{ position: "relative", width: 40, height: 40, flexShrink: 0 }}>
+              <Image src="/figma/quality-badge.png" alt="" fill sizes="40px" unoptimized style={{ objectFit: "contain" }} />
+            </Box>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography sx={{ fontSize: 14, fontWeight: 700, color: tokens.bleuFonce }}>Nouvel adhérent · premiers avis à venir</Typography>
+              <Typography sx={{ fontSize: 12.5, color: "#2a8f7e" }}>Membre Opinion System depuis {agency.memberSince}</Typography>
+            </Box>
+          </Box>
+        )}
 
         {/* Comprendre les avis: opens the definitions sheet (on phones, on the list of all of them). */}
         <ButtonBase

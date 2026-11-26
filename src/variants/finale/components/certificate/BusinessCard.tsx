@@ -27,6 +27,20 @@ import { OpenStatus } from "./OpenStatus";
 import { useRelativeDate } from "@/variants/finale/components/reviews/ReviewCard";
 import { useNoPhotoPreview } from "@/variants/presentation";
 import { AgencySheet } from "./ActionWidget";
+import { LogoInitials } from "@/variants/finale/components/ui/LogoInitials";
+import { useCaseData, type SectorId } from "@/variants/finale/cases";
+import DirectionsCarOutlined from "@mui/icons-material/DirectionsCarOutlined";
+import HandshakeOutlined from "@mui/icons-material/HandshakeOutlined";
+import HomeWorkOutlined from "@mui/icons-material/HomeWorkOutlined";
+import ShieldOutlined from "@mui/icons-material/ShieldOutlined";
+
+/** Case 4: without a photo, a neutral sign of the trade over the « Aurore » background (never a real-estate image for another sector). */
+const sectorGlyph: Record<SectorId, typeof HomeWorkOutlined | null> = {
+  immobilier: null,
+  assurance: ShieldOutlined,
+  "auto-ecole": DirectionsCarOutlined,
+  services: HandshakeOutlined,
+};
 
 export const cardSx = {
   bgcolor: tokens.blanc,
@@ -106,6 +120,10 @@ export function BusinessCard() {
   const th = useTranslations("VarianteFinale.hero");
   const tr = useTranslations("Reputation.views");
   const { agency, reviews, scoreView, scoreCollaboratorId, setPanel, goToSection } = useCertificate();
+  const { sector, useCase } = useCaseData();
+  const Glyph = sectorGlyph[sector.id];
+  // Case 3: no reviews yet.
+  const noReviews = reviews.length === 0;
   const [copied, setCopied] = useState(false);
   const [nameOpen, setNameOpen] = useState(false);
   const nameRef = useRef<HTMLHeadingElement>(null);
@@ -157,11 +175,11 @@ export function BusinessCard() {
   // No photo (or the presentation's key 3): option 3, « La parole aux clients », a recent 5★ controlled review on the brand navy.
   const noPhoto = useNoPhotoPreview() || !agency.coverPhoto;
   const quote = useMemo(
-    () =>
+    () => useCase?.quote ? { ...useCase.quote, product: "vente" as const } :
       reviews
         .filter((review) => review.status === "controle" && review.rating >= 5 && review.comment && review.comment.length >= 40 && review.comment.length <= 170)
         .sort((a, b) => a.daysAgo - b.daysAgo)[0],
-    [reviews],
+    [reviews, useCase],
   );
   const quoteInitials = quote ? quote.authorName.split(" ").slice(0, 2).map((part) => part[0]).join("").toUpperCase() : "";
   const quoteAuthor = quote ? (([first, last]) => (last ? `${first} ${last[0]}.` : first))(quote.authorName.split(" ")) : "";
@@ -239,6 +257,7 @@ export function BusinessCard() {
         <Box aria-hidden sx={{ position: "absolute", zIndex: -1, inset: 0, overflow: "hidden", pointerEvents: "none" }}>
           <Box sx={{ position: "absolute", inset: "-20%", filter: "blur(30px)", background: "radial-gradient(40% 30% at 30% 20%, rgba(63,181,159,0.55), transparent 70%), radial-gradient(35% 40% at 75% 35%, rgba(44,149,255,0.5), transparent 70%), radial-gradient(45% 30% at 60% 85%, rgba(126,224,201,0.35), transparent 70%)" }} />
           <Box sx={{ position: "absolute", inset: 0, background: `${sparkles} 0 0/120px 120px` }} />
+          {Glyph && <Glyph sx={{ position: "absolute", right: { xs: -24, md: 40 }, top: { xs: 24, md: "50%" }, transform: { md: "translateY(-50%) rotate(-8deg)" }, fontSize: { xs: 180, md: 340 }, color: "rgba(255,255,255,0.13)" }} />}
         </Box>
       )}
       {/* The team photo runs behind the whole hero on desktop; on phones and tablets it fills the top and fades into navy under the sign. */}
@@ -282,16 +301,21 @@ export function BusinessCard() {
           }}
         >
           <Box sx={{ gridArea: "logo", alignSelf: "center", width: { xs: 42, md: 46 }, height: { xs: 42, md: 46 }, borderRadius: "10px", overflow: "hidden", bgcolor: tokens.blanc, border: `1px solid ${tokens.grisMoyen1}`, display: "grid", placeItems: "center" }}>
-            <Box sx={{ position: "relative", width: { xs: 36, md: 40 }, height: { xs: 32, md: 36 }, overflow: "hidden" }}>
-              <Box sx={{ position: "absolute", width: "133.24%", height: "145.41%", left: "-14.28%", top: "-22.96%" }}>
-                <Image src={agency.logo} alt="" fill sizes="48px" />
+            {agency.logo ? (
+              <Box sx={{ position: "relative", width: { xs: 36, md: 40 }, height: { xs: 32, md: 36 }, overflow: "hidden" }}>
+                <Box sx={{ position: "absolute", width: "133.24%", height: "145.41%", left: "-14.28%", top: "-22.96%" }}>
+                  <Image src={agency.logo} alt="" fill sizes="48px" />
+                </Box>
               </Box>
-            </Box>
+            ) : (
+              <LogoInitials name={agency.name} fontSize={{ xs: 16, md: 18 }} />
+            )}
           </Box>
           <Box sx={{ gridArea: "name", position: "relative", alignSelf: "center", minWidth: 0, fontSize: { xs: 24, md: 28 } }}>
-            <Typography ref={nameRef} component="h1" sx={{
+            <Typography ref={nameRef} component="h1" title={agency.name} sx={{
               fontSize: "inherit", fontWeight: 700, lineHeight: 1.08, letterSpacing: "-0.04em", color: tokens.bleuFonce,
-              display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", overflowWrap: "anywhere",
+              // One line, cut with … (Case 2, 2026-11-26): the full name is in the agency sheet the name opens.
+              whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
             }}>
               {agency.name}
             </Typography>
@@ -363,6 +387,24 @@ export function BusinessCard() {
           </ButtonBase>
         )}
 
+        {noReviews && (
+          // Case 3 (2026-11-26): no reviews yet. The score block says so, with the membership date and the label.
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, px: { xs: 2, sm: 2.25 }, py: { xs: 1.5, md: 2 }, borderRadius: "8px", border: "1px solid #b8dacf", background: "linear-gradient(117deg, #fff 6%, #f5fcfa 48%, #ddefe9)", boxShadow: "0 4px 10px rgba(21,44,80,0.09)" }}>
+            <Box sx={{ position: "relative", width: { xs: 44, md: 56 }, height: { xs: 44, md: 56 }, flexShrink: 0 }}>
+              <Image src="/figma/quality-badge.png" alt="" fill sizes="56px" unoptimized style={{ objectFit: "contain" }} />
+            </Box>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography sx={{ fontSize: { xs: 15, md: 17 }, fontWeight: 700, lineHeight: 1.25, color: tokens.bleuFonce }}>
+                Nouvel adhérent <Box component="span" sx={{ fontWeight: 500, color: "#456379" }}>· premiers avis à venir</Box>
+              </Typography>
+              <Typography sx={{ display: "flex", alignItems: "center", gap: 0.5, mt: 0.25, fontSize: { xs: 12.5, md: 13.5 }, color: "#456379" }}>
+                <Verified sx={{ fontSize: 16, color: tokens.vertOs }} />
+                Membre Opinion System depuis {agency.memberSince}
+              </Typography>
+            </Box>
+          </Box>
+        )}
+
         {/* Phones: the status, the address, then the website and the directions side by side.
             Desktop: one line each, with a thin divider and a chevron, straight on the glass (no panel). */}
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: { xs: "flex-start", md: "stretch" }, gap: { xs: 1, md: 0 }, ...infoLinesSx }}>
@@ -429,7 +471,7 @@ export function BusinessCard() {
         {/* At the foot of the card (2026-11-25). Side by side on every width, sharing the card width on phones and desktop; on phones the text is 13 px and the padding tighter so both fit on one line. */}
         <Box sx={{ display: "flex", gap: { xs: 1, sm: 1.5 }, "& > .MuiButton-root": { width: "auto", minWidth: 0, flex: { xs: "1 1 0", sm: "0 0 auto", md: "1 1 0" }, px: { xs: 1.25, sm: 3 }, fontSize: { xs: 13, sm: 14 }, whiteSpace: { xs: "nowrap", sm: "normal" } } }}>
           <CtaButton onClick={() => setPanel("contact")}>{th("talkShort")}</CtaButton>
-          <CtaButton variant="secondary" icon="icon-right-arrow" onClick={() => goToSection("avis")}>{th("read")}</CtaButton>
+          {!noReviews && <CtaButton variant="secondary" icon="icon-right-arrow" onClick={() => goToSection("avis")}>{th("read")}</CtaButton>}
         </Box>
       </Box>
 
@@ -453,7 +495,7 @@ export function BusinessCard() {
               <Typography sx={{ fontSize: { xs: 12, md: 15 }, fontWeight: 600, lineHeight: 1.3 }}>{quoteAuthor}</Typography>
               <Typography sx={{ display: "flex", alignItems: "center", gap: 0.5, fontSize: { xs: 10.5, md: 12.5 }, lineHeight: 1.3, color: "rgba(255,255,255,0.88)" }}>
                 <Verified sx={{ fontSize: { xs: 13, md: 15 }, color: "#7ee0c9" }} />
-                {th("quoteDetails", { product: tp(quote.product), date: relativeDate(quote.daysAgo) })}
+                {th("quoteDetails", { product: "productLabel" in quote ? quote.productLabel : tp(quote.product), date: relativeDate(quote.daysAgo) })}
               </Typography>
             </Box>
           </Box>
@@ -462,10 +504,10 @@ export function BusinessCard() {
       <Box sx={{ gridArea: "caption", containerType: "inline-size", alignSelf: "end", minHeight: { xs: 170, sm: 220, md: 0 }, display: "flex", flexDirection: "column", justifyContent: "flex-end", px: { xs: 1, md: 0 }, pr: { md: "64px" }, pb: { xs: 2, md: 0 }, color: tokens.blanc, textShadow: "0 1px 12px rgba(4,27,68,0.45)" }}>
         <Typography sx={{ display: "flex", alignItems: "center", gap: 0.75, mb: 0.75, fontSize: 13, lineHeight: "normal" }}>
           <Verified sx={{ fontSize: 18, color: tokens.vertOs }} />
-          {th("photoKicker")}
+          {sector.kicker}
         </Typography>
         {/* Always one line: the size follows the width of the photo (up to 20 px on phones, 26 px on desktop). Desktop keeps clear of the curved corner. */}
-        <Typography sx={{ whiteSpace: "nowrap", fontSize: { xs: "min(20px, 4.1cqi)", md: "min(26px, 4.1cqi)" }, fontWeight: 600, lineHeight: 1.2, letterSpacing: "-0.02em" }}>{th("photoTitle")}</Typography>
+        <Typography sx={{ whiteSpace: "nowrap", fontSize: { xs: "min(20px, 4.1cqi)", md: "min(26px, 4.1cqi)" }, fontWeight: 600, lineHeight: 1.2, letterSpacing: "-0.02em" }}>{sector.tagline}</Typography>
       </Box>
       )}
 

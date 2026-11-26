@@ -8,6 +8,8 @@ import Typography from "@mui/material/Typography";
 import StarRounded from "@mui/icons-material/StarRounded";
 import VerifiedRounded from "@mui/icons-material/VerifiedRounded";
 import Image from "next/image";
+import { LogoInitials } from "@/variants/finale/components/ui/LogoInitials";
+import { useCaseData } from "@/variants/finale/cases";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { opinionSystemLinks } from "@/data/opinionSystem";
@@ -73,6 +75,7 @@ function VerifiedBadge({ label }: { label: string }) {
 export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (id: SectionId) => void }) {
   const t = useTranslations("Header");
   const { agency, reviews, scoreView, scoreCollaboratorId } = useCertificate();
+  const { sector } = useCaseData();
   const [scrolled, setScrolled] = useState(false);
   const [company, setCompany] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
@@ -157,11 +160,15 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
               sx={{ ...fade(company), justifyContent: "flex-start", textAlign: "left", fontFamily: "inherit", borderRadius: "8px", "&.Mui-focusVisible": { outline: `2px solid ${underline}`, outlineOffset: 2 } }}
             >
               <Box sx={{ flex: "none", width: { xs: 28, md: 32 }, height: { xs: 28, md: 32 }, borderRadius: "7px", overflow: "hidden", bgcolor: tokens.blanc, display: "grid", placeItems: "center" }}>
-                <Box sx={{ position: "relative", width: "80%", height: "72%", overflow: "hidden" }}>
-                  <Box sx={{ position: "absolute", width: "133.24%", height: "145.41%", left: "-14.28%", top: "-22.96%" }}>
-                    <Image src={agency.logo} alt="" fill sizes="40px" />
+                {agency.logo ? (
+                  <Box sx={{ position: "relative", width: "80%", height: "72%", overflow: "hidden" }}>
+                    <Box sx={{ position: "absolute", width: "133.24%", height: "145.41%", left: "-14.28%", top: "-22.96%" }}>
+                      <Image src={agency.logo} alt="" fill sizes="40px" />
+                    </Box>
                   </Box>
-                </Box>
+                ) : (
+                  <LogoInitials name={agency.name} fontSize={{ xs: 11, md: 12.5 }} />
+                )}
               </Box>
               {/* The name, with the agency's city under it in small (2026-11-25). */}
               <Box component="span" sx={{ minWidth: 0, flex: { xs: 1, md: "0 1 auto" }, display: "flex", flexDirection: "column", lineHeight: 1.15 }}>
@@ -193,7 +200,7 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
                 <Tab
                   key={id}
                   value={id}
-                  label={t(`tabs.${id}`)}
+                  label={id === "agences" ? sector.tab : t(`tabs.${id}`)}
                   disableRipple
                   sx={{
                     minWidth: 0, minHeight: { xs: 48, md: 64 }, px: { xs: 1, md: 2 }, py: 1.5, fontSize: { xs: 14, md: 15 }, lineHeight: "normal", fontWeight: 400,

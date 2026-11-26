@@ -16,9 +16,11 @@ import { AiLogo, aiModels, type AiModel } from "@/variants/finale/components/ui/
 import { CtaButton } from "@/variants/finale/components/ui/CtaButton";
 import { appGradientWide } from "@/variants/finale/appGradient";
 import { ResponsiveSheet } from "@/variants/finale/components/ui/ResponsiveSheet";
+import { useAiQuestions, type AiQuestion } from "@/variants/finale/cases";
 
-const questions = ["reviews", "team", "agencies", "custom"] as const;
-type Question = (typeof questions)[number];
+// Case 7 (2026-11-26): the ready-made questions depend on the client (reviews, sector, team, agencies): see useAiQuestions.
+// « custom » is always offered last, in the sheet.
+type Question = string;
 const CUSTOM_MAX = 200;
 
 /**
@@ -79,18 +81,18 @@ function AiChoice({ value, onChange, labelId }: { value: AiModel; onChange: (mod
 }
 
 /** "2. Choisissez votre question": the 3 ready-made questions and "Poser ma propre question" (a field opens under it). */
-function QuestionChoice({ value, onChange, custom, onCustomChange, labelId }: { value: Question; onChange: (question: Question) => void; custom: string; onCustomChange: (text: string) => void; labelId: string }) {
+function QuestionChoice({ list, value, onChange, custom, onCustomChange, labelId }: { list: AiQuestion[]; value: Question; onChange: (question: Question) => void; custom: string; onCustomChange: (text: string) => void; labelId: string }) {
   const t = useTranslations("VarianteFinale.askAi");
   const name = useId();
   return (
     <Box role="radiogroup" aria-labelledby={labelId} sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-      {questions.map((question) => {
+      {[...list.map((item) => item.key), "custom"].map((question) => {
         const selected = value === question;
         return (
           <Box key={question} sx={{ borderRadius: "12px", border: `1px solid ${selected ? tokens.bleuFonce : tokens.grisMoyen1}`, boxShadow: selected ? `inset 0 0 0 1px ${tokens.bleuFonce}` : "none", bgcolor: selected ? tokens.grisClair1 : tokens.blanc, transition: "border-color 150ms ease, background-color 150ms ease" }}>
             <Box component="label" sx={{ display: "flex", alignItems: "center", gap: 0.5, pl: 0.5, pr: 1.5, minHeight: 52, cursor: "pointer" }}>
               <Radio name={name} checked={selected} onChange={() => onChange(question)} sx={{ color: tokens.gris, "&.Mui-checked": { color: tokens.bleuFonce } }} />
-              <Typography component="span" sx={{ fontSize: 15, fontWeight: selected ? 600 : 500, color: tokens.bleuFonce }}>{t(`questions.${question}`)}</Typography>
+              <Typography component="span" sx={{ fontSize: 15, fontWeight: selected ? 600 : 500, color: tokens.bleuFonce }}>{question === "custom" ? t("questions.custom") : list.find((item) => item.key === question)?.label}</Typography>
             </Box>
             {question === "custom" && selected && (
               <Box sx={{ px: 1.5, pb: 1.5 }}>
@@ -120,7 +122,7 @@ function QuestionChoice({ value, onChange, custom, onCustomChange, labelId }: { 
  * The "Demandez à votre IA" sheet: what it is, then the AI and the question; the button opens that AI
  * (its app on a phone where it is installed) with the question ready to send. Opened by the card and by the floating card.
  */
-function AskYourAiSheet({ question, setQuestion, onCopied }: { question: Question; setQuestion: (question: Question) => void; onCopied: () => void }) {
+function AskYourAiSheet({ list, reads, question, setQuestion, onCopied }: { list: AiQuestion[]; reads: string; question: Question; setQuestion: (question: Question) => void; onCopied: () => void }) {
   const t = useTranslations("VarianteFinale.askAi");
   const tm = useTranslations("Assistant.models");
   const { agency, panel, setPanel, assistantModel: model, setAssistantModel } = useCertificate();
@@ -133,7 +135,8 @@ function AskYourAiSheet({ question, setQuestion, onCopied }: { question: Questio
   // The page as published, without the hash or the query (built on the client, at the tap).
   const prompt = () => {
     const url = `${window.location.origin}${window.location.pathname}`;
-    return question === "custom" ? t("prompts.custom", { question: custom.trim(), name: agency.name, city: agency.city, url }) : t(`prompts.${question}`, { name: agency.name, city: agency.city, url });
+    const ready = list.find((item) => item.key === question) ?? list[0];
+    return question === "custom" ? t("prompts.custom", { question: custom.trim(), name: agency.name, city: agency.city, url }) : ready.prompt(url);
   };
   const build = aiUrl[model];
 
@@ -177,7 +180,7 @@ function AskYourAiSheet({ question, setQuestion, onCopied }: { question: Questio
     >
       <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2.5 }}>
         <Typography sx={{ fontSize: 14, lineHeight: 1.55, color: tokens.bleuFonce }}>
-          {t.rich("intro", { name: agency.name, city: agency.city, b: (chunks) => <Box component="strong" sx={{ fontWeight: 600, whiteSpace: "nowrap" }}>{chunks}</Box> })}
+          Posez vos questions sur <Box component="strong" sx={{ fontWeight: 600 }}>{agency.name} · {agency.city}</Box> à l’IA que vous utilisez déjà. Elle lit cette page ({reads}) pour vous répondre.
         </Typography>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1.25 }}>
           <Typography id={aiLabelId} component="h3" sx={stepTitle}>{t("stepAi")}</Typography>
@@ -185,7 +188,7 @@ function AskYourAiSheet({ question, setQuestion, onCopied }: { question: Questio
         </Box>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1.25 }}>
           <Typography id={questionLabelId} component="h3" sx={stepTitle}>{t("stepQuestion")}</Typography>
-          <QuestionChoice value={question} onChange={setQuestion} custom={custom} onCustomChange={setCustom} labelId={questionLabelId} />
+          <QuestionChoice list={list} value={question} onChange={setQuestion} custom={custom} onCustomChange={setCustom} labelId={questionLabelId} />
         </Box>
       </Box>
     </ResponsiveSheet>
@@ -195,7 +198,6 @@ function AskYourAiSheet({ question, setQuestion, onCopied }: { question: Questio
 /** Anchor of the card. */
 export const askYourAiId = "demander-ia";
 
-const readyMade = ["reviews", "team", "agencies"] as const;
 
 /**
  * "Demandez à votre IA" (its own card, under the hero), in the style of "Vous êtes une entreprise ?": side by side at every size,
@@ -207,8 +209,9 @@ const readyMade = ["reviews", "team", "agencies"] as const;
 export function AskYourAi() {
   const t = useTranslations("VarianteFinale.askAi");
   const tm = useTranslations("Assistant.models");
-  const { agency, openAssistant } = useCertificate();
-  const [question, setQuestion] = useState<Question>("reviews");
+  const { agency, team, reviews, openAssistant } = useCertificate();
+  const { questions: list, reads } = useAiQuestions(agency, team, reviews);
+  const [question, setQuestion] = useState<Question>(list[0].key);
   const [copied, setCopied] = useState(false);
   const titleId = useId();
 
@@ -251,7 +254,7 @@ export function AskYourAi() {
           {t("eyebrow")}
         </Typography>
         <Typography component="h3" sx={{ fontSize: { xs: 18, sm: 22, md: 28 }, "@media (max-width:374.95px)": { fontSize: 16 }, fontWeight: 700, lineHeight: 1.2, letterSpacing: { xs: "-0.3px", md: "-0.5px" }, textWrap: "balance" }}>{t("heading", { name: agency.name })}</Typography>
-        <Typography sx={{ display: { xs: "none", sm: "block" }, fontSize: 14, lineHeight: 1.6, color: "rgba(255, 255, 255, 0.82)" }}>{t("text")}</Typography>
+        <Typography sx={{ display: { xs: "none", sm: "block" }, fontSize: 14, lineHeight: 1.6, color: "rgba(255, 255, 255, 0.82)" }}>Choisissez votre IA et une question : elle lit cette page ({reads}) et vous répond en quelques secondes.</Typography>
         {/* Phones: the button takes the width of the text column, its label centred. */}
         <CtaButton onClick={() => openAssistant()} aria-haspopup="dialog" sx={{ display: { xs: "none", sm: "inline-flex" }, mt: { xs: 0.5, md: 1.5 }, width: { xs: "100%", sm: "auto" }, alignSelf: { xs: "stretch", sm: "flex-start" }, justifyContent: "center", px: { xs: 1.75, md: 2.5 } }}>
           <Box component="span" sx={{ display: { xs: "inline", sm: "none" } }}>{t("ctaShort")}</Box>
@@ -314,20 +317,20 @@ export function AskYourAi() {
       </Box>
 
       <Box component="ul" aria-label={t("questionsLabel")} sx={{ gridArea: "pills", position: "relative", listStyle: "none", m: 0, px: { sm: 3, md: 4.5 }, pt: { sm: 0.5, md: 3 }, pb: { sm: 3, md: 0 }, display: { xs: "none", sm: "flex" }, flexWrap: "wrap", justifyContent: { xs: "flex-start", md: "center" }, gap: 1 }}>
-        {readyMade.map((item) => (
-          <li key={item}>
+        {list.map((item) => (
+          <li key={item.key}>
             <ButtonBase
-              onClick={() => { setQuestion(item); openAssistant(); }}
+              onClick={() => { setQuestion(item.key); openAssistant(); }}
               aria-haspopup="dialog"
               sx={{ px: { xs: 1.25, md: 1.5 }, py: { xs: 0.75, md: 1 }, borderRadius: "8px", fontFamily: "inherit", fontSize: { xs: 12, md: 12.5 }, fontWeight: 500, color: tokens.blanc, bgcolor: "rgba(255, 255, 255, 0.1)", border: "1px solid rgba(255, 255, 255, 0.22)", transition: "background-color 150ms ease", "&:hover": { bgcolor: "rgba(255, 255, 255, 0.18)" }, "&.Mui-focusVisible": { outline: "3px solid #6dd3c1", outlineOffset: 2 } }}
             >
-              {t(`questions.${item}`)}
+              {item.label}
             </ButtonBase>
           </li>
         ))}
       </Box>
 
-      <AskYourAiSheet question={question} setQuestion={setQuestion} onCopied={() => setCopied(true)} />
+      <AskYourAiSheet list={list} reads={reads} question={question} setQuestion={setQuestion} onCopied={() => setCopied(true)} />
       <Snackbar open={copied} autoHideDuration={4000} onClose={() => setCopied(false)} message={t("copied")} anchorOrigin={{ vertical: "bottom", horizontal: "center" }} />
     </Box>
   );
