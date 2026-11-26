@@ -91,19 +91,11 @@ function useShare() {
   return { share, snackbar };
 }
 
-/** The closed button: ★ 4,3 and the yellow arrow (turned over when open). The open status shows only when there is no score
- *  (a new member without reviews), so the button is never empty; the hours stay in the card. */
+/** The closed button: ★ 4,3 and the yellow arrow (turned over when open); « En savoir plus » when there is no score
+ *  (a new member without reviews). The hours are in the card. */
 function PillContent({ open }: { open: boolean }) {
   const t = useTranslations("VarianteFinale.widget");
-  const th = useTranslations("Hours");
-  const { agency } = useCertificate();
   const { summary, visible, controle } = useActiveScore();
-  const now = useNow();
-  const status = now ? openingStatus(agency.hours, now, undefined, specialDaysAround(now)) : null;
-  const statusColor = status?.open ? "#6dd3c1" : tokens.error3;
-  // « Ouvert – 19 h » (closing time) or « Fermé – 9 h » (reopening time, with the day when it is not today: « Fermé – lun. 9 h »).
-  const time = !status ? null : status.open ? frenchTime(status.closesAt) : status.opensAt === null ? null
-    : status.opensDay === null ? frenchTime(status.opensAt) : `${th(`days.${status.opensDay}`).slice(0, 3)}. ${frenchTime(status.opensAt)}`;
   return (
     <>
       {visible && (
@@ -112,13 +104,7 @@ function PillContent({ open }: { open: boolean }) {
           {formatScore(summary.average!)}
         </Box>
       )}
-      {!visible && (
-        <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.75, fontSize: 13, fontWeight: 600, color: statusColor, visibility: status ? "visible" : "hidden" }}>
-          <ScheduleOutlined aria-hidden sx={{ fontSize: 20, color: statusColor, flexShrink: 0 }} />
-          {status?.open ? t("open") : th("closed")}
-          {time && <Box component="span" sx={{ fontWeight: 500, whiteSpace: "nowrap" }}>– {time}</Box>}
-        </Box>
-      )}
+      {!visible && <Box component="span" sx={{ fontSize: 15, fontWeight: 600, color: tokens.blanc }}>{t("learnMore")}</Box>}
       <Box component="span" sx={{ ml: "auto", width: 40, height: 40, flexShrink: 0, borderRadius: "50%", bgcolor: tokens.jaune400, color: tokens.bleuFonce, display: "grid", placeItems: "center" }}>
         <ExpandLessRounded sx={{ transform: open ? "rotate(180deg)" : "none", transition: `transform ${ease}` }} />
       </Box>
