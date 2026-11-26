@@ -44,8 +44,8 @@ const networks = [
 const focusSx = { "&.Mui-focusVisible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: 2 } } as const;
 
 /** A job or agency line in the profile: grey text with a 15 px outlined icon before it. */
-// The icon sits inline with the first word, so a long job that wraps stays centred with its icon.
-const profileMetaSx = { fontSize: 12.5, color: tokens.gris, lineHeight: 1.3, "& svg": { fontSize: 15, verticalAlign: "-3px", mr: "4px" } } as const;
+// Left-aligned, the icons in one column; a long job wraps under its own text, not under the icon.
+const profileMetaSx = { display: "flex", alignItems: "flex-start", gap: "4px", textAlign: "left", fontSize: 12.5, color: tokens.gris, lineHeight: 1.3, "& svg": { fontSize: 15, flexShrink: 0, mt: "1px" } } as const;
 
 /** Instagram, Facebook, LinkedIn in one dark blue (from option G). */
 function SocialLinks({ person }: { person: Collaborator }) {
@@ -270,8 +270,10 @@ export function TeamSection() {
                 <StaffAvatar person={selected.person} size={72} />
                 <Typography sx={{ mt: 0.75, fontSize: 17, fontWeight: 600, lineHeight: 1.2, color: tokens.bleuFonce }}>{selected.person.name}</Typography>
                 {/* The job, then the agency, each with its outlined icon (briefcase, map pin as in Nos agences); the scores on the right carry the numbers of reviews. */}
-                <Typography sx={profileMetaSx}><WorkOutlineOutlined aria-hidden />{selected.person.role}</Typography>
-                <Typography sx={profileMetaSx}><PlaceOutlined aria-hidden />{tv("agency")} {agency.city}</Typography>
+                <Box sx={{ maxWidth: "100%", display: "flex", flexDirection: "column", gap: 0.25 }}>
+                  <Typography sx={profileMetaSx}><WorkOutlineOutlined aria-hidden />{selected.person.role}</Typography>
+                  <Typography sx={profileMetaSx}><PlaceOutlined aria-hidden />{tv("agency")} {agency.city}</Typography>
+                </Box>
               </Box>
               <Box aria-hidden sx={{ alignSelf: "stretch", bgcolor: tokens.grisMoyen1 }} />
               <Box component="dl" sx={{ m: 0, display: "flex", flexDirection: "column", gap: 0.5, minWidth: 0 }}>
