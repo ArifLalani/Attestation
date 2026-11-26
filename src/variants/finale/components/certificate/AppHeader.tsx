@@ -180,7 +180,8 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
                 </Typography>
               </Box>
               {average !== null && (
-                <Box component="span" sx={{ flex: "none", display: "inline-flex", alignItems: "center", gap: 0.25, fontSize: 14, fontWeight: 700, color: tokens.blanc }}>
+                // Desktop: level with the company name (its line is 7 px above the middle of the name and the city), not centred on both (2026-11-26).
+                <Box component="span" sx={{ flex: "none", display: "inline-flex", alignItems: "center", position: "relative", top: { md: "-7px" }, gap: 0.25, fontSize: 14, fontWeight: 700, color: tokens.blanc }}>
                   <StarRounded aria-hidden sx={{ fontSize: 18, color: tokens.rating }} />
                   {formatScore(average)}
                 </Box>
