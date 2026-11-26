@@ -324,7 +324,7 @@ export function DefinitionsSheet({ open, onClose, initial, review, view = "globa
             aria-controls="definitions-menu"
             sx={{ m: -1, mr: 0, color: menuOpen ? tokens.bleu600 : tokens.bleuFonce, bgcolor: menuOpen ? tokens.bleu10 : "transparent", borderRadius: "8px", "&:hover": { bgcolor: tokens.bleu10 } }}
           >
-            {/* A side panel on the left: › opens the menu (the sheet widens), ‹ closes it. */}
+            {/* A side panel on the left: ‹ while collapsed (the sheet widens to the left), › once open. */}
             <PanelIcon open={menuOpen} sx={{ fontSize: 20 }} />
           </IconButton>
         }
