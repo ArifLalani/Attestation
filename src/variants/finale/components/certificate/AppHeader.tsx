@@ -70,7 +70,7 @@ function VerifiedBadge({ label }: { label: string }) {
  * Header, option 1 « swap on scroll » (stakeholder review, 2026-11-24). One navy bar, always pinned.
  * At the top of the page it shows the Opinion System logo and « Réputation vérifiée »; once the company's name has scrolled away
  * that row cross-fades to the company (logo, name, score), tapping it goes back to the top. The tabs stay: under that row on phones,
- * beside it on desktop (with the Opinion System logo moving to the right end once scrolled).
+ * beside it on desktop (with « Réputation vérifiée » staying at the right end).
  */
 export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (id: SectionId) => void }) {
   const t = useTranslations("Header");
@@ -216,14 +216,9 @@ export function AppHeader({ active, onSelect }: { active: SectionId; onSelect: (
             </Tabs>
           </Box>
 
-          {/* Desktop, right end: « Réputation vérifiée » at the top of the page, the Opinion System logo once scrolled. */}
-          <Box sx={{ display: { xs: "none", md: "block" }, position: "relative", flex: "0 0 340px", height: 64 }}>
-            <Box sx={{ ...fade(!company), justifyContent: "flex-end" }} aria-hidden={company || undefined}>
-              <VerifiedBadge label={t("badge")} />
-            </Box>
-            <Box sx={{ ...fade(company), justifyContent: "flex-end" }} aria-hidden={!company || undefined}>
-              <OsLogo label={t("homeLabel")} small tabIndex={company ? undefined : -1} />
-            </Box>
+          {/* Desktop, right end: « Réputation vérifiée », at the top of the page and once scrolled. */}
+          <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center", justifyContent: "flex-end", flex: "0 0 340px", height: 64 }}>
+            <VerifiedBadge label={t("badge")} />
           </Box>
         </Box>
       </Box>
