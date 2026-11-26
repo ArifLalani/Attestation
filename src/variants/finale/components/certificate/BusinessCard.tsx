@@ -193,18 +193,22 @@ export function BusinessCard() {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (!card || !reflection || reducedMotion.matches) return;
 
+    // A constant shine (2026-11-26): the light sweeps across the box (2.1 s), then rests 2.9 s, again and again. It runs only
+    // while the box is on screen, and not at all for people who turn animations off.
     let animation: Animation | undefined;
     const observer = new IntersectionObserver(([entry]) => {
-      if (!entry || entry.intersectionRatio < 0.4) return;
-      observer.disconnect();
+      if (!entry) return;
+      if (entry.intersectionRatio < 0.4) { animation?.pause(); return; }
       if (reducedMotion.matches) return;
+      if (animation) { animation.play(); return; }
       animation = reflection.animate([
-        { opacity: 0, transform: "translateX(-78%)" },
-        { opacity: 0.85, offset: 0.24 },
-        { opacity: 0.72, offset: 0.7 },
+        { opacity: 0, transform: "translateX(-78%)", easing: "cubic-bezier(.25,.6,.45,1)" },
+        { opacity: 0.85, transform: "translateX(-40%)", offset: 0.1 },
+        { opacity: 0.72, transform: "translateX(31%)", offset: 0.29 },
+        { opacity: 0, transform: "translateX(78%)", offset: 0.42 },
         { opacity: 0, transform: "translateX(78%)" },
-      ], { duration: 2100, easing: "cubic-bezier(.25,.6,.45,1)" });
-    }, { threshold: 0.4 });
+      ], { duration: 5000, iterations: Infinity });
+    }, { threshold: [0, 0.4] });
     observer.observe(card);
 
     return () => {
