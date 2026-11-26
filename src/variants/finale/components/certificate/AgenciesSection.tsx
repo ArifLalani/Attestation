@@ -4,6 +4,8 @@ import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import Collapse from "@mui/material/Collapse";
 import Typography from "@mui/material/Typography";
+import PhoneOutlined from "@mui/icons-material/PhoneOutlined";
+import PlaceOutlined from "@mui/icons-material/PlaceOutlined";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
@@ -19,7 +21,7 @@ import { tokens } from "@/theme/theme";
 import { emptyFilters, useCertificate } from "@/components/certificate/CertificateContext";
 import { AgencyPhotos } from "./AgencyPhotos";
 import { HoursSheet } from "./HoursSheet";
-import { OpenStatus } from "./OpenStatus";
+import { OpenStatus, StatusClock } from "./OpenStatus";
 import { CardTitle } from "./ReputationCard";
 
 const AgencyMap = dynamic(() => import("./AgencyMap"), { ssr: false });
@@ -36,6 +38,9 @@ const agencyActionSx = {
   "&:focus-visible": { outline: `2px solid ${tokens.bleu600}`, outlineOffset: -2 },
 } as const;
 
+/** The same icons as the hero card: outlined, 20 px, navy. */
+const agencyIconSx = { fontSize: 20, flexShrink: 0, color: tokens.bleuFonce } as const;
+
 const agencyActionLabelSx = { flex: 1, minWidth: 0, overflowWrap: "anywhere" } as const;
 
 /** The open/closed line of the agency shown; it opens the Horaires sheet (today, the week, holidays and other exceptions). */
@@ -45,7 +50,7 @@ function OpeningHours({ agency }: { agency: Agency }) {
   return (
     <>
       <CtaButton variant="secondary" icon="icon-right-arrow" onClick={() => setOpen(true)} aria-haspopup="dialog" aria-label={th("open")} sx={agencyActionSx}>
-        <FigmaIcon name="agency-clock" />
+        <StatusClock hours={agency.hours} />
         <Box sx={agencyActionLabelSx}><OpenStatus hours={agency.hours} split /></Box>
       </CtaButton>
       <HoursSheet agency={agency} open={open} onClose={() => setOpen(false)} />
@@ -123,11 +128,11 @@ export function AgenciesSection() {
               aria-label={t("addressMapsLink", { address: selected.address })}
               sx={agencyActionSx}
             >
-              <FigmaIcon name="agency-pin" />
+              <PlaceOutlined aria-hidden sx={agencyIconSx} />
               <Box component="span" sx={agencyActionLabelSx}>{selected.address}</Box>
             </CtaButton>
             <CtaButton variant="secondary" icon="icon-right-arrow" href={`tel:${selected.phone.replace(/\s/g, "")}`} sx={agencyActionSx}>
-              <FigmaIcon name="agency-phone" />
+              <PhoneOutlined aria-hidden sx={agencyIconSx} />
               <Box component="span" sx={agencyActionLabelSx}>{selected.phone}</Box>
             </CtaButton>
             <OpeningHours key={`hours-${selected.id}`} agency={selected} />
@@ -141,7 +146,7 @@ export function AgenciesSection() {
               } : undefined}
               sx={agencyActionSx}
             >
-              <FigmaIcon name="rv-all" size={18} />
+              <FigmaIcon name="rv-all" size={20} />
               <Box component="span" sx={{ ...agencyActionLabelSx, display: "flex", alignItems: "center", flexWrap: "wrap", gap: 0.75 }}>
                 {isPublic(globalSummary.count, selected.publicThreshold) && globalSummary.average !== null && (
                   <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.25, px: 0.75, border: `1px solid ${tokens.grisMoyen1}`, borderRadius: "6px" }}>

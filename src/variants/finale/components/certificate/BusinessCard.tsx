@@ -78,7 +78,7 @@ const metaLinkSx = {
   textDecoration: "none",
   textUnderlineOffset: "3px",
   "&:hover": { textDecoration: "underline" },
-  "& .MuiSvgIcon-root": { fontSize: 19 },
+  "& .MuiSvgIcon-root": { fontSize: 20 },
 } as const;
 
 function directionsUrl(address: string) {

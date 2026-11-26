@@ -20,6 +20,7 @@ import ExpandLessRounded from "@mui/icons-material/ExpandLessRounded";
 import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import LanguageOutlined from "@mui/icons-material/LanguageOutlined";
 import RateReviewOutlined from "@mui/icons-material/RateReviewOutlined";
+import ScheduleOutlined from "@mui/icons-material/ScheduleOutlined";
 import StarRounded from "@mui/icons-material/StarRounded";
 import StorefrontOutlined from "@mui/icons-material/StorefrontOutlined";
 import Image from "next/image";
@@ -110,7 +111,7 @@ function PillContent({ open }: { open: boolean }) {
         </Box>
       )}
       <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.75, fontSize: 13, fontWeight: 600, color: statusColor, visibility: status ? "visible" : "hidden" }}>
-        <Box component="span" sx={{ width: 8, height: 8, borderRadius: "50%", bgcolor: statusColor, boxShadow: `0 0 0 3px ${status?.open ? "rgba(67, 182, 163, 0.3)" : "rgba(252, 101, 48, 0.3)"}` }} />
+        <ScheduleOutlined aria-hidden sx={{ fontSize: 20, color: statusColor, flexShrink: 0 }} />
         {status?.open ? t("open") : th("closed")}
         {time && <Box component="span" sx={{ fontWeight: 500, whiteSpace: "nowrap" }}>– {time}</Box>}
       </Box>

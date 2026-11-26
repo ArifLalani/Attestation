@@ -5,7 +5,8 @@ import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { FigmaIcon } from "@/variants/finale/components/ui/FigmaIcon";
+import EmailOutlined from "@mui/icons-material/EmailOutlined";
+import PhoneOutlined from "@mui/icons-material/PhoneOutlined";
 import { opinionSystemLinks as links } from "@/data/opinionSystem";
 import { tokens } from "@/theme/theme";
 import { contentColumnSx } from "./AppHeader";
@@ -39,9 +40,9 @@ export function CertificateFooter() {
           <Typography sx={{ fontSize: 13, color: tokens.gris, lineHeight: 1.5, maxWidth: 320 }}>{t("description")}</Typography>
         </Box>
         <Box className="footer-wide" sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 1.5, pb: { xs: 1, md: 0 } }}>
-          {[{ key: "email", value: "contact@opinionsystem.fr", href: "mailto:contact@opinionsystem.fr", icon: "footer-email" }, { key: "phone", value: "+33 4 78 24 00 00", href: "tel:+33478240000", icon: "agency-phone" }].map((contact) => (
+          {[{ key: "email", value: "contact@opinionsystem.fr", href: "mailto:contact@opinionsystem.fr" }, { key: "phone", value: "+33 4 78 24 00 00", href: "tel:+33478240000" }].map((contact) => (
             <Link key={contact.key} href={contact.href} underline="hover" sx={{ ...footerLinkSx, display: "inline-flex", alignItems: "center", gap: 1, fontWeight: 600, overflowWrap: "anywhere" }}>
-              <FigmaIcon name={contact.icon as "footer-email" | "agency-phone"} />
+              {contact.key === "email" ? <EmailOutlined aria-hidden sx={{ fontSize: 20, color: tokens.bleuFonce }} /> : <PhoneOutlined aria-hidden sx={{ fontSize: 20, color: tokens.bleuFonce }} />}
               {contact.value}
             </Link>
           ))}

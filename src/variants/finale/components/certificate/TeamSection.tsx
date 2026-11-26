@@ -307,7 +307,7 @@ export function TeamSection() {
                 href={`mailto:${selected.person.email}`}
                 sx={{ maxWidth: "100%", height: 40, gap: 1, px: 1.75, borderRadius: "8px", bgcolor: tokens.bleu10, color: tokens.bleuFonce, fontFamily: "inherit", fontSize: 14, fontWeight: 600, "&:hover": { bgcolor: tokens.bleu20 }, ...focusSx }}
               >
-                <EmailOutlined sx={{ fontSize: 18 }} />
+                <EmailOutlined sx={{ fontSize: 20 }} />
                 <Box component="span" sx={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{selected.person.email}</Box>
               </ButtonBase>
               <SocialLinks person={selected.person} />

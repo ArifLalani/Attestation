@@ -84,7 +84,7 @@ export function HoursSheet({ agency, open, onClose }: { agency: Agency; open: bo
             aria-label={ta("addressMapsLink", { address: agency.address })}
             sx={{ display: "inline-flex", alignItems: "flex-start", gap: 0.5, mt: 0.5, fontSize: 14, color: tokens.bleuFonce, textUnderlineOffset: "3px" }}
           >
-            <PlaceOutlined sx={{ fontSize: 18, flexShrink: 0 }} />
+            <PlaceOutlined sx={{ fontSize: 20, flexShrink: 0 }} />
             {agency.address}
           </Link>
         </Box>

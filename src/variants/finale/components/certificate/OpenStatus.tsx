@@ -44,7 +44,7 @@ export function OpenStatus({ hours, split = false, dot = false, clock = false, b
     const [state, ...rest] = label.split(" · ");
     return (
       <Typography role="status" sx={{ fontSize: 14, lineHeight: 1.45, color: tokens.bleuFonce, visibility: status ? "visible" : "hidden", ...(clock && { display: "flex", alignItems: "center", gap: 0.5 }) }}>
-        {clock && <ScheduleOutlined aria-hidden sx={{ fontSize: 19, color, flexShrink: 0 }} />}
+        {clock && <ScheduleOutlined aria-hidden sx={{ fontSize: 20, color, flexShrink: 0 }} />}
         {dot && <Box component="span" aria-hidden sx={{ display: "inline-block", width: 6, height: 6, ml: "4px", mr: "8px", borderRadius: "50%", bgcolor: color, verticalAlign: "middle", position: "relative", top: "-1px" }} />}
         <Box component="span">
           <Box component="span" sx={{ fontWeight: 600, color }}>{state}</Box>
@@ -67,4 +67,12 @@ export function OpenStatus({ hours, split = false, dot = false, clock = false, b
       {boxed && <ChevronRight aria-hidden sx={{ fontSize: 20, color, mx: "-2px" }} />}
     </Box>
   );
+}
+
+/** The hero's clock on its own (20 px), in the status colour: green when open, orange when closed. For rows that hold their own icon slot. */
+export function StatusClock({ hours, size = 20 }: { hours: WeekHours; size?: number }) {
+  const now = useNow();
+  const status = now ? openingStatus(hours, now, undefined, specialDaysAround(now)) : null;
+  const color = status && !status.open ? tokens.error3 : tokens.vertOs;
+  return <ScheduleOutlined aria-hidden sx={{ fontSize: size, color, flexShrink: 0, visibility: status ? "visible" : "hidden" }} />;
 }
