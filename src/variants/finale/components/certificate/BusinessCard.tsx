@@ -375,7 +375,7 @@ export function BusinessCard() {
               icon={<StarRounded fontSize="inherit" />} emptyIcon={<StarRounded fontSize="inherit" />}
               sx={{ gridArea: "stars", alignSelf: "end", ml: { xs: "-2px", md: 0 }, mt: { md: 1 }, fontSize: { xs: "clamp(22px, 10cqi, 34px)", md: 34 }, "& .MuiRating-iconFilled": { color: tokens.rating }, "& .MuiRating-iconEmpty": { color: "#8ea6ba", opacity: 0.48 } }}
             />
-            <ChevronRight aria-hidden className="score-chevron" sx={{ gridArea: { xs: "chevron", md: "auto" }, position: { md: "absolute" }, top: { md: 14 }, right: { md: 12 }, fontSize: 21, transition: "transform 150ms ease" }} />
+            <ChevronRight aria-hidden className="score-chevron" sx={{ gridArea: { xs: "chevron", md: "auto" }, position: { md: "absolute" }, top: { md: "calc(50% - 10.5px)" }, right: { md: 12 }, fontSize: 21, transition: "transform 150ms ease" }} />
             <Box component="span" sx={{ gridArea: "caption", alignSelf: "start", display: "flex", alignItems: "center", flexWrap: "nowrap", columnGap: 0.5, minWidth: 0, fontSize: { xs: "clamp(12px, 4cqi, 14px)", md: 14.5 }, lineHeight: 1.3, color: "#456379" }}>
               <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, fontWeight: 600, color: tokens.bleuFonce, whiteSpace: "nowrap" }}>
                 <FigmaIcon name={controlled ? "rv-controle" : "rv-all"} size={18} />
