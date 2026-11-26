@@ -7,10 +7,9 @@ import ArrowBackRounded from "@mui/icons-material/ArrowBackRounded";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ChevronRight from "@mui/icons-material/ChevronRight";
-import CloseFullscreenRounded from "@mui/icons-material/CloseFullscreenRounded";
-import OpenInFullRounded from "@mui/icons-material/OpenInFullRounded";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { PanelIcon } from "@/variants/finale/components/ui/PanelIcon";
 import { useCertificate } from "@/components/certificate/CertificateContext";
 import { ResponsiveSheet } from "@/variants/finale/components/ui/ResponsiveSheet";
 import type { Review, ReviewSource } from "@/data/types";
@@ -325,8 +324,8 @@ export function DefinitionsSheet({ open, onClose, initial, review, view = "globa
             aria-controls="definitions-menu"
             sx={{ m: -1, mr: 0, color: menuOpen ? tokens.bleu600 : tokens.bleuFonce, bgcolor: menuOpen ? tokens.bleu10 : "transparent", borderRadius: "8px", "&:hover": { bgcolor: tokens.bleu10 } }}
           >
-            {/* Two diagonal arrows: outwards to widen the sheet with the menu, inwards to narrow it back. */}
-            {menuOpen ? <CloseFullscreenRounded sx={{ fontSize: 20 }} /> : <OpenInFullRounded sx={{ fontSize: 20 }} />}
+            {/* A side panel on the left: › opens the menu (the sheet widens), ‹ closes it. */}
+            <PanelIcon open={menuOpen} sx={{ fontSize: 20 }} />
           </IconButton>
         }
       >
