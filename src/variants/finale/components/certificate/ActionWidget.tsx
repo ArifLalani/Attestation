@@ -91,7 +91,8 @@ function useShare() {
   return { share, snackbar };
 }
 
-/** The closed button: ★ 4,3 · ● Ouvert – 19 h, and the yellow arrow (turned over when open). */
+/** The closed button: ★ 4,3 and the yellow arrow (turned over when open). The open status shows only when there is no score
+ *  (a new member without reviews), so the button is never empty; the hours stay in the card. */
 function PillContent({ open }: { open: boolean }) {
   const t = useTranslations("VarianteFinale.widget");
   const th = useTranslations("Hours");
@@ -111,11 +112,13 @@ function PillContent({ open }: { open: boolean }) {
           {formatScore(summary.average!)}
         </Box>
       )}
-      <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.75, fontSize: 13, fontWeight: 600, color: statusColor, visibility: status ? "visible" : "hidden" }}>
-        <ScheduleOutlined aria-hidden sx={{ fontSize: 20, color: statusColor, flexShrink: 0 }} />
-        {status?.open ? t("open") : th("closed")}
-        {time && <Box component="span" sx={{ fontWeight: 500, whiteSpace: "nowrap" }}>– {time}</Box>}
-      </Box>
+      {!visible && (
+        <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.75, fontSize: 13, fontWeight: 600, color: statusColor, visibility: status ? "visible" : "hidden" }}>
+          <ScheduleOutlined aria-hidden sx={{ fontSize: 20, color: statusColor, flexShrink: 0 }} />
+          {status?.open ? t("open") : th("closed")}
+          {time && <Box component="span" sx={{ fontWeight: 500, whiteSpace: "nowrap" }}>– {time}</Box>}
+        </Box>
+      )}
       <Box component="span" sx={{ ml: "auto", width: 40, height: 40, flexShrink: 0, borderRadius: "50%", bgcolor: tokens.jaune400, color: tokens.bleuFonce, display: "grid", placeItems: "center" }}>
         <ExpandLessRounded sx={{ transform: open ? "rotate(180deg)" : "none", transition: `transform ${ease}` }} />
       </Box>
